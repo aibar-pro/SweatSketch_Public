@@ -12,25 +12,80 @@ struct ExerciseView: View {
     @ObservedObject var exercise: ExerciseEntity
     
     var body: some View {
-        VStack (alignment: .leading, spacing: 10){
-            Text(exercise.name ?? "n/a")
-                .font(.title2)
-            HStack (spacing: 10){
-                Image(systemName: "dumbbell.fill")
-                let exerciseItems = exercise.exerciseActions?.array as? [ExerciseActionEntity] ?? []
-                if exerciseItems.count>0 {
-                    ScrollView (.horizontal) {
-                        HStack {
-                            ForEach (exerciseItems) { item in
-                                Text("\(item.setCount) x \(item.repCount)")
-                                    .frame(width: 50, alignment: .leading)
+        VStack (alignment: .leading) {
+            let exerciseType = ExerciseType.from(rawValue: exercise.type)
+            
+            HStack (alignment: .top){
+                Image(systemName: exerciseType.iconName)
+                    .padding(Constants.Design.spacing/4)
+                
+                VStack (alignment: .leading) {
+                    Text(exercise.name ?? "Unnamed")
+                        .font(.title2)
+                        .lineLimit(2)
+                    
+                    if let exerciseItems = exercise.exerciseActions?.array as? [ExerciseActionEntity] {
+                        if exerciseType == .mixed {
+                            VStack (alignment: .leading){
+                                ForEach (exerciseItems) { item in
+                                    let itemType = ExerciseActionType.from(rawValue: item.type)
+                                    
+                                    HStack {
+//                                        Image(systemName: itemType.iconName)
+                                        
+                                        if exercise.superSets > 0, let itemName = item.name {
+                                            Text(itemName+",")
+                                                .lineLimit(2)
+                                        }
+                                        
+                                        switch itemType {
+                                        case .setsNreps:
+                                            Text("\(item.sets)x\(item.repsMax ? "MAX" : String(item.reps))")
+                                        case .timed:
+                                            Text("\(item.duration) seconds")
+                                        case .unknown:
+                                            EmptyView()
+                                        }
+                                    }
+                                }
+                                
+                                if exercise.superSets > 0 {
+                                    Text("superset, \(exercise.superSets) times")
+                                        .opacity(0.7)
+                                } else {
+                                    EmptyView()
+                                }
+                            }
+                        } else {
+                            ScrollView(.horizontal) {
+                                HStack {
+                                    ForEach (exerciseItems) { item in
+                                        let itemType = ExerciseActionType.from(rawValue: item.type)
+                                        
+                                        HStack {
+                                            
+                                            switch itemType {
+                                            case .setsNreps:
+                                                Text("\(item.sets)x\(item.repsMax ? "MAX" : String(item.reps))")
+                                            case .timed:
+                                                Text("\(item.duration) seconds")
+                                            case .unknown:
+                                                EmptyView()
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
+                    } else {
+                        EmptyView()
                     }
-                } else {
-                    EmptyView()
+                    
+                    
                 }
             }
+            
+            
         }
     }
 }
@@ -41,7 +96,7 @@ struct ExerciseView_Previews: PreviewProvider {
     static var previews: some View {
         let context = PersistenceController.preview.container.viewContext
         
-        let planFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "WorkoutPlan")
+        let planFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "WorkoutEntity")
         
         let plans = try! context.fetch(planFetch) as! [WorkoutEntity]
         

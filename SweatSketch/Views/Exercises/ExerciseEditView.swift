@@ -167,7 +167,7 @@ struct ExerciseEditView: View {
                                 VStack {
                                     ForEach(newExerciseItems) { item in
                                         ZStack {
-                                            if item.repCount > 0 && item.setCount > 0 {
+                                            if item.reps > 0 && item.sets > 0 {
                                                 Circle()
                                                     .fill()
                                                     .foregroundColor(.blue)
@@ -213,7 +213,7 @@ struct ExerciseEditView_Previews: PreviewProvider {
         
         let context = PersistenceController.preview.container.viewContext
      
-        let planFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "WorkoutPlanEntity")
+        let planFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "WorkoutEntity")
         
         let plans = try! context.fetch(planFetch) as! [WorkoutEntity]
         

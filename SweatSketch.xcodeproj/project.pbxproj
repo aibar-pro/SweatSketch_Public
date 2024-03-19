@@ -13,6 +13,8 @@
 		3F2A8F432B1723EC00F184ED /* WorkoutEditTemporaryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2A8F422B1723EC00F184ED /* WorkoutEditTemporaryViewModel.swift */; };
 		3F31A2E9264C0AD800DF3980 /* WorkoutCarouselCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F31A2E8264C0AD700DF3980 /* WorkoutCarouselCardView.swift */; };
 		3F4036A72BA48A9A001E0AF5 /* WorkoutEditCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4036A62BA48A9A001E0AF5 /* WorkoutEditCoordinator.swift */; };
+		3F4AB5472BA9F9B9005836E7 /* ExerciseActionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4AB5462BA9F9B9005836E7 /* ExerciseActionType.swift */; };
+		3F4AB5492BA9F9D2005836E7 /* WeightType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4AB5482BA9F9D2005836E7 /* WeightType.swift */; };
 		3F598CBA2B8F7F6B00117D59 /* CardBackgroundModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F598CB92B8F7F6B00117D59 /* CardBackgroundModifier.swift */; };
 		3F598CBC2B8F9BBC00117D59 /* AccentButtonLabelStyleModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F598CBB2B8F9BBC00117D59 /* AccentButtonLabelStyleModifier.swift */; };
 		3F598CBE2B8F9F1600117D59 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F598CBD2B8F9F1600117D59 /* Constants.swift */; };
@@ -32,6 +34,7 @@
 		3F8F7F4B2653EC460003BBDA /* WorkoutListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8F7F4A2653EC460003BBDA /* WorkoutListView.swift */; };
 		3FA91226269DBDF400B941F3 /* SnapCarouselModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA91225269DBDF400B941F3 /* SnapCarouselModifier.swift */; };
 		3FB7E6C32BA476E300ECAEDE /* WorkoutListCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB7E6C22BA476E300ECAEDE /* WorkoutListCoordinator.swift */; };
+		3FC92D7E2BA9AF5700AFBCC8 /* ExerciseType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC92D7D2BA9AF5700AFBCC8 /* ExerciseType.swift */; };
 		3FCE2C242BA1FC3B004B4E62 /* WorkoutListTemporaryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCE2C232BA1FC3B004B4E62 /* WorkoutListTemporaryViewModel.swift */; };
 		3FCE2C282BA21DB6004B4E62 /* ApplicationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCE2C272BA21DB6004B4E62 /* ApplicationCoordinator.swift */; };
 		3FCE2C2A2BA21DD1004B4E62 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCE2C292BA21DD1004B4E62 /* Coordinator.swift */; };
@@ -49,6 +52,8 @@
 		3F2A8F422B1723EC00F184ED /* WorkoutEditTemporaryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutEditTemporaryViewModel.swift; sourceTree = "<group>"; };
 		3F31A2E8264C0AD700DF3980 /* WorkoutCarouselCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutCarouselCardView.swift; sourceTree = "<group>"; };
 		3F4036A62BA48A9A001E0AF5 /* WorkoutEditCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutEditCoordinator.swift; sourceTree = "<group>"; };
+		3F4AB5462BA9F9B9005836E7 /* ExerciseActionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseActionType.swift; sourceTree = "<group>"; };
+		3F4AB5482BA9F9D2005836E7 /* WeightType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightType.swift; sourceTree = "<group>"; };
 		3F598CB92B8F7F6B00117D59 /* CardBackgroundModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardBackgroundModifier.swift; sourceTree = "<group>"; };
 		3F598CBB2B8F9BBC00117D59 /* AccentButtonLabelStyleModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccentButtonLabelStyleModifier.swift; sourceTree = "<group>"; };
 		3F598CBD2B8F9F1600117D59 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -70,6 +75,7 @@
 		3F8F7F4A2653EC460003BBDA /* WorkoutListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutListView.swift; sourceTree = "<group>"; };
 		3FA91225269DBDF400B941F3 /* SnapCarouselModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapCarouselModifier.swift; sourceTree = "<group>"; };
 		3FB7E6C22BA476E300ECAEDE /* WorkoutListCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutListCoordinator.swift; sourceTree = "<group>"; };
+		3FC92D7D2BA9AF5700AFBCC8 /* ExerciseType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseType.swift; sourceTree = "<group>"; };
 		3FCE2C232BA1FC3B004B4E62 /* WorkoutListTemporaryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutListTemporaryViewModel.swift; sourceTree = "<group>"; };
 		3FCE2C272BA21DB6004B4E62 /* ApplicationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationCoordinator.swift; sourceTree = "<group>"; };
 		3FCE2C292BA21DD1004B4E62 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
@@ -166,7 +172,7 @@
 			isa = PBXGroup;
 			children = (
 				3F866696264542D400124E44 /* SweatSketchApp.swift */,
-				3F86669F264542D600124E44 /* Persistence.swift */,
+				3FC92D7C2BA9AF4400AFBCC8 /* Model */,
 				3F4795282BA9869C0097E1EE /* Views */,
 				3F2A8F3C2B16299900F184ED /* ViewModels */,
 				3F1936DB2B98CA7B007978CA /* Coordinators */,
@@ -202,6 +208,17 @@
 				3F598CC12B8FAD7500117D59 /* BackgroundGradientView.swift */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		3FC92D7C2BA9AF4400AFBCC8 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				3F86669F264542D600124E44 /* Persistence.swift */,
+				3FC92D7D2BA9AF5700AFBCC8 /* ExerciseType.swift */,
+				3F4AB5462BA9F9B9005836E7 /* ExerciseActionType.swift */,
+				3F4AB5482BA9F9D2005836E7 /* WeightType.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		3FCE2C2D2BA42BDD004B4E62 /* Protocols */ = {
@@ -240,7 +257,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1250;
-				LastUpgradeCheck = 1520;
+				LastUpgradeCheck = 1530;
 				TargetAttributes = {
 					3F866692264542D400124E44 = {
 						CreatedOnToolsVersion = 12.5;
@@ -286,6 +303,7 @@
 				3FA91226269DBDF400B941F3 /* SnapCarouselModifier.swift in Sources */,
 				3F2A8F412B171BE500F184ED /* ExerciseViewModel.swift in Sources */,
 				3FCE2C242BA1FC3B004B4E62 /* WorkoutListTemporaryViewModel.swift in Sources */,
+				3F4AB5472BA9F9B9005836E7 /* ExerciseActionType.swift in Sources */,
 				3FCE2C2C2BA310EA004B4E62 /* WorkoutCarouselCoordinator.swift in Sources */,
 				3F8D78912B92DE19006BFD18 /* PrimaryButtonLabelModifier.swift in Sources */,
 				3F866699264542D400124E44 /* ContentView.swift in Sources */,
@@ -307,10 +325,12 @@
 				3FB7E6C32BA476E300ECAEDE /* WorkoutListCoordinator.swift in Sources */,
 				3FCE2C2A2BA21DD1004B4E62 /* Coordinator.swift in Sources */,
 				3F598CBA2B8F7F6B00117D59 /* CardBackgroundModifier.swift in Sources */,
+				3FC92D7E2BA9AF5700AFBCC8 /* ExerciseType.swift in Sources */,
 				3F8F7F4B2653EC460003BBDA /* WorkoutListView.swift in Sources */,
 				3F8666AE26454C7C00124E44 /* ButtonLookAndFeel.swift in Sources */,
 				3F598CBC2B8F9BBC00117D59 /* AccentButtonLabelStyleModifier.swift in Sources */,
 				3F8666AF26454C7C00124E44 /* ColorExtension.swift in Sources */,
+				3F4AB5492BA9F9D2005836E7 /* WeightType.swift in Sources */,
 				3FF16B9E2B109F5500D5F610 /* WorkoutEditView.swift in Sources */,
 				3F866697264542D400124E44 /* SweatSketchApp.swift in Sources */,
 			);
@@ -323,6 +343,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -385,6 +406,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";

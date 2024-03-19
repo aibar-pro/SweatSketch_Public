@@ -87,8 +87,21 @@ struct WorkoutEditView: View {
                         HStack {
                             List {
                                 ForEach (exercises) { exercise in
-                                    ExerciseView(exercise: exercise)
-                                        .listRowBackground(Color.clear)
+                                    HStack (alignment: .top){
+                                        ExerciseView(exercise: exercise)
+                                        Spacer()
+                                        if !isEditingName, !isEditingList {
+                                            Button(action: {
+                                                print("Edit exercise: \(exercise.name ?? "")")
+                                            }) {
+                                                Image(systemName: "ellipsis")
+                                                    .font(.title3)
+                                            }
+                                        } else {
+                                            EmptyView()
+                                        }
+                                    }
+                                    .listRowBackground(Color.clear)
                                 }
                                 .onDelete { index in viewModel.deleteExercise(at: index) }
                                 .onMove(perform: viewModel.reorderExercise)

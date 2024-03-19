@@ -100,7 +100,7 @@ struct ExerciseActionEditView: View {
                             .pickerStyle(WheelPickerStyle())
                             .frame(width: gReader.size.width * 0.2)
                             .onChange(of: self.setsCount, perform: { value in
-                                exerciseAction.setCount = Int16(value)
+                                exerciseAction.sets = Int16(value)
                             })
 
                         Divider()
@@ -119,7 +119,7 @@ struct ExerciseActionEditView: View {
                         .pickerStyle(WheelPickerStyle())
                         .frame(width: gReader.size.width * 0.2)
                         .onChange(of: self.repsCount, perform: { value in
-                            exerciseAction.repCount = Int16(value)
+                            exerciseAction.reps = Int16(value)
                         })
                     }
                     .frame(width: gReader.size.width, height: 50, alignment: .center)
