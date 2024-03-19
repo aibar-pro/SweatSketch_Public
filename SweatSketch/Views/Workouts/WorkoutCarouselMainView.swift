@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct WorkoutCarouselView: View {
+struct WorkoutCarouselMainView: View {
         
     @EnvironmentObject var coordinator: WorkoutCarouselCoordinator
     @Environment(\.colorScheme) var colorScheme
@@ -93,7 +93,7 @@ struct WorkoutCarouselView_Previews: PreviewProvider {
     static var previews: some View {
         let persistenceController = PersistenceController.preview
         
-        WorkoutCarouselView()
+        WorkoutCarouselMainView()
             .environmentObject(WorkoutCarouselCoordinator(dataContext: persistenceController.container.viewContext))
 //        
     }

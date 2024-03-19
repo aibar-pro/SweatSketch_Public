@@ -31,20 +31,20 @@ struct WorkoutListView: View {
                             Text(plan.name ?? "n/a")
                                 .font(.title3)
                                 .lineLimit(3)
+                                .padding(.horizontal, Constants.Design.spacing/2)
+                                .padding(.horizontal, Constants.Design.spacing/4)
                                 .listRowBackground(
                                     RoundedRectangle(cornerRadius: Constants.Design.cornerRadius, style: .continuous)
                                         .fill(
                                             Color.clear
                                         )
                                         .modifier(CardBackgroundModifier(cornerRadius: Constants.Design.cornerRadius))
-                                        .padding(.all, 5)
+                                        .padding(.all, Constants.Design.spacing/4)
                                 )
                             
                         }
-                        
                         .onDelete(perform: viewModel.deleteWorkout)
                         .onMove(perform: viewModel.moveWorkout)
-                        
                     }
                     .padding(.horizontal, Constants.Design.spacing)
                     .listStyle(.plain)

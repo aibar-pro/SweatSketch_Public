@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3F1936DF2B98CCAF007978CA /* WorkoutCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1936DE2B98CCAF007978CA /* WorkoutCarouselView.swift */; };
+		3F1936DF2B98CCAF007978CA /* WorkoutCarouselMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1936DE2B98CCAF007978CA /* WorkoutCarouselMainView.swift */; };
 		3F2A8F3B2B16298E00F184ED /* WorkoutCarouselViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2A8F3A2B16298E00F184ED /* WorkoutCarouselViewModel.swift */; };
 		3F2A8F412B171BE500F184ED /* ExerciseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2A8F402B171BE500F184ED /* ExerciseViewModel.swift */; };
 		3F2A8F432B1723EC00F184ED /* WorkoutEditTemporaryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2A8F422B1723EC00F184ED /* WorkoutEditTemporaryViewModel.swift */; };
@@ -43,7 +43,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		3F1936DE2B98CCAF007978CA /* WorkoutCarouselView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutCarouselView.swift; sourceTree = "<group>"; };
+		3F1936DE2B98CCAF007978CA /* WorkoutCarouselMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutCarouselMainView.swift; sourceTree = "<group>"; };
 		3F2A8F3A2B16298E00F184ED /* WorkoutCarouselViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutCarouselViewModel.swift; sourceTree = "<group>"; };
 		3F2A8F402B171BE500F184ED /* ExerciseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseViewModel.swift; sourceTree = "<group>"; };
 		3F2A8F422B1723EC00F184ED /* WorkoutEditTemporaryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutEditTemporaryViewModel.swift; sourceTree = "<group>"; };
@@ -127,7 +127,7 @@
 		3F4795292BA986AF0097E1EE /* Workouts */ = {
 			isa = PBXGroup;
 			children = (
-				3F1936DE2B98CCAF007978CA /* WorkoutCarouselView.swift */,
+				3F1936DE2B98CCAF007978CA /* WorkoutCarouselMainView.swift */,
 				3F31A2E8264C0AD700DF3980 /* WorkoutCarouselCardView.swift */,
 				3F8F7F4A2653EC460003BBDA /* WorkoutListView.swift */,
 				3F6BDEDE26455E160079EC84 /* WorkoutDetailView.swift */,
@@ -301,7 +301,7 @@
 				3FCE2C282BA21DB6004B4E62 /* ApplicationCoordinator.swift in Sources */,
 				3F598CC22B8FAD7500117D59 /* BackgroundGradientView.swift in Sources */,
 				3F31A2E9264C0AD800DF3980 /* WorkoutCarouselCardView.swift in Sources */,
-				3F1936DF2B98CCAF007978CA /* WorkoutCarouselView.swift in Sources */,
+				3F1936DF2B98CCAF007978CA /* WorkoutCarouselMainView.swift in Sources */,
 				3F8D788F2B92DC9B006BFD18 /* SecondaryButtonLabelStyleModifier.swift in Sources */,
 				3FF16BA02B10C15800D5F610 /* ExerciseView.swift in Sources */,
 				3FB7E6C32BA476E300ECAEDE /* WorkoutListCoordinator.swift in Sources */,

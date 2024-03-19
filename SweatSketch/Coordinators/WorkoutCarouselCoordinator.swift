@@ -73,7 +73,7 @@ class WorkoutCarouselCoordinator: ObservableObject, Coordinator {
     }
     
     func start() {
-        let view = WorkoutCarouselView().environmentObject(self)
+        let view = WorkoutCarouselMainView().environmentObject(self)
         rootViewController = UIHostingController(rootView: view)
     }
 }
