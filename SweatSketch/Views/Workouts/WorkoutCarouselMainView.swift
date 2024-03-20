@@ -12,18 +12,19 @@ struct WorkoutCarouselMainView: View {
     @EnvironmentObject var coordinator: WorkoutCarouselCoordinator
     @Environment(\.colorScheme) var colorScheme
     
+    //Changes in EnvironmentObject doesn't invalidate the View
+    @ObservedObject var viewModel: WorkoutCarouselViewModel
+    
     var body: some View {
         GeometryReader { geoReader in
-            let viewModel = coordinator.viewModel
-            
             ZStack {
                 BackgroundGradientView()
                 
-                if !viewModel.workouts.isEmpty {
+                if coordinator.viewModel.workouts.count>0 {
                     ZStack {
                         VStack (alignment: .leading, spacing: Constants.Design.spacing) {
                             HStack {
-                                Text(coordinator.getViewTitle())
+                                Text(coordinator.viewModel.workouts[coordinator.presentedWorkoutIndex].name ?? "Unnamed")
                                     .font(.title2.bold())
                                     .lineLimit(2)
                                 Spacer()
@@ -67,6 +68,7 @@ struct WorkoutCarouselMainView: View {
                             .font(.title.bold())
                         Button(action: {
                             coordinator.goToAddWorkout()
+                            
                         }, label: {
                             Text("Add workout")
                                 .accentButtonLabelStyleModifier()
@@ -92,9 +94,9 @@ struct WorkoutCarouselView_Previews: PreviewProvider {
     
     static var previews: some View {
         let persistenceController = PersistenceController.preview
+        let carouselCoordinator = WorkoutCarouselCoordinator(dataContext: persistenceController.container.viewContext)
         
-        WorkoutCarouselMainView()
-            .environmentObject(WorkoutCarouselCoordinator(dataContext: persistenceController.container.viewContext))
-//        
+        WorkoutCarouselMainView(viewModel: carouselCoordinator.viewModel)
+            .environmentObject(carouselCoordinator)
     }
 }

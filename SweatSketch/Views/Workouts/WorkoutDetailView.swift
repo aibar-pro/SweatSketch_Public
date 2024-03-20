@@ -22,7 +22,7 @@ struct WorkoutDetailView: View {
                         VStack(alignment: .leading, spacing: 10) {
                             ForEach (exercises) { exercise in
                                 ExerciseView(exercise: exercise)
-                                    .padding(.bottom, Constants.Design.spacing/2)
+                                    .padding(.bottom, Constants.Design.spacing)
                                     .frame(width: geoReader.size.width, alignment: .leading)
                             }
                         }

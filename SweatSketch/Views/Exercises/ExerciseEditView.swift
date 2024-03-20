@@ -9,199 +9,234 @@ import SwiftUI
 
 struct ExerciseEditView: View {
     
-    @Environment(\.managedObjectContext) private var viewContext
+    @EnvironmentObject var coordinator: ExerciseEditCoordinator
+    @ObservedObject var viewModel: ExerciseEditTemporaryViewModel
+
+    @GestureState var titlePress = false
+    @State private var newExerciseName : String = ""
+    @State private var isEditingName : Bool = false
     
-    var workout: WorkoutEntity
+    @State private var exerciseType: ExerciseType = .setsNreps
     
-    @Binding var showExerciseModal: Bool
-    
-    @State var exerciseName: String = ""
-    
-    enum exerciseTypes: String, CaseIterable, Identifiable {
-        case dumbbell, barbell, stack, time, none
-        var id: Self { self }
-    }
-    @State private var exerciseType: exerciseTypes = .dumbbell
-    
-    @State var newExerciseItems = [ExerciseActionEntity]()
+    @State private var supersetsCount: Int = 1
     
     @State var isEditingList : Bool = false
     
-//    @FetchRequest(
-//        sortDescriptors: [NSSortDescriptor (keyPath: \WeightPlate.weight, ascending: true)],
-//        animation: .default)
-//    private var weightPlates: FetchedResults<WeightPlate>
-    
-    private func saveExercise() {
-        
-        let newExercise = ExerciseEntity(context: viewContext)
-        newExercise.name = exerciseName
-        
-        newExerciseItems.forEach({
-            newExercise.addToExerciseActions($0)
-        })
-        
-        workout.addToExercises(newExercise)
-        
-        do {
-            try viewContext.save()
-        } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-        }
-    }
-    
-    private func onItemDelete(offsets: IndexSet) {
-        
-        offsets.map { newExerciseItems[$0] }.forEach({ item in
-            newExerciseItems.removeAll(where: {$0 == item})
-            viewContext.delete(item)
-        })
-        
-        do {
-            try viewContext.save()
-        } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-        }
-    }
-
-    private func onItemMove(source: IndexSet, destination: Int) {
-        newExerciseItems.move(fromOffsets: source, toOffset: destination)
-    }
-    
     var body: some View {
-        
-        let paddingValue : CGFloat = 20
-        
-        GeometryReader { gReader in
+        GeometryReader { geoReader in
             VStack (alignment: .leading) {
-                VStack (alignment: .leading) {
-                    HStack {
-                        Text("New exercise")
-                            .bold()
-                        Spacer()
-                        Button(action: {
-                            self.isEditingList.toggle()
-                        }) {
-                            Image(systemName: self.isEditingList ?  "checkmark.circle" : "line.horizontal.3")
-                                .frame(width: 60, height: 60)
-                                .padding(.horizontal, paddingValue)
+                HStack {
+                    Button(action: {
+                        if isEditingList {
+                            isEditingList = false
+                        } else if isEditingName {
+                            isEditingName = false
+                        } else {
+                            print("Exercise DISCARD")
+                            coordinator.discardExerciseEdit()
                         }
+                    }) {
+                        Text("Cancel")
+                            .padding(.vertical, Constants.Design.spacing/2)
+                            .padding(.trailing, Constants.Design.spacing/2)
                     }
-                    .font(.title)
-                    .frame(width: gReader.size.width, alignment: .leading)
-                    
+                    Spacer()
+                    Button(action: {
+                        if isEditingList {
+                            isEditingList = false
+                        } else if isEditingName {
+                            viewModel.renameExercise(newName: newExerciseName)
+                            newExerciseName.removeAll()
+                            isEditingName = false
+                        } else {
+                            print("Exercise SAVE")
+                            coordinator.saveExerciseEdit()
+                        }
+                    }) {
+                        Text(isEditingName ? "Done" : "Save")
+                            .bold()
+                            .padding(.vertical, Constants.Design.spacing/2)
+                            .padding(.leading, Constants.Design.spacing/2)
+                    }
+                    //                    .disabled(newExerciseName.isEmpty&&isEditingName)
+                }
+                .padding(.horizontal, Constants.Design.spacing)
+                
+                Text(viewModel.editingExercise?.name ?? "\"unnamed\"")
+                    .font(.title2.bold())
+                    .lineLimit(2)
+                    .padding(.horizontal, Constants.Design.spacing)
+                    .padding(.bottom, Constants.Design.spacing/2)
+                    .scaleEffect(titlePress ? 0.95 : 1)
+                    .animation(.spring(response: 0.4, dampingFraction: 0.6))
+                    .gesture(
+                        LongPressGesture(minimumDuration: 0.5)
+                            .updating($titlePress) { currentState, gestureState, transaction in
+                                gestureState = currentState
+                            }
+                            .onEnded { value in
+                                isEditingName = true
+                            }
+                    )
+                    .disabled(isEditingName || isEditingList)
+                
+                if isEditingName {
                     HStack {
                         Text("Name: ")
                         
-                        TextField("New exercise", text: $exerciseName)
+                        TextField("New exercise name", text: $newExerciseName)
+                            .disabled(isEditingList)
                     }
+                    .padding(.horizontal, Constants.Design.spacing)
+                    .padding(.bottom, Constants.Design.spacing/2)
                 }
-                .padding(.horizontal, paddingValue)
-                .padding(.top, paddingValue * 2)
                 
-                HStack (spacing: 20) {
-                   Picker("Type", selection: $exerciseType) {
-                            ForEach(exerciseTypes.allCases) { type in
-                                Text(type.rawValue.capitalized)
-                            }
+                if !isEditingName {
+                    Picker("Type", selection: $exerciseType) {
+                        ForEach(ExerciseType.exerciseTypes, id: \.self) { type in
+                            Text(type.screenTitle)
                         }
-                   .pickerStyle(.segmented)
-                }
-                .padding(.leading, 20)
-                .frame(width: gReader.size.width, height: 50, alignment: .center)
-                
-                GeometryReader { listGeo in
-                    HStack {
-                        NavigationView {
-                            List {
-//                                let weights = weightPlates.sorted(by: { $0.weight < $1.weight})
-                                
-                                if newExerciseItems.count>0 {
-                                    
-                                    ForEach(newExerciseItems) { item in
-                                        
-//                                        ExerciseItemEditView(exerciseItem: item, weightPlates: weights)
-                                        
-                                    }
-                                    .onDelete(perform: onItemDelete)
-                                    .onMove(perform: onItemMove)
-                                    .disabled(self.isEditingList)
-                                } else {
-                                    EmptyView()
-                                }
-                            }
-                            .navigationBarHidden(true)
-                            .environment(\.editMode,
-                                         .constant(self.isEditingList ? EditMode.active : EditMode.inactive))
-                            .animation(Animation.easeInOut(duration: 0.25))
-                            .listStyle(.plain)
-                            .padding(.leading, paddingValue)
-                            .frame(width: listGeo.size.width * 0.85, height: listGeo.size.height, alignment: .topLeading)
+                    }
+                    .onAppear(perform: {
+                        exerciseType = ExerciseType.from(rawValue: viewModel.editingExercise?.type)
+                    })
+                    .onChange(of: exerciseType, perform: { _ in
+                        viewModel.setExerciseType(type: ExerciseType.from(rawValue: exerciseType.rawValue))
+                    })
+                    .pickerStyle(.segmented)
+                    .padding(.horizontal, Constants.Design.spacing)
+                    .padding(.bottom, Constants.Design.spacing/2)
+                    
+                    if exerciseType == .mixed {
+                        HStack {
+                            Text("Superset reps:")
                             
-                        }
-                        
-                        if self.isEditingList == false {
-                            VStack (alignment: .center) {
-                                
-                                Button(action: {
-                                    let addedExerciseItem = ExerciseActionEntity(context: viewContext)
-                                    self.newExerciseItems.append(addedExerciseItem)
-                                }) {
-                                    Image(systemName: "plus")
+                            Picker("", selection: $supersetsCount) {
+                                ForEach(1...99, id: \.self) {
+                                    Text("\($0)")
                                 }
-                                .padding(10)
-                                .background(
-                                    ZStack {
-                                        Circle()
-                                            .stroke(Color.blue, lineWidth: 2)
-                                    }
-                                )
-                                .padding(.top, newExerciseItems.count > 0 ? paddingValue : 0)
-                                
-                                VStack {
-                                    ForEach(newExerciseItems) { item in
-                                        ZStack {
-                                            if item.reps > 0 && item.sets > 0 {
-                                                Circle()
-                                                    .fill()
-                                                    .foregroundColor(.blue)
-                                            }
-                                            Circle()
-                                                .stroke(lineWidth: 1.0)
-                                                .foregroundColor(.blue)
-                                        }
-                                        
-                                    }
-                                }
-                                .frame(width: listGeo.size.width * 0.05, height: CGFloat(30 * newExerciseItems.count))
                             }
-                            .frame(width: newExerciseItems.count > 0 ? listGeo.size.width * 0.15 : listGeo.size.width, height: listGeo.size.height, alignment: newExerciseItems.count > 0 ? .top : .top)
-                        } else {
-                            EmptyView()
+                            .pickerStyle(.menu)
+                            .onAppear(perform: {
+                                if let superSets = viewModel.editingExercise?.superSets {
+                                    supersetsCount = Int(superSets)
+                                } else {
+                                    supersetsCount = 1
+                                }
+                            })
+                            .onChange(of: supersetsCount, perform: { _ in
+                                viewModel.setSupersets(superset: supersetsCount)
+                            })
+                        }
+                        .padding(.horizontal, Constants.Design.spacing)
+                        .padding(.bottom, Constants.Design.spacing/2)
+                    }
+                    List {
+                        ForEach(viewModel.exerciseActions) { action in
+                                ExerciseActionEditView(exerciseAction: action, exerciseType: exerciseType)
                         }
                     }
+                    .listStyle(.plain)
+                    .environment(\.editMode,
+                                  .constant(isEditingList ? EditMode.active : EditMode.inactive))
+                    .animation(.easeInOut(duration: 0.25))
+                    .onChange(of: viewModel.exerciseActions.count==0, perform: { _ in
+                        if isEditingList {
+                            isEditingList = false
+                        }
+                    })
+//                    List {
+//                        ForEach(viewModel.exerciseActions.filter { action in
+//                            switch exerciseType {
+//                            case .setsNreps:
+//                                return ExerciseActionType.from(rawValue: action.type) == .setsNreps
+//                            case .timed:
+//                                return ExerciseActionType.from(rawValue: action.type) == .timed
+//                            case .mixed:
+//                                return ExerciseActionType.from(rawValue: action.type) == .setsNreps || ExerciseActionType.from(rawValue: action.type) == .timed
+//                            case .unknown:
+//                                return ExerciseActionType.from(rawValue: action.type) == .unknown
+//                            }
+//                        }) { action in
+//                            let actionType = ExerciseActionType.from(rawValue: action.type)
+//                            
+//                            HStack {
+//                                if exerciseType == .mixed {
+//                                    if let actionName = action.name {
+//                                        Text(actionName+",")
+//                                    } else {
+//                                        Text("\"unnamed\"")
+//                                    }
+//                                    
+//                                    switch actionType {
+//                                    case .setsNreps:
+//                                        if action.repsMax {
+//                                            Text("xMAX")
+//                                        } else {
+//                                            Text("x\(action.reps)")
+//                                        }
+//                                    case .timed:
+//                                        Text("\(action.duration) seconds")
+//                                    case .unknown:
+//                                        EmptyView()
+//                                    }
+//                                } else {
+//                                    switch actionType {
+//                                    case .setsNreps:
+//                                        Text("\(action.sets)x\(action.repsMax ? "MAX" : String(action.reps))")
+//                                    case .timed:
+//                                        Text("\(action.duration) seconds")
+//                                    case .unknown:
+//                                        EmptyView()
+//                                    }
+//                                }
+//                            }
+//                            .listRowBackground(Color.clear)
+//                            
+//                        }
+//                        .onDelete(perform: coordinator.viewModel.deleteExerciseActions)
+//                        .onMove(perform: coordinator.viewModel.reorderWorkoutExerciseActions)
+//                            // Why?
+//                        .disabled(isEditingList)
+//                    }
+//                    .listStyle(.plain)
+//                    .environment(\.editMode,
+//                                  .constant(isEditingList ? EditMode.active : EditMode.inactive))
+//                    .animation(.easeInOut(duration: 0.25))
+//                    .onChange(of: viewModel.exerciseActions.count==0, perform: { _ in
+//                        if isEditingList {
+//                            isEditingList = false
+//                        }
+//                    })
                 }
                 
-                Button(action: {
-                      saveExercise()
-
-                      showExerciseModal.toggle()
-
-                  }) {
-                      Text("Save")
-                  }
-                  .disabled(
-                      exerciseName.isEmpty
-                  )
-                  .frame(width: gReader.size.width, alignment: .center)
-                  .padding(.vertical, paddingValue * 2)
+                if !isEditingList && !isEditingName {
+                    HStack {
+                        Button(action: {
+                            isEditingList.toggle()
+                        }) {
+                            Image(systemName: "arrow.up.arrow.down")
+                                .padding(Constants.Design.spacing/2)
+                        }
+                        .disabled(viewModel.exerciseActions.isEmpty || isEditingName)
+                        
+                        Spacer()
+                        Button(action: {
+                            print("New action")
+                            //                        let addedExerciseItem = ExerciseActionEntity(context: viewContext)
+                            //                                    self.newExerciseItems.append(addedExerciseItem)
+                        }) {
+                            Image(systemName: "plus")
+                                .font(.title2.bold())
+                                .primaryButtonLabelStyleModifier()
+                        }
+                    }
+                    .padding(.horizontal, Constants.Design.spacing)
+                } else {
+                    EmptyView()
+                }
             }
+            .accentColor(.primary)
         }
     }
 }
@@ -211,15 +246,13 @@ import CoreData
 struct ExerciseEditView_Previews: PreviewProvider {
     static var previews: some View {
         
-        let context = PersistenceController.preview.container.viewContext
-     
-        let planFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "WorkoutEntity")
+        let persistenceController = PersistenceController.preview
+        let workoutCarouselViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext)
+        let workoutEditViewModel = WorkoutEditTemporaryViewModel(parentViewModel: workoutCarouselViewModel, editingWorkout: workoutCarouselViewModel.workouts[0])
+        let exerciseEditViewModel = ExerciseEditTemporaryViewModel(parentViewModel: workoutEditViewModel, editingExercise: workoutEditViewModel.exercises[0])
+        let exerciseCoordinator = ExerciseEditCoordinator(viewModel: exerciseEditViewModel)
         
-        let plans = try! context.fetch(planFetch) as! [WorkoutEntity]
-        
-//        let exercise = plans[0].exercises?.array[0] as! Exercise
-        
-        ExerciseEditView(workout: plans[0], showExerciseModal: .constant(true))
-            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        ExerciseEditView(viewModel: exerciseEditViewModel)
+            .environmentObject(exerciseCoordinator)
     }
 }

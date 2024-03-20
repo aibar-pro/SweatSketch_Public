@@ -5,7 +5,7 @@
 //  Created by aibaranchikov on 19.03.2024.
 //
 
-enum ExerciseActionType: String {
+enum ExerciseActionType: String, CaseIterable {
     case setsNreps, timed
     case unknown
     
