@@ -20,7 +20,7 @@ class WorkoutListCoordinator: ObservableObject, Coordinator {
     }
     
     func start() {
-        let view = WorkoutListView().environmentObject(self)
+        let view = WorkoutListView(viewModel: viewModel).environmentObject(self)
         rootViewController = UIHostingController(rootView: view)
     }
     
@@ -35,7 +35,7 @@ class WorkoutListCoordinator: ObservableObject, Coordinator {
     }
     
     func discardlWorkoutListChanges(){
-        viewModel.cancelWorkoutListChange()
+        viewModel.discardWorkoutListChange()
         if #available(iOS 15, *) {
             print("List Dismiss:Discard \(Date.now)")
         } else {

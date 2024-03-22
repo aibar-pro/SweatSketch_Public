@@ -18,74 +18,28 @@ struct ExerciseView: View {
             HStack (alignment: .top){
                 Image(systemName: exerciseType.iconName)
                     .padding(Constants.Design.spacing/4)
+                    .frame(width: Constants.Design.spacing*1.5)
                 
                 VStack (alignment: .leading) {
-                    Text(exercise.name ?? "Unnamed")
-                        .font(.title2)
-                        .lineLimit(2)
-                    
-                    if let exerciseItems = exercise.exerciseActions?.array as? [ExerciseActionEntity] {
+                    HStack (alignment: .bottom) {
+                        Text(exercise.name ?? "Unnamed")
+                            .font(.title2)
+                            .lineLimit(2)
+                        Spacer()
                         if exerciseType == .mixed {
-                            VStack (alignment: .leading){
-                                ForEach (exerciseItems) { item in
-                                    let itemType = ExerciseActionType.from(rawValue: item.type)
-                                    
-                                    HStack {
-//                                        Image(systemName: itemType.iconName)
-                                        
-                                        if exercise.superSets > 0, let itemName = item.name {
-                                            Text(itemName+",")
-                                                .lineLimit(2)
-                                        }
-                                        
-                                        switch itemType {
-                                        case .setsNreps:
-                                            Text("\(item.sets)x\(item.repsMax ? "MAX" : String(item.reps))")
-                                        case .timed:
-                                            Text("\(item.duration) seconds")
-                                        case .unknown:
-                                            EmptyView()
-                                        }
-                                    }
-                                }
-                                
-                                if exercise.superSets > 0 {
-                                    Text("superset, \(exercise.superSets) times")
-                                        .opacity(0.7)
-                                } else {
-                                    EmptyView()
-                                }
-                            }
+                            Text("x\(exercise.superSets)")
+                                .font(.title2)
+                                .padding(.trailing, Constants.Design.spacing/4)
                         } else {
-                            ScrollView(.horizontal) {
-                                HStack {
-                                    ForEach (exerciseItems) { item in
-                                        let itemType = ExerciseActionType.from(rawValue: item.type)
-                                        
-                                        HStack {
-                                            
-                                            switch itemType {
-                                            case .setsNreps:
-                                                Text("\(item.sets)x\(item.repsMax ? "MAX" : String(item.reps))")
-                                            case .timed:
-                                                Text("\(item.duration) seconds")
-                                            case .unknown:
-                                                EmptyView()
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            EmptyView()
                         }
-                    } else {
-                        EmptyView()
                     }
+                    .padding(.bottom, Constants.Design.spacing/4)
                     
-                    
+                    ExerciseActionListView(exercise: exercise)
+                        .opacity(0.8)
                 }
             }
-            
-            
         }
     }
 }
@@ -100,7 +54,7 @@ struct ExerciseView_Previews: PreviewProvider {
         
         let plans = try! context.fetch(planFetch) as! [WorkoutEntity]
         
-        let exercise = plans[0].exercises?.array[0] as! ExerciseEntity
+        let exercise = plans[0].exercises?.array[2] as! ExerciseEntity
         
         ExerciseView(exercise: exercise)
     }

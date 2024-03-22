@@ -10,8 +10,14 @@ import CoreData
 
 class WorkoutEditTemporaryViewModel: ObservableObject {
     
-    private let temporaryContext: NSManagedObjectContext
-    var parentViewModel: WorkoutCarouselViewModel
+    let parentViewModel: WorkoutCarouselViewModel
+    let temporaryContext: NSManagedObjectContext
+    var canUndo: Bool {
+        return temporaryContext.undoManager?.canUndo ?? false
+       }
+    var canRedo: Bool {
+       return temporaryContext.undoManager?.canRedo ?? false
+    }
     
     @Published var editingWorkout: WorkoutEntity?
     @Published var exercises: [ExerciseEntity] = []
@@ -19,6 +25,9 @@ class WorkoutEditTemporaryViewModel: ObservableObject {
     init(parentViewModel: WorkoutCarouselViewModel, editingWorkout: WorkoutEntity? = nil) {
         self.temporaryContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         self.temporaryContext.parent = parentViewModel.mainContext
+        if self.temporaryContext.undoManager == nil {
+            self.temporaryContext.undoManager = UndoManager()
+        }
         
         self.parentViewModel = parentViewModel
         
@@ -48,118 +57,39 @@ class WorkoutEditTemporaryViewModel: ObservableObject {
         self.editingWorkout?.name = newName
     }
     
-//    func addExercise(to workout: WorkoutPlan, newExercise: Exercise) {
-//        editingWorkout?.addToExercises(newExercise)
-//        saveContext()
-//    }
-//
-//
-//    func deleteExercise(offsets: IndexSet) {
-//
-//        offsets.map { editingWorkout?.exercises?.array[$0] as! Exercise }.forEach({
-////                editingWorkout?.removeFromExercises($0)
-//                temporaryContext.delete($0)
-//            })
-//        saveContext()
-//    }
-//
-//    func reorderExercise(source: IndexSet, destination: Int) {
-//        source.map { editingWorkout?.exercises?.array[$0] as! Exercise }
-//            .forEach({
-//                editingWorkout?.removeFromExercises($0)
-//                // Have to adjust the destination to avoid crush after drag-and-drop at bottom or top of the list
-//                var adjustedDestination = destination-1
-//                if adjustedDestination < 0 {
-//                    adjustedDestination = 0
-//                }
-//                editingWorkout?.insertIntoExercises($0, at: adjustedDestination)
-//            })
-//        saveContext()
-//    }
-//    private func fetchExercises() {
-//       temporaryContext.perform {
-////           let workoutFetchRequest: NSFetchRequest<WorkoutPlanEntity> = WorkoutPlanEntity.fetchRequest()
-////           workoutFetchRequest.predicate = NSPredicate(format: "SELF == %@", self.editingWorkout!.objectID)
-////
-////           do {
-////               let workoutResults = try self.temporaryContext.fetch(workoutFetchRequest)
-////               if let workout = workoutResults.first {
-////                   // Assuming that `exercises` is a relationship property of `WorkoutEntity`
-////                   if let fetchedExercises = workout.exercises as? [ExerciseEntity] {
-////                       DispatchQueue.main.async {
-////                           self.exercises = fetchedExercises
-////                       }
-////                   }
-////               }
-////           } catch {
-////               print("Error fetching exercises: \(error)")
-////           }
-//           let exercisesFetchRequest: NSFetchRequest<ExerciseEntity> = ExerciseEntity.fetchRequest()
-//           exercisesFetchRequest.predicate = NSPredicate(format: "%K == %@",
-//                                                         #keyPath(ExerciseEntity.workoutPlan), self.editingWorkout!)
-//           
-//           do {
-//               self.exercises = try self.temporaryContext.fetch(exercisesFetchRequest)
-//           } catch {
-//               print("Error fetching workouts: \(error)")
-//           }
-//       }
-//   }
-    
-    func addExercise(name: String) {
-        let newExercise = ExerciseEntity(context: temporaryContext)
-        newExercise.name = name
-//        newExercise.workout = editingWorkout
-        editingWorkout?.addToExercises(newExercise)
-        exercises.append(newExercise)
+    func addWorkoutExercise(newExercise: ExerciseEntity) {
+        self.exercises.append(newExercise)
+        self.editingWorkout?.addToExercises(newExercise)
     }
-
-    func deleteExercise(at offsets: IndexSet) {
-        //        offsets.forEach { index in
-        //            let exercise = exercises[index]
-        //            temporaryContext.delete(exercise)
-        //        }
-        //    }
-        temporaryContext.perform {
-            let exercisesToDelete = offsets.map { self.exercises[$0] }
-            exercisesToDelete.forEach { exercise in
-                self.temporaryContext.delete(exercise)
-            }
-            do {
-                try self.temporaryContext.save()
-                DispatchQueue.main.async {
-                    self.exercises.remove(atOffsets: offsets)
-                }
-            } catch {
-                print("Error deleting exercises: \(error)")
-            }
+    
+    func deleteWorkoutExercise(at offsets: IndexSet) {
+        let exercisesToDelete = offsets.map { self.exercises[$0] }
+        exercisesToDelete.forEach { exercise in
+            self.exercises.remove(atOffsets: offsets)
+            self.temporaryContext.delete(exercise)
         }
     }
     
-
-    func reorderExercise(from source: IndexSet, to destination: Int) {
+    func reorderWorkoutExercise(from source: IndexSet, to destination: Int) {
         exercises.move(fromOffsets: source, toOffset: destination)
-    }
-    
-    func saveExercise() {
+        
         exercises.enumerated().forEach{ index, exercise in
             editingWorkout?.removeFromExercises(exercise)
             editingWorkout?.insertIntoExercises(exercise, at: index)
+            exercise.order=Int16(index)
         }
     }
     
     func saveWorkout() {
-        do {
-            saveExercise()
-            saveContext()
-            try temporaryContext.parent?.save()
-            parentViewModel.refreshData()
-        } catch {
-            print("Error saving context: \(error)")
-        }
+        saveTemporaryContext()
+        parentViewModel.refreshData()
     }
-
-    private func saveContext() {
+    
+    func discardWorkout() {
+        temporaryContext.rollback()
+    }
+    
+    private func saveTemporaryContext() {
         do {
             try temporaryContext.save()
         } catch {
@@ -170,7 +100,13 @@ class WorkoutEditTemporaryViewModel: ObservableObject {
         }
     }
     
-    func cancelWorkoutEdit() {
-        temporaryContext.rollback()
+    func undo() {
+        temporaryContext.undoManager?.undo()
+        self.objectWillChange.send()
+    }
+        
+    func redo() {
+        temporaryContext.undoManager?.redo()
+        self.objectWillChange.send()
     }
 }
