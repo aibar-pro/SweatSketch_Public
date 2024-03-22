@@ -10,6 +10,7 @@ import SwiftUI
 struct WorkoutEditView: View {
     
     @EnvironmentObject var coordinator: WorkoutEditCoordinator
+    @ObservedObject var viewModel: WorkoutEditTemporaryViewModel
     
     @GestureState var titlePress = false
     @State private var newWorkoutName : String = ""
@@ -19,7 +20,6 @@ struct WorkoutEditView: View {
     
     var body: some View {
         
-        let viewModel = coordinator.viewModel
         let exercises = viewModel.exercises
        
         ZStack {
@@ -45,6 +45,23 @@ struct WorkoutEditView: View {
                         }
                         Spacer()
                         Button(action: {
+                           viewModel.undo()
+                        }) {
+                            Image(systemName: "arrow.uturn.backward")
+                        }
+                        .padding(.vertical, Constants.Design.spacing/2)
+                        .padding(.horizontal, Constants.Design.spacing/2)
+                        .disabled(!viewModel.canUndo)
+                        Button(action: {
+                            viewModel.redo()
+                        }) {
+                            Image(systemName: "arrow.uturn.forward")
+                        }
+                        .padding(.vertical, Constants.Design.spacing/2)
+                        .padding(.horizontal, Constants.Design.spacing/2)
+                        .disabled(!viewModel.canRedo)
+                        Spacer()
+                        Button(action: {
                             if isEditingName {
                                 viewModel.renameWorkout(newName: newWorkoutName)
                                 newWorkoutName.removeAll()
@@ -65,7 +82,7 @@ struct WorkoutEditView: View {
                     }
                     .padding(.horizontal, Constants.Design.spacing)
                     
-                    Text(viewModel.editingWorkout?.name ?? "Unnamed")
+                    Text(viewModel.editingWorkout?.name ?? "unnamed")
                         .font(.title2.bold())
                         .lineLimit(2)
                         .padding(.horizontal, Constants.Design.spacing)
@@ -79,43 +96,41 @@ struct WorkoutEditView: View {
                                   .onEnded { value in
                                       isEditingName = true
                                   }
-                                
                           )
                         .disabled(isEditingName || isEditingList)
                         
                     if !isEditingName {
-                        HStack {
-                            List {
-                                ForEach (exercises) { exercise in
-                                    HStack (alignment: .top){
-                                        ExerciseView(exercise: exercise)
-                                        Spacer()
-                                        if !isEditingName, !isEditingList {
-                                            Button(action: {
-                                                print("Edit exercise: \(exercise.name ?? "")")
-                                            }) {
-                                                Image(systemName: "ellipsis")
-                                                    .font(.title3)
-                                            }
-                                        } else {
-                                            EmptyView()
+                        List {
+                            ForEach (exercises) { exercise in
+                                HStack (alignment: .top){
+                                    ExerciseView(exercise: exercise)
+                                    Spacer()
+                                    if !isEditingName, !isEditingList {
+                                        Button(action: {
+                                            print("Edit exercise: \(exercise.name ?? "")")
+                                            coordinator.goToEditWorkout(exerciseToEdit: exercise)
+                                        }) {
+                                            Image(systemName: "ellipsis")
+                                                .font(.title3)
                                         }
+                                    } else {
+                                        EmptyView()
                                     }
-                                    .listRowBackground(Color.clear)
                                 }
-                                .onDelete { index in viewModel.deleteExercise(at: index) }
-                                .onMove(perform: viewModel.reorderExercise)
+                                .listRowBackground(Color.clear)
                             }
-                            .listStyle(.plain)
-                            .environment(\.editMode,
-                                          .constant(isEditingList ? EditMode.active : EditMode.inactive))
-                            .animation(.easeInOut(duration: 0.25))
-                            .onChange(of: exercises.count==0, perform: { _ in
-                                if isEditingList {
-                                    isEditingList = false
-                                }
-                            })
+                            .onDelete { index in viewModel.deleteWorkoutExercise(at: index) }
+                            .onMove(perform: viewModel.reorderWorkoutExercise)
                         }
+                        .listStyle(.plain)
+                        .environment(\.editMode,
+                                      .constant(isEditingList ? EditMode.active : EditMode.inactive))
+                        .animation(.easeInOut(duration: 0.25))
+                        .onChange(of: exercises.count==0, perform: { _ in
+                            if isEditingList {
+                                isEditingList = false
+                            }
+                        })
                     } else {
                         VStack {
                             VStack (alignment: .leading) {
@@ -149,7 +164,7 @@ struct WorkoutEditView: View {
                             
                             Spacer()
                             Button(action: {
-                                
+                                coordinator.goToAddExercise()
                             }) {
                                 Image(systemName: "plus")
                                     .font(.title2.bold())
@@ -158,7 +173,7 @@ struct WorkoutEditView: View {
                         }
                         .padding(.horizontal, Constants.Design.spacing)
                     } else {
-                        /*@START_MENU_TOKEN@*/EmptyView()/*@END_MENU_TOKEN@*/
+                        EmptyView()
                     }
                 }
                 .accentColor(.primary)
@@ -175,9 +190,10 @@ struct WorkoutEditView_Previews: PreviewProvider {
         let persistenceController = PersistenceController.preview
         let workoutViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext)
         let workoutEditModel = WorkoutEditTemporaryViewModel(parentViewModel: workoutViewModel, editingWorkout: workoutViewModel.workouts[0])
+        let workoutEditCoordinator = WorkoutEditCoordinator(viewModel: workoutEditModel)
         
-        WorkoutEditView()
-            .environmentObject(WorkoutEditCoordinator(viewModel: workoutEditModel))
+        WorkoutEditView(viewModel: workoutEditCoordinator.viewModel)
+            .environmentObject(workoutEditCoordinator)
 
     }
 }

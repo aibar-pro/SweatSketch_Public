@@ -11,7 +11,7 @@ import CoreData
 class WorkoutListTemporaryViewModel: ObservableObject {
     
     private let temporaryWorkoutListContext: NSManagedObjectContext
-    var parentViewModel: WorkoutCarouselViewModel
+    let parentViewModel: WorkoutCarouselViewModel
     
     @Published var workouts = [WorkoutEntity]()
     
@@ -37,16 +37,15 @@ class WorkoutListTemporaryViewModel: ObservableObject {
     }
     
     func saveWorkoutListChange() {
-        do {
-            saveContext()
-            try temporaryWorkoutListContext.parent?.save()
-            parentViewModel.refreshData()
-        } catch {
-            print("Error saving context: \(error)")
-        }
+        saveTemporaryListContext()
+        parentViewModel.refreshData()
     }
 
-    private func saveContext() {
+    func discardWorkoutListChange() {
+        temporaryWorkoutListContext.rollback()
+    }
+    
+    private func saveTemporaryListContext() {
         do {
             try temporaryWorkoutListContext.save()
         } catch {
@@ -57,14 +56,12 @@ class WorkoutListTemporaryViewModel: ObservableObject {
         }
     }
     
-    func cancelWorkoutListChange() {
-        temporaryWorkoutListContext.rollback()
-    }
-    
     func deleteWorkout(offsets: IndexSet) {
-        offsets.map { workouts[$0] }.forEach(
-            temporaryWorkoutListContext.delete
-        )
+        let workoutsToDelete = offsets.map { self.workouts[$0] }
+        workoutsToDelete.forEach { workout in
+            self.workouts.remove(atOffsets: offsets)
+            self.temporaryWorkoutListContext.delete(workout)
+        }
     }
 
     func moveWorkout(source: IndexSet, destination: Int) {

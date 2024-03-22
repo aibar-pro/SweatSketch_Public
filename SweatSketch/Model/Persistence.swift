@@ -22,7 +22,7 @@ struct PersistenceController {
 //            weightPlates.append(newPlate)
 //        }
         
-        let planCount = Int.random(in: 0...2)
+        let planCount = Int.random(in: 2...4)
         
         for w in 0...planCount {
             let workout = WorkoutEntity(context: viewContext)
@@ -30,51 +30,66 @@ struct PersistenceController {
             workout.name = "Test Workout Auto \(w) Test Workout Auto Test Workout Auto"
             workout.position = Int16(w)
             
-            let exerciseCount = Int.random(in: 0...20)
-            
-            for e in 0...exerciseCount {
-                let newExercise = ExerciseEntity(context: viewContext)
-                newExercise.uuid = UUID()
-                newExercise.name = String("Test Exercise \(w)-\(e)")
-                newExercise.order = Int16(e)
-                newExercise.type = ExerciseType.setsNreps.rawValue
-                
-                let actionCount = Int.random(in: 0...5)
-                
-                for a in 0...actionCount {
-                    let newExerciseAction = ExerciseActionEntity(context: viewContext)
-                    newExerciseAction.uuid = UUID()
-                    newExerciseAction.name = "Test Exercise \(w)-\(e)-\(a)"
-                    newExerciseAction.reps = Int16.random(in: 6...10)
-                    newExerciseAction.sets = Int16.random(in: 1...4)
-                    newExerciseAction.order = Int16(a)
-                    newExerciseAction.type = ExerciseActionType.setsNreps.rawValue
-                    newExercise.addToExerciseActions(newExerciseAction)
-                }
-                
-                workout.addToExercises(newExercise)
-            }
+           
             
             let newTimedExercise = ExerciseEntity(context: viewContext)
             newTimedExercise.uuid = UUID()
-            newTimedExercise.name = String("Test Timed Exercise \(w)-\(exerciseCount+1)")
-            newTimedExercise.order = Int16(exerciseCount+2)
+            newTimedExercise.name = String("Test Timed Exercise")
+            newTimedExercise.order = Int16(0)
             newTimedExercise.type = ExerciseType.timed.rawValue
             
             let newExerciseTimedAction = ExerciseActionEntity(context: viewContext)
             newExerciseTimedAction.uuid = UUID()
-            newExerciseTimedAction.name = "Treadmill run"
-            newExerciseTimedAction.duration = Int16.random(in: 600...10000)
             newExerciseTimedAction.order = Int16(1)
-            newExerciseTimedAction.type = ExerciseActionType.timed.rawValue
+            newExerciseTimedAction.duration = Int16.random(in: 600...10000)
             
             newTimedExercise.addToExerciseActions(newExerciseTimedAction)
             workout.addToExercises(newTimedExercise)
             
+            
+            let newSNRExercise = ExerciseEntity(context: viewContext)
+            newSNRExercise.uuid = UUID()
+            newSNRExercise.name = String("Test Sets-n-Reps Exercise")
+            newSNRExercise.order = Int16(1)
+            newSNRExercise.type = ExerciseType.setsNreps.rawValue
+            
+            let newExerciseSNRAction = ExerciseActionEntity(context: viewContext)
+            newExerciseSNRAction.uuid = UUID()
+            newExerciseSNRAction.order = Int16(1)
+            newExerciseSNRAction.sets = Int16(3)
+            newExerciseSNRAction.reps = Int16(12)
+            
+            let newExerciseSNRMAXAction = ExerciseActionEntity(context: viewContext)
+            newExerciseSNRMAXAction.uuid = UUID()
+            newExerciseSNRMAXAction.order = Int16(2)
+            newExerciseSNRMAXAction.sets = Int16(5)
+            newExerciseSNRMAXAction.repsMax = true
+            
+            newSNRExercise.addToExerciseActions(newExerciseSNRAction)
+            newSNRExercise.addToExerciseActions(newExerciseSNRMAXAction)
+            workout.addToExercises(newSNRExercise)
+            
+            
+//            let newSNRMAXExercise = ExerciseEntity(context: viewContext)
+//            newSNRMAXExercise.uuid = UUID()
+//            newSNRMAXExercise.name = String("Test Sets-n-Reps max Exercise")
+//            newSNRMAXExercise.order = Int16(2)
+//            newSNRMAXExercise.type = ExerciseType.setsNreps.rawValue
+//            
+//            let newExerciseSNRMAXAction = ExerciseActionEntity(context: viewContext)
+//            newExerciseSNRMAXAction.uuid = UUID()
+//            newExerciseSNRMAXAction.order = Int16(1)
+//            newExerciseSNRMAXAction.sets = Int16(5)
+//            newExerciseSNRMAXAction.repsMax = true
+//            
+//            newSNRMAXExercise.addToExerciseActions(newExerciseSNRAction)
+//            workout.addToExercises(newSNRMAXExercise)
+            
+            
             let newSupersetExercise = ExerciseEntity(context: viewContext)
             newSupersetExercise.uuid = UUID()
-            newSupersetExercise.name = String("Test Superset Exercise \(w)-\(exerciseCount+2)")
-            newSupersetExercise.order = Int16(exerciseCount+2)
+            newSupersetExercise.name = String("Test Superset Exercise")
+            newSupersetExercise.order = Int16(4)
             newSupersetExercise.superSets = Int16(3)
             newSupersetExercise.type = ExerciseType.mixed.rawValue
 
@@ -117,6 +132,31 @@ struct PersistenceController {
             
             newSupersetExercise.addToExerciseActions(newExerciseAction4)
             workout.addToExercises(newSupersetExercise)
+            
+            let exerciseCount = Int.random(in: 0...20)
+            
+            for e in 0...exerciseCount {
+                let newExercise = ExerciseEntity(context: viewContext)
+                newExercise.uuid = UUID()
+                newExercise.name = String("Test Exercise \(w)-\(e+3)")
+                newExercise.order = Int16(e+3)
+                newExercise.type = ExerciseType.setsNreps.rawValue
+                
+                let actionCount = Int.random(in: 0...5)
+                
+                for a in 0...actionCount {
+                    let newExerciseAction = ExerciseActionEntity(context: viewContext)
+                    newExerciseAction.uuid = UUID()
+                    newExerciseAction.name = "Test Exercise \(w)-\(e)-\(a)"
+                    newExerciseAction.reps = Int16.random(in: 6...10)
+                    newExerciseAction.sets = Int16.random(in: 1...4)
+                    newExerciseAction.order = Int16(a)
+                    newExerciseAction.type = ExerciseActionType.setsNreps.rawValue
+                    newExercise.addToExerciseActions(newExerciseAction)
+                }
+                
+                workout.addToExercises(newExercise)
+            }
         }
 
         do {
