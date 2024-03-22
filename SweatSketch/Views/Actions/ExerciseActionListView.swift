@@ -33,7 +33,7 @@ struct ExerciseActionListView: View {
                             if let actionName = action.name {
                                 Text(actionName+",")
                             } else {
-                                EmptyView()
+                                Text(Constants.Design.Placeholders.exerciseActionName+",")
                             }
                             
                             let actionType = ExerciseActionType.from(rawValue: action.type)
@@ -61,22 +61,19 @@ import CoreData
 
 struct ExerciseActionView_Previews: PreviewProvider {
     static var previews: some View {
-        let context = PersistenceController.preview.container.viewContext
+        let persistenceController = PersistenceController.preview
+        let workoutCarouselViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext)
+       
+        let exercise = workoutCarouselViewModel.workouts[0].exercises![0] as! ExerciseEntity
+        let exercise1 = workoutCarouselViewModel.workouts[0].exercises![1] as! ExerciseEntity
+        let exercise2 = workoutCarouselViewModel.workouts[0].exercises![2] as! ExerciseEntity
         
-        let planFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "WorkoutEntity")
-        
-        let plans = try! context.fetch(planFetch) as! [WorkoutEntity]
-        
-        let exercise1 = plans[0].exercises?.array[0] as! ExerciseEntity
-        let exercise2 = plans[0].exercises?.array[1] as! ExerciseEntity
-        let exercise3 = plans[0].exercises?.array[2] as! ExerciseEntity
-        
-        VStack {
-            ExerciseActionListView(exercise: exercise1)
+        VStack (spacing: 50) {
+            ExerciseActionListView(exercise: exercise)
     
-            ExerciseActionListView(exercise: exercise2)
+            ExerciseActionListView(exercise: exercise1)
 
-            ExerciseActionListView(exercise: exercise3)
+            ExerciseActionListView(exercise: exercise2)
         }
     }
 }

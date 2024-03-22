@@ -10,7 +10,7 @@ import SwiftUI
 
 class WorkoutListCoordinator: ObservableObject, Coordinator {
     
-    @Published var viewModel: WorkoutListTemporaryViewModel
+    let viewModel: WorkoutListTemporaryViewModel
     
     var rootViewController = UIViewController()
     
@@ -20,16 +20,16 @@ class WorkoutListCoordinator: ObservableObject, Coordinator {
     }
     
     func start() {
-        let view = WorkoutListView().environmentObject(self)
+        let view = WorkoutListView(viewModel: viewModel).environmentObject(self)
         rootViewController = UIHostingController(rootView: view)
     }
     
     func saveWorkoutListChanges(){
         viewModel.saveWorkoutListChange()
         if #available(iOS 15, *) {
-            print("List Dismiss:Save \(Date.now)")
+            print("List Save \(Date.now)")
         } else {
-            print("List Dismiss:Save")
+            print("List Save")
         }
         rootViewController.dismiss(animated: true)
     }
@@ -37,9 +37,9 @@ class WorkoutListCoordinator: ObservableObject, Coordinator {
     func discardlWorkoutListChanges(){
         viewModel.discardWorkoutListChange()
         if #available(iOS 15, *) {
-            print("List Dismiss:Discard \(Date.now)")
+            print("List Discard \(Date.now)")
         } else {
-            print("List Dismiss:Discard")
+            print("List Discard")
         }
         rootViewController.dismiss(animated: true)
     }

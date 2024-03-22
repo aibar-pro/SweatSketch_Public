@@ -28,6 +28,7 @@ class WorkoutEditTemporaryViewModel: ObservableObject {
         if self.temporaryContext.undoManager == nil {
             self.temporaryContext.undoManager = UndoManager()
         }
+        self.temporaryContext.undoManager?.levelsOfUndo = 10
         
         self.parentViewModel = parentViewModel
         
@@ -41,14 +42,14 @@ class WorkoutEditTemporaryViewModel: ObservableObject {
             }
             self.exercises = self.editingWorkout?.exercises?.array as? [ExerciseEntity] ?? []
         } else {
-            addWorkout(name: "New workout")
+            addWorkout()
         }
     }
 
-    func addWorkout(name: String) {
+    func addWorkout() {
         let newWorkout = WorkoutEntity(context: temporaryContext)
         newWorkout.uuid = UUID()
-        newWorkout.name = name
+        newWorkout.name = Constants.Design.Placeholders.workoutName
         newWorkout.position = (parentViewModel.workouts.last?.position ?? -1) + 1
         self.editingWorkout = newWorkout
     }

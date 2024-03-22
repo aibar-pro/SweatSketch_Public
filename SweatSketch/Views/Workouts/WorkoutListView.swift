@@ -10,28 +10,50 @@ import SwiftUI
 struct WorkoutListView: View {
     
     @EnvironmentObject var coordinator: WorkoutListCoordinator
+    @ObservedObject var viewModel: WorkoutListTemporaryViewModel
+    
     @State private var editMode = EditMode.active
     
     var body: some View {
+        
         GeometryReader { geoReader in
             ZStack{
                 BackgroundGradientView()
                 
                 VStack (alignment: .leading) {
-                    Text("Workouts")
-                        .font(.title2.bold())
-                        .padding(.top, Constants.Design.spacing)
+                    HStack {
+                        Text("Workouts")
+                            .font(.title2.bold())
+                            .padding(.top, Constants.Design.spacing)
                         .padding(.horizontal, Constants.Design.spacing)
+                        Spacer()
+                        Button(action: {
+                           viewModel.undo()
+                        }) {
+                            Image(systemName: "arrow.uturn.backward")
+                        }
+                        .padding(.vertical, Constants.Design.spacing/2)
+                        .padding(.horizontal, Constants.Design.spacing/2)
+                        .disabled(!viewModel.canUndo)
+                        Button(action: {
+                            viewModel.redo()
+                        }) {
+                            Image(systemName: "arrow.uturn.forward")
+                        }
+                        .padding(.vertical, Constants.Design.spacing/2)
+                        .padding(.horizontal, Constants.Design.spacing/2)
+                        .disabled(!viewModel.canRedo)
                         
-                    let viewModel = coordinator.viewModel
+                    }
                     
                     List {
                         ForEach(viewModel.workouts) { plan in
+                            
                             Text(plan.name ?? "n/a")
                                 .font(.title3)
                                 .lineLimit(3)
                                 .padding(.horizontal, Constants.Design.spacing/2)
-                                .padding(.horizontal, Constants.Design.spacing/4)
+                                .padding(.vertical, Constants.Design.spacing/2)
                                 .listRowBackground(
                                     RoundedRectangle(cornerRadius: Constants.Design.cornerRadius, style: .continuous)
                                         .fill(
@@ -42,11 +64,12 @@ struct WorkoutListView: View {
                                 )
                             
                         }
-                        .onDelete(perform: viewModel.deleteWorkout)
                         .onMove(perform: viewModel.moveWorkout)
+                        .onDelete(perform: viewModel.deleteWorkout)
                     }
                     .padding(.horizontal, Constants.Design.spacing)
                     .listStyle(.plain)
+                    .environment(\.editMode, $editMode)
                     
                     HStack {
                         Button(action: {
@@ -68,7 +91,6 @@ struct WorkoutListView: View {
                     .frame(width: geoReader.size.width, alignment: .trailing)
                 }
                 
-                .environment(\.editMode, $editMode)
             }
             .accentColor(.primary)
         }
@@ -85,7 +107,7 @@ struct WorkoutListView_Previews: PreviewProvider {
         let workoutListModel = WorkoutListTemporaryViewModel(parentViewModel: workoutViewModel)
         let workoutCoordinator = WorkoutListCoordinator(viewModel: workoutListModel)
         
-        WorkoutListView()
+        WorkoutListView(viewModel: workoutCoordinator.viewModel)
             .environmentObject(workoutCoordinator)
     }
 }
