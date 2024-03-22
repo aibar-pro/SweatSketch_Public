@@ -10,14 +10,24 @@ import CoreData
 
 class WorkoutListTemporaryViewModel: ObservableObject {
     
-    private let temporaryWorkoutListContext: NSManagedObjectContext
     let parentViewModel: WorkoutCarouselViewModel
+    private let temporaryWorkoutListContext: NSManagedObjectContext
+    var canUndo: Bool {
+        return temporaryWorkoutListContext.undoManager?.canUndo ?? false
+       }
+    var canRedo: Bool {
+       return temporaryWorkoutListContext.undoManager?.canRedo ?? false
+    }
     
     @Published var workouts = [WorkoutEntity]()
     
     init(parentViewModel: WorkoutCarouselViewModel) {
         self.temporaryWorkoutListContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         self.temporaryWorkoutListContext.parent = parentViewModel.mainContext
+        if self.temporaryWorkoutListContext.undoManager == nil {
+            self.temporaryWorkoutListContext.undoManager = UndoManager()
+        }
+        
         self.parentViewModel = parentViewModel
         
         fetchWorkouts()
@@ -56,13 +66,42 @@ class WorkoutListTemporaryViewModel: ObservableObject {
         }
     }
     
+    @objc func undoWorkoutDelete(_ workout: WorkoutEntity) {
+        temporaryWorkoutListContext.undoManager?.registerUndo(withTarget: self, selector: #selector(redoWorkoutDelete(_ :)), object: workout)
+        var low: Int = 0
+        var high = workouts.count
+
+        while low < high {
+            let mid = low + (high - low) / 2
+            if workouts[mid].position < workout.position {
+                low = mid + 1
+            } else {
+                high = mid
+            }
+        }
+        workouts.insert(workout, at: low)
+    }
+    
+    @objc func redoWorkoutDelete(_ workout: WorkoutEntity) {
+        temporaryWorkoutListContext.undoManager?.registerUndo(withTarget: self, selector: #selector(undoWorkoutDelete(_ :)), object: workout)
+        if let index = workouts.firstIndex(of: workout) {
+            workouts.remove(at: index)
+        }
+        temporaryWorkoutListContext.delete(workout)
+    }
+    
     func deleteWorkout(offsets: IndexSet) {
+        
         let workoutsToDelete = offsets.map { self.workouts[$0] }
         workoutsToDelete.forEach { workout in
+            temporaryWorkoutListContext.undoManager?.registerUndo(withTarget: self, selector: #selector(undoWorkoutDelete(_ :)), object: workout)
             self.workouts.remove(atOffsets: offsets)
             self.temporaryWorkoutListContext.delete(workout)
+            
         }
     }
+    
+    
 
     func moveWorkout(source: IndexSet, destination: Int) {
         workouts.move(fromOffsets: source, toOffset: destination)
@@ -70,5 +109,15 @@ class WorkoutListTemporaryViewModel: ObservableObject {
         workouts.enumerated().forEach{ index, workout in
             workout.position = Int16(index)
         }
+    }
+    
+    func undo() {
+        temporaryWorkoutListContext.undoManager?.undo()
+        self.objectWillChange.send()
+    }
+        
+    func redo() {
+        temporaryWorkoutListContext.undoManager?.redo()
+        self.objectWillChange.send()
     }
 }

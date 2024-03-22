@@ -10,20 +10,42 @@ import SwiftUI
 struct WorkoutListView: View {
     
     @EnvironmentObject var coordinator: WorkoutListCoordinator
+    @ObservedObject var viewModel: WorkoutListTemporaryViewModel
+    
     @State private var editMode = EditMode.active
     
     var body: some View {
+        let viewModel = coordinator.viewModel
+        
         GeometryReader { geoReader in
             ZStack{
                 BackgroundGradientView()
                 
                 VStack (alignment: .leading) {
-                    Text("Workouts")
-                        .font(.title2.bold())
-                        .padding(.top, Constants.Design.spacing)
+                    HStack {
+                        Text("Workouts")
+                            .font(.title2.bold())
+                            .padding(.top, Constants.Design.spacing)
                         .padding(.horizontal, Constants.Design.spacing)
+                        Spacer()
+                        Button(action: {
+                           viewModel.undo()
+                        }) {
+                            Image(systemName: "arrow.uturn.backward")
+                        }
+                        .padding(.vertical, Constants.Design.spacing/2)
+                        .padding(.horizontal, Constants.Design.spacing/2)
+                        .disabled(!viewModel.canUndo)
+                        Button(action: {
+                            viewModel.redo()
+                        }) {
+                            Image(systemName: "arrow.uturn.forward")
+                        }
+                        .padding(.vertical, Constants.Design.spacing/2)
+                        .padding(.horizontal, Constants.Design.spacing/2)
+                        .disabled(!viewModel.canRedo)
                         
-                    let viewModel = coordinator.viewModel
+                    }
                     
                     List {
                         ForEach(viewModel.workouts) { plan in
@@ -85,7 +107,7 @@ struct WorkoutListView_Previews: PreviewProvider {
         let workoutListModel = WorkoutListTemporaryViewModel(parentViewModel: workoutViewModel)
         let workoutCoordinator = WorkoutListCoordinator(viewModel: workoutListModel)
         
-        WorkoutListView()
+        WorkoutListView(viewModel: workoutCoordinator.viewModel)
             .environmentObject(workoutCoordinator)
     }
 }

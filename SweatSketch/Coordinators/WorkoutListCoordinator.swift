@@ -20,7 +20,7 @@ class WorkoutListCoordinator: ObservableObject, Coordinator {
     }
     
     func start() {
-        let view = WorkoutListView().environmentObject(self)
+        let view = WorkoutListView(viewModel: viewModel).environmentObject(self)
         rootViewController = UIHostingController(rootView: view)
     }
     
