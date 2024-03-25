@@ -15,8 +15,6 @@ struct WorkoutListView: View {
     @State private var editMode = EditMode.active
     
     var body: some View {
-        let viewModel = coordinator.viewModel
-        
         GeometryReader { geoReader in
             ZStack{
                 BackgroundGradientView()
@@ -49,11 +47,12 @@ struct WorkoutListView: View {
                     
                     List {
                         ForEach(viewModel.workouts) { plan in
+                            
                             Text(plan.name ?? "n/a")
                                 .font(.title3)
                                 .lineLimit(3)
                                 .padding(.horizontal, Constants.Design.spacing/2)
-                                .padding(.horizontal, Constants.Design.spacing/4)
+                                .padding(.vertical, Constants.Design.spacing/2)
                                 .listRowBackground(
                                     RoundedRectangle(cornerRadius: Constants.Design.cornerRadius, style: .continuous)
                                         .fill(
@@ -64,11 +63,12 @@ struct WorkoutListView: View {
                                 )
                             
                         }
-                        .onDelete(perform: viewModel.deleteWorkout)
                         .onMove(perform: viewModel.moveWorkout)
+                        .onDelete(perform: viewModel.deleteWorkout)
                     }
                     .padding(.horizontal, Constants.Design.spacing)
                     .listStyle(.plain)
+                    .environment(\.editMode, $editMode)
                     
                     HStack {
                         Button(action: {
@@ -90,7 +90,6 @@ struct WorkoutListView: View {
                     .frame(width: geoReader.size.width, alignment: .trailing)
                 }
                 
-                .environment(\.editMode, $editMode)
             }
             .accentColor(.primary)
         }
