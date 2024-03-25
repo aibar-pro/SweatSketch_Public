@@ -22,7 +22,7 @@ struct ExerciseView: View {
                 
                 VStack (alignment: .leading) {
                     HStack (alignment: .bottom) {
-                        Text(exercise.name ?? "Unnamed")
+                        Text(exercise.name ?? Constants.Design.Placeholders.exerciseName)
                             .font(.title2)
                             .lineLimit(2)
                         Spacer()
@@ -48,14 +48,18 @@ import CoreData
 
 struct ExerciseView_Previews: PreviewProvider {
     static var previews: some View {
-        let context = PersistenceController.preview.container.viewContext
         
-        let planFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "WorkoutEntity")
+        let persistenceController = PersistenceController.preview
+        let workoutCarouselViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext)
+       
+        let exercise = workoutCarouselViewModel.workouts[0].exercises![0] as! ExerciseEntity
+        let exercise1 = workoutCarouselViewModel.workouts[0].exercises![1] as! ExerciseEntity
+        let exercise2 = workoutCarouselViewModel.workouts[0].exercises![2] as! ExerciseEntity
         
-        let plans = try! context.fetch(planFetch) as! [WorkoutEntity]
-        
-        let exercise = plans[0].exercises?.array[2] as! ExerciseEntity
-        
-        ExerciseView(exercise: exercise)
+        VStack (spacing: 50) {
+            ExerciseView(exercise: exercise)
+            ExerciseView(exercise: exercise1)
+            ExerciseView(exercise: exercise2)
+        }
     }
 }

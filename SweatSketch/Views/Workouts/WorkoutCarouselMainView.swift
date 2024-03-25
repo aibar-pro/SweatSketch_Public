@@ -15,18 +15,36 @@ struct WorkoutCarouselMainView: View {
     //Changes in EnvironmentObject doesn't invalidate the View
     @ObservedObject var viewModel: WorkoutCarouselViewModel
     
+    @State var screenTitle: String = Constants.Design.Placeholders.workoutName
+    
     var body: some View {
         GeometryReader { geoReader in
             ZStack {
                 BackgroundGradientView()
                 
-                if coordinator.viewModel.workouts.count>0 {
+                if viewModel.workouts.count>0 {
                     ZStack {
                         VStack (alignment: .leading, spacing: Constants.Design.spacing) {
                             HStack {
-                                Text(coordinator.viewModel.workouts[coordinator.presentedWorkoutIndex].name ?? "Unnamed")
+                                Text(screenTitle)
                                     .font(.title2.bold())
                                     .lineLimit(2)
+                                    .onAppear(perform: {
+                                        if let workoutNameToDisplay = viewModel.workouts[coordinator.presentedWorkoutIndex].name {
+                                            screenTitle = workoutNameToDisplay
+                                        } else {
+                                            screenTitle = Constants.Design.Placeholders.workoutName
+                                        }
+                                    })
+                                    .onChange(of: coordinator.presentedWorkoutIndex, perform: { newValue in
+                                        if let workoutNameToDisplay = viewModel.workouts[newValue].name {
+                                            screenTitle = workoutNameToDisplay 
+                                        } else {
+                                            screenTitle = Constants.Design.Placeholders.workoutName
+                                        }
+                                    })
+                                
+                                
                                 Spacer()
                                 HStack {
                                     Button(action: coordinator.goToAddWorkout, label: {
@@ -53,7 +71,7 @@ struct WorkoutCarouselMainView: View {
                         }
                         
                         Button (action: {
-                            print("Active workout index: \(coordinator.presentedWorkoutIndex) Workout count: \(coordinator.viewModel.workouts.count)")
+                            print("Active workout index: \(coordinator.presentedWorkoutIndex) Workout count: \(viewModel.workouts.count)")
                         }) {
                             Text("Go")
                                 .accentButtonLabelStyleModifier()

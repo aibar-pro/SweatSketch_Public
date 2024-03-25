@@ -39,6 +39,7 @@ struct SnapCarouselModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .onChange(of: items, perform: { [items] value in
+                print("MODIFIER")
                 if value == 0 {
                     scrollOffset = itemSpacing
                 } else {

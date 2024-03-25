@@ -82,7 +82,7 @@ struct WorkoutEditView: View {
                     }
                     .padding(.horizontal, Constants.Design.spacing)
                     
-                    Text(viewModel.editingWorkout?.name ?? "unnamed")
+                    Text(viewModel.editingWorkout?.name ?? Constants.Design.Placeholders.workoutName)
                         .font(.title2.bold())
                         .lineLimit(2)
                         .padding(.horizontal, Constants.Design.spacing)

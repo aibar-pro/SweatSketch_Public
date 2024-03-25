@@ -40,15 +40,10 @@ import CoreData
 
 struct WorkoutPlanView_Previews: PreviewProvider {
     static var previews: some View {
+        
         let persistenceController = PersistenceController.preview
+        let workoutCarouselViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext)
         
-        let context = persistenceController.container.viewContext
-     
-        let planFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "WorkoutEntity")
-        
-        let plans = try! context.fetch(planFetch) as! [WorkoutEntity]
-        
-        WorkoutDetailView(workout: plans[0])
-
+        WorkoutDetailView(workout: workoutCarouselViewModel.workouts[0])
     }
 }

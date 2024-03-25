@@ -10,25 +10,79 @@ import SwiftUI
 struct ExerciseActionEditView: View {
     @ObservedObject var exerciseAction: ExerciseActionEntity
     
+    @Binding var isEditing: Bool
+    
     var exerciseType: ExerciseType
-    
-//    @Environment(\.managedObjectContext) private var viewContext
-    
-//    @State private var setsCount: Int = 1
-//    @State private var repsCount: Int = 1
-//    
-//    @State private var timeHour: Int = 0
-//    @State private var timeMinute: Int = 0
-//    @State private var timeSecond: Int = 0
-    
-//    @State private var showWeightPlates : Bool = false
     
     var body: some View {
         switch exerciseType {
         case .setsNreps:
-            if exerciseAction.sets > 0, (exerciseAction.repsMax || exerciseAction.reps > 0) {
-                Text("\(exerciseAction.sets)x\(exerciseAction.repsMax ? "MAX" : String(exerciseAction.reps))")
+            switch isEditing {
+            case true:
+                HStack (alignment: .center) {
+                    Picker("Sets", selection: Binding(
+                       get: { Int(self.exerciseAction.sets) },
+                       set: { self.exerciseAction.sets = Int16($0) }
+                   )) {
+                       ForEach(1...99, id: \.self) {
+                           Text("\($0)").tag($0)
+                       }
+                   }
+                   .onAppear(perform: {
+                       if self.exerciseAction.sets < 1 {
+                           self.exerciseAction.sets = Int16(1)
+                       }
+                   })
+                   .labelsHidden()
+                   .pickerStyle(MenuPickerStyle())
+                    Text("x")
+                    Picker("Reps", selection: Binding(
+                       get: { Int(self.exerciseAction.reps) },
+                       set: { self.exerciseAction.reps = Int16($0) }
+                   )) {
+                       ForEach(1...99, id: \.self) {
+                           Text("\($0)").tag($0)
+                       }
+                   }
+                   .onAppear(perform: {
+                       if self.exerciseAction.reps < 1 {
+                           self.exerciseAction.reps = Int16(1)
+                       }
+                   })
+                   .labelsHidden()
+                   .pickerStyle(MenuPickerStyle())
+                   .fixedSize()
+                   .disabled(self.exerciseAction.repsMax)
+                    Divider()
+                        .fixedSize()
+                    Toggle(isOn: Binding(
+                        get: { self.exerciseAction.repsMax },
+                        set: { self.exerciseAction.repsMax = $0 }
+                    )) {
+                        Text("MAX")
+                    }
+                    .toggleStyle(.switch)
+                    .labelsHidden()
+                    .fixedSize()
+                    Text("MAX")
+                        .padding(Constants.Design.spacing/2)
+                    Spacer()
+                    Button(action: {
+                        isEditing.toggle()
+                    }){
+                        Text("Done")
+                            .padding(.vertical,Constants.Design.spacing/2)
+                            .padding(.leading, Constants.Design.spacing/2)
+                    }
+                }
+                
+            case false:
+                if exerciseAction.sets > 0, (exerciseAction.repsMax || exerciseAction.reps > 0) {
+                    Text("\(exerciseAction.sets)x\(exerciseAction.repsMax ? "MAX" : String(exerciseAction.reps))")
+                        .padding(.vertical, Constants.Design.spacing/2)
+                }
             }
+            
         case .timed:
             if exerciseAction.duration > 0 {
                 Text("\(exerciseAction.duration) seconds")
@@ -38,9 +92,15 @@ struct ExerciseActionEditView: View {
                 if let actionName = exerciseAction.name {
                     Text(actionName+",")
                 } else {
-                    Text("\"unnamed\"")
+                    Text(Constants.Design.Placeholders.exerciseActionName+",")
                 }
                 
+//                TextField("Action Name", text: Binding(
+//                                    get: { self.exerciseAction.name ?? "" },
+//                                    set: { self.exerciseAction.name = $0 }
+//                                ))
+//                                .textFieldStyle(RoundedBorderTextFieldStyle())
+//                                .padding(.bottom)
                 let actionType = ExerciseActionType.from(rawValue: exerciseAction.type)
                 
                 switch actionType {
@@ -152,12 +212,30 @@ struct ExerciseActionEditView_Previews: PreviewProvider {
         let persistenceController = PersistenceController.preview
         let workoutCarouselViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext)
         let workoutEditViewModel = WorkoutEditTemporaryViewModel(parentViewModel: workoutCarouselViewModel, editingWorkout: workoutCarouselViewModel.workouts[0])
-        let exerciseEditViewModel = ExerciseEditTemporaryViewModel(parentViewModel: workoutEditViewModel, editingExercise: workoutEditViewModel.exercises[2])
+        let exerciseEditViewModel = ExerciseEditTemporaryViewModel(parentViewModel: workoutEditViewModel, editingExercise: workoutEditViewModel.exercises[1])
         
-        let action = exerciseEditViewModel.exerciseActions[1]
+        let action = exerciseEditViewModel.exerciseActions[0]
         let exerciseType = exerciseEditViewModel.editingExercise?.type
         
-        ExerciseActionEditView(exerciseAction: action, exerciseType: ExerciseType.from(rawValue: exerciseType))
+        let isEditingBinding = Binding<Bool>(
+            get: {
+                true
+            },
+            set: { isEditing in
+                if isEditing {
+                    exerciseEditViewModel.setEditingAction(action)
+                } else {
+                    exerciseEditViewModel.clearEditingAction()
+                }
+            }
+        )
+        
+        VStack (spacing: 50 ) {
+            ExerciseActionEditView(exerciseAction: action, isEditing: .constant(false), exerciseType: ExerciseType.from(rawValue: exerciseType))
+            
+            ExerciseActionEditView(exerciseAction: action, isEditing: isEditingBinding, exerciseType: ExerciseType.from(rawValue: exerciseType))
+                
+        }
 
     }
 }
