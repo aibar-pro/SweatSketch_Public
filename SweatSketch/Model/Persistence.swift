@@ -38,8 +38,13 @@ struct PersistenceController {
             let newExerciseTimedAction = ExerciseActionEntity(context: viewContext)
             newExerciseTimedAction.uuid = UUID()
             newExerciseTimedAction.order = Int16(1)
-            newExerciseTimedAction.duration = Int16.random(in: 600...10000)
+            newExerciseTimedAction.duration = Int32.random(in: 600...10000)
             newTimedExercise.addToExerciseActions(newExerciseTimedAction)
+            let newExerciseTimedAction1 = ExerciseActionEntity(context: viewContext)
+            newExerciseTimedAction1.uuid = UUID()
+            newExerciseTimedAction1.order = Int16(2)
+            newExerciseTimedAction1.duration = Int32.random(in: 50000...100000)
+            newTimedExercise.addToExerciseActions(newExerciseTimedAction1)
             workout.addToExercises(newTimedExercise)
             
             let newSNRExercise = ExerciseEntity(context: viewContext)
@@ -70,7 +75,7 @@ struct PersistenceController {
             let newExerciseAction1 = ExerciseActionEntity(context: viewContext)
             newExerciseAction1.uuid = UUID()
             newExerciseAction1.name = "Treadmill run"
-            newExerciseAction1.duration = Int16(180)
+            newExerciseAction1.duration = Int32(180)
             newExerciseAction1.order = Int16(0)
             newExerciseAction1.type = ExerciseActionType.timed.rawValue
             newSupersetExercise.addToExerciseActions(newExerciseAction1)

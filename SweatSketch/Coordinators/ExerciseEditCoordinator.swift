@@ -31,7 +31,7 @@ class ExerciseEditCoordinator: ObservableObject, Coordinator {
             print("Exercise Coordinator: Save")
         }
         
-        viewModel.addFilteredExerciseActions()
+        viewModel.saveFilteredExerciseActions()
         viewModel.saveExercise()
         rootViewController.dismiss(animated: true)
 //        rootViewController.navigationController?.popViewController(animated: true)

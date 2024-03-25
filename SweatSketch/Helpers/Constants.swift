@@ -21,9 +21,12 @@ enum Constants {
         }
         
         enum Placeholders {
-            static let workoutName = "Untitled Workout"
-            static let exerciseName = "Untitled Exercise"
-            static let exerciseActionName = "Untitled Action"
+            static let noWorkoutName = "Untitled Workout"
+            static let noExerciseName = "Untitled Exercise"
+            static let noActionName = "Untitled Action"
+            
+            static let noExerciseDetails = "No Exercise details"
+            static let noActionDetails = "No Action details"
         }
     }
     

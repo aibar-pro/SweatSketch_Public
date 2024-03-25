@@ -14,7 +14,6 @@ class ExerciseEditTemporaryViewModel: ObservableObject {
     
     @Published var editingExercise: ExerciseEntity?
     @Published var exerciseActions: [ExerciseActionEntity] = []
-    
     @Published var editingAction: ExerciseActionEntity?
     var isEditingAction: Bool {
         self.editingAction != nil
@@ -29,12 +28,16 @@ class ExerciseEditTemporaryViewModel: ObservableObject {
         if editingExercise != nil {
             self.editingExercise = editingExercise
             self.exerciseActions = editingExercise?.exerciseActions?.array as? [ExerciseActionEntity] ?? []
-            if (editingExercise?.exerciseActions!.count)! > 0 {
+            if !self.exerciseActions.isEmpty {
                 switch ExerciseType.from(rawValue: self.editingExercise?.type) {
                 case .setsNreps:
-                    self.exerciseActions.forEach{ $0.type = ExerciseActionType.setsNreps.rawValue }
+                    self.exerciseActions.forEach{
+                        if $0.type == nil { $0.type = ExerciseActionType.setsNreps.rawValue }
+                    }
                 case .timed:
-                    self.exerciseActions.forEach{ $0.type = ExerciseActionType.timed.rawValue }
+                    self.exerciseActions.forEach{ 
+                        if $0.type == nil { $0.type = ExerciseActionType.timed.rawValue }
+                    }
                 default:
                     return
                 }
@@ -48,26 +51,27 @@ class ExerciseEditTemporaryViewModel: ObservableObject {
     func addExercise() {
         let newExercise = ExerciseEntity(context: temporaryContext)
         newExercise.uuid = UUID()
-        newExercise.name = Constants.Design.Placeholders.exerciseName
+        newExercise.name = Constants.Design.Placeholders.noExerciseName
         newExercise.order = (parentViewModel.exercises.last?.order ?? -1) + 1
         newExercise.type = ExerciseType.setsNreps.rawValue
+        
         self.editingExercise = newExercise
     }
     
     func addExerciseAction() {
         let newExerciseAction = ExerciseActionEntity(context: temporaryContext)
         newExerciseAction.uuid = UUID()
-        newExerciseAction.name = Constants.Design.Placeholders.exerciseActionName
+        newExerciseAction.name = Constants.Design.Placeholders.noActionName
         newExerciseAction.order = Int16(editingExercise?.exerciseActions?.count ?? 0)
         
-        
         switch ExerciseType.from(rawValue: self.editingExercise?.type) {
-        case .setsNreps:
-            newExerciseAction.type = ExerciseActionType.setsNreps.rawValue
         case .timed:
             newExerciseAction.type = ExerciseActionType.timed.rawValue
+            newExerciseAction.duration = 1
         default:
-            newExerciseAction.type = ExerciseActionType.unknown.rawValue
+            newExerciseAction.type = ExerciseActionType.setsNreps.rawValue
+            newExerciseAction.sets = 1
+            newExerciseAction.reps = 1
         }
         
         editingExercise?.addToExerciseActions(newExerciseAction)
@@ -85,31 +89,47 @@ class ExerciseEditTemporaryViewModel: ObservableObject {
         self.objectWillChange.send()
     }
     
-    func setExerciseType(type: ExerciseType) {
+    func setEditingExerciseType(to type: ExerciseType) {
         exerciseActions.forEach{ action in
             let actionType = ExerciseActionType.from(rawValue: action.type).rawValue
             if actionType.isEmpty || actionType == ExerciseActionType.unknown.rawValue {
                 switch ExerciseType.from(rawValue: self.editingExercise?.type) {
-                case .setsNreps:
-                    action.type = ExerciseActionType.setsNreps.rawValue
-                    print("Action type changed to SNR")
                 case .timed:
                     action.type = ExerciseActionType.timed.rawValue
+                    if action.duration < 1 { action.duration = Int32(1) }
                     print("Action type changed to timed")
-                case .mixed, .unknown:
-                    action.type = ExerciseActionType.unknown.rawValue
+                default:
+                    action.type = ExerciseActionType.setsNreps.rawValue
+                    if action.sets < 1 { action.sets = Int16(1) }
+                    if action.reps < 1 { action.reps = Int16(1) }
+                    print("Action type changed to SNR")
                 }
             }
         }
         self.editingExercise?.type = type.rawValue
-        print("New Exercise type:"+(self.editingExercise?.type)!)
         self.objectWillChange.send()
+        
+        print("New Exercise type:"+(self.editingExercise?.type)!)
     }
     
-    func addFilteredExerciseActions() {
+    func setEditingExerciseActionType(to type: ExerciseActionType) {
+        self.editingAction?.type = type.rawValue
+        
+        switch ExerciseActionType.from(rawValue: self.editingAction?.type) {
+        case .timed:
+            if self.editingAction!.duration < 1 { self.editingAction?.duration = Int32(1) }
+        default:
+            if self.editingAction!.sets < 1 { self.editingAction?.sets = Int16(1) }
+            if self.editingAction!.reps < 1 { self.editingAction?.reps = Int16(1) }
+        }
+        self.objectWillChange.send()
+        
+        print("New Action type:"+(self.editingAction?.type)!)
+    }
+    
+    func saveFilteredExerciseActions() {
         let filteredActions = exerciseActions.filter { action in
-            if let exerciseTypeToFilter = editingExercise?.type {
-                switch ExerciseType.from(rawValue: self.editingExercise?.type) {
+            switch ExerciseType.from(rawValue: editingExercise?.type) {
                 case .setsNreps:
                     return ExerciseActionType.from(rawValue: action.type) == .setsNreps
                 case .timed:
@@ -118,9 +138,6 @@ class ExerciseEditTemporaryViewModel: ObservableObject {
                     return ExerciseActionType.from(rawValue: action.type) == .setsNreps || ExerciseActionType.from(rawValue: action.type) == .timed
                 case .unknown:
                     return ExerciseActionType.from(rawValue: action.type) == .unknown
-                }
-            } else {
-                return ExerciseActionType.from(rawValue: action.type) == .setsNreps || ExerciseActionType.from(rawValue: action.type) == .timed || ExerciseActionType.from(rawValue: action.type) == .unknown
             }
         }
         
@@ -145,7 +162,7 @@ class ExerciseEditTemporaryViewModel: ObservableObject {
         }
     }
     
-    func reorderWorkoutExerciseActions(from source: IndexSet, to destination: Int) {
+    func moveExerciseActions(from source: IndexSet, to destination: Int) {
         exerciseActions.move(fromOffsets: source, toOffset: destination)
         
         exerciseActions.enumerated().forEach{ index, exerciseAction in
@@ -171,12 +188,15 @@ class ExerciseEditTemporaryViewModel: ObservableObject {
         if let exerciseToAdd = self.editingExercise {
             parentViewModel.addWorkoutExercise(newExercise: exerciseToAdd)
             self.temporaryContext.undoManager?.endUndoGrouping()
+            //TODO: Undo add exercise
+//            self.temporaryContext.undoManager?.registerUndo(withTarget: self, handler: { [weak self] _ in
+//                self?.parentViewModel.undoAddExercise(for: exerciseToAdd)
+//            })
         }
     }
     
     func discardExercise() {
         self.temporaryContext.undoManager?.endUndoGrouping()
-        //TODO: Need tests
         self.temporaryContext.undoManager?.undo()
     }
     

@@ -9,11 +9,21 @@ enum ExerciseActionType: String, CaseIterable {
     case setsNreps, timed
     case unknown
     
+    static let exerciseActionTypes: [ExerciseActionType] = [.setsNreps, .timed]
+    
     var iconName: String {
         switch self {
         case .setsNreps: return "123.rectangle.fill"
         case .timed: return "gauge.with.needle.fill"
         case .unknown: return "questionmark.circle"
+        }
+    }
+    
+    var screenTitle: String {
+        switch self {
+        case .setsNreps: return "Sets and reps"
+        case .timed: return "Timed"
+        case .unknown: return "Unknown"
         }
     }
 }

@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3F14CFC32BB29FB100FD6C7E /* DurationPickerEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F14CFC22BB29FB100FD6C7E /* DurationPickerEditView.swift */; };
+		3F14CFC52BB2A71000FD6C7E /* DurationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F14CFC42BB2A71000FD6C7E /* DurationView.swift */; };
+		3F14CFC72BB2EE8800FD6C7E /* ActionSetsNRepsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F14CFC62BB2EE8800FD6C7E /* ActionSetsNRepsView.swift */; };
+		3F14CFC92BB2F27A00FD6C7E /* ActionTimedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F14CFC82BB2F27A00FD6C7E /* ActionTimedView.swift */; };
+		3F14CFCB2BB2FD8900FD6C7E /* ActionTimedEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F14CFCA2BB2FD8900FD6C7E /* ActionTimedEditView.swift */; };
+		3F14CFCD2BB3065F00FD6C7E /* ActionSetsNRepsEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F14CFCC2BB3065F00FD6C7E /* ActionSetsNRepsEditView.swift */; };
 		3F1936DF2B98CCAF007978CA /* WorkoutCarouselMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1936DE2B98CCAF007978CA /* WorkoutCarouselMainView.swift */; };
 		3F2A8F3B2B16298E00F184ED /* WorkoutCarouselViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2A8F3A2B16298E00F184ED /* WorkoutCarouselViewModel.swift */; };
 		3F2A8F412B171BE500F184ED /* ExerciseEditTemporaryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2A8F402B171BE500F184ED /* ExerciseEditTemporaryViewModel.swift */; };
@@ -16,7 +22,7 @@
 		3F4AB5472BA9F9B9005836E7 /* ExerciseActionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4AB5462BA9F9B9005836E7 /* ExerciseActionType.swift */; };
 		3F4AB5492BA9F9D2005836E7 /* WeightType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4AB5482BA9F9D2005836E7 /* WeightType.swift */; };
 		3F4AB54B2BAAC2D6005836E7 /* ExerciseEditCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4AB54A2BAAC2D6005836E7 /* ExerciseEditCoordinator.swift */; };
-		3F4AB54E2BAAE36E005836E7 /* ExerciseActionListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4AB54D2BAAE36E005836E7 /* ExerciseActionListView.swift */; };
+		3F4AB54E2BAAE36E005836E7 /* ActionListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4AB54D2BAAE36E005836E7 /* ActionListView.swift */; };
 		3F598CBA2B8F7F6B00117D59 /* CardBackgroundModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F598CB92B8F7F6B00117D59 /* CardBackgroundModifier.swift */; };
 		3F598CBC2B8F9BBC00117D59 /* AccentButtonLabelStyleModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F598CBB2B8F9BBC00117D59 /* AccentButtonLabelStyleModifier.swift */; };
 		3F598CBE2B8F9F1600117D59 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F598CBD2B8F9F1600117D59 /* Constants.swift */; };
@@ -48,6 +54,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3F14CFC22BB29FB100FD6C7E /* DurationPickerEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DurationPickerEditView.swift; sourceTree = "<group>"; };
+		3F14CFC42BB2A71000FD6C7E /* DurationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DurationView.swift; sourceTree = "<group>"; };
+		3F14CFC62BB2EE8800FD6C7E /* ActionSetsNRepsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSetsNRepsView.swift; sourceTree = "<group>"; };
+		3F14CFC82BB2F27A00FD6C7E /* ActionTimedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionTimedView.swift; sourceTree = "<group>"; };
+		3F14CFCA2BB2FD8900FD6C7E /* ActionTimedEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionTimedEditView.swift; sourceTree = "<group>"; };
+		3F14CFCC2BB3065F00FD6C7E /* ActionSetsNRepsEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSetsNRepsEditView.swift; sourceTree = "<group>"; };
 		3F1936DE2B98CCAF007978CA /* WorkoutCarouselMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutCarouselMainView.swift; sourceTree = "<group>"; };
 		3F2A8F3A2B16298E00F184ED /* WorkoutCarouselViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutCarouselViewModel.swift; sourceTree = "<group>"; };
 		3F2A8F402B171BE500F184ED /* ExerciseEditTemporaryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseEditTemporaryViewModel.swift; sourceTree = "<group>"; };
@@ -57,7 +69,7 @@
 		3F4AB5462BA9F9B9005836E7 /* ExerciseActionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseActionType.swift; sourceTree = "<group>"; };
 		3F4AB5482BA9F9D2005836E7 /* WeightType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightType.swift; sourceTree = "<group>"; };
 		3F4AB54A2BAAC2D6005836E7 /* ExerciseEditCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseEditCoordinator.swift; sourceTree = "<group>"; };
-		3F4AB54D2BAAE36E005836E7 /* ExerciseActionListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseActionListView.swift; sourceTree = "<group>"; };
+		3F4AB54D2BAAE36E005836E7 /* ActionListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionListView.swift; sourceTree = "<group>"; };
 		3F598CB92B8F7F6B00117D59 /* CardBackgroundModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardBackgroundModifier.swift; sourceTree = "<group>"; };
 		3F598CBB2B8F9BBC00117D59 /* AccentButtonLabelStyleModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccentButtonLabelStyleModifier.swift; sourceTree = "<group>"; };
 		3F598CBD2B8F9F1600117D59 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -160,7 +172,11 @@
 		3F4AB54C2BAAE32C005836E7 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
-				3F4AB54D2BAAE36E005836E7 /* ExerciseActionListView.swift */,
+				3F4AB54D2BAAE36E005836E7 /* ActionListView.swift */,
+				3F14CFC62BB2EE8800FD6C7E /* ActionSetsNRepsView.swift */,
+				3F14CFCC2BB3065F00FD6C7E /* ActionSetsNRepsEditView.swift */,
+				3F14CFC82BB2F27A00FD6C7E /* ActionTimedView.swift */,
+				3F14CFCA2BB2FD8900FD6C7E /* ActionTimedEditView.swift */,
 				3F6BDEFA264572B40079EC84 /* ExerciseActionEditView.swift */,
 			);
 			path = Actions;
@@ -220,6 +236,8 @@
 				3F8D788E2B92DC9B006BFD18 /* SecondaryButtonLabelStyleModifier.swift */,
 				3F598CBD2B8F9F1600117D59 /* Constants.swift */,
 				3F598CC12B8FAD7500117D59 /* BackgroundGradientView.swift */,
+				3F14CFC22BB29FB100FD6C7E /* DurationPickerEditView.swift */,
+				3F14CFC42BB2A71000FD6C7E /* DurationView.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -314,7 +332,9 @@
 			files = (
 				3F8785BD264B3ADC007E533A /* ExerciseEditView.swift in Sources */,
 				3F8666A0264542D600124E44 /* Persistence.swift in Sources */,
+				3F14CFC92BB2F27A00FD6C7E /* ActionTimedView.swift in Sources */,
 				3FA91226269DBDF400B941F3 /* SnapCarouselModifier.swift in Sources */,
+				3F14CFC32BB29FB100FD6C7E /* DurationPickerEditView.swift in Sources */,
 				3F2A8F412B171BE500F184ED /* ExerciseEditTemporaryViewModel.swift in Sources */,
 				3FCE2C242BA1FC3B004B4E62 /* WorkoutListTemporaryViewModel.swift in Sources */,
 				3F4AB5472BA9F9B9005836E7 /* ExerciseActionType.swift in Sources */,
@@ -332,19 +352,23 @@
 				3F598CBE2B8F9F1600117D59 /* Constants.swift in Sources */,
 				3F4036A72BA48A9A001E0AF5 /* WorkoutEditCoordinator.swift in Sources */,
 				3FCE2C282BA21DB6004B4E62 /* ApplicationCoordinator.swift in Sources */,
-				3F4AB54E2BAAE36E005836E7 /* ExerciseActionListView.swift in Sources */,
+				3F4AB54E2BAAE36E005836E7 /* ActionListView.swift in Sources */,
 				3F598CC22B8FAD7500117D59 /* BackgroundGradientView.swift in Sources */,
+				3F14CFCB2BB2FD8900FD6C7E /* ActionTimedEditView.swift in Sources */,
 				3F31A2E9264C0AD800DF3980 /* WorkoutCarouselCardView.swift in Sources */,
+				3F14CFCD2BB3065F00FD6C7E /* ActionSetsNRepsEditView.swift in Sources */,
 				3F1936DF2B98CCAF007978CA /* WorkoutCarouselMainView.swift in Sources */,
 				3F8D788F2B92DC9B006BFD18 /* SecondaryButtonLabelStyleModifier.swift in Sources */,
 				3FF16BA02B10C15800D5F610 /* ExerciseView.swift in Sources */,
 				3FB7E6C32BA476E300ECAEDE /* WorkoutListCoordinator.swift in Sources */,
+				3F14CFC72BB2EE8800FD6C7E /* ActionSetsNRepsView.swift in Sources */,
 				3FCE2C2A2BA21DD1004B4E62 /* Coordinator.swift in Sources */,
 				3F598CBA2B8F7F6B00117D59 /* CardBackgroundModifier.swift in Sources */,
 				3FC92D7E2BA9AF5700AFBCC8 /* ExerciseType.swift in Sources */,
 				3F8F7F4B2653EC460003BBDA /* WorkoutListView.swift in Sources */,
 				3F8666AE26454C7C00124E44 /* ButtonLookAndFeel.swift in Sources */,
 				3F598CBC2B8F9BBC00117D59 /* AccentButtonLabelStyleModifier.swift in Sources */,
+				3F14CFC52BB2A71000FD6C7E /* DurationView.swift in Sources */,
 				3F8666AF26454C7C00124E44 /* ColorExtension.swift in Sources */,
 				3F4AB5492BA9F9D2005836E7 /* WeightType.swift in Sources */,
 				3FF16B9E2B109F5500D5F610 /* WorkoutEditView.swift in Sources */,
