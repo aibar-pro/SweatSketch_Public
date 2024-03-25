@@ -29,12 +29,16 @@ class ExerciseEditTemporaryViewModel: ObservableObject {
         if editingExercise != nil {
             self.editingExercise = editingExercise
             self.exerciseActions = editingExercise?.exerciseActions?.array as? [ExerciseActionEntity] ?? []
-            if (editingExercise?.exerciseActions!.count)! > 0 {
+            if !self.exerciseActions.isEmpty {
                 switch ExerciseType.from(rawValue: self.editingExercise?.type) {
                 case .setsNreps:
-                    self.exerciseActions.forEach{ $0.type = ExerciseActionType.setsNreps.rawValue }
+                    self.exerciseActions.forEach{
+                        if $0.type == nil { $0.type = ExerciseActionType.setsNreps.rawValue }
+                    }
                 case .timed:
-                    self.exerciseActions.forEach{ $0.type = ExerciseActionType.timed.rawValue }
+                    self.exerciseActions.forEach{ 
+                        if $0.type == nil { $0.type = ExerciseActionType.timed.rawValue }
+                    }
                 default:
                     return
                 }
@@ -51,6 +55,7 @@ class ExerciseEditTemporaryViewModel: ObservableObject {
         newExercise.name = Constants.Design.Placeholders.exerciseName
         newExercise.order = (parentViewModel.exercises.last?.order ?? -1) + 1
         newExercise.type = ExerciseType.setsNreps.rawValue
+        
         self.editingExercise = newExercise
     }
     
@@ -60,12 +65,14 @@ class ExerciseEditTemporaryViewModel: ObservableObject {
         newExerciseAction.name = Constants.Design.Placeholders.exerciseActionName
         newExerciseAction.order = Int16(editingExercise?.exerciseActions?.count ?? 0)
         
-        
         switch ExerciseType.from(rawValue: self.editingExercise?.type) {
         case .setsNreps:
             newExerciseAction.type = ExerciseActionType.setsNreps.rawValue
+            newExerciseAction.sets = 1
+            newExerciseAction.reps = 1
         case .timed:
             newExerciseAction.type = ExerciseActionType.timed.rawValue
+            newExerciseAction.duration = 1
         default:
             newExerciseAction.type = ExerciseActionType.unknown.rawValue
         }

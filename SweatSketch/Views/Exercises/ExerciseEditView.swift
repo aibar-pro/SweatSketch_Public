@@ -100,7 +100,7 @@ struct ExerciseEditView: View {
                                        )) {
                             ForEach(ExerciseType.exerciseTypes, id: \.self) { type in
                                 Text(type.screenTitle)
-                                   
+                                
                             }
                         }
                         .disabled(isEditingName || isEditingList || viewModel.isEditingAction)
@@ -126,6 +126,7 @@ struct ExerciseEditView: View {
                             .padding(.horizontal, Constants.Design.spacing)
                             .padding(.bottom, Constants.Design.spacing/2)
                         }
+                        
                         List {
                             ForEach(viewModel.exerciseActions.filter { action in
                                 switch ExerciseType.from(rawValue: viewModel.editingExercise?.type) {
