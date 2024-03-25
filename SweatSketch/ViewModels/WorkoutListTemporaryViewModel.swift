@@ -9,10 +9,17 @@ import Foundation
 import CoreData
 
 class WorkoutListTemporaryViewModel: ObservableObject {
-    
+
     @Published var workouts = [WorkoutEntity]()
     
     let parentViewModel: WorkoutCarouselViewModel
+    private let temporaryWorkoutListContext: NSManagedObjectContext
+    var canUndo: Bool {
+        return temporaryWorkoutListContext.undoManager?.canUndo ?? false
+       }
+    var canRedo: Bool {
+       return temporaryWorkoutListContext.undoManager?.canRedo ?? false
+    }
     
     private let temporaryWorkoutListContext: NSManagedObjectContext
     
@@ -93,6 +100,7 @@ class WorkoutListTemporaryViewModel: ObservableObject {
         temporaryWorkoutListContext.delete(workout)
     }
     
+
     func revertWorkoutOrder(_ originalWorkoutOrder: [WorkoutEntity]) {
         self.temporaryWorkoutListContext.undoManager?.beginUndoGrouping()
         
@@ -110,6 +118,7 @@ class WorkoutListTemporaryViewModel: ObservableObject {
         self.temporaryWorkoutListContext.undoManager?.endUndoGrouping()
     }
     
+
     func deleteWorkout(offsets: IndexSet) {
         
         let workoutsToDelete = offsets.map { self.workouts[$0] }
@@ -117,8 +126,11 @@ class WorkoutListTemporaryViewModel: ObservableObject {
             temporaryWorkoutListContext.undoManager?.registerUndo(withTarget: self, selector: #selector(undoWorkoutDelete(_ :)), object: workout)
             self.workouts.remove(atOffsets: offsets)
             self.temporaryWorkoutListContext.delete(workout)
+            
         }
     }
+    
+    
 
     func moveWorkout(source: IndexSet, destination: Int) {
         self.temporaryWorkoutListContext.undoManager?.beginUndoGrouping()
@@ -136,6 +148,16 @@ class WorkoutListTemporaryViewModel: ObservableObject {
         }
         
         self.temporaryWorkoutListContext.undoManager?.endUndoGrouping()
+    }
+    
+    func undo() {
+        temporaryWorkoutListContext.undoManager?.undo()
+        self.objectWillChange.send()
+    }
+        
+    func redo() {
+        temporaryWorkoutListContext.undoManager?.redo()
+        self.objectWillChange.send()
     }
     
     func undo() {

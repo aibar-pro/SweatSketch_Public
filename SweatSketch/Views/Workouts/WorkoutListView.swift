@@ -15,7 +15,6 @@ struct WorkoutListView: View {
     @State private var editMode = EditMode.active
     
     var body: some View {
-        
         GeometryReader { geoReader in
             ZStack{
                 BackgroundGradientView()
