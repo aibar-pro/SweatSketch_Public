@@ -16,17 +16,13 @@ struct ExerciseEditView: View {
     @State private var newExerciseName : String = ""
     @State private var isEditingName : Bool = false
     
-//    @State private var exerciseType: ExerciseType = .setsNreps
-    
-//    @State private var supersetsCount: Int = 1
-    
     @State var isEditingList : Bool = false
     
     var body: some View {
-        GeometryReader { geoReader in
-            ZStack {
-                BackgroundGradientView()
-                
+        ZStack {
+            BackgroundGradientView()
+            
+            GeometryReader { geoReader in
                 VStack (alignment: .leading) {
                     HStack {
                         Button(action: {
@@ -53,20 +49,36 @@ struct ExerciseEditView: View {
                                 viewModel.renameExercise(newName: newExerciseName)
                                 newExerciseName.removeAll()
                                 isEditingName = false
+                            } else if viewModel.isEditingAction {
+                                viewModel.clearEditingAction()
                             } else {
                                 print("Exercise SAVE")
                                 coordinator.saveExerciseEdit()
                             }
                         }) {
-                            Text(isEditingName ? "Done" : "Save")
-                                .bold()
-                                .padding(.vertical, Constants.Design.spacing/2)
-                                .padding(.leading, Constants.Design.spacing/2)
+                            if isEditingName {
+                                Text("Rename")
+                                    .bold()
+                                    .padding(.vertical, Constants.Design.spacing/2)
+                                    .padding(.leading, Constants.Design.spacing/2)
+                            } else if viewModel.isEditingAction || isEditingList {
+                                Text("Done")
+                                    .bold()
+                                    .padding(.vertical, Constants.Design.spacing/2)
+                                    .padding(.leading, Constants.Design.spacing/2)
+                            } else {
+                                Text("Save")
+                                    .bold()
+                                    .padding(.vertical, Constants.Design.spacing/2)
+                                    .padding(.leading, Constants.Design.spacing/2)
+                            }
                         }
+                        .disabled(isEditingName && newExerciseName.isEmpty)
                     }
+                    .padding(.top, Constants.Design.spacing/2)
                     .padding(.horizontal, Constants.Design.spacing)
                     
-                    Text(viewModel.editingExercise?.name ?? Constants.Design.Placeholders.exerciseName)
+                    Text(viewModel.editingExercise?.name ?? Constants.Design.Placeholders.noExerciseName)
                         .font(.title2.bold())
                         .lineLimit(2)
                         .padding(.horizontal, Constants.Design.spacing)
@@ -84,35 +96,25 @@ struct ExerciseEditView: View {
                         )
                         .disabled(isEditingName || isEditingList || viewModel.isEditingAction)
                     
-                    if isEditingName {
-                        HStack {
-                            Text("Name: ")
-                            
-                            TextField("New exercise name", text: $newExerciseName)
-                        }
-                        .padding(.horizontal, Constants.Design.spacing)
-                        .padding(.bottom, Constants.Design.spacing/2)
-                    }
-                    
                     if !isEditingName {
-                        Picker("Type", selection: 
-                                Binding(get: { ExerciseType.from(rawValue: self.viewModel.editingExercise?.type) }, set: { self.viewModel.setExerciseType(type: $0) }
+                        Picker("Type", selection:
+                                Binding(get: { ExerciseType.from(rawValue: self.viewModel.editingExercise?.type) }, set: { self.viewModel.setEditingExerciseType(to: $0) }
                                        )) {
                             ForEach(ExerciseType.exerciseTypes, id: \.self) { type in
                                 Text(type.screenTitle)
                                 
                             }
                         }
-                        .disabled(isEditingName || isEditingList || viewModel.isEditingAction)
-                        .pickerStyle(.segmented)
-                        .padding(.horizontal, Constants.Design.spacing)
-                        .padding(.bottom, Constants.Design.spacing/2)
+                       .disabled(isEditingName || isEditingList || viewModel.isEditingAction)
+                       .pickerStyle(.segmented)
+                       .padding(.horizontal, Constants.Design.spacing)
+                       .padding(.bottom, Constants.Design.spacing/2)
                         
                         if ExerciseType.from(rawValue: viewModel.editingExercise?.type) == .mixed {
                             HStack {
-                                Text("Superset reps:")
+                                Text("Superset repetitions:")
                                 
-                                Picker("", selection: Binding(
+                                Picker("Superset reps", selection: Binding(
                                     get: { Int(viewModel.editingExercise?.superSets ?? 1)},
                                     set: { viewModel.setSupersets(superset: $0)}))
                                 {
@@ -120,143 +122,108 @@ struct ExerciseEditView: View {
                                         Text("\($0)")
                                     }
                                 }
+                                .labelsHidden()
                                 .disabled(isEditingName || isEditingList || viewModel.isEditingAction)
                                 .pickerStyle(.menu)
                             }
                             .padding(.horizontal, Constants.Design.spacing)
                             .padding(.bottom, Constants.Design.spacing/2)
                         }
-                        
-                        List {
-                            ForEach(viewModel.exerciseActions.filter { action in
-                                switch ExerciseType.from(rawValue: viewModel.editingExercise?.type) {
-                                case .setsNreps:
-                                    return ExerciseActionType.from(rawValue: action.type) == .setsNreps
-                                case .timed:
-                                    return ExerciseActionType.from(rawValue: action.type) == .timed
-                                case .mixed:
-                                    return ExerciseActionType.from(rawValue: action.type) == .setsNreps || ExerciseActionType.from(rawValue: action.type) == .timed
-                                case .unknown:
-                                    return ExerciseActionType.from(rawValue: action.type) == .unknown
+                        GeometryReader { listGeo in
+                            //TODO: Consider View change: from List to ScrollView
+                            List {
+                                ForEach(viewModel.exerciseActions.filter { action in
+                                    switch ExerciseType.from(rawValue: viewModel.editingExercise?.type) {
+                                    case .setsNreps:
+                                        return ExerciseActionType.from(rawValue: action.type) == .setsNreps
+                                    case .timed:
+                                        return ExerciseActionType.from(rawValue: action.type) == .timed
+                                    case .mixed:
+                                        return ExerciseActionType.from(rawValue: action.type) == .setsNreps || ExerciseActionType.from(rawValue: action.type) == .timed
+                                    case .unknown:
+                                        return ExerciseActionType.from(rawValue: action.type) == .unknown
+                                    }
+                                })
+                                { action in
+                                    let isEditingBinding = Binding<Bool>(
+                                        get: {
+                                            viewModel.isEditingAction(action)
+                                        },
+                                        set: { isEditing in
+                                            if isEditing {
+                                                viewModel.setEditingAction(action)
+                                            } else {
+                                                viewModel.clearEditingAction()
+                                            }
+                                        }
+                                    )
+                                    
+                                    HStack (alignment: .center) {
+                                        let exerciseType = ExerciseType.from(rawValue: viewModel.editingExercise?.type)
+                                        
+                                        ActionEditSwitchView(actionEntity: action, isEditing: isEditingBinding, exerciseType: exerciseType) {
+                                            type in
+                                            viewModel.setEditingActionType(to: type)
+                                        }
+                                            .animation(.linear(duration: 0.25))
+                                            .frame(height:  listGeo.size.height/getRowHeightMultiplier(exerciseType: exerciseType, actionType: ExerciseActionType.from(rawValue: action.type), actionIsEditing: isEditingBinding.wrappedValue))
+                                        Spacer()
+                                        if viewModel.editingAction == nil {
+                                            Button(action: {
+                                                if viewModel.editingAction == action {
+                                                    viewModel.editingAction = nil
+                                                } else {
+                                                    viewModel.setEditingAction(action)
+                                                }
+                                            }) {
+                                                Image(systemName: "ellipsis")
+                                            }
+                                            .disabled(isEditingName || isEditingList || viewModel.isEditingAction)
+                                        }
+                                    }
+                                    .padding(.horizontal, Constants.Design.spacing/2)
+                                    .padding(.vertical, Constants.Design.spacing)
+                                    .listRowBackground(
+                                        RoundedRectangle(cornerRadius: Constants.Design.cornerRadius, style: .continuous)
+                                            .fill(
+                                                Color.clear
+                                            )
+                                            .modifier(CardBackgroundModifier(cornerRadius: Constants.Design.cornerRadius))
+                                            .padding(.all, Constants.Design.spacing/2)
+                                    )
+                                }
+                                .onMove(perform: viewModel.moveExerciseActions)
+                                .onDelete(perform: viewModel.deleteExerciseActions)
+                            }
+                            .listStyle(.plain)
+                            .environment(\.editMode,
+                                          .constant(isEditingList ? EditMode.active : EditMode.inactive))
+                            .animation(.easeInOut(duration: 0.25))
+                            .onChange(of: viewModel.exerciseActions.count==0, perform: { _ in
+                                if isEditingList {
+                                    isEditingList = false
                                 }
                             })
-                             { action in
-                                let isEditingBinding = Binding<Bool>(
-                                    get: {
-                                        viewModel.isEditingAction(action)
-                                    },
-                                    set: { isEditing in
-                                        if isEditing {
-                                            viewModel.setEditingAction(action)
-                                        } else {
-                                            viewModel.clearEditingAction()
-                                        }
-                                    }
-                                )
-                                
-                                HStack (alignment: .center) {
-                                    ExerciseActionEditView(exerciseAction: action, isEditing: isEditingBinding, exerciseType: ExerciseType.from(rawValue: viewModel.editingExercise?.type))
-                                        .animation(.linear(duration: 0.25))
-                                    Spacer()
-                                    if viewModel.editingAction == nil {
-                                        Button(action: {
-                                            if viewModel.editingAction == action {
-                                                viewModel.editingAction = nil
-                                            } else {
-                                                viewModel.setEditingAction(action)
-                                            }
-                                        }) {
-                                            Image(systemName: "ellipsis")
-                                        }
-                                        .disabled(isEditingName || isEditingList || viewModel.isEditingAction)
-                                    }
-                                }
-                                .padding(.horizontal, Constants.Design.spacing/2)
-                                .padding(.vertical, Constants.Design.spacing)
-                                .listRowBackground(
-                                    RoundedRectangle(cornerRadius: Constants.Design.cornerRadius, style: .continuous)
-                                        .fill(
-                                            Color.clear
-                                        )
-                                        .modifier(CardBackgroundModifier(cornerRadius: Constants.Design.cornerRadius))
-                                        .padding(.all, Constants.Design.spacing/2)
-                                )
-                                
-                            }
-                            .onDelete(perform: viewModel.deleteExerciseActions)
+                            
+                            //                        }
+                            //                        .onDelete(perform: coordinator.viewModel.deleteExerciseActions)
+                            //                        .onMove(perform: coordinator.viewModel.reorderWorkoutExerciseActions)
+                            //                            // Why?
+                            //                        .disabled(isEditingList)
+                            //                    }
+                          
                         }
-                        .listStyle(.plain)
-                        .environment(\.editMode,
-                                      .constant(isEditingList ? EditMode.active : EditMode.inactive))
-                        .animation(.easeInOut(duration: 0.25))
-                        .onChange(of: viewModel.exerciseActions.count==0, perform: { _ in
-                            if isEditingList {
-                                isEditingList = false
+                    } else {
+                        VStack {
+                            HStack {
+                                Text("Name: ")
+                                
+                                TextField("New exercise name", text: $newExerciseName)
                             }
-                        })
-                        //                    List {
-                        //                        ForEach(viewModel.exerciseActions.filter { action in
-                        //                            switch exerciseType {
-                        //                            case .setsNreps:
-                        //                                return ExerciseActionType.from(rawValue: action.type) == .setsNreps
-                        //                            case .timed:
-                        //                                return ExerciseActionType.from(rawValue: action.type) == .timed
-                        //                            case .mixed:
-                        //                                return ExerciseActionType.from(rawValue: action.type) == .setsNreps || ExerciseActionType.from(rawValue: action.type) == .timed
-                        //                            case .unknown:
-                        //                                return ExerciseActionType.from(rawValue: action.type) == .unknown
-                        //                            }
-                        //                        }) { action in
-                        //                            let actionType = ExerciseActionType.from(rawValue: action.type)
-                        //
-                        //                            HStack {
-                        //                                if exerciseType == .mixed {
-                        //                                    if let actionName = action.name {
-                        //                                        Text(actionName+",")
-                        //                                    } else {
-                        //                                        Text("\"unnamed\"")
-                        //                                    }
-                        //
-                        //                                    switch actionType {
-                        //                                    case .setsNreps:
-                        //                                        if action.repsMax {
-                        //                                            Text("xMAX")
-                        //                                        } else {
-                        //                                            Text("x\(action.reps)")
-                        //                                        }
-                        //                                    case .timed:
-                        //                                        Text("\(action.duration) seconds")
-                        //                                    case .unknown:
-                        //                                        EmptyView()
-                        //                                    }
-                        //                                } else {
-                        //                                    switch actionType {
-                        //                                    case .setsNreps:
-                        //                                        Text("\(action.sets)x\(action.repsMax ? "MAX" : String(action.reps))")
-                        //                                    case .timed:
-                        //                                        Text("\(action.duration) seconds")
-                        //                                    case .unknown:
-                        //                                        EmptyView()
-                        //                                    }
-                        //                                }
-                        //                            }
-                        //                            .listRowBackground(Color.clear)
-                        //
-                        //                        }
-                        //                        .onDelete(perform: coordinator.viewModel.deleteExerciseActions)
-                        //                        .onMove(perform: coordinator.viewModel.reorderWorkoutExerciseActions)
-                        //                            // Why?
-                        //                        .disabled(isEditingList)
-                        //                    }
-                        //                    .listStyle(.plain)
-                        //                    .environment(\.editMode,
-                        //                                  .constant(isEditingList ? EditMode.active : EditMode.inactive))
-                        //                    .animation(.easeInOut(duration: 0.25))
-                        //                    .onChange(of: viewModel.exerciseActions.count==0, perform: { _ in
-                        //                        if isEditingList {
-                        //                            isEditingList = false
-                        //                        }
-                        //                    })
+                            .padding(.horizontal, Constants.Design.spacing)
+                            .padding(.bottom, Constants.Design.spacing/2)
+                        }
+                        
                     }
                     
                     if !isEditingName {
@@ -289,9 +256,27 @@ struct ExerciseEditView: View {
             }
         }
     }
+    
+    private func getRowHeightMultiplier(exerciseType: ExerciseType, actionType: ExerciseActionType, actionIsEditing: Bool) -> CGFloat {
+        if !actionIsEditing { return 10 }
+        else {
+            switch actionType {
+            case .timed:
+                if exerciseType == .mixed {
+                    return 2.5
+                } else {
+                    return 6
+                }
+            default:
+                if exerciseType == .mixed {
+                    return 3.5
+                } else {
+                    return 10
+                }
+            }
+        }
+    }
 }
-
-import CoreData
 
 struct ExerciseEditView_Previews: PreviewProvider {
     static var previews: some View {
@@ -299,7 +284,7 @@ struct ExerciseEditView_Previews: PreviewProvider {
         let persistenceController = PersistenceController.preview
         let workoutCarouselViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext)
         let workoutEditViewModel = WorkoutEditTemporaryViewModel(parentViewModel: workoutCarouselViewModel, editingWorkout: workoutCarouselViewModel.workouts[0])
-        let exerciseEditViewModel = ExerciseEditTemporaryViewModel(parentViewModel: workoutEditViewModel, editingExercise: workoutEditViewModel.exercises[1])
+        let exerciseEditViewModel = ExerciseEditTemporaryViewModel(parentViewModel: workoutEditViewModel, editingExercise: workoutEditViewModel.exercises[2])
         let exerciseCoordinator = ExerciseEditCoordinator(viewModel: exerciseEditViewModel)
         
         ExerciseEditView(viewModel: exerciseEditViewModel)

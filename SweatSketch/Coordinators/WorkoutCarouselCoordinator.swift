@@ -12,7 +12,7 @@ import CoreData
 
 class WorkoutCarouselCoordinator: ObservableObject, Coordinator {
     
-    @Published var viewModel: WorkoutCarouselViewModel
+    var viewModel: WorkoutCarouselViewModel
     @Published var presentedWorkoutIndex: Int = 0
     
     var childCoordinators = [Coordinator]()

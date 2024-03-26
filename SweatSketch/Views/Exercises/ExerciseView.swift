@@ -9,11 +9,11 @@ import SwiftUI
 
 struct ExerciseView: View {
     
-    @ObservedObject var exercise: ExerciseEntity
+    @ObservedObject var exerciseEntity: ExerciseEntity
     
     var body: some View {
         VStack (alignment: .leading) {
-            let exerciseType = ExerciseType.from(rawValue: exercise.type)
+            let exerciseType = ExerciseType.from(rawValue: exerciseEntity.type)
             
             HStack (alignment: .top){
                 Image(systemName: exerciseType.iconName)
@@ -22,12 +22,12 @@ struct ExerciseView: View {
                 
                 VStack (alignment: .leading) {
                     HStack (alignment: .bottom) {
-                        Text(exercise.name ?? Constants.Design.Placeholders.exerciseName)
+                        Text(exerciseEntity.name ?? Constants.Design.Placeholders.noExerciseName)
                             .font(.title2)
                             .lineLimit(2)
                         Spacer()
                         if exerciseType == .mixed {
-                            Text("x\(exercise.superSets)")
+                            Text("x\(exerciseEntity.superSets)")
                                 .font(.title2)
                                 .padding(.trailing, Constants.Design.spacing/4)
                         } else {
@@ -36,15 +36,13 @@ struct ExerciseView: View {
                     }
                     .padding(.bottom, Constants.Design.spacing/4)
                     
-                    ExerciseActionListView(exercise: exercise)
+                    ActionListView(exerciseEntity: exerciseEntity)
                         .opacity(0.8)
                 }
             }
         }
     }
 }
-
-import CoreData
 
 struct ExerciseView_Previews: PreviewProvider {
     static var previews: some View {
@@ -57,9 +55,9 @@ struct ExerciseView_Previews: PreviewProvider {
         let exercise2 = workoutCarouselViewModel.workouts[0].exercises![2] as! ExerciseEntity
         
         VStack (spacing: 50) {
-            ExerciseView(exercise: exercise)
-            ExerciseView(exercise: exercise1)
-            ExerciseView(exercise: exercise2)
+            ExerciseView(exerciseEntity: exercise)
+            ExerciseView(exerciseEntity: exercise1)
+            ExerciseView(exerciseEntity: exercise2)
         }
     }
 }

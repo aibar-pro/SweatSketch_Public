@@ -10,7 +10,7 @@ import SwiftUI
 
 class ExerciseEditCoordinator: ObservableObject, Coordinator {
     
-    @Published var viewModel: ExerciseEditTemporaryViewModel
+    var viewModel: ExerciseEditTemporaryViewModel
     
     var rootViewController = UIViewController()
     
@@ -31,7 +31,7 @@ class ExerciseEditCoordinator: ObservableObject, Coordinator {
             print("Exercise Coordinator: Save")
         }
         
-        viewModel.addFilteredExerciseActions()
+        viewModel.saveFilteredExerciseActions()
         viewModel.saveExercise()
         rootViewController.dismiss(animated: true)
 //        rootViewController.navigationController?.popViewController(animated: true)

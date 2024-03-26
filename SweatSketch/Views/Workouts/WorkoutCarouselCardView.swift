@@ -22,7 +22,7 @@ struct WorkoutCarouselCardView: View {
             
             HStack(alignment: .center, spacing: cardSpacing) {
                 ForEach(viewModel.workouts, id: \.self) { plan in
-                    WorkoutDetailView(workout: plan)
+                    WorkoutDetailView(workoutEntity: plan)
                         .padding(.all, Constants.Design.spacing/2)
                         .modifier(CardBackgroundModifier(cornerRadius: Constants.Design.cornerRadius))
                         .frame(width: cardWidth, height: cardHeight, alignment: .top)

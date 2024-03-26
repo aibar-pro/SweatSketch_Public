@@ -82,7 +82,7 @@ struct WorkoutEditView: View {
                     }
                     .padding(.horizontal, Constants.Design.spacing)
                     
-                    Text(viewModel.editingWorkout?.name ?? Constants.Design.Placeholders.workoutName)
+                    Text(viewModel.editingWorkout?.name ?? Constants.Design.Placeholders.noWorkoutName)
                         .font(.title2.bold())
                         .lineLimit(2)
                         .padding(.horizontal, Constants.Design.spacing)
@@ -92,6 +92,9 @@ struct WorkoutEditView: View {
                               LongPressGesture(minimumDuration: 0.5)
                                   .updating($titlePress) { currentState, gestureState, transaction in
                                       gestureState = currentState
+                                      let undoStack = object_getIvar(viewModel.temporaryWorkoutContext.undoManager!, class_getInstanceVariable(UndoManager.self, "_undoStack")!)
+                                      
+                                      print(undoStack.debugDescription)
                                   }
                                   .onEnded { value in
                                       isEditingName = true
@@ -101,9 +104,9 @@ struct WorkoutEditView: View {
                         
                     if !isEditingName {
                         List {
-                            ForEach (exercises) { exercise in
+                            ForEach (exercises, id: \.self) { exercise in
                                 HStack (alignment: .top){
-                                    ExerciseView(exercise: exercise)
+                                    ExerciseView(exerciseEntity: exercise)
                                     Spacer()
                                     if !isEditingName, !isEditingList {
                                         Button(action: {
@@ -181,8 +184,6 @@ struct WorkoutEditView: View {
         }
     }
 }
-
-import CoreData
 
 struct WorkoutEditView_Previews: PreviewProvider {
     static var previews: some View {

@@ -10,7 +10,7 @@ import SwiftUI
 
 class WorkoutEditCoordinator: ObservableObject, Coordinator {
     
-    @Published var viewModel: WorkoutEditTemporaryViewModel
+    var viewModel: WorkoutEditTemporaryViewModel
     
     var rootViewController = UIViewController()
     var childCoordinators = [Coordinator]()
