@@ -14,58 +14,14 @@ struct ExerciseActionEditView: View {
     
     var exerciseType: ExerciseType
     
+    var onActionTypeChange: (_ type: ExerciseActionType) -> Void = {type in }
+    
     var body: some View {
         switch exerciseType {
         case .setsNreps:
-            switch isEditing {
-            case true:
+            if isEditing {
                 HStack (alignment: .center) {
-                    Picker("Sets", selection: Binding(
-                       get: { Int(self.exerciseAction.sets) },
-                       set: { self.exerciseAction.sets = Int16($0) }
-                   )) {
-                       ForEach(1...99, id: \.self) {
-                           Text("\($0)").tag($0)
-                       }
-                   }
-                   .onAppear(perform: {
-                       if self.exerciseAction.sets < 1 {
-                           self.exerciseAction.sets = Int16(1)
-                       }
-                   })
-                   .labelsHidden()
-                   .pickerStyle(MenuPickerStyle())
-                    Text("x")
-                    Picker("Reps", selection: Binding(
-                       get: { Int(self.exerciseAction.reps) },
-                       set: { self.exerciseAction.reps = Int16($0) }
-                   )) {
-                       ForEach(1...99, id: \.self) {
-                           Text("\($0)").tag($0)
-                       }
-                   }
-                   .onAppear(perform: {
-                       if self.exerciseAction.reps < 1 {
-                           self.exerciseAction.reps = Int16(1)
-                       }
-                   })
-                   .labelsHidden()
-                   .pickerStyle(MenuPickerStyle())
-                   .fixedSize()
-                   .disabled(self.exerciseAction.repsMax)
-                    Divider()
-                        .fixedSize()
-                    Toggle(isOn: Binding(
-                        get: { self.exerciseAction.repsMax },
-                        set: { self.exerciseAction.repsMax = $0 }
-                    )) {
-                        Text("MAX")
-                    }
-                    .toggleStyle(.switch)
-                    .labelsHidden()
-                    .fixedSize()
-                    Text("MAX")
-                        .padding(Constants.Design.spacing/2)
+                    ActionSetsNRepsEditView(exerciseAction: exerciseAction)
                     Spacer()
                     Button(action: {
                         isEditing.toggle()
@@ -75,47 +31,77 @@ struct ExerciseActionEditView: View {
                             .padding(.leading, Constants.Design.spacing/2)
                     }
                 }
-                
-            case false:
-                if exerciseAction.sets > 0, (exerciseAction.repsMax || exerciseAction.reps > 0) {
-                    Text("\(exerciseAction.sets)x\(exerciseAction.repsMax ? "MAX" : String(exerciseAction.reps))")
-                        .padding(.vertical, Constants.Design.spacing/2)
-                }
+            } else {
+                ActionSetsNRepsView(exerciseAction: exerciseAction)
+                    .padding(.vertical, Constants.Design.spacing/2)
             }
-            
         case .timed:
-            if exerciseAction.duration > 0 {
-                Text("\(exerciseAction.duration) seconds")
+            if isEditing {
+                HStack(alignment: .center) {
+                    ActionTimedEditView(exerciseAction: exerciseAction)
+                    Spacer()
+                    Button(action: {
+                        isEditing.toggle()
+                    }){
+                        Text("Done")
+                            .padding(.vertical,Constants.Design.spacing/2)
+                            .padding(.leading, Constants.Design.spacing/2)
+                    }
+                }
+            } else {
+                ActionTimedView(exerciseAction: exerciseAction)
+                    .padding(.vertical, Constants.Design.spacing/2)
             }
         case .mixed:
-            HStack{
-                if let actionName = exerciseAction.name {
-                    Text(actionName+",")
-                } else {
-                    Text(Constants.Design.Placeholders.exerciseActionName+",")
-                }
-                
-//                TextField("Action Name", text: Binding(
-//                                    get: { self.exerciseAction.name ?? "" },
-//                                    set: { self.exerciseAction.name = $0 }
-//                                ))
-//                                .textFieldStyle(RoundedBorderTextFieldStyle())
-//                                .padding(.bottom)
-                let actionType = ExerciseActionType.from(rawValue: exerciseAction.type)
-                
-                switch actionType {
-                case .setsNreps:
-                    if exerciseAction.repsMax {
-                        Text("xMAX")
-                    } else {
-                        Text("x\(exerciseAction.reps)")
+            if isEditing {
+                HStack(alignment: .center) {
+                    VStack (alignment: .leading){
+                        HStack{
+                            Text("Action type:")
+                            Picker("Type", selection:
+                                    Binding(
+                                        get: { ExerciseActionType.from(rawValue: exerciseAction.type ) },
+                                        set: { onActionTypeChange($0) }
+                                    )) {
+                                ForEach(ExerciseActionType.exerciseActionTypes, id: \.self) { type in
+                                    Text(type.screenTitle)
+                                }
+                            }
+                            .labelsHidden()
+                            .pickerStyle(.menu)
+                        }
+                        .padding(.bottom, Constants.Design.spacing/2)
+                        switch ExerciseActionType.from(rawValue: exerciseAction.type) {
+                        case .setsNreps:
+                            ActionSetsNRepsEditView(exerciseAction: exerciseAction, editTitle: true)
+                        case .timed:
+                            ActionTimedEditView(exerciseAction: exerciseAction, editTitle: true)
+                        case .unknown:
+                            Text(Constants.Design.Placeholders.noActionDetails)
+                        }
                     }
+                    Spacer()
+                    Button(action: {
+                        isEditing.toggle()
+                    }){
+                        Text("Done")
+                            .padding(.vertical,Constants.Design.spacing/2)
+                            .padding(.leading, Constants.Design.spacing/2)
+                    }
+                }
+            } else {
+                switch ExerciseActionType.from(rawValue: exerciseAction.type) {
+                case .setsNreps:
+                    ActionSetsNRepsView(exerciseAction: exerciseAction, showTitle: true)
+                        .padding(.vertical, Constants.Design.spacing/2)
                 case .timed:
-                    Text("\(exerciseAction.duration) seconds")
+                    ActionTimedView(exerciseAction: exerciseAction,showTitle: true)
+                        .padding(.vertical, Constants.Design.spacing/2)
                 case .unknown:
-                    Text("unknown action type")
+                    Text(Constants.Design.Placeholders.noActionDetails)
                 }
             }
+        
         case .unknown:
             EmptyView()
         }
@@ -202,17 +188,15 @@ struct ExerciseActionEditView: View {
     }
 }
 
-import CoreData
 
 struct ExerciseActionEditView_Previews: PreviewProvider {
-    
     
     static var previews: some View {
       
         let persistenceController = PersistenceController.preview
         let workoutCarouselViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext)
         let workoutEditViewModel = WorkoutEditTemporaryViewModel(parentViewModel: workoutCarouselViewModel, editingWorkout: workoutCarouselViewModel.workouts[0])
-        let exerciseEditViewModel = ExerciseEditTemporaryViewModel(parentViewModel: workoutEditViewModel, editingExercise: workoutEditViewModel.exercises[1])
+        let exerciseEditViewModel = ExerciseEditTemporaryViewModel(parentViewModel: workoutEditViewModel, editingExercise: workoutEditViewModel.exercises[2])
         
         let action = exerciseEditViewModel.exerciseActions[0]
         let exerciseType = exerciseEditViewModel.editingExercise?.type

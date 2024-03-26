@@ -46,7 +46,7 @@ struct WorkoutListView: View {
                     }
                     
                     List {
-                        ForEach(viewModel.workouts) { plan in
+                        ForEach(viewModel.workouts, id: \.self) { plan in
                             
                             Text(plan.name ?? "n/a")
                                 .font(.title3)

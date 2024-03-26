@@ -49,7 +49,7 @@ class WorkoutEditTemporaryViewModel: ObservableObject {
     func addWorkout() {
         let newWorkout = WorkoutEntity(context: temporaryContext)
         newWorkout.uuid = UUID()
-        newWorkout.name = Constants.Design.Placeholders.workoutName
+        newWorkout.name = Constants.Design.Placeholders.noWorkoutName
         newWorkout.position = (parentViewModel.workouts.last?.position ?? -1) + 1
         self.editingWorkout = newWorkout
     }
@@ -109,5 +109,36 @@ class WorkoutEditTemporaryViewModel: ObservableObject {
     func redo() {
         temporaryContext.undoManager?.redo()
         self.objectWillChange.send()
+    }
+    
+    func undoAddExercise(for exercise: ExerciseEntity) {
+        
+        self.temporaryContext.undoManager?.registerUndo(withTarget: self, handler: { [weak self] _ in
+            self?.redoAddExercise(for: exercise)
+        })
+        if let index = exercises.firstIndex(of: exercise) {
+            exercises.remove(at: index)
+        }
+        self.temporaryContext.delete(exercise)
+    }
+    
+    func redoAddExercise(for exercise: ExerciseEntity) {
+        
+        self.temporaryContext.undoManager?.registerUndo(withTarget: self, handler: { [weak self] _ in
+            self?.undoAddExercise(for: exercise)
+        })
+        
+        var low: Int = 0
+        var high = exercises.count
+
+        while low < high {
+            let mid = low + (high - low) / 2
+            if exercises[mid].order < exercise.order {
+                low = mid + 1
+            } else {
+                high = mid
+            }
+        }
+        exercises.insert(exercise, at: low)
     }
 }

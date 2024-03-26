@@ -82,7 +82,7 @@ struct WorkoutEditView: View {
                     }
                     .padding(.horizontal, Constants.Design.spacing)
                     
-                    Text(viewModel.editingWorkout?.name ?? Constants.Design.Placeholders.workoutName)
+                    Text(viewModel.editingWorkout?.name ?? Constants.Design.Placeholders.noWorkoutName)
                         .font(.title2.bold())
                         .lineLimit(2)
                         .padding(.horizontal, Constants.Design.spacing)
@@ -101,7 +101,7 @@ struct WorkoutEditView: View {
                         
                     if !isEditingName {
                         List {
-                            ForEach (exercises) { exercise in
+                            ForEach (exercises, id: \.self) { exercise in
                                 HStack (alignment: .top){
                                     ExerciseView(exercise: exercise)
                                     Spacer()

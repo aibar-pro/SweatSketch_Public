@@ -22,7 +22,7 @@ struct ExerciseView: View {
                 
                 VStack (alignment: .leading) {
                     HStack (alignment: .bottom) {
-                        Text(exercise.name ?? Constants.Design.Placeholders.exerciseName)
+                        Text(exercise.name ?? Constants.Design.Placeholders.noExerciseName)
                             .font(.title2)
                             .lineLimit(2)
                         Spacer()
@@ -36,7 +36,7 @@ struct ExerciseView: View {
                     }
                     .padding(.bottom, Constants.Design.spacing/4)
                     
-                    ExerciseActionListView(exercise: exercise)
+                    ActionListView(exercise: exercise)
                         .opacity(0.8)
                 }
             }

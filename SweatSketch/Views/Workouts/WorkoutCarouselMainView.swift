@@ -15,7 +15,7 @@ struct WorkoutCarouselMainView: View {
     //Changes in EnvironmentObject doesn't invalidate the View
     @ObservedObject var viewModel: WorkoutCarouselViewModel
     
-    @State var screenTitle: String = Constants.Design.Placeholders.workoutName
+    @State var screenTitle: String = Constants.Design.Placeholders.noWorkoutName
     
     var body: some View {
         GeometryReader { geoReader in
@@ -33,14 +33,14 @@ struct WorkoutCarouselMainView: View {
                                         if let workoutNameToDisplay = viewModel.workouts[coordinator.presentedWorkoutIndex].name {
                                             screenTitle = workoutNameToDisplay
                                         } else {
-                                            screenTitle = Constants.Design.Placeholders.workoutName
+                                            screenTitle = Constants.Design.Placeholders.noWorkoutName
                                         }
                                     })
                                     .onChange(of: coordinator.presentedWorkoutIndex, perform: { newValue in
                                         if let workoutNameToDisplay = viewModel.workouts[newValue].name {
                                             screenTitle = workoutNameToDisplay 
                                         } else {
-                                            screenTitle = Constants.Design.Placeholders.workoutName
+                                            screenTitle = Constants.Design.Placeholders.noWorkoutName
                                         }
                                     })
                                 

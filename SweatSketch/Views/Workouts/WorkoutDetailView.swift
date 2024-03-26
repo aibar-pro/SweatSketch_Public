@@ -14,13 +14,13 @@ struct WorkoutDetailView: View {
     var body: some View {
         GeometryReader { geoReader in
             ScrollView { 
-                LazyVStack (alignment: .leading, spacing: 25) {
+                VStack (alignment: .leading, spacing: 25) {
                     let exercises =
                     workout.exercises?.array as? [ExerciseEntity] ?? []
                     
                     if exercises.count>0 {
                         VStack(alignment: .leading, spacing: 10) {
-                            ForEach (exercises) { exercise in
+                            ForEach (exercises, id: \.self) { exercise in
                                 ExerciseView(exercise: exercise)
                                     .padding(.bottom, Constants.Design.spacing)
                                     .frame(width: geoReader.size.width, alignment: .leading)
