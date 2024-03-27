@@ -96,8 +96,6 @@ struct WorkoutListView: View {
     }
 }
 
-import CoreData
-
 struct WorkoutListView_Previews: PreviewProvider {
     static var previews: some View {
         

@@ -9,19 +9,19 @@ import SwiftUI
 
 struct WorkoutDetailView: View {
     
-    @ObservedObject var workout: WorkoutEntity
+    @ObservedObject var workoutEntity: WorkoutEntity
     
     var body: some View {
         GeometryReader { geoReader in
             ScrollView { 
                 VStack (alignment: .leading, spacing: 25) {
                     let exercises =
-                    workout.exercises?.array as? [ExerciseEntity] ?? []
+                    workoutEntity.exercises?.array as? [ExerciseEntity] ?? []
                     
                     if exercises.count>0 {
                         VStack(alignment: .leading, spacing: 10) {
                             ForEach (exercises, id: \.self) { exercise in
-                                ExerciseView(exercise: exercise)
+                                ExerciseView(exerciseEntity: exercise)
                                     .padding(.bottom, Constants.Design.spacing)
                                     .frame(width: geoReader.size.width, alignment: .leading)
                             }
@@ -36,14 +36,12 @@ struct WorkoutDetailView: View {
     }
 }
 
-import CoreData
-
 struct WorkoutPlanView_Previews: PreviewProvider {
     static var previews: some View {
         
         let persistenceController = PersistenceController.preview
         let workoutCarouselViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext)
         
-        WorkoutDetailView(workout: workoutCarouselViewModel.workouts[0])
+        WorkoutDetailView(workoutEntity: workoutCarouselViewModel.workouts[0])
     }
 }

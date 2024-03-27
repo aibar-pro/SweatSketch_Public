@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct ActionTimedEditView: View {
-    @ObservedObject var exerciseAction: ExerciseActionEntity
+    
+    @ObservedObject var actionEntity: ExerciseActionEntity
     
     var editTitle: Bool = false
     
@@ -16,8 +17,8 @@ struct ActionTimedEditView: View {
         VStack (alignment: .leading, spacing: Constants.Design.spacing/2) {
             if editTitle {
                 TextField("Edit name", text: Binding(
-                    get: { self.exerciseAction.name ?? Constants.Design.Placeholders.noActionName },
-                    set: { self.exerciseAction.name = $0 }
+                    get: { self.actionEntity.name ?? Constants.Design.Placeholders.noActionName },
+                    set: { self.actionEntity.name = $0 }
                 ))
                 .padding(.horizontal, Constants.Design.spacing/2)
                 .padding(.vertical, Constants.Design.spacing/2)
@@ -28,15 +29,15 @@ struct ActionTimedEditView: View {
             }
             
             DurationPickerEditView(durationInSeconds: Binding(
-                get: { Int(self.exerciseAction.duration) },
-                set: { self.exerciseAction.duration = Int32($0) }
+                get: { Int(self.actionEntity.duration) },
+                set: { self.actionEntity.duration = Int32($0) }
             ))
         }
     }
 }
 
 struct ActionTimedEditView_Preview : PreviewProvider {
-   
+    
     static var previews: some View {
         let persistenceController = PersistenceController.preview
         let workoutCarouselViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext)
@@ -45,6 +46,6 @@ struct ActionTimedEditView_Preview : PreviewProvider {
         
         let action = exerciseEditViewModel.exerciseActions[0]
         
-        ActionTimedEditView(exerciseAction: action, editTitle: true)
+        ActionTimedEditView(actionEntity: action, editTitle: true)
     }
 }

@@ -49,6 +49,11 @@ class WorkoutListTemporaryViewModel: ObservableObject {
     
     func saveWorkoutListChange() {
         saveTemporaryListContext()
+        do {
+            try temporaryWorkoutListContext.parent?.save()
+        } catch {
+            print("Error saving workout main context: \(error)")
+        }
         parentViewModel.refreshData()
     }
 

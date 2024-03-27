@@ -106,9 +106,7 @@ struct WorkoutCarouselMainView: View {
     }
 }
 
-
 struct WorkoutCarouselView_Previews: PreviewProvider {
-    
     
     static var previews: some View {
         let persistenceController = PersistenceController.preview

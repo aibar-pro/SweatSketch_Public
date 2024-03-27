@@ -92,6 +92,9 @@ struct WorkoutEditView: View {
                               LongPressGesture(minimumDuration: 0.5)
                                   .updating($titlePress) { currentState, gestureState, transaction in
                                       gestureState = currentState
+                                      let undoStack = object_getIvar(viewModel.temporaryWorkoutContext.undoManager!, class_getInstanceVariable(UndoManager.self, "_undoStack")!)
+                                      
+                                      print(undoStack.debugDescription)
                                   }
                                   .onEnded { value in
                                       isEditingName = true
@@ -103,7 +106,7 @@ struct WorkoutEditView: View {
                         List {
                             ForEach (exercises, id: \.self) { exercise in
                                 HStack (alignment: .top){
-                                    ExerciseView(exercise: exercise)
+                                    ExerciseView(exerciseEntity: exercise)
                                     Spacer()
                                     if !isEditingName, !isEditingList {
                                         Button(action: {
@@ -181,8 +184,6 @@ struct WorkoutEditView: View {
         }
     }
 }
-
-import CoreData
 
 struct WorkoutEditView_Previews: PreviewProvider {
     static var previews: some View {

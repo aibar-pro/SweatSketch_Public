@@ -9,17 +9,17 @@ import SwiftUI
 
 struct ActionTimedView: View {
     
-    @ObservedObject var exerciseAction: ExerciseActionEntity
+    @ObservedObject var actionEntity: ExerciseActionEntity
     
     var showTitle: Bool = false
     
     var body: some View {
         HStack (alignment: .top) {
             if showTitle {
-                Text("\(exerciseAction.name ?? Constants.Design.Placeholders.noActionName),")
+                Text("\(actionEntity.name ?? Constants.Design.Placeholders.noActionName),")
             }
-            if exerciseAction.duration > 0 {
-                DurationView(durationInSeconds: Int(exerciseAction.duration))
+            if actionEntity.duration > 0 {
+                DurationView(durationInSeconds: Int(actionEntity.duration))
             } else {
                 Text(Constants.Design.Placeholders.noActionDetails)
             }
@@ -28,7 +28,7 @@ struct ActionTimedView: View {
 }
 
 struct ActionTimedView_Preview : PreviewProvider {
-   
+
     static var previews: some View {
         let persistenceController = PersistenceController.preview
         let workoutCarouselViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext)
@@ -37,6 +37,6 @@ struct ActionTimedView_Preview : PreviewProvider {
         
         let action = exerciseEditViewModel.exerciseActions[0]
         
-        ActionTimedView(exerciseAction: action, showTitle: true)
+        ActionTimedView(actionEntity: action, showTitle: true)
     }
 }

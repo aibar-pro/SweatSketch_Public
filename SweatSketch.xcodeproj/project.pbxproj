@@ -28,7 +28,7 @@
 		3F598CBE2B8F9F1600117D59 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F598CBD2B8F9F1600117D59 /* Constants.swift */; };
 		3F598CC22B8FAD7500117D59 /* BackgroundGradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F598CC12B8FAD7500117D59 /* BackgroundGradientView.swift */; };
 		3F6BDEDF26455E160079EC84 /* WorkoutDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6BDEDE26455E160079EC84 /* WorkoutDetailView.swift */; };
-		3F6BDEFB264572B40079EC84 /* ExerciseActionEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6BDEFA264572B40079EC84 /* ExerciseActionEditView.swift */; };
+		3F6BDEFB264572B40079EC84 /* ActionEditSwitchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6BDEFA264572B40079EC84 /* ActionEditSwitchView.swift */; };
 		3F866697264542D400124E44 /* SweatSketchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F866696264542D400124E44 /* SweatSketchApp.swift */; };
 		3F866699264542D400124E44 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F866698264542D400124E44 /* ContentView.swift */; };
 		3F86669B264542D600124E44 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3F86669A264542D600124E44 /* Assets.xcassets */; };
@@ -75,7 +75,7 @@
 		3F598CBD2B8F9F1600117D59 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		3F598CC12B8FAD7500117D59 /* BackgroundGradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundGradientView.swift; sourceTree = "<group>"; };
 		3F6BDEDE26455E160079EC84 /* WorkoutDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutDetailView.swift; sourceTree = "<group>"; };
-		3F6BDEFA264572B40079EC84 /* ExerciseActionEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseActionEditView.swift; sourceTree = "<group>"; };
+		3F6BDEFA264572B40079EC84 /* ActionEditSwitchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionEditSwitchView.swift; sourceTree = "<group>"; };
 		3F866693264542D400124E44 /* SweatSketch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SweatSketch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F866696264542D400124E44 /* SweatSketchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SweatSketchApp.swift; sourceTree = "<group>"; };
 		3F866698264542D400124E44 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -174,10 +174,10 @@
 			children = (
 				3F4AB54D2BAAE36E005836E7 /* ActionListView.swift */,
 				3F14CFC62BB2EE8800FD6C7E /* ActionSetsNRepsView.swift */,
-				3F14CFCC2BB3065F00FD6C7E /* ActionSetsNRepsEditView.swift */,
 				3F14CFC82BB2F27A00FD6C7E /* ActionTimedView.swift */,
+				3F6BDEFA264572B40079EC84 /* ActionEditSwitchView.swift */,
+				3F14CFCC2BB3065F00FD6C7E /* ActionSetsNRepsEditView.swift */,
 				3F14CFCA2BB2FD8900FD6C7E /* ActionTimedEditView.swift */,
-				3F6BDEFA264572B40079EC84 /* ExerciseActionEditView.swift */,
 			);
 			path = Actions;
 			sourceTree = "<group>";
@@ -346,7 +346,7 @@
 				3FF16B9C2B1086F900D5F610 /* ClearListBackgroundModifier.swift in Sources */,
 				3F2A8F432B1723EC00F184ED /* WorkoutEditTemporaryViewModel.swift in Sources */,
 				3F8666A3264542D600124E44 /* SweatSketchData.xcdatamodeld in Sources */,
-				3F6BDEFB264572B40079EC84 /* ExerciseActionEditView.swift in Sources */,
+				3F6BDEFB264572B40079EC84 /* ActionEditSwitchView.swift in Sources */,
 				3F6BDEDF26455E160079EC84 /* WorkoutDetailView.swift in Sources */,
 				3F2A8F3B2B16298E00F184ED /* WorkoutCarouselViewModel.swift in Sources */,
 				3F598CBE2B8F9F1600117D59 /* Constants.swift in Sources */,
