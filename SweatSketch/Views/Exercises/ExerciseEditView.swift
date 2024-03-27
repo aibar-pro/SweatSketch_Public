@@ -75,6 +75,7 @@ struct ExerciseEditView: View {
                         }
                         .disabled(isEditingName && newExerciseName.isEmpty)
                     }
+                    .padding(.top, Constants.Design.spacing/2)
                     .padding(.horizontal, Constants.Design.spacing)
                     
                     Text(viewModel.editingExercise?.name ?? Constants.Design.Placeholders.noExerciseName)
@@ -160,12 +161,12 @@ struct ExerciseEditView: View {
                                     HStack (alignment: .center) {
                                         let exerciseType = ExerciseType.from(rawValue: viewModel.editingExercise?.type)
                                         
-                                        ExerciseActionEditView(exerciseAction: action, isEditing: isEditingBinding, exerciseType: exerciseType) {
+                                        ActionEditSwitchView(actionEntity: action, isEditing: isEditingBinding, exerciseType: exerciseType) {
                                             type in
-                                            viewModel.setEditingExerciseActionType(to: type)
+                                            viewModel.setEditingActionType(to: type)
                                         }
                                             .animation(.linear(duration: 0.25))
-                                            .frame(height:  listGeo.size.height/getHeightCoefficient(exerciseType: exerciseType, actionType: ExerciseActionType.from(rawValue: action.type), actionIsEditing: isEditingBinding.wrappedValue))
+                                            .frame(height:  listGeo.size.height/getRowHeightMultiplier(exerciseType: exerciseType, actionType: ExerciseActionType.from(rawValue: action.type), actionIsEditing: isEditingBinding.wrappedValue))
                                         Spacer()
                                         if viewModel.editingAction == nil {
                                             Button(action: {
@@ -187,7 +188,7 @@ struct ExerciseEditView: View {
                                             .fill(
                                                 Color.clear
                                             )
-                                            .modifier(CardBackgroundModifier(cornerRadius: Constants.Design.cornerRadius))
+                                            .materialCardBackgroundModifier()
                                             .padding(.all, Constants.Design.spacing/2)
                                     )
                                 }
@@ -251,12 +252,12 @@ struct ExerciseEditView: View {
                         EmptyView()
                     }
                 }
-                .accentColor(.primary)
+                .accentColor(Constants.Design.Colors.textColorHighEmphasis)
             }
         }
     }
     
-    private func getHeightCoefficient(exerciseType: ExerciseType, actionType: ExerciseActionType, actionIsEditing: Bool) -> CGFloat {
+    private func getRowHeightMultiplier(exerciseType: ExerciseType, actionType: ExerciseActionType, actionIsEditing: Bool) -> CGFloat {
         if !actionIsEditing { return 10 }
         else {
             switch actionType {

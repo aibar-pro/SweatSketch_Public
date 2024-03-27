@@ -10,7 +10,7 @@ import SwiftUI
 
 class ExerciseEditCoordinator: ObservableObject, Coordinator {
     
-    @Published var viewModel: ExerciseEditTemporaryViewModel
+    var viewModel: ExerciseEditTemporaryViewModel
     
     var rootViewController = UIViewController()
     
@@ -22,6 +22,7 @@ class ExerciseEditCoordinator: ObservableObject, Coordinator {
     func start() {
         let view = ExerciseEditView(viewModel: self.viewModel).environmentObject(self)
         rootViewController = UIHostingController(rootView: view)
+        //TODO: fix dark theme background in preview
     }
     
     func saveExerciseEdit(){

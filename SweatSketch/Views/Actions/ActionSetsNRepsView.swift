@@ -9,18 +9,18 @@ import SwiftUI
 
 struct ActionSetsNRepsView: View {
     
-    @ObservedObject var exerciseAction: ExerciseActionEntity
+    @ObservedObject var actionEntity: ExerciseActionEntity
     
     var showTitle: Bool = false
     
     var body: some View {
         HStack (alignment: .top) {
             if showTitle {
-                Text("\(exerciseAction.name ?? Constants.Design.Placeholders.noActionName),")
+                Text("\(actionEntity.name ?? Constants.Design.Placeholders.noActionName),")
             }
             
-            if exerciseAction.sets > 0, (exerciseAction.repsMax || exerciseAction.reps > 0) {
-                Text("\(exerciseAction.sets)x\(exerciseAction.repsMax ? "MAX" : String(exerciseAction.reps))")
+            if actionEntity.sets > 0, (actionEntity.repsMax || actionEntity.reps > 0) {
+                Text("\(actionEntity.sets)x\(actionEntity.repsMax ? "MAX" : String(actionEntity.reps))")
             } else {
                 Text(Constants.Design.Placeholders.noActionDetails)
             }
@@ -38,6 +38,6 @@ struct ActionSetsNRepsView_Previews: PreviewProvider {
         
         let action = exerciseEditViewModel.exerciseActions[1]
         
-        ActionSetsNRepsView(exerciseAction: action, showTitle: true)
+        ActionSetsNRepsView(actionEntity: action, showTitle: true)
     }
 }

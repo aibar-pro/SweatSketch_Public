@@ -8,8 +8,9 @@
 import Foundation
 import SwiftUI
 
-struct CardBackgroundModifier: ViewModifier {
-    let cornerRadius: CGFloat
+struct MaterialCardBackgroundModifier: ViewModifier {
+    
+    let cornerRadius: CGFloat = Constants.Design.cornerRadius
     
     func body(content: Content) -> some View {
         if #available(iOS 15.0, *) {
@@ -24,6 +25,12 @@ struct CardBackgroundModifier: ViewModifier {
                 )
                 
         }
+    }
+}
+
+extension View {
+    func materialCardBackgroundModifier() -> some View {
+        modifier(MaterialCardBackgroundModifier())
     }
 }
 

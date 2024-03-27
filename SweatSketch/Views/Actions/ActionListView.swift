@@ -9,12 +9,13 @@ import SwiftUI
 
 struct ActionListView: View {
     
-    @ObservedObject var exercise: ExerciseEntity
+    @ObservedObject var exerciseEntity: ExerciseEntity
     
     var body: some View {
-        let exerciseType = ExerciseType.from(rawValue: exercise.type)
         
-        if let actions = exercise.exerciseActions?.array as? [ExerciseActionEntity] {
+        let exerciseType = ExerciseType.from(rawValue: exerciseEntity.type)
+        
+        if let actions = exerciseEntity.exerciseActions?.array as? [ExerciseActionEntity] {
             VStack (alignment: .leading) {
                 switch exerciseType {
                 case .setsNreps:
@@ -22,7 +23,7 @@ struct ActionListView: View {
                         HStack {
                             ForEach(actions, id: \.self) { action in
                                 HStack (spacing: 0){
-                                    ActionSetsNRepsView(exerciseAction: action)
+                                    ActionSetsNRepsView(actionEntity: action)
                                     Text(action != actions.last ? "," : "")
                                 }
                             }
@@ -33,7 +34,7 @@ struct ActionListView: View {
                         HStack {
                             ForEach(actions, id: \.self) { action in
                                 HStack (spacing: 0){
-                                    ActionTimedView(exerciseAction: action)
+                                    ActionTimedView(actionEntity: action)
                                     Text(action != actions.last ? "," : "")
                                 }
                             }
@@ -46,10 +47,10 @@ struct ActionListView: View {
                         
                         switch actionType {
                         case .setsNreps:
-                            ActionSetsNRepsView(exerciseAction: action,showTitle: true)
+                            ActionSetsNRepsView(actionEntity: action,showTitle: true)
                                 .padding(.bottom, action != actions.last ?  Constants.Design.spacing/4 : 0)
                         case .timed:
-                            ActionTimedView(exerciseAction: action, showTitle: true)
+                            ActionTimedView(actionEntity: action, showTitle: true)
                                 .padding(.bottom, action != actions.last ?  Constants.Design.spacing/4 : 0)
                         default:
                             Text(Constants.Design.Placeholders.noActionDetails)
@@ -73,11 +74,11 @@ struct ActionListView_Previews: PreviewProvider {
         let exercise2 = workoutCarouselViewModel.workouts[0].exercises![2] as! ExerciseEntity
         
         VStack (spacing: 50) {
-            ActionListView(exercise: exercise)
+            ActionListView(exerciseEntity: exercise)
     
-            ActionListView(exercise: exercise1)
+            ActionListView(exerciseEntity: exercise1)
 
-            ActionListView(exercise: exercise2)
+            ActionListView(exerciseEntity: exercise2)
         }
     }
 }

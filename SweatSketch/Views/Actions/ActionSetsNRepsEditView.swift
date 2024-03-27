@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct ActionSetsNRepsEditView: View {
-    @ObservedObject var exerciseAction: ExerciseActionEntity
+    
+    @ObservedObject var actionEntity: ExerciseActionEntity
     
     var editTitle: Bool = false
     
@@ -16,8 +17,8 @@ struct ActionSetsNRepsEditView: View {
         VStack (alignment: .leading, spacing: Constants.Design.spacing/2) {
             if editTitle {
                 TextField("Edit name", text: Binding(
-                    get: { self.exerciseAction.name ?? Constants.Design.Placeholders.noActionName },
-                    set: { self.exerciseAction.name = $0 }
+                    get: { self.actionEntity.name ?? Constants.Design.Placeholders.noActionName },
+                    set: { self.actionEntity.name = $0 }
                 ))
                 .padding(.horizontal, Constants.Design.spacing/2)
                 .padding(.vertical, Constants.Design.spacing/2)
@@ -27,44 +28,50 @@ struct ActionSetsNRepsEditView: View {
                 )
             }
             
-            HStack (alignment: .center, spacing: Constants.Design.spacing/2) {
+            HStack (alignment: .center, spacing: Constants.Design.spacing/4) {
                 Picker("Sets", selection: Binding(
-                    get: { Int(self.exerciseAction.sets) },
-                    set: { self.exerciseAction.sets = Int16($0) }
-                )) {
+                    get: { Int(self.actionEntity.sets) },
+                    set: {
+                        self.actionEntity.sets = Int16($0)
+                        self.actionEntity.objectWillChange.send()
+                })) {
                     ForEach(1...99, id: \.self) {
                         Text("\($0)").tag($0)
                     }
                 }
                 .labelsHidden()
                 .pickerStyle(MenuPickerStyle())
-                .fixedSize()
+                
                 Text("x")
+                
                 Picker("Reps", selection: Binding(
-                    get: { Int(self.exerciseAction.reps) },
-                    set: { self.exerciseAction.reps = Int16($0) }
-                )) {
+                    get: { Int(self.actionEntity.reps) },
+                    set: {
+                        self.actionEntity.reps = Int16($0)
+                        self.actionEntity.objectWillChange.send()
+                })) {
                     ForEach(1...99, id: \.self) {
                         Text("\($0)").tag($0)
                     }
                 }
                 .labelsHidden()
                 .pickerStyle(MenuPickerStyle())
-                .fixedSize()
-                .disabled(self.exerciseAction.repsMax)
+                .disabled(self.actionEntity.repsMax)
+                
                 Divider()
                     .fixedSize()
+                
                 Toggle(isOn: Binding(
-                    get: { self.exerciseAction.repsMax },
-                    set: { self.exerciseAction.repsMax = $0 }
-                )) {
-                    Text("MAX")
-                }
+                    get: { self.actionEntity.repsMax },
+                    set: {
+                        self.actionEntity.repsMax = $0
+                        self.actionEntity.objectWillChange.send()
+                })) { Text("MAX") }
                 .toggleStyle(.switch)
                 .labelsHidden()
-                .fixedSize()
+                
                 Text("MAX")
-                    .padding(Constants.Design.spacing/2)
+                .padding(Constants.Design.spacing/2)
             }
         }
     }
@@ -78,8 +85,9 @@ struct ActionSetsNRepsEditView_Previews: PreviewProvider {
         let workoutEditViewModel = WorkoutEditTemporaryViewModel(parentViewModel: workoutCarouselViewModel, editingWorkout: workoutCarouselViewModel.workouts[0])
         let exerciseEditViewModel = ExerciseEditTemporaryViewModel(parentViewModel: workoutEditViewModel, editingExercise: workoutEditViewModel.exercises[2])
         
-        let action = exerciseEditViewModel.exerciseActions[1]
+        let action = exerciseEditViewModel.exerciseActions[2]
         
-        ActionSetsNRepsEditView(exerciseAction: action, editTitle: true)
+        ActionSetsNRepsEditView(actionEntity: action, editTitle: true)
+        
     }
 }

@@ -15,16 +15,16 @@ struct WorkoutEditView: View {
     @GestureState var titlePress = false
     @State private var newWorkoutName : String = ""
     
+    
     @State private var isEditingName : Bool = false
     @State private var isEditingList : Bool = false
+    @State private var isEditingRestPeriod : Bool = false
     
     var body: some View {
         
         let exercises = viewModel.exercises
        
         ZStack {
-            BackgroundGradientView()
-            
             GeometryReader { gReader in
                 VStack (alignment: .leading, spacing: Constants.Design.spacing/2) {
 
@@ -97,31 +97,40 @@ struct WorkoutEditView: View {
                                       isEditingName = true
                                   }
                           )
-                        .disabled(isEditingName || isEditingList)
-                        
-                    if !isEditingName {
+                        .disabled(isEditingName || isEditingList || isEditingRestPeriod)
+                    
+                    ZStack {
                         List {
                             ForEach (exercises, id: \.self) { exercise in
                                 HStack (alignment: .top){
-                                    ExerciseView(exercise: exercise)
+                                    ExerciseView(exerciseEntity: exercise)
                                     Spacer()
-                                    if !isEditingName, !isEditingList {
-                                        Button(action: {
-                                            print("Edit exercise: \(exercise.name ?? "")")
-                                            coordinator.goToEditWorkout(exerciseToEdit: exercise)
-                                        }) {
-                                            Image(systemName: "ellipsis")
-                                                .font(.title3)
-                                        }
-                                    } else {
-                                        EmptyView()
+                                    Button(action: {
+                                        print("Edit exercise: \(exercise.name ?? "")")
+                                        coordinator.goToEditWorkout(exerciseToEdit: exercise)
+                                    }) {
+                                        Image(systemName: "ellipsis")
+                                            .font(.title3)
+                                            .padding(.trailing, Constants.Design.spacing/4)
+                                            .padding(.vertical, Constants.Design.spacing/4)
                                     }
                                 }
-                                .listRowBackground(Color.clear)
+                                .padding(.vertical, Constants.Design.spacing/4)
+                                .listRowBackground(
+                                    RoundedRectangle(cornerRadius: Constants.Design.cornerRadius, style: .continuous)
+                                        .fill(
+                                            Color.clear
+                                        )
+                                        .materialCardBackgroundModifier()
+                                        .padding(.all, Constants.Design.spacing/4)
+                                )
                             }
                             .onDelete { index in viewModel.deleteWorkoutExercise(at: index) }
                             .onMove(perform: viewModel.reorderWorkoutExercise)
                         }
+                        .padding(.horizontal, Constants.Design.spacing/2)
+                        .opacity(isEditingName || isEditingRestPeriod ? 0.2 : 1)
+                        .disabled(isEditingName || isEditingRestPeriod)
                         .listStyle(.plain)
                         .environment(\.editMode,
                                       .constant(isEditingList ? EditMode.active : EditMode.inactive))
@@ -131,58 +140,72 @@ struct WorkoutEditView: View {
                                 isEditingList = false
                             }
                         })
-                    } else {
+                        
                         VStack {
-                            VStack (alignment: .leading) {
-                                Text("Enter new workout name:")
-                                    .font(.title3)
-                                
-                                TextField("New name", text: $newWorkoutName)
-                                    .padding(.horizontal, Constants.Design.spacing/2)
-                                    .padding(.vertical, Constants.Design.spacing)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: Constants.Design.cornerRadius)
-                                            .stroke(Constants.Design.Colors.backgroundStartColor)
-                                    )
-                                
+                            if isEditingName {
+                                VStack {
+                                    VStack (alignment: .leading) {
+                                        Text("Enter new workout name:")
+                                            .font(.title3)
+                                        
+                                        TextField("New name", text: $newWorkoutName)
+                                            .padding(.horizontal, Constants.Design.spacing/2)
+                                            .padding(.vertical, Constants.Design.spacing)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: Constants.Design.cornerRadius)
+                                                    .stroke(Constants.Design.Colors.backgroundStartColor)
+                                            )
+                                        
+                                    }
+                                    .padding(Constants.Design.spacing)
+                                }
+                                .materialCardBackgroundModifier()
+                                .padding(.horizontal, Constants.Design.spacing)
                             }
-                            .padding(Constants.Design.spacing)
-                        }
-                        .modifier(CardBackgroundModifier(cornerRadius: Constants.Design.cornerRadius))
-                        .padding(.horizontal, Constants.Design.spacing)
-                    }
-                    
-                    if !isEditingList && !isEditingName {
-                        HStack {
-                            Button(action: {
-                                isEditingList.toggle()
-                            }) {
-                                Image(systemName: "arrow.up.arrow.down")
-                                    .padding(Constants.Design.spacing/2)
-                            }
-                            .disabled(exercises.isEmpty)
                             
                             Spacer()
-                            Button(action: {
-                                coordinator.goToAddExercise()
-                            }) {
-                                Image(systemName: "plus")
-                                    .font(.title2.bold())
-                                    .primaryButtonLabelStyleModifier()
+                            
+                            if isEditingRestPeriod {
+                                RestPeriodPopoverView()
+                                    .padding(Constants.Design.spacing)
+                                    .materialCardBackgroundModifier()
                             }
                         }
-                        .padding(.horizontal, Constants.Design.spacing)
-                    } else {
-                        EmptyView()
                     }
+                    HStack (alignment: .bottom, spacing: Constants.Design.spacing) {
+                        Button(action: {
+                            isEditingList.toggle()
+                        }) {
+                            Image(systemName: "arrow.up.arrow.down")
+                                .padding(Constants.Design.spacing/2)
+                        }
+                        .disabled(exercises.isEmpty || isEditingName || isEditingRestPeriod)
+                      
+                        Button(action: {
+                            isEditingRestPeriod.toggle()
+                        }) {
+                            Image(systemName: "timer")
+                                .padding(Constants.Design.spacing/2)
+                        }
+                        .disabled(isEditingName || isEditingList)
+                    
+                        Spacer()
+                        Button(action: {
+                            coordinator.goToAddExercise()
+                        }) {
+                            Image(systemName: "plus")
+                                .font(.title2.bold())
+                                .primaryButtonLabelStyleModifier()
+                        }
+                        .disabled(isEditingName || isEditingList || isEditingRestPeriod)
+                    }
+                    .padding(.horizontal, Constants.Design.spacing)
                 }
-                .accentColor(.primary)
+                .accentColor(Constants.Design.Colors.textColorHighEmphasis)
             }
         }
     }
 }
-
-import CoreData
 
 struct WorkoutEditView_Previews: PreviewProvider {
     static var previews: some View {
