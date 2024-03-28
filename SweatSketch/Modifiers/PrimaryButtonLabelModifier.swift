@@ -11,7 +11,7 @@ import SwiftUI
 struct PrimaryButtonLabelStyleModifier: ViewModifier {
     
     let cornerRadius: CGFloat = Constants.Design.cornerRadius
-    let color: Color = Constants.Design.Colors.backgroundStartColor
+    let color: Color = Constants.Design.Colors.buttonPrimaryBackgroundColor
     
     func body(content: Content) -> some View {
         content

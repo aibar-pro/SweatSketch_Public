@@ -188,7 +188,7 @@ struct ExerciseEditView: View {
                                             .fill(
                                                 Color.clear
                                             )
-                                            .modifier(CardBackgroundModifier(cornerRadius: Constants.Design.cornerRadius))
+                                            .materialCardBackgroundModifier()
                                             .padding(.all, Constants.Design.spacing/2)
                                     )
                                 }
@@ -252,7 +252,7 @@ struct ExerciseEditView: View {
                         EmptyView()
                     }
                 }
-                .accentColor(.primary)
+                .accentColor(Constants.Design.Colors.textColorHighEmphasis)
             }
         }
     }

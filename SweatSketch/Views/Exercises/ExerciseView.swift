@@ -21,7 +21,7 @@ struct ExerciseView: View {
                     .frame(width: Constants.Design.spacing*1.5)
                 
                 VStack (alignment: .leading) {
-                    HStack (alignment: .bottom) {
+                    HStack (alignment: .top) {
                         Text(exerciseEntity.name ?? Constants.Design.Placeholders.noExerciseName)
                             .font(.title2)
                             .lineLimit(2)
@@ -37,7 +37,7 @@ struct ExerciseView: View {
                     .padding(.bottom, Constants.Design.spacing/4)
                     
                     ActionListView(exerciseEntity: exerciseEntity)
-                        .opacity(0.8)
+                        .foregroundSecondaryColorModifier()
                 }
             }
         }

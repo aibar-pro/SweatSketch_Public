@@ -23,6 +23,7 @@ class WorkoutEditCoordinator: ObservableObject, Coordinator {
     func start() {
         let view = WorkoutEditView(viewModel: self.viewModel).environmentObject(self)
         rootViewController = UIHostingController(rootView: view)
+        rootViewController.view.backgroundColor = .clear
     }
     
     func goToAddExercise() {
@@ -35,6 +36,10 @@ class WorkoutEditCoordinator: ObservableObject, Coordinator {
         let addExerciseViewController = exerciseAddCoordinator.rootViewController
         addExerciseViewController.modalPresentationStyle = .formSheet
         rootViewController.present(addExerciseViewController, animated: true)
+    }
+    
+    func goToEditRestPeriod() {
+        //go to rest period advanced editing
     }
     
     func goToEditWorkout(exerciseToEdit: ExerciseEntity) {
@@ -69,3 +74,4 @@ class WorkoutEditCoordinator: ObservableObject, Coordinator {
         rootViewController.navigationController?.popViewController(animated: true)
     }
 }
+

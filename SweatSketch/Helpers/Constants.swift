@@ -15,9 +15,14 @@ enum Constants {
         static let spacing = CGFloat(20)
         
         enum Colors {
-            static let backgroundStartColor = Color("background_gradient_start").opacity(0.7)
-            static let backgroundEndColor = Color("background_gradient_end").opacity(0.7)
-            static let buttonBackgroundColor = Color("button_background")
+            static let backgroundStartColor = Color(.backgroundGradientStart).opacity(0.87)
+            static let backgroundEndColor = Color(.backgroundGradientEnd).opacity(0.87)
+            static let backgroundAccentColor = Color(.backgroundAccent).opacity(0.75)
+            static let buttonAccentBackgroundColor = Color(.accent).opacity(0.87)
+            static let buttonPrimaryBackgroundColor = Color(.backgroundGradientStart).opacity(0.87)
+            static let buttonSecondaryBackgroundColor = Color.secondary.opacity(0.05)
+            static let textColorHighEmphasis = Color.primary.opacity(0.87)
+            static let textColorMediumEmphasis = Color.primary.opacity(0.6)
         }
         
         enum Placeholders {
