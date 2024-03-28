@@ -65,6 +65,7 @@ class WorkoutCarouselCoordinator: ObservableObject, Coordinator {
         
         let workoutListViewController = workoutListCoordinator.rootViewController
         workoutListViewController.modalPresentationStyle = .formSheet
+//        workoutListViewController.view.window?.backgroundColor = UIColor(Constants.Design.Colors.backgroundStartColor)
         rootViewController.present(workoutListViewController, animated: true)
         
 //        if let window = UIApplication.shared.windows.first {
@@ -75,5 +76,6 @@ class WorkoutCarouselCoordinator: ObservableObject, Coordinator {
     func start() {
         let view = WorkoutCarouselMainView(viewModel: self.viewModel).environmentObject(self)
         rootViewController = UIHostingController(rootView: view)
+        rootViewController.view.backgroundColor = .clear
     }
 }

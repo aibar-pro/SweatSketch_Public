@@ -11,17 +11,21 @@ import SwiftUI
 struct AccentButtonLabelStyleModifier: ViewModifier {
     
     let cornerRadius: CGFloat = Constants.Design.cornerRadius
-    let color: Color = Constants.Design.Colors.buttonBackgroundColor
+    let color: Color = Constants.Design.Colors.buttonAccentBackgroundColor
     
     func body(content: Content) -> some View {
         content
             .padding(.horizontal, Constants.Design.spacing*1.5)
             .padding(.vertical, Constants.Design.spacing)
-            .foregroundColor(.primary.opacity(0.8))
-            .font(.title3.weight(.semibold))
+            .foregroundColor(Constants.Design.Colors.textColorHighEmphasis)
+            .font(.title3.weight(.bold))
             .background(
-                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(color)
+                ZStack {
+//                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+//                        .stroke(Constants.Design.Colors.textColorHighEmphasis, lineWidth: 2)
+                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                        .fill(color)
+                }
             )
             
     }

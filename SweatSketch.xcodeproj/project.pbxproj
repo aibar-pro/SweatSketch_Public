@@ -23,7 +23,7 @@
 		3F4AB5492BA9F9D2005836E7 /* WeightType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4AB5482BA9F9D2005836E7 /* WeightType.swift */; };
 		3F4AB54B2BAAC2D6005836E7 /* ExerciseEditCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4AB54A2BAAC2D6005836E7 /* ExerciseEditCoordinator.swift */; };
 		3F4AB54E2BAAE36E005836E7 /* ActionListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4AB54D2BAAE36E005836E7 /* ActionListView.swift */; };
-		3F598CBA2B8F7F6B00117D59 /* CardBackgroundModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F598CB92B8F7F6B00117D59 /* CardBackgroundModifier.swift */; };
+		3F598CBA2B8F7F6B00117D59 /* MaterialCardBackgroundModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F598CB92B8F7F6B00117D59 /* MaterialCardBackgroundModifier.swift */; };
 		3F598CBC2B8F9BBC00117D59 /* AccentButtonLabelStyleModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F598CBB2B8F9BBC00117D59 /* AccentButtonLabelStyleModifier.swift */; };
 		3F598CBE2B8F9F1600117D59 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F598CBD2B8F9F1600117D59 /* Constants.swift */; };
 		3F598CC22B8FAD7500117D59 /* BackgroundGradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F598CC12B8FAD7500117D59 /* BackgroundGradientView.swift */; };
@@ -48,7 +48,8 @@
 		3FCE2C2A2BA21DD1004B4E62 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCE2C292BA21DD1004B4E62 /* Coordinator.swift */; };
 		3FCE2C2C2BA310EA004B4E62 /* WorkoutCarouselCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCE2C2B2BA310EA004B4E62 /* WorkoutCarouselCoordinator.swift */; };
 		3FCE2C2F2BA4450D004B4E62 /* ApplicationCoordinatorRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCE2C2E2BA4450D004B4E62 /* ApplicationCoordinatorRepresentable.swift */; };
-		3FF16B9C2B1086F900D5F610 /* ClearListBackgroundModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF16B9B2B1086F900D5F610 /* ClearListBackgroundModifier.swift */; };
+		3FF097D72BB54EDC0043DE3F /* ForegroundSecondaryColorModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF097D62BB54EDC0043DE3F /* ForegroundSecondaryColorModifier.swift */; };
+		3FF097DB2BB5AD720043DE3F /* RestPeriodPopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF097DA2BB5AD720043DE3F /* RestPeriodPopoverView.swift */; };
 		3FF16B9E2B109F5500D5F610 /* WorkoutEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF16B9D2B109F5500D5F610 /* WorkoutEditView.swift */; };
 		3FF16BA02B10C15800D5F610 /* ExerciseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF16B9F2B10C15800D5F610 /* ExerciseView.swift */; };
 /* End PBXBuildFile section */
@@ -70,7 +71,7 @@
 		3F4AB5482BA9F9D2005836E7 /* WeightType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightType.swift; sourceTree = "<group>"; };
 		3F4AB54A2BAAC2D6005836E7 /* ExerciseEditCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseEditCoordinator.swift; sourceTree = "<group>"; };
 		3F4AB54D2BAAE36E005836E7 /* ActionListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionListView.swift; sourceTree = "<group>"; };
-		3F598CB92B8F7F6B00117D59 /* CardBackgroundModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardBackgroundModifier.swift; sourceTree = "<group>"; };
+		3F598CB92B8F7F6B00117D59 /* MaterialCardBackgroundModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialCardBackgroundModifier.swift; sourceTree = "<group>"; };
 		3F598CBB2B8F9BBC00117D59 /* AccentButtonLabelStyleModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccentButtonLabelStyleModifier.swift; sourceTree = "<group>"; };
 		3F598CBD2B8F9F1600117D59 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		3F598CC12B8FAD7500117D59 /* BackgroundGradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundGradientView.swift; sourceTree = "<group>"; };
@@ -97,7 +98,8 @@
 		3FCE2C292BA21DD1004B4E62 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		3FCE2C2B2BA310EA004B4E62 /* WorkoutCarouselCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutCarouselCoordinator.swift; sourceTree = "<group>"; };
 		3FCE2C2E2BA4450D004B4E62 /* ApplicationCoordinatorRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationCoordinatorRepresentable.swift; sourceTree = "<group>"; };
-		3FF16B9B2B1086F900D5F610 /* ClearListBackgroundModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearListBackgroundModifier.swift; sourceTree = "<group>"; };
+		3FF097D62BB54EDC0043DE3F /* ForegroundSecondaryColorModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForegroundSecondaryColorModifier.swift; sourceTree = "<group>"; };
+		3FF097DA2BB5AD720043DE3F /* RestPeriodPopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestPeriodPopoverView.swift; sourceTree = "<group>"; };
 		3FF16B9D2B109F5500D5F610 /* WorkoutEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutEditView.swift; sourceTree = "<group>"; };
 		3FF16B9F2B10C15800D5F610 /* ExerciseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -144,6 +146,7 @@
 				3F4795292BA986AF0097E1EE /* Workouts */,
 				3F47952A2BA986BB0097E1EE /* Exercises */,
 				3F4AB54C2BAAE32C005836E7 /* Actions */,
+				3FF097DC2BB5ADB60043DE3F /* RestPeriod */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -210,6 +213,8 @@
 				3F86669A264542D600124E44 /* Assets.xcassets */,
 				3F8666A4264542D600124E44 /* Info.plist */,
 				3F8666A1264542D600124E44 /* SweatSketchData.xcdatamodeld */,
+				3FF097D82BB554430043DE3F /* Modifiers */,
+				3FF097D92BB5559B0043DE3F /* ViewComponents */,
 				3F8666B026454C8300124E44 /* Helpers */,
 				3F86669C264542D600124E44 /* Preview Content */,
 			);
@@ -228,16 +233,7 @@
 			children = (
 				3F8666AC26454C7C00124E44 /* ButtonLookAndFeel.swift */,
 				3F8666AD26454C7C00124E44 /* ColorExtension.swift */,
-				3FA91225269DBDF400B941F3 /* SnapCarouselModifier.swift */,
-				3FF16B9B2B1086F900D5F610 /* ClearListBackgroundModifier.swift */,
-				3F598CB92B8F7F6B00117D59 /* CardBackgroundModifier.swift */,
-				3F598CBB2B8F9BBC00117D59 /* AccentButtonLabelStyleModifier.swift */,
-				3F8D78902B92DE19006BFD18 /* PrimaryButtonLabelModifier.swift */,
-				3F8D788E2B92DC9B006BFD18 /* SecondaryButtonLabelStyleModifier.swift */,
 				3F598CBD2B8F9F1600117D59 /* Constants.swift */,
-				3F598CC12B8FAD7500117D59 /* BackgroundGradientView.swift */,
-				3F14CFC22BB29FB100FD6C7E /* DurationPickerEditView.swift */,
-				3F14CFC42BB2A71000FD6C7E /* DurationView.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -259,6 +255,37 @@
 				3FCE2C292BA21DD1004B4E62 /* Coordinator.swift */,
 			);
 			path = Protocols;
+			sourceTree = "<group>";
+		};
+		3FF097D82BB554430043DE3F /* Modifiers */ = {
+			isa = PBXGroup;
+			children = (
+				3FA91225269DBDF400B941F3 /* SnapCarouselModifier.swift */,
+				3FF097D62BB54EDC0043DE3F /* ForegroundSecondaryColorModifier.swift */,
+				3F598CB92B8F7F6B00117D59 /* MaterialCardBackgroundModifier.swift */,
+				3F598CBB2B8F9BBC00117D59 /* AccentButtonLabelStyleModifier.swift */,
+				3F8D78902B92DE19006BFD18 /* PrimaryButtonLabelModifier.swift */,
+				3F8D788E2B92DC9B006BFD18 /* SecondaryButtonLabelStyleModifier.swift */,
+			);
+			path = Modifiers;
+			sourceTree = "<group>";
+		};
+		3FF097D92BB5559B0043DE3F /* ViewComponents */ = {
+			isa = PBXGroup;
+			children = (
+				3F598CC12B8FAD7500117D59 /* BackgroundGradientView.swift */,
+				3F14CFC22BB29FB100FD6C7E /* DurationPickerEditView.swift */,
+				3F14CFC42BB2A71000FD6C7E /* DurationView.swift */,
+			);
+			path = ViewComponents;
+			sourceTree = "<group>";
+		};
+		3FF097DC2BB5ADB60043DE3F /* RestPeriod */ = {
+			isa = PBXGroup;
+			children = (
+				3FF097DA2BB5AD720043DE3F /* RestPeriodPopoverView.swift */,
+			);
+			path = RestPeriod;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -343,12 +370,13 @@
 				3F866699264542D400124E44 /* ContentView.swift in Sources */,
 				3FCE2C2F2BA4450D004B4E62 /* ApplicationCoordinatorRepresentable.swift in Sources */,
 				3F4AB54B2BAAC2D6005836E7 /* ExerciseEditCoordinator.swift in Sources */,
-				3FF16B9C2B1086F900D5F610 /* ClearListBackgroundModifier.swift in Sources */,
 				3F2A8F432B1723EC00F184ED /* WorkoutEditTemporaryViewModel.swift in Sources */,
 				3F8666A3264542D600124E44 /* SweatSketchData.xcdatamodeld in Sources */,
 				3F6BDEFB264572B40079EC84 /* ActionEditSwitchView.swift in Sources */,
+				3FF097D72BB54EDC0043DE3F /* ForegroundSecondaryColorModifier.swift in Sources */,
 				3F6BDEDF26455E160079EC84 /* WorkoutDetailView.swift in Sources */,
 				3F2A8F3B2B16298E00F184ED /* WorkoutCarouselViewModel.swift in Sources */,
+				3FF097DB2BB5AD720043DE3F /* RestPeriodPopoverView.swift in Sources */,
 				3F598CBE2B8F9F1600117D59 /* Constants.swift in Sources */,
 				3F4036A72BA48A9A001E0AF5 /* WorkoutEditCoordinator.swift in Sources */,
 				3FCE2C282BA21DB6004B4E62 /* ApplicationCoordinator.swift in Sources */,
@@ -363,7 +391,7 @@
 				3FB7E6C32BA476E300ECAEDE /* WorkoutListCoordinator.swift in Sources */,
 				3F14CFC72BB2EE8800FD6C7E /* ActionSetsNRepsView.swift in Sources */,
 				3FCE2C2A2BA21DD1004B4E62 /* Coordinator.swift in Sources */,
-				3F598CBA2B8F7F6B00117D59 /* CardBackgroundModifier.swift in Sources */,
+				3F598CBA2B8F7F6B00117D59 /* MaterialCardBackgroundModifier.swift in Sources */,
 				3FC92D7E2BA9AF5700AFBCC8 /* ExerciseType.swift in Sources */,
 				3F8F7F4B2653EC460003BBDA /* WorkoutListView.swift in Sources */,
 				3F8666AE26454C7C00124E44 /* ButtonLookAndFeel.swift in Sources */,

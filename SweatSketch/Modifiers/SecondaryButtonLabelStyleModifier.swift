@@ -11,7 +11,7 @@ import SwiftUI
 struct SecondaryButtonLabelStyleModifier: ViewModifier {
     
     let cornerRadius: CGFloat = Constants.Design.cornerRadius
-    let color: Color = Color.secondary.opacity(0.2)
+    let color: Color = Constants.Design.Colors.buttonSecondaryBackgroundColor
     
     func body(content: Content) -> some View {
         content
@@ -19,8 +19,6 @@ struct SecondaryButtonLabelStyleModifier: ViewModifier {
             .padding(.vertical, Constants.Design.spacing*0.75)
             .background(
                 ZStack {
-//                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-//                        .stroke(Color.accentColor, lineWidth: 2)
                     RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                         .fill(color)
                 }

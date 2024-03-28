@@ -24,7 +24,7 @@ struct WorkoutCarouselCardView: View {
                 ForEach(viewModel.workouts, id: \.self) { plan in
                     WorkoutDetailView(workoutEntity: plan)
                         .padding(.all, Constants.Design.spacing/2)
-                        .modifier(CardBackgroundModifier(cornerRadius: Constants.Design.cornerRadius))
+                        .materialCardBackgroundModifier()
                         .frame(width: cardWidth, height: cardHeight, alignment: .top)
                         .animation(Animation.bouncy(duration: 0.5))
                     

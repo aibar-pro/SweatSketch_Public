@@ -58,7 +58,7 @@ struct WorkoutListView: View {
                                         .fill(
                                             Color.clear
                                         )
-                                        .modifier(CardBackgroundModifier(cornerRadius: Constants.Design.cornerRadius))
+                                        .materialCardBackgroundModifier()
                                         .padding(.all, Constants.Design.spacing/4)
                                 )
                             
@@ -82,6 +82,7 @@ struct WorkoutListView: View {
                             coordinator.saveWorkoutListChanges()
                         }) {
                             Text("Done")
+                                .bold()
                                 .primaryButtonLabelStyleModifier()
                         }
                         
@@ -91,7 +92,7 @@ struct WorkoutListView: View {
                 }
                 
             }
-            .accentColor(.primary)
+            .accentColor(Constants.Design.Colors.textColorHighEmphasis)
         }
     }
 }
