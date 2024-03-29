@@ -21,6 +21,7 @@ class WorkoutEditTemporaryViewModel: ObservableObject {
     
     @Published var editingWorkout: WorkoutEntity?
     @Published var exercises: [ExerciseEntity] = []
+    @Published var defaultRestTime: RestTimeEntity?
     
     init(parentViewModel: WorkoutCarouselViewModel, editingWorkout: WorkoutEntity? = nil) {
         self.temporaryWorkoutContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
@@ -41,8 +42,17 @@ class WorkoutEditTemporaryViewModel: ObservableObject {
                 print("Error fetching workout: \(error)")
             }
             self.exercises = self.editingWorkout?.exercises?.array as? [ExerciseEntity] ?? []
+            
+            self.defaultRestTime = editingWorkout?.restTimes?.first { restTime in
+                (restTime as? RestTimeEntity)?.isDefault == true
+            } as? RestTimeEntity
+            if self.defaultRestTime == nil {
+                addOrUpdateDefaultRestTime(withDuration: Constants.DefaultValues.restTimeDuration)
+            }
+            
         } else {
             addWorkout()
+            addOrUpdateDefaultRestTime(withDuration: Constants.DefaultValues.restTimeDuration)
         }
     }
     
@@ -69,6 +79,20 @@ class WorkoutEditTemporaryViewModel: ObservableObject {
             self.editingWorkout?.addToExercises(fetchedExercise)
         } catch {
             print("Error fetching exercise for temporary context: \(error)")
+        }
+    }
+    
+    func addOrUpdateDefaultRestTime(withDuration duration: Int) {
+        if self.defaultRestTime == nil {
+            let newDefaultRestTime = RestTimeEntity(context: temporaryWorkoutContext)
+            newDefaultRestTime.uuid = UUID()
+            newDefaultRestTime.isDefault = true
+            newDefaultRestTime.duration = Int32(duration)
+            editingWorkout?.addToRestTimes(newDefaultRestTime)
+            self.defaultRestTime = newDefaultRestTime
+            
+        } else {
+            self.defaultRestTime?.duration = Int32(duration)
         }
     }
     

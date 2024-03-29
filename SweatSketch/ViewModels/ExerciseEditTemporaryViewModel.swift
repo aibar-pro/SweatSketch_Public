@@ -16,9 +16,10 @@ class ExerciseEditTemporaryViewModel: ObservableObject {
     @Published var editingExercise: ExerciseEntity?
     @Published var exerciseActions: [ExerciseActionEntity] = []
     @Published var editingAction: ExerciseActionEntity?
-    var isEditingAction: Bool {
-        self.editingAction != nil
-    }
+    @Published var restTime: ExerciseActionEntity?
+//    var isEditingAction: Bool {
+//        self.editingAction != nil
+//    }
     
     private var isNewExercise: Bool = false
     
@@ -35,8 +36,8 @@ class ExerciseEditTemporaryViewModel: ObservableObject {
             } catch {
                 print("Error fetching exercise for temporary context: \(error)")
             }
-            self.exerciseActions = self.editingExercise?.exerciseActions?.array as? [ExerciseActionEntity] ?? []
             
+            self.exerciseActions = (self.editingExercise?.exerciseActions?.array as? [ExerciseActionEntity])?.filter{ !$0.isRestTime } ?? []
             self.exerciseActions.forEach{
                 switch ExerciseType.from(rawValue: self.editingExercise?.type) {
                 case .timed:
@@ -49,9 +50,18 @@ class ExerciseEditTemporaryViewModel: ObservableObject {
                 default: break
                 }
             }
+            
+            self.restTime = (self.editingExercise?.exerciseActions?.array as? [ExerciseActionEntity])?.first(where: { $0.isRestTime })
+            if self.restTime == nil {
+                let defaultDuration = parentViewModel.defaultRestTime?.duration ?? Int32(Constants.DefaultValues.restTimeDuration)
+                addOrUpdateDefaultRestTime(withDuration: Int(defaultDuration))
+            }
+            
         } else {
             self.isNewExercise = true
             addExercise()
+            let defaultDuration = parentViewModel.defaultRestTime?.duration ?? Int32(Constants.DefaultValues.restTimeDuration)
+            addOrUpdateDefaultRestTime(withDuration: Int(defaultDuration))
         }
     }
     
@@ -84,6 +94,19 @@ class ExerciseEditTemporaryViewModel: ObservableObject {
         editingExercise?.addToExerciseActions(newExerciseAction)
         exerciseActions.append(newExerciseAction)
         setEditingAction(newExerciseAction)
+    }
+    
+    func addOrUpdateDefaultRestTime(withDuration duration: Int) {
+        if self.restTime == nil {
+            let newRestTime = ExerciseActionEntity(context: temporaryExerciseContext)
+            newRestTime.uuid = UUID()
+            newRestTime.isRestTime = true
+            newRestTime.duration = Int32(duration)
+            editingExercise?.addToExerciseActions(newRestTime)
+            self.restTime = newRestTime
+        } else {
+            self.restTime?.duration = Int32(duration)
+        }
     }
     
     func renameExercise(newName: String) {
