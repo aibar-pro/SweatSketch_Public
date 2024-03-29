@@ -10,26 +10,31 @@ import SwiftUI
 struct DurationPickerEditView: View {
    
     @Binding var durationInSeconds: Int
-
+    
+    var showHours: Bool = true
+    var secondsInterval: Int = 1
+    
     private var hours: Int { Int(durationInSeconds) / 3600 }
     private var minutes: Int { (Int(durationInSeconds) % 3600) / 60 }
     private var seconds: Int { Int(durationInSeconds) % 60 }
     
     var body: some View {
         HStack (alignment: .center, spacing: Constants.Design.spacing/2) {
-            Picker("Hours", selection: Binding(
-                get: { self.hours },
-                set: { newValue in
-                    self.updateTotalSeconds(hours: newValue, minutes: self.minutes, seconds: self.seconds)
+            if showHours {
+                Picker("Hours", selection: Binding(
+                    get: { self.hours },
+                    set: { newValue in
+                        self.updateTotalSeconds(hours: newValue, minutes: self.minutes, seconds: self.seconds)
+                    }
+                )) {
+                    ForEach(0..<24, id: \.self) { hour in
+                        Text("\(hour)").tag(hour)
+                    }
                 }
-            )) {
-                ForEach(0..<24, id: \.self) { hour in
-                    Text("\(hour)").tag(hour)
-                }
+                .labelsHidden()
+                .pickerStyle(WheelPickerStyle())
+                Text(":")
             }
-            .labelsHidden()
-            .pickerStyle(WheelPickerStyle())
-            Text(":")
             
             Picker("Minutes", selection: Binding(
                get: { self.minutes },
@@ -51,7 +56,7 @@ struct DurationPickerEditView: View {
                     self.updateTotalSeconds(hours: self.hours, minutes: self.minutes, seconds: newValue)
                 }
             )) {
-                ForEach(0..<60, id: \.self) { second in
+                ForEach(Array(stride(from: 0, through: 59, by: secondsInterval)), id: \.self) { second in
                     Text("\(second)").tag(second)
                 }
             }
@@ -66,5 +71,9 @@ struct DurationPickerEditView: View {
 }
 
 #Preview {
-    DurationPickerEditView(durationInSeconds: .constant(4000))
+    VStack {
+        DurationPickerEditView(durationInSeconds: .constant(4000))
+        
+        DurationPickerEditView(durationInSeconds: .constant(4000), showHours: false, secondsInterval: 5)
+    }
 }

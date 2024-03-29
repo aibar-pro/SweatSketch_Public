@@ -29,11 +29,20 @@ enum Constants {
             static let noWorkoutName = "Untitled Workout"
             static let noExerciseName = "Untitled Exercise"
             static let noActionName = "Untitled Action"
+            static let noRestTimeName = "Untitled Rest Period"
             
             static let noExerciseDetails = "No Exercise details"
             static let noActionDetails = "No Action details"
+            
+            static let noDuration = "-:-:-"
         }
     }
     
-    
+    enum DefaultValues {
+        static let setsCount = 1
+        static let repsCount = 1
+        static let actionDuration = 1
+        static let supersetCount = 1
+        static let restTimeDuration = 60
+    }
 }
