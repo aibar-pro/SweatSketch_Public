@@ -1,28 +1,26 @@
 //
-//  ExerciseEditCoordinator.swift
+//  RestTimeEditCoordinator.swift
 //  SweatSketch
 //
-//  Created by aibaranchikov on 20.03.2024.
+//  Created by aibaranchikov on 30.03.2024.
 //
 
-import Foundation
 import SwiftUI
 
-class ExerciseEditCoordinator: ObservableObject, Coordinator {
+class RestTimeEditCoordinator: ObservableObject, Coordinator {
     
-    var viewModel: ExerciseEditTemporaryViewModel
+    var viewModel: RestTimeEditTemporaryViewModel
     
     var rootViewController = UIViewController()
     
-    init(viewModel: ExerciseEditTemporaryViewModel) {
+    init(viewModel: RestTimeEditTemporaryViewModel) {
         rootViewController = UIViewController()
         self.viewModel = viewModel
     }
     
     func start() {
-        let view = ExerciseEditView(viewModel: self.viewModel).environmentObject(self)
+        let view = RestTimeEditView(viewModel: self.viewModel).environmentObject(self)
         rootViewController = UIHostingController(rootView: view)
-        //TODO: fix dark theme background in preview
     }
     
     func saveExerciseEdit(){
@@ -31,11 +29,8 @@ class ExerciseEditCoordinator: ObservableObject, Coordinator {
         } else {
             print("Exercise Coordinator: Save")
         }
-        
-        viewModel.saveFilteredExerciseActions()
-        viewModel.saveExercise()
+        viewModel.saveRestTime()
         rootViewController.dismiss(animated: true)
-//        rootViewController.navigationController?.popViewController(animated: true)
     }
     
     func discardExerciseEdit(){
@@ -44,8 +39,7 @@ class ExerciseEditCoordinator: ObservableObject, Coordinator {
         } else {
             print("Exercise Coordinator: Discard")
         }
-        viewModel.discardExercise()
+        viewModel.discardRestTime()
         rootViewController.dismiss(animated: true)
-//        rootViewController.navigationController?.popViewController(animated: true)
     }
 }

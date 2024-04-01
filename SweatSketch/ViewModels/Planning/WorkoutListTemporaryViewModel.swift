@@ -12,7 +12,7 @@ class WorkoutListTemporaryViewModel: ObservableObject {
 
     @Published var workouts = [WorkoutEntity]()
     
-    let parentViewModel: WorkoutCarouselViewModel
+    private let parentViewModel: WorkoutCarouselViewModel
     private let temporaryWorkoutListContext: NSManagedObjectContext
     var canUndo: Bool {
         return temporaryWorkoutListContext.undoManager?.canUndo ?? false

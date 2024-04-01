@@ -17,7 +17,7 @@ struct WorkoutListView: View {
     var body: some View {
         GeometryReader { geoReader in
             ZStack{
-                BackgroundGradientView()
+                WorkoutPlanningMainBackgroundView()
                 
                 VStack (alignment: .leading) {
                     HStack {

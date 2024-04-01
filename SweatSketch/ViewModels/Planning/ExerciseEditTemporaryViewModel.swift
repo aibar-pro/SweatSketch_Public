@@ -11,15 +11,12 @@ import CoreData
 class ExerciseEditTemporaryViewModel: ObservableObject {
 
     private let parentViewModel: WorkoutEditTemporaryViewModel
-    let temporaryExerciseContext: NSManagedObjectContext
+    private let temporaryExerciseContext: NSManagedObjectContext
     
     @Published var editingExercise: ExerciseEntity?
     @Published var exerciseActions: [ExerciseActionEntity] = []
     @Published var editingAction: ExerciseActionEntity?
     @Published var restTime: ExerciseActionEntity?
-//    var isEditingAction: Bool {
-//        self.editingAction != nil
-//    }
     
     private var isNewExercise: Bool = false
     

@@ -1,14 +1,13 @@
 //
-//  BackgroundGradientView.swift
+//  WorkoutPlanningMainBackgroundView.swift
 //  SweatSketch
 //
 //  Created by aibaranchikov on 29.02.2024.
 //
 
-import Foundation
 import SwiftUI
 
-struct BackgroundGradientView : View {
+struct WorkoutPlanningMainBackgroundView : View {
     let elementColor: Color = Constants.Design.Colors.backgroundAccentColor
     
     var body: some View {
@@ -27,7 +26,6 @@ struct BackgroundGradientView : View {
                 .rotationEffect(Angle(degrees: 30))
                 .offset(x: 100, y: -50)
                 .foregroundColor(elementColor)
-                
             
             Image(systemName: "gym.bag.fill")
                 .font(.system(size: 100))
@@ -45,9 +43,9 @@ struct BackgroundGradientView : View {
     }
 }
 
-struct BackgroundGradientView_Preview : PreviewProvider {
+struct WorkoutPlanningMainBackgroundView_Preview : PreviewProvider {
     
     static var previews: some View {
-        BackgroundGradientView()
+        WorkoutPlanningMainBackgroundView()
     }
 }

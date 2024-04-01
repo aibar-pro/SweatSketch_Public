@@ -38,8 +38,8 @@ class WorkoutEditCoordinator: ObservableObject, Coordinator {
         rootViewController.present(addExerciseViewController, animated: true)
     }
     
-    func goToEditRestPeriod() {
-        //go to rest period advanced editing
+    func goToAdvancedEditRestPeriod() {
+        print("Coordinator: Present advanced edit VC")
     }
     
     func goToEditWorkout(exerciseToEdit: ExerciseEntity) {
