@@ -26,12 +26,13 @@ class WorkoutEditTemporaryViewModel: ObservableObject {
     init(parentViewModel: WorkoutCarouselViewModel, editingWorkout: WorkoutEntity? = nil) {
         self.temporaryWorkoutContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         self.temporaryWorkoutContext.parent = parentViewModel.mainContext
+        self.parentViewModel = parentViewModel
+        
         if self.temporaryWorkoutContext.undoManager == nil {
             self.temporaryWorkoutContext.undoManager = UndoManager()
         }
         self.temporaryWorkoutContext.undoManager?.levelsOfUndo = 10
-        
-        self.parentViewModel = parentViewModel
+        self.temporaryWorkoutContext.undoManager?.beginUndoGrouping()
         
         if editingWorkout != nil {
             let workoutFetchRequest: NSFetchRequest<WorkoutEntity> = WorkoutEntity.fetchRequest()
@@ -47,13 +48,17 @@ class WorkoutEditTemporaryViewModel: ObservableObject {
                 (restTime as? RestTimeEntity)?.isDefault == true
             } as? RestTimeEntity
             if self.defaultRestTime == nil {
-                addOrUpdateDefaultRestTime(withDuration: Constants.DefaultValues.restTimeDuration)
+                addDefaultRestTime(withDuration: Constants.DefaultValues.restTimeDuration)
             }
             
         } else {
             addWorkout()
-            addOrUpdateDefaultRestTime(withDuration: Constants.DefaultValues.restTimeDuration)
+            addDefaultRestTime(withDuration: Constants.DefaultValues.restTimeDuration)
         }
+        
+        //Ignore Workout and default RestTime creation for undo/redo
+        self.temporaryWorkoutContext.undoManager?.endUndoGrouping()
+        self.temporaryWorkoutContext.undoManager?.removeAllActions()
     }
     
     func addWorkout() {
@@ -68,7 +73,7 @@ class WorkoutEditTemporaryViewModel: ObservableObject {
         self.editingWorkout?.name = newName
     }
     
-    func addExercise(newExercise: ExerciseEntity) {
+    func addExerciseToWorkout(newExercise: ExerciseEntity) {
         let exerciseFetchRequest: NSFetchRequest<ExerciseEntity> = ExerciseEntity.fetchRequest()
         exerciseFetchRequest.predicate = NSPredicate(format: "SELF == %@", newExercise.objectID)
         
@@ -82,18 +87,17 @@ class WorkoutEditTemporaryViewModel: ObservableObject {
         }
     }
     
-    func addOrUpdateDefaultRestTime(withDuration duration: Int) {
-        if self.defaultRestTime == nil {
-            let newDefaultRestTime = RestTimeEntity(context: temporaryWorkoutContext)
-            newDefaultRestTime.uuid = UUID()
-            newDefaultRestTime.isDefault = true
-            newDefaultRestTime.duration = Int32(duration)
-            editingWorkout?.addToRestTimes(newDefaultRestTime)
-            self.defaultRestTime = newDefaultRestTime
-            
-        } else {
-            self.defaultRestTime?.duration = Int32(duration)
-        }
+    func addDefaultRestTime(withDuration duration: Int) {
+        let newDefaultRestTime = RestTimeEntity(context: temporaryWorkoutContext)
+        newDefaultRestTime.uuid = UUID()
+        newDefaultRestTime.isDefault = true
+        newDefaultRestTime.duration = Int32(duration)
+        editingWorkout?.addToRestTimes(newDefaultRestTime)
+        self.defaultRestTime = newDefaultRestTime
+    }
+    
+    func updateDefaultRestTime(duration: Int) {
+        self.defaultRestTime?.duration = Int32(duration)
     }
     
     func deleteExercise(exerciseEntity: ExerciseEntity) {

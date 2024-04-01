@@ -8,18 +8,11 @@
 import SwiftUI
 
 struct RestTimeEditPopover: View {
-    @ObservedObject var restTimeEntity: RestTimeEntity
-    @Binding var showPopover: Bool
     @State var duration: Int
     
-    var onDuractionChange: (_ duration: Int) -> Void = { duration in }
-    
-    init(restTimeEntity: RestTimeEntity, showPopover: Binding<Bool>) {
-        self.restTimeEntity = restTimeEntity
-        self._showPopover = showPopover
-        self.duration = Int(restTimeEntity.duration)
-    }
-    
+    var onDurationChange: (_ duration: Int) -> Void
+    var onDiscard: () -> Void
+
     var body: some View {
         VStack (alignment: .leading, spacing: Constants.Design.spacing) {
             HStack {
@@ -37,15 +30,13 @@ struct RestTimeEditPopover: View {
             HStack (spacing: Constants.Design.spacing) {
                 Spacer()
                 Button(action: {
-                    showPopover.toggle()
+                    onDiscard()
                 }) {
                     Text("Cancel")
                         .secondaryButtonLabelStyleModifier()
                 }
                 Button(action: {
-//                    self.restTimeEntity.duration = Int32(duration)
-                    onDuractionChange(duration)
-                    showPopover.toggle()
+                    onDurationChange(duration)
                 }) {
                     Text("Done")
                         .bold()
@@ -67,6 +58,6 @@ struct RestTimeEditPopover_Preview : PreviewProvider {
         
         let restTime = workoutEditViewModel.defaultRestTime!
         
-        RestTimeEditPopover(restTimeEntity: restTime, showPopover: .constant(true))
+        RestTimeEditPopover(duration: Int(restTime.duration), onDurationChange: { duration in print("Save \(duration)") }, onDiscard: { print("Discard") })
     }
 }

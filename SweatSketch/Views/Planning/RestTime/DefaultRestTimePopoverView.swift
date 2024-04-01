@@ -11,15 +11,8 @@ struct DefaultRestTimePopoverView: View {
     
     @EnvironmentObject var coordinator: WorkoutEditCoordinator
     
-    @ObservedObject var restTimeEntity: RestTimeEntity
     @Binding var showPopover: Bool
-    @State var duration: Int
-    
-    init(restTimeEntity: RestTimeEntity, showPopover: Binding<Bool>) {
-        self.restTimeEntity = restTimeEntity
-        self._showPopover = showPopover
-        self.duration = Int(restTimeEntity.duration)
-    }
+    @State var duration: Int = Constants.DefaultValues.restTimeDuration
     
     var body: some View {
         VStack (alignment: .leading, spacing: Constants.Design.spacing) {
@@ -38,12 +31,16 @@ struct DefaultRestTimePopoverView: View {
                 Spacer()
                 VStack (alignment: .center, spacing: Constants.Design.spacing/2) {
                     DurationPickerEditView(durationInSeconds: $duration, showHours: false, secondsInterval: 10)
+                        .onAppear(perform: {
+                            self.duration = Int(coordinator.viewModel.defaultRestTime?.duration ?? Int32(Constants.DefaultValues.restTimeDuration))
+                        })
                         .background(
                             RoundedRectangle(cornerRadius: Constants.Design.cornerRadius)
                                 .stroke(Constants.Design.Colors.backgroundStartColor)
                         )
                     .frame(width: 250, height: 150)
                     Button(action: {
+                        coordinator.viewModel.updateDefaultRestTime(duration: duration)
                         showPopover.toggle()
                         coordinator.goToAdvancedEditRestPeriod()
                     }) {
@@ -65,7 +62,7 @@ struct DefaultRestTimePopoverView: View {
                         .secondaryButtonLabelStyleModifier()
                 }
                 Button(action: {
-                    self.restTimeEntity.duration = Int32(duration)
+                    coordinator.viewModel.updateDefaultRestTime(duration: duration)
                     showPopover.toggle()
                 }) {
                     Text("Done")
@@ -89,7 +86,7 @@ struct DefaultRestTimePopoverView_Preview : PreviewProvider {
         
         let restTime = workoutEditViewModel.defaultRestTime!
         
-        DefaultRestTimePopoverView(restTimeEntity: restTime, showPopover: .constant(true))
+        DefaultRestTimePopoverView(showPopover: .constant(true))
             .environmentObject(workoutEditCoordinator)
     }
 }

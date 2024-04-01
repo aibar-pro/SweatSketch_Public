@@ -11,16 +11,10 @@ import CoreData
 class RestTimeEditTemporaryViewModel: ObservableObject {
     private let parentViewModel: WorkoutEditTemporaryViewModel
     private let temporaryRestTimeContext: NSManagedObjectContext
-    var canUndo: Bool {
-        return temporaryRestTimeContext.undoManager?.canUndo ?? false
-    }
-    var canRedo: Bool {
-        return temporaryRestTimeContext.undoManager?.canRedo ?? false
-    }
+
     @Published var editingWorkout: WorkoutEntity?
     @Published var exercises: [ExerciseEntity] = []
     @Published var defaultRestTime: RestTimeEntity?
-    @Published var restTimes: [RestTimeEntity]?
     @Published var editingRestTime: RestTimeEntity?
     var isNewRestTime: Bool = false
     
@@ -41,11 +35,11 @@ class RestTimeEditTemporaryViewModel: ObservableObject {
             
             self.exercises = self.editingWorkout?.exercises?.array as? [ExerciseEntity] ?? []
             
-            self.defaultRestTime = editingWorkout?.restTimes?.first { restTime in
+            self.defaultRestTime = self.editingWorkout?.restTimes?.first { restTime in
                 (restTime as? RestTimeEntity)?.isDefault == true
             } as? RestTimeEntity
             
-            self.restTimes = (self.editingWorkout?.restTimes?.allObjects as? [RestTimeEntity])?.filter( { !$0.isDefault} )
+//            self.restTimes = (self.editingWorkout?.restTimes?.allObjects as? [RestTimeEntity])?.filter( { !$0.isDefault} )
         }
     }
     
@@ -57,9 +51,10 @@ class RestTimeEditTemporaryViewModel: ObservableObject {
         newRestTime.duration = defaultRestTime?.duration ?? Int32(Constants.DefaultValues.restTimeDuration)
         editingWorkout?.addToRestTimes(newRestTime)
         self.editingRestTime = newRestTime
+        isNewRestTime = true
     }
     
-    func removeRestTime(for exercise: ExerciseEntity) {
+    func deleteRestTime(for exercise: ExerciseEntity) {
         if let restTimeToDelete = exercise.restTime {
             exercise.restTime = nil
             self.temporaryRestTimeContext.delete(restTimeToDelete)
@@ -73,12 +68,20 @@ class RestTimeEditTemporaryViewModel: ObservableObject {
         }
     }
     
+
+    func discardRestTime(for exercise: ExerciseEntity) {
+        if isNewRestTime {
+            deleteRestTime(for: exercise)
+            isNewRestTime = false
+        }
+    }
+    
+
     func setEditingRestTime(for exercise: ExerciseEntity) {
         if let exerciseRestTime = exercise.restTime {
             editingRestTime = exerciseRestTime
         } else {
             addRestTime(for: exercise)
-            isNewRestTime = true
         }
     }
 
@@ -88,7 +91,7 @@ class RestTimeEditTemporaryViewModel: ObservableObject {
     }
     
     func isEditingRestTime(for exercise: ExerciseEntity) -> Bool {
-        editingRestTime?.followingExercise == exercise
+        editingRestTime?.followingExercise == exercise && editingRestTime == exercise.restTime && exercise.restTime != nil
     }
     
     func saveRestTime() {
@@ -100,7 +103,7 @@ class RestTimeEditTemporaryViewModel: ObservableObject {
         }
     }
     
-    func discardRestTime() {
+    func cancelRestTime() {
         temporaryRestTimeContext.rollback()
     }
 }

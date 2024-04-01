@@ -360,7 +360,7 @@ struct ExerciseEditView: View {
                                 .font(.title2.bold())
                                 .primaryButtonLabelStyleModifier()
                         }
-                        .disabled(currentEditingState != .none)
+                        .disabled(isRowEditDisable())
                     }
                     .padding(.horizontal, Constants.Design.spacing)
                     

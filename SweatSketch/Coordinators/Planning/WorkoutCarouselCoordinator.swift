@@ -5,10 +5,9 @@
 //  Created by aibaranchikov on 14.03.2024.
 //
 
-import Foundation
-import UIKit
 import SwiftUI
 import CoreData
+import Combine
 
 class WorkoutCarouselCoordinator: ObservableObject, Coordinator {
     
@@ -18,16 +17,17 @@ class WorkoutCarouselCoordinator: ObservableObject, Coordinator {
     var childCoordinators = [Coordinator]()
     var rootViewController = UIViewController()
     
-    init(dataContext: NSManagedObjectContext) {
+    let workoutEvent: PassthroughSubject<WorkoutEvent, Never>
+    
+    init(dataContext: NSManagedObjectContext, workoutEvent: PassthroughSubject<WorkoutEvent, Never>) {
         rootViewController = UIViewController()
         viewModel = WorkoutCarouselViewModel(context: dataContext)
+        self.workoutEvent = workoutEvent
     }
     
-    func getViewTitle() -> String {
-        if let workoutName = viewModel.workouts[presentedWorkoutIndex].name {
-            return workoutName
-        } else {
-            return "Workouts"
+    func startWorkout() {
+        if let launchedWorkout = viewModel.workouts[presentedWorkoutIndex].uuid {
+            workoutEvent.send(.started(launchedWorkout))
         }
     }
     

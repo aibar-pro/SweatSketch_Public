@@ -15,7 +15,8 @@ struct ActionListView: View {
         
         let exerciseType = ExerciseType.from(rawValue: exerciseEntity.type)
         
-        if let actions = exerciseEntity.exerciseActions?.array as? [ExerciseActionEntity] {
+        //TODO: Consider viewmodel usage
+        if let actions = (exerciseEntity.exerciseActions?.array as? [ExerciseActionEntity])?.filter({ !$0.isRestTime }) {
             VStack (alignment: .leading) {
                 switch exerciseType {
                 case .setsNreps:
