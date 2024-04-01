@@ -26,7 +26,7 @@ struct ExerciseEditView: View {
 
     var body: some View {
         ZStack {
-            BackgroundGradientView()
+            WorkoutPlanningModalBackgroundView()
             
             GeometryReader { geoReader in
                
@@ -113,10 +113,10 @@ struct ExerciseEditView: View {
                                         
                                     }
                                 }
-                                               .disabled(currentEditingState != .none)
-                                               .pickerStyle(.segmented)
-                                               .padding(.horizontal, Constants.Design.spacing)
-                                               .padding(.bottom, Constants.Design.spacing/2)
+                                .disabled(currentEditingState != .none)
+                                .pickerStyle(.segmented)
+                                .padding(.horizontal, Constants.Design.spacing)
+                                .padding(.bottom, Constants.Design.spacing/2)
                                 
                                 if ExerciseType.from(rawValue: viewModel.editingExercise?.type) == .mixed {
                                     HStack {
@@ -150,7 +150,7 @@ struct ExerciseEditView: View {
                                             case .timed:
                                                 return ExerciseActionType.from(rawValue: action.type) == .timed
                                             case .mixed:
-                                                return ExerciseActionType.from(rawValue: action.type) == .setsNreps || ExerciseActionType.from(rawValue: action.type) == .timed
+                                                return [.setsNreps, .timed].contains(ExerciseActionType.from(rawValue: action.type))
                                             case .unknown:
                                                 return ExerciseActionType.from(rawValue: action.type) == .unknown
                                             }
@@ -164,11 +164,9 @@ struct ExerciseEditView: View {
                                                     if isEditing {
                                                         viewModel.setEditingAction(action)
                                                         currentEditingState = .action
-                                                        print("binding \(currentEditingState)")
                                                     } else {
                                                         viewModel.clearEditingAction()
                                                         currentEditingState = .none
-                                                        print("binding \(currentEditingState)")
                                                     }
                                                 }
                                             )
@@ -180,25 +178,27 @@ struct ExerciseEditView: View {
                                                     type in
                                                     viewModel.setEditingActionType(to: type)
                                                 }
-                                                .frame(height:  listGeo.size.height/getRowHeightMultiplier(exerciseType: exerciseType, actionType: ExerciseActionType.from(rawValue: action.type), actionIsEditing: isEditingBinding.wrappedValue))
+                                                .frame(height:  listGeo.size.height/getRowHeightMultiplier(exerciseType: exerciseType, actionType: ExerciseActionType.from(rawValue: action.type), actionIsEditing: viewModel.isEditingAction(action)))
+                                                
                                                 Spacer()
-                                                if viewModel.editingAction == nil {
-                                                    Button(action: {
-                                                        if viewModel.editingAction == action {
-                                                            viewModel.editingAction = nil
-                                                            currentEditingState = .none
-                                                            print("button \(currentEditingState)")
-                                                        } else {
-                                                            viewModel.setEditingAction(action)
-                                                            currentEditingState = .action
-                                                            scrollProxy.scrollTo(action)
-                                                            print("button \(currentEditingState)")
-                                                        }
-                                                    }) {
+                                                
+                                                Button(action: {
+                                                    if currentEditingState == .action, viewModel.isEditingAction(action) {
+                                                        viewModel.clearEditingAction()
+                                                        currentEditingState = .none
+                                                    } else {
+                                                        viewModel.setEditingAction(action)
+                                                        currentEditingState = .action
+                                                    }
+                                                }) {
+                                                    if currentEditingState == .action, viewModel.isEditingAction(action) {
+                                                        Text("Done")
+                                                            .padding(Constants.Design.spacing/2)
+                                                    } else {
                                                         Image(systemName: "ellipsis")
                                                     }
-                                                    .disabled(currentEditingState != .none)
                                                 }
+                                                .disabled(isRowEditDisable())
                                             }
                                             .id(action.objectID)
                                             .padding(.horizontal, Constants.Design.spacing/2)
@@ -222,16 +222,16 @@ struct ExerciseEditView: View {
                                                   .constant(currentEditingState == .list ? EditMode.active : EditMode.inactive))
                                     .animation(.easeInOut(duration: 0.25))
                                     .onChange(of: viewModel.editingAction) { _ in
-                                        if let latestActionID = viewModel.editingAction?.objectID {
+                                        if let actionID = viewModel.editingAction?.objectID {
                                             withAnimation {
-                                                scrollProxy.scrollTo(latestActionID, anchor: .bottom)
+                                                scrollProxy.scrollTo(actionID, anchor: .bottom)
                                             }
                                         }
                                     }
                                     .onChange(of: viewModel.editingAction?.type) { _ in
-                                        if let latestActionID = viewModel.editingAction?.objectID {
+                                        if let actionID = viewModel.editingAction?.objectID {
                                             withAnimation {
-                                                scrollProxy.scrollTo(latestActionID, anchor: .bottom)
+                                                scrollProxy.scrollTo(actionID, anchor: .bottom)
                                             }
                                         }
                                     }
@@ -360,7 +360,7 @@ struct ExerciseEditView: View {
                                 .font(.title2.bold())
                                 .primaryButtonLabelStyleModifier()
                         }
-                        .disabled(currentEditingState != .none)
+                        .disabled(isRowEditDisable())
                     }
                     .padding(.horizontal, Constants.Design.spacing)
                     
@@ -394,6 +394,10 @@ struct ExerciseEditView: View {
     
     private func isSaveButtonDisable() -> Bool {
         return [.name, .action, .rest].contains(currentEditingState)
+    }
+    
+    private func isRowEditDisable() -> Bool {
+        return [.name, .rest, .list].contains(currentEditingState)
     }
     
     private func isListEditDisabled() -> Bool {

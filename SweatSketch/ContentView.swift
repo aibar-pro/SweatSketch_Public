@@ -14,7 +14,7 @@ struct ContentView: View {
     
     var body: some View {
         ZStack {
-            BackgroundGradientView()
+            WorkoutPlanningMainBackgroundView()
             ApplicationCoordinatorRepresentable(coordinator: coordinator)
         }
     }
