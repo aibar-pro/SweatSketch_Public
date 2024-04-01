@@ -23,23 +23,24 @@ class RestTimeEditCoordinator: ObservableObject, Coordinator {
         rootViewController = UIHostingController(rootView: view)
     }
     
-    func saveExerciseEdit(){
+
+    func saveRestTimeEdit(){
         if #available(iOS 15, *) {
-            print("Exercise Coordinator: Save \(Date.now)")
+            print("Rest Time Coordinator: Save \(Date.now)")
         } else {
-            print("Exercise Coordinator: Save")
+            print("Rest Time Coordinator: Save")
         }
         viewModel.saveRestTime()
         rootViewController.dismiss(animated: true)
     }
     
-    func discardExerciseEdit(){
+    func discardRestTimeEdit(){
         if #available(iOS 15, *) {
-            print("Exercise Coordinator: Discard \(Date.now)")
+            print("Rest Time Coordinator: Discard \(Date.now)")
         } else {
-            print("Exercise Coordinator: Discard")
+            print("Rest Time Coordinator: Discard")
         }
-        viewModel.discardRestTime()
+        viewModel.cancelRestTime()
         rootViewController.dismiss(animated: true)
     }
 }

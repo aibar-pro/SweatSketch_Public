@@ -210,7 +210,7 @@ class ExerciseEditTemporaryViewModel: ObservableObject {
         do {
             try temporaryExerciseContext.save()
             if let exerciseToAdd = self.editingExercise, isNewExercise {
-                parentViewModel.addExercise(newExercise: exerciseToAdd)
+                parentViewModel.addExerciseToWorkout(newExercise: exerciseToAdd)
             }
             parentViewModel.objectWillChange.send()
         } catch {

@@ -39,7 +39,15 @@ class WorkoutEditCoordinator: ObservableObject, Coordinator {
     }
     
     func goToAdvancedEditRestPeriod() {
-        print("Coordinator: Present advanced edit VC")
+        let temporaryRestTimeViewModel = RestTimeEditTemporaryViewModel(parentViewModel: viewModel)
+        let restTimeCoordinator = RestTimeEditCoordinator(viewModel: temporaryRestTimeViewModel)
+        
+        restTimeCoordinator.start()
+        childCoordinators.append(restTimeCoordinator)
+        
+        let restTimeViewController = restTimeCoordinator.rootViewController
+        restTimeViewController.modalPresentationStyle = .formSheet
+        rootViewController.present(restTimeViewController, animated: true)
     }
     
     func goToEditWorkout(exerciseToEdit: ExerciseEntity) {

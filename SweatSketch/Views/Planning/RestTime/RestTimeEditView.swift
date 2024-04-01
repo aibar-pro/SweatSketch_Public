@@ -26,25 +26,25 @@ struct RestTimeEditView: View {
                     VStack (alignment: .leading, spacing: Constants.Design.spacing/2) {
                         HStack {
                             Button(action: {
-                                coordinator.discardExerciseEdit()
+                                coordinator.discardRestTimeEdit()
                             }) {
                                 Text("Cancel")
                                     .padding(.vertical, Constants.Design.spacing/2)
                                     .padding(.trailing, Constants.Design.spacing/2)
                             }
-    //                        .disabled(currentEditingState == .list)
+                            .disabled(currentEditingState != .none)
                             
                             Spacer()
                             
                             Button(action: {
-                                coordinator.saveExerciseEdit()
+                                coordinator.saveRestTimeEdit()
                             }) {
                                 Text("Save")
                                     .bold()
                                     .padding(.vertical, Constants.Design.spacing/2)
                                     .padding(.leading, Constants.Design.spacing/2)
                             }
-    //                        .disabled(isSaveButtonDisable())
+                            .disabled(currentEditingState != .none)
                         }
                         .padding(.horizontal, Constants.Design.spacing)
                     
@@ -62,41 +62,27 @@ struct RestTimeEditView: View {
                         }
                         .foregroundSecondaryColorModifier()
                         .padding(.horizontal, Constants.Design.spacing)
-//                        .disabled(isRenameDisabled())
+
                         ScrollView {
                             VStack (alignment: .leading, spacing: Constants.Design.spacing/2) {
                                 ForEach(viewModel.exercises, id: \.self) { exercise in
                                     VStack (alignment: .leading, spacing: Constants.Design.spacing) {
                                         if exercise != viewModel.exercises.first {
-                                            if viewModel.isEditingRestTime(for: exercise) {
-                                                let isEditingBinding = Binding<Bool>(
-                                                    get: {
-                                                        viewModel.isEditingRestTime(for: exercise)
-                                                    },
-                                                    set: { isEditing in
-                                                        if isEditing {
-                                                            viewModel.setEditingRestTime(for: exercise)
-                                                            currentEditingState = .rest
-                                                            print("binding \(currentEditingState)")
-                                                        } else {
-                                                            viewModel.clearEditingRestTime()
-                                                            currentEditingState = .none
-                                                            print("binding \(currentEditingState)")
-                                                        }
-                                                    }
-                                                )
-                                                
-                                                if let restTimeToEdit = exercise.restTime {
-                                                    RestTimeEditPopover(restTimeEntity: restTimeToEdit, showPopover: isEditingBinding) { duration in
-                                                        viewModel.updateRestTime(for: exercise, duration: duration)
-                                                    }
-                                                }
+                                            if let exerciseRestTime = exercise.restTime?.duration, viewModel.isEditingRestTime(for: exercise) {
+                                                RestTimeEditPopover(duration: Int(exerciseRestTime), onDurationChange: { duration in
+                                                    viewModel.updateRestTime(for: exercise, duration: duration)
+                                                    viewModel.clearEditingRestTime()
+                                                    currentEditingState = .none
+                                                }, onDiscard: {
+                                                    viewModel.discardRestTime(for: exercise)
+                                                    viewModel.clearEditingRestTime()
+                                                    currentEditingState = .none
+                                                })
                                             } else {
-                                                HStack(alignment: .center, spacing: Constants.Design.spacing) {
+                                                HStack(alignment: .center, spacing: Constants.Design.spacing/2) {
                                                     Button(action: {
                                                         viewModel.setEditingRestTime(for: exercise)
                                                         currentEditingState = .rest
-                                                        print("button \(currentEditingState)")
                                                     }) {
                                                         HStack (alignment: . center)  {
                                                             Image(systemName: "timer")
@@ -110,9 +96,10 @@ struct RestTimeEditView: View {
                                                     }
                                                     if exercise.restTime != nil {
                                                         Button(action: {
-                                                            viewModel.removeRestTime(for: exercise)
+                                                            viewModel.deleteRestTime(for: exercise)
                                                         }) {
                                                             Image(systemName: "trash")
+                                                                .secondaryButtonLabelStyleModifier()
                                                         }
                                                     }
                                                 }
