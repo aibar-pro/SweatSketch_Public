@@ -23,6 +23,7 @@ class RestTimeEditCoordinator: ObservableObject, Coordinator {
         rootViewController = UIHostingController(rootView: view)
     }
     
+
     func saveRestTimeEdit(){
         if #available(iOS 15, *) {
             print("Rest Time Coordinator: Save \(Date.now)")

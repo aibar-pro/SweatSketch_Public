@@ -37,7 +37,6 @@ struct RestTimeEditView: View {
                             Spacer()
                             
                             Button(action: {
-                                
                                 coordinator.saveRestTimeEdit()
                             }) {
                                 Text("Save")
@@ -63,7 +62,7 @@ struct RestTimeEditView: View {
                         }
                         .foregroundSecondaryColorModifier()
                         .padding(.horizontal, Constants.Design.spacing)
-                        
+
                         ScrollView {
                             VStack (alignment: .leading, spacing: Constants.Design.spacing/2) {
                                 ForEach(viewModel.exercises, id: \.self) { exercise in

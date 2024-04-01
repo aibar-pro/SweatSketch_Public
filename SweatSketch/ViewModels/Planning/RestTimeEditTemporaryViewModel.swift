@@ -11,7 +11,7 @@ import CoreData
 class RestTimeEditTemporaryViewModel: ObservableObject {
     private let parentViewModel: WorkoutEditTemporaryViewModel
     private let temporaryRestTimeContext: NSManagedObjectContext
-    
+
     @Published var editingWorkout: WorkoutEntity?
     @Published var exercises: [ExerciseEntity] = []
     @Published var defaultRestTime: RestTimeEntity?
@@ -68,6 +68,7 @@ class RestTimeEditTemporaryViewModel: ObservableObject {
         }
     }
     
+
     func discardRestTime(for exercise: ExerciseEntity) {
         if isNewRestTime {
             deleteRestTime(for: exercise)
@@ -75,6 +76,7 @@ class RestTimeEditTemporaryViewModel: ObservableObject {
         }
     }
     
+
     func setEditingRestTime(for exercise: ExerciseEntity) {
         if let exerciseRestTime = exercise.restTime {
             editingRestTime = exerciseRestTime
@@ -99,8 +101,6 @@ class RestTimeEditTemporaryViewModel: ObservableObject {
         } catch {
             print("Error saving exercise temporary context: \(error)")
         }
-        let restTimes2 = (self.editingWorkout?.restTimes?.allObjects as? [RestTimeEntity])?.filter( { !$0.isDefault} )
-        print(restTimes2?.count ?? "")
     }
     
     func cancelRestTime() {
