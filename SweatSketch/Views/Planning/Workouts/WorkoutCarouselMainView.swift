@@ -72,6 +72,7 @@ struct WorkoutCarouselMainView: View {
                     
                     Button (action: {
                         print("Active workout index: \(coordinator.presentedWorkoutIndex) Workout count: \(viewModel.workouts.count)")
+                        coordinator.startWorkout()
                     }) {
                         Text("Go")
                             .accentButtonLabelStyleModifier()
@@ -110,7 +111,9 @@ struct WorkoutCarouselView_Previews: PreviewProvider {
     
     static var previews: some View {
         let persistenceController = PersistenceController.preview
-        let carouselCoordinator = WorkoutCarouselCoordinator(dataContext: persistenceController.container.viewContext)
+        let appCoordinator = ApplicationCoordinator(dataContext: persistenceController.container.viewContext)
+        let workoutEvent = appCoordinator.workoutEvent
+        let carouselCoordinator = WorkoutCarouselCoordinator(dataContext: persistenceController.container.viewContext, workoutEvent: workoutEvent)
         
         WorkoutCarouselMainView(viewModel: carouselCoordinator.viewModel)
             .environmentObject(carouselCoordinator)

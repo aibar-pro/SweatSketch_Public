@@ -204,7 +204,7 @@ struct WorkoutEditView: View {
                             Spacer()
                             
                             if currentEditingState == .restTime {
-                                if let defaultRestTime = viewModel.defaultRestTime {
+                                if viewModel.defaultRestTime != nil {
                                     DefaultRestTimePopoverView(showPopover: Binding(
                                         get: {
                                             switch currentEditingState {
