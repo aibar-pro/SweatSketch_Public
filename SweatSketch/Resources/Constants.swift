@@ -35,6 +35,10 @@ enum Constants {
             static let noActionDetails = "No Action details"
             
             static let noDuration = "-:-:-"
+            
+            static let restPeriodLabel = "Rest Time"
+            
+            static let activeWorkoutItemError = "Error fetching workout item"
         }
     }
     

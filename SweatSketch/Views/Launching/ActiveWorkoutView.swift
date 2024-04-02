@@ -11,14 +11,101 @@ struct ActiveWorkoutView: View {
     @EnvironmentObject var coordinator: ActiveWorkoutCoordinator
     @ObservedObject var viewModel: ActiveWorkoutViewModel
     
+    @State var yOffset : CGFloat = 0
+    
     var body: some View {
-        VStack {
-            Text(viewModel.activeWorkout?.name ?? Constants.Design.Placeholders.noWorkoutName)
-            HStack{
-                Button("Stop") {
-                    coordinator.finishWorkout()
+        let items = viewModel.items
+        
+        GeometryReader { gReader in
+            VStack (alignment: .center, spacing: Constants.Design.spacing) {
+                
+                HStack{
+                    Text(viewModel.activeWorkout?.name ?? Constants.Design.Placeholders.noWorkoutName)
+                        .font(.title2.bold())
+                        .lineLimit(2)
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        coordinator.finishWorkout()
+                    }) {
+                        Image(systemName: "stop")
+                            .secondaryButtonLabelStyleModifier()
+                    }
+                }
+                .padding(.horizontal, Constants.Design.spacing)
+                
+                ScrollViewReader { scrollProxy in
+//                        Button("Go to active item") {
+//                            if let activeItemID = viewModel.activeItem?.id {
+//                                withAnimation {
+//                                    scrollProxy.scrollTo(activeItemID, anchor: .center)
+//                                }
+//                            }
+//                        }
+
+                    ScrollView {
+                        VStack (alignment: .center, spacing: Constants.Design.spacing) {
+                            ForEach(items, id: \.id) { item in
+                                VStack (alignment: .center, spacing: Constants.Design.spacing) {
+                                    if viewModel.isActiveItem(item: item) {
+                                        switch item.type {
+                                        case .exercise:
+                                            if let exercise = viewModel.getExercise(from: item) {
+                                                ActiveWorkoutExerciseView(exercise: exercise, doneRequested: {
+                                                    viewModel.nextItem()
+                                                    
+                                                }, returnRequested: {
+                                                    viewModel.previousItem()
+                                                })
+                                                .frame(width: gReader.size.width * 0.75)
+                                            }
+                                        case .rest:
+                                                ActiveWorkoutRestTimeView(restTime: item, doneRequested: {
+                                                    viewModel.nextItem()
+                                                }, returnRequested: {
+                                                    viewModel.previousItem()
+                                                })
+                                                .frame(width: gReader.size.width * 0.6)
+                                        case .none:
+                                            ErrorMessageView(text: Constants.Design.Placeholders.activeWorkoutItemError)
+                                                .fixedSize()
+                                        }
+                                    } else {
+                                        Text(item.name)
+                                            .font(.subheadline)
+                                            .lineLimit(3)
+                                            .multilineTextAlignment(.center)
+                                    }
+                                }
+                                .id(item.id)
+                                .padding(Constants.Design.spacing)
+                                .materialCardBackgroundModifier()
+                                .opacity(viewModel.isActiveItem(item: item) ? 1 : 0.4)
+                                
+                            }
+                        }
+                    }
+                    .onChange(of: viewModel.activeItem) { _ in
+                        if let activeItemID = viewModel.activeItem?.id {
+                            withAnimation {
+                                scrollProxy.scrollTo(activeItemID, anchor: .center)
+                            }
+                        }
+                    }
+                    .onAppear(perform: {
+                        if let activeItemID = viewModel.activeItem?.id {
+                            withAnimation {
+                                scrollProxy.scrollTo(activeItemID, anchor: .center)
+                            }
+                        }
+                    })
+                   
+                    
+                    
                 }
             }
+            .accentColor(Constants.Design.Colors.textColorHighEmphasis)
         }
     }
 }
