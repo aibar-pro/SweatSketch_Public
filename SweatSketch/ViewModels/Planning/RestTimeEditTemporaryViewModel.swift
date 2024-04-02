@@ -38,8 +38,6 @@ class RestTimeEditTemporaryViewModel: ObservableObject {
             self.defaultRestTime = self.editingWorkout?.restTimes?.first { restTime in
                 (restTime as? RestTimeEntity)?.isDefault == true
             } as? RestTimeEntity
-            
-//            self.restTimes = (self.editingWorkout?.restTimes?.allObjects as? [RestTimeEntity])?.filter( { !$0.isDefault} )
         }
     }
     

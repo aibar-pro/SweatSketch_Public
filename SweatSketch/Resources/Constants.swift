@@ -35,6 +35,8 @@ enum Constants {
             static let noActionDetails = "No Action details"
             
             static let noDuration = "-:-:-"
+            
+            static let restPeriodLabel = "Resting"
         }
     }
     

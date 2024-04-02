@@ -48,7 +48,7 @@ struct WorkoutListView: View {
                     List {
                         ForEach(viewModel.workouts, id: \.self) { plan in
                             
-                            Text(plan.name ?? "n/a")
+                            Text(plan.name ?? Constants.Design.Placeholders.noWorkoutName)
                                 .font(.title3)
                                 .lineLimit(3)
                                 .padding(.horizontal, Constants.Design.spacing/2)

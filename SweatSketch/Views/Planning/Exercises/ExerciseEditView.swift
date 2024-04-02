@@ -124,7 +124,7 @@ struct ExerciseEditView: View {
                                             .opacity(currentEditingState != .none ? 0.3 : 1)
                                         
                                         Picker("Superset reps", selection: Binding(
-                                            get: { Int(viewModel.editingExercise?.superSets ?? 1)},
+                                            get: { Int(viewModel.editingExercise?.superSets ?? Int16(Constants.DefaultValues.supersetCount))},
                                             set: { viewModel.setSupersets(superset: $0)}))
                                         {
                                             ForEach(1...99, id: \.self) {
