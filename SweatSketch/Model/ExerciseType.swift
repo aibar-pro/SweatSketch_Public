@@ -5,10 +5,6 @@
 //  Created by aibaranchikov on 19.03.2024.
 //
 
-import Foundation
-
-//Consider deletion
-
 enum ExerciseType: String {
     case setsNreps, timed, mixed
     case unknown

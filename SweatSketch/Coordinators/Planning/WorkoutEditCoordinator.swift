@@ -5,7 +5,6 @@
 //  Created by aibaranchikov on 15.03.2024.
 //
 
-import Foundation
 import SwiftUI
 
 class WorkoutEditCoordinator: ObservableObject, Coordinator {
