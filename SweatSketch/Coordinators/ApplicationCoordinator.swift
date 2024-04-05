@@ -16,9 +16,7 @@ class ApplicationCoordinator: ObservableObject, Coordinator {
     
     let dataContext: NSManagedObjectContext
     
-//    let workoutStarted = PassthroughSubject<UUID, Never>()
-//    let workoutFinished = PassthroughSubject<Void, Never>()
-    let workoutEvent = PassthroughSubject<WorkoutEvent, Never>()
+    let workoutEvent = PassthroughSubject<WorkoutEventType, Never>()
     var cancellables = Set<AnyCancellable>()
     
     init(dataContext: NSManagedObjectContext) {
@@ -28,8 +26,11 @@ class ApplicationCoordinator: ObservableObject, Coordinator {
     }
     
     func start() {
-        
-        
+        setupEventSubscription()
+        checkActiveWorkoutValue()
+    }
+    
+    private func setupEventSubscription() {
         workoutEvent
             .print("App Coordinator: Workout Event")
             .sink { [weak self] event in
@@ -37,29 +38,45 @@ class ApplicationCoordinator: ObservableObject, Coordinator {
                 
                 switch event {
                 case .started(let workoutUUID):
-                    UserDefaults.standard.set(workoutUUID.uuidString, forKey: UserDefaultsKeys.activeWorkoutUUID)
-                    
-                    let activeWorkoutCoordinator = ActiveWorkoutCoordinator(dataContext: dataContext, activeWorkoutUUID: workoutUUID, workoutEvent: self.workoutEvent)
-                    activeWorkoutCoordinator.start()
-                    
-                    self.childCoordinators.append(activeWorkoutCoordinator)
-                    self.rootViewController.popToRootViewController(animated: true)
-                    self.rootViewController.viewControllers = [activeWorkoutCoordinator.rootViewController]
+                    showActiveWorkout(with: workoutUUID)
                 case .finished:
-                    UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.activeWorkoutUUID)
-                        
-                    let workoutPlanningCoordinator = WorkoutCarouselCoordinator(dataContext: dataContext, workoutEvent: self.workoutEvent)
-                    workoutPlanningCoordinator.start()
-                        
-                    self.childCoordinators.append(workoutPlanningCoordinator)
-                    self.rootViewController.popToRootViewController(animated: true)
-                    self.rootViewController.viewControllers = [workoutPlanningCoordinator.rootViewController]
+                    showWorkoutCarousel()
+                case .enterCollections:
+                    showWorkoutCollection()
                 }
-                
             }
             .store(in: &cancellables)
+    }
+    
+    private func showActiveWorkout(with workoutUUID: UUID) {
+        UserDefaults.standard.set(workoutUUID.uuidString, forKey: UserDefaultsKeys.activeWorkoutUUID)
         
-        checkActiveWorkoutValue()
+        let activeWorkoutCoordinator = ActiveWorkoutCoordinator(dataContext: dataContext, activeWorkoutUUID: workoutUUID, workoutEvent: self.workoutEvent)
+        activeWorkoutCoordinator.start()
+        
+        self.childCoordinators.append(activeWorkoutCoordinator)
+        self.rootViewController.popToRootViewController(animated: true)
+        self.rootViewController.viewControllers = [activeWorkoutCoordinator.rootViewController]
+    }
+    
+    private func showWorkoutCarousel() {
+        UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.activeWorkoutUUID)
+            
+        let workoutPlanningCoordinator = WorkoutCarouselCoordinator(dataContext: dataContext, workoutEvent: self.workoutEvent)
+        workoutPlanningCoordinator.start()
+            
+        self.childCoordinators.append(workoutPlanningCoordinator)
+        self.rootViewController.popToRootViewController(animated: true)
+        self.rootViewController.viewControllers = [workoutPlanningCoordinator.rootViewController]
+    }
+    
+    private func showWorkoutCollection() {
+        let workoutCollectionCoordinator = WorkoutCollectionCoordinator(dataContext: dataContext, workoutEvent: self.workoutEvent)
+        workoutCollectionCoordinator.start()
+            
+        self.childCoordinators.append(workoutCollectionCoordinator)
+        self.rootViewController.popToRootViewController(animated: true)
+        self.rootViewController.viewControllers = [workoutCollectionCoordinator.rootViewController]
     }
     
     func checkActiveWorkoutValue() {

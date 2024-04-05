@@ -26,6 +26,7 @@ enum Constants {
         }
         
         enum Placeholders {
+            static let noCollectionName = "Untitled Collection"
             static let noWorkoutName = "Untitled Workout"
             static let noExerciseName = "Untitled Exercise"
             static let noActionName = "Untitled Action"
@@ -36,7 +37,9 @@ enum Constants {
             
             static let noDuration = "-:-:-"
             
-            static let restPeriodLabel = "Resting"
+            static let restPeriodLabel = "Rest Time"
+            
+            static let activeWorkoutItemError = "Error fetching workout item"
         }
     }
     

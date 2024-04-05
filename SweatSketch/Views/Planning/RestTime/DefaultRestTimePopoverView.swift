@@ -32,7 +32,7 @@ struct DefaultRestTimePopoverView: View {
                 VStack (alignment: .center, spacing: Constants.Design.spacing/2) {
                     DurationPickerEditView(durationInSeconds: $duration, showHours: false, secondsInterval: 10)
                         .onAppear(perform: {
-                            self.duration = Int(coordinator.viewModel.defaultRestTime?.duration ?? Int32(Constants.DefaultValues.restTimeDuration))
+                            self.duration = Int(coordinator.viewModel.defaultRestTime.duration ?? Int32(Constants.DefaultValues.restTimeDuration))
                         })
                         .background(
                             RoundedRectangle(cornerRadius: Constants.Design.cornerRadius)
@@ -84,7 +84,7 @@ struct DefaultRestTimePopoverView_Preview : PreviewProvider {
         let workoutEditViewModel = WorkoutEditTemporaryViewModel(parentViewModel: workoutCarouselViewModel, editingWorkout: workoutCarouselViewModel.workouts[0])
         let workoutEditCoordinator = WorkoutEditCoordinator(viewModel: workoutEditViewModel)
         
-        let restTime = workoutEditViewModel.defaultRestTime!
+        let restTime = workoutEditViewModel.defaultRestTime
         
         DefaultRestTimePopoverView(showPopover: .constant(true))
             .environmentObject(workoutEditCoordinator)

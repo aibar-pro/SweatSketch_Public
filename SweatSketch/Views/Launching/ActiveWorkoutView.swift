@@ -35,105 +35,74 @@ struct ActiveWorkoutView: View {
                 }
                 .padding(.horizontal, Constants.Design.spacing)
                 
-                GeometryReader { timelineGeometry in
-                    ScrollViewReader { scrollProxy in
-                        Button("Go to active item") {
-                            if let activeItemID = viewModel.activeItem?.id {
-                                withAnimation {
-                                    scrollProxy.scrollTo(activeItemID, anchor: .center)
-                                }
-                            }
-                        }
+                ScrollViewReader { scrollProxy in
+//                        Button("Go to active item") {
+//                            if let activeItemID = viewModel.activeItem?.id {
+//                                withAnimation {
+//                                    scrollProxy.scrollTo(activeItemID, anchor: .center)
+//                                }
+//                            }
+//                        }
 
-                        ScrollView {
-                            VStack (spacing: Constants.Design.spacing) {
-                                ForEach(items, id: \.id) { item in
-                                    VStack (alignment: .center, spacing: Constants.Design.spacing) {
-                                        HStack (alignment: .center, spacing: Constants.Design.spacing/2) {
-                                            if viewModel.isActiveItem(item: item) {
-                                                VStack {
-                                                    Button(action: {
-                                                        viewModel.previousItem()
-                                                    }) {
-                                                        Image(systemName: "chevron.backward")
-                                                            .secondaryButtonLabelStyleModifier()
-                                                    }
-                                                    Spacer()
-                                                }
-                                            }
-                                            Spacer()
-                                            
-                                            VStack (alignment: .center, spacing: Constants.Design.spacing) {
-                                                Text(item.name ?? Constants.Design.Placeholders.noActionName)
-                                                    .font(viewModel.isActiveItem(item: item) ? .headline.bold() : .subheadline)
-                                                    .lineLimit(3)
-                                                    .multilineTextAlignment(.center)
-                                               
-                                                if viewModel.isActiveItem(item: item) {
-                                                    switch item.type {
-                                                    case .rest, .timed:
-                                                        if let duration = item.duration {
-                                                            DurationView(durationInSeconds: Int(duration))
-                                                        }
-                                                    case .reps:
-                                                        if let reps = item.reps {
-                                                            Text("x\(reps)")
-                                                        } else if let repsmax = item.repsMax {
-                                                            Text ("MAX")
-                                                        }
-                                                    default:
-                                                        EmptyView()
-                                                    }
-                                                    
-                                                }
-                                            }
-                                            
-                                            Spacer()
-                                            if viewModel.isActiveItem(item: item) {
-                                                
-                                                Button(action: {
+                    ScrollView {
+                        VStack (alignment: .center, spacing: Constants.Design.spacing) {
+                            ForEach(items, id: \.id) { item in
+                                VStack (alignment: .center, spacing: Constants.Design.spacing) {
+                                    if viewModel.isActiveItem(item: item) {
+                                        switch item.type {
+                                        case .exercise:
+                                            if let exercise = viewModel.getExercise(from: item) {
+                                                ActiveWorkoutExerciseView(exercise: exercise, doneRequested: {
                                                     viewModel.nextItem()
-                                                }) {
-                                                    Image(systemName: "chevron.forward")
-                                                        .font(.headline.bold())
-                                                        .frame(height: 150 - 3.5 * Constants.Design.spacing)
-                                                        .primaryButtonLabelStyleModifier()
-                                                }
+                                                    
+                                                }, returnRequested: {
+                                                    viewModel.previousItem()
+                                                })
+                                                .frame(width: gReader.size.width * 0.75)
                                             }
+                                        case .rest:
+                                                ActiveWorkoutRestTimeView(restTime: item, doneRequested: {
+                                                    viewModel.nextItem()
+                                                }, returnRequested: {
+                                                    viewModel.previousItem()
+                                                })
+                                                .frame(width: gReader.size.width * 0.6)
+                                        case .none:
+                                            ErrorMessageView(text: Constants.Design.Placeholders.activeWorkoutItemError)
+                                                .fixedSize()
                                         }
+                                    } else {
+                                        Text(item.name)
+                                            .font(.subheadline)
+                                            .lineLimit(3)
+                                            .multilineTextAlignment(.center)
                                     }
-                                    .id(item.id)
-                                    .padding(Constants.Design.spacing)
-                                    .frame(width: timelineGeometry.size.width * (viewModel.isActiveItem(item: item) ? 1 : 0.75) - 2 * Constants.Design.spacing, height: viewModel.isActiveItem(item: item) ? 150 : 75, alignment: .top)
-                                    .materialCardBackgroundModifier()
-                                    .opacity(viewModel.isActiveItem(item: item) ? 1 : 0.4)
                                 }
-                            }
-                            
-                        }
-                        .padding(.horizontal, Constants.Design.spacing)
-                        .onChange(of: viewModel.activeItem) { _ in
-                            if let activeItemID = viewModel.activeItem?.id {
-                                withAnimation {
-                                    scrollProxy.scrollTo(activeItemID, anchor: .center)
-                                }
+                                .id(item.id)
+                                .padding(Constants.Design.spacing)
+                                .materialCardBackgroundModifier()
+                                .opacity(viewModel.isActiveItem(item: item) ? 1 : 0.4)
+                                
                             }
                         }
-                        .onAppear(perform: {
-                            if let activeItemID = viewModel.activeItem?.id {
-                                withAnimation {
-                                    scrollProxy.scrollTo(activeItemID, anchor: .center)
-                                }
-                            }
-                        })
-                        
-                        
                     }
+                    .onChange(of: viewModel.activeItem) { _ in
+                        if let activeItemID = viewModel.activeItem?.id {
+                            withAnimation {
+                                scrollProxy.scrollTo(activeItemID, anchor: .center)
+                            }
+                        }
+                    }
+                    .onAppear(perform: {
+                        if let activeItemID = viewModel.activeItem?.id {
+                            withAnimation {
+                                scrollProxy.scrollTo(activeItemID, anchor: .center)
+                            }
+                        }
+                    })
                 }
-                .accentColor(Constants.Design.Colors.textColorHighEmphasis)
-                
-                
             }
+            .accentColor(Constants.Design.Colors.textColorHighEmphasis)
         }
     }
 }

@@ -30,8 +30,6 @@ class ExerciseEditCoordinator: ObservableObject, Coordinator {
         } else {
             print("Exercise Coordinator: Save")
         }
-        
-        viewModel.saveFilteredExerciseActions()
         viewModel.saveExercise()
         rootViewController.dismiss(animated: true)
 //        rootViewController.navigationController?.popViewController(animated: true)

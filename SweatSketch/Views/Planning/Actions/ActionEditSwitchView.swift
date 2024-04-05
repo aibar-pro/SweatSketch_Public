@@ -85,7 +85,7 @@ struct ActionEditSwitchView_Previews: PreviewProvider {
         let exerciseEditViewModel = ExerciseEditTemporaryViewModel(parentViewModel: workoutEditViewModel, editingExercise: workoutEditViewModel.exercises[0])
         
         let action = exerciseEditViewModel.exerciseActions[0]
-        let exerciseType = exerciseEditViewModel.editingExercise?.type
+        let exerciseType = exerciseEditViewModel.editingExercise.type
         
 //        let isEditingBinding = Binding<Bool>(
 //            get: {

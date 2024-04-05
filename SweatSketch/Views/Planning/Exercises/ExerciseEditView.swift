@@ -78,7 +78,7 @@ struct ExerciseEditView: View {
                     .padding(.top, Constants.Design.spacing/2)
                     .padding(.horizontal, Constants.Design.spacing)
                     
-                    Text(viewModel.editingExercise?.name ?? Constants.Design.Placeholders.noExerciseName)
+                    Text(viewModel.editingExercise.name ?? Constants.Design.Placeholders.noExerciseName)
                         .font(.title2.bold())
                         .lineLimit(2)
                         .padding(.horizontal, Constants.Design.spacing)
@@ -106,7 +106,7 @@ struct ExerciseEditView: View {
                             if currentEditingState != .list {
                                 
                                 Picker("Type", selection:
-                                        Binding(get: { ExerciseType.from(rawValue: self.viewModel.editingExercise?.type) }, set: { self.viewModel.setEditingExerciseType(to: $0) }
+                                        Binding(get: { ExerciseType.from(rawValue: self.viewModel.editingExercise.type) }, set: { self.viewModel.setEditingExerciseType(to: $0) }
                                                )) {
                                     ForEach(ExerciseType.exerciseTypes, id: \.self) { type in
                                         Text(type.screenTitle)
@@ -118,13 +118,13 @@ struct ExerciseEditView: View {
                                 .padding(.horizontal, Constants.Design.spacing)
                                 .padding(.bottom, Constants.Design.spacing/2)
                                 
-                                if ExerciseType.from(rawValue: viewModel.editingExercise?.type) == .mixed {
+                                if ExerciseType.from(rawValue: viewModel.editingExercise.type) == .mixed {
                                     HStack {
                                         Text("Superset repetitions:")
                                             .opacity(currentEditingState != .none ? 0.3 : 1)
                                         
                                         Picker("Superset reps", selection: Binding(
-                                            get: { Int(viewModel.editingExercise?.superSets ?? Int16(Constants.DefaultValues.supersetCount))},
+                                            get: { Int(viewModel.editingExercise.superSets ?? Int16(Constants.DefaultValues.supersetCount))},
                                             set: { viewModel.setSupersets(superset: $0)}))
                                         {
                                             ForEach(1...99, id: \.self) {
@@ -144,7 +144,7 @@ struct ExerciseEditView: View {
                                     //TODO: Consider View change: from List to ScrollView
                                     List {
                                         ForEach(viewModel.exerciseActions.filter { action in
-                                            switch ExerciseType.from(rawValue: viewModel.editingExercise?.type) {
+                                            switch ExerciseType.from(rawValue: viewModel.editingExercise.type) {
                                             case .setsNreps:
                                                 return ExerciseActionType.from(rawValue: action.type) == .setsNreps
                                             case .timed:
@@ -172,7 +172,7 @@ struct ExerciseEditView: View {
                                             )
                                             
                                             HStack (alignment: .center) {
-                                                let exerciseType = ExerciseType.from(rawValue: viewModel.editingExercise?.type)
+                                                let exerciseType = ExerciseType.from(rawValue: viewModel.editingExercise.type)
                                                 
                                                 ActionEditSwitchView(actionEntity: action, isEditing: isEditingBinding, exerciseType: exerciseType) {
                                                     type in
@@ -294,22 +294,20 @@ struct ExerciseEditView: View {
                             Spacer()
                             
                             if currentEditingState == .rest {
-                                if let exerciseRestTime = viewModel.restTime {
-                                    ExerciseRestTimePopoverView(restActionEntity: exerciseRestTime, showPopover: Binding(
-                                        get: {
-                                            switch currentEditingState {
-                                            case .rest:
-                                                return true
-                                            default:
-                                                return false
-                                            }
-                                        },
-                                        set: {_ in
-                                            currentEditingState = .none
-                                        }))
-                                    .padding(Constants.Design.spacing)
-                                    .materialCardBackgroundModifier()
-                                }
+                                ExerciseRestTimePopoverView(restActionEntity: viewModel.restTimeBetweenActions, showPopover: Binding(
+                                    get: {
+                                        switch currentEditingState {
+                                        case .rest:
+                                            return true
+                                        default:
+                                            return false
+                                        }
+                                    },
+                                    set: {_ in
+                                        currentEditingState = .none
+                                    }))
+                                .padding(Constants.Design.spacing)
+                                .materialCardBackgroundModifier()
                             }
                         }
                     }
@@ -340,8 +338,8 @@ struct ExerciseEditView: View {
                             HStack (alignment: .center, spacing: Constants.Design.spacing/4) {
                                 Image(systemName: "timer")
                                 
-                                if let exerciseRestTime = viewModel.restTime, currentEditingState != .rest {
-                                    DurationView(durationInSeconds: Int(exerciseRestTime.duration))
+                                if currentEditingState != .rest {
+                                    DurationView(durationInSeconds: Int(viewModel.restTimeBetweenActions.duration))
                                 } else {
                                     Text(Constants.Design.Placeholders.noDuration)
                                 }

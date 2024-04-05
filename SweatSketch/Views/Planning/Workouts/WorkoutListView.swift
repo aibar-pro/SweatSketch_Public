@@ -102,7 +102,7 @@ struct WorkoutListView_Previews: PreviewProvider {
         
         let persistenceController = PersistenceController.preview
         let workoutViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext)
-        let workoutListModel = WorkoutListTemporaryViewModel(parentViewModel: workoutViewModel)
+        let workoutListModel = WorkoutListTemporaryViewModel(parentViewModel: workoutViewModel, workoutCollection: workoutViewModel.workoutCollection)
         let workoutCoordinator = WorkoutListCoordinator(viewModel: workoutListModel)
         
         WorkoutListView(viewModel: workoutCoordinator.viewModel)

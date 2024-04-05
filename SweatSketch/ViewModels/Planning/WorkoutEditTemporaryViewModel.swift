@@ -11,113 +11,95 @@ import CoreData
 class WorkoutEditTemporaryViewModel: ObservableObject {
     
     private let parentViewModel: WorkoutCarouselViewModel
-    let temporaryWorkoutContext: NSManagedObjectContext
+    let mainContext: NSManagedObjectContext
     var canUndo: Bool {
-        return temporaryWorkoutContext.undoManager?.canUndo ?? false
+        return mainContext.undoManager?.canUndo ?? false
     }
     var canRedo: Bool {
-        return temporaryWorkoutContext.undoManager?.canRedo ?? false
+        return mainContext.undoManager?.canRedo ?? false
     }
     
-    @Published var editingWorkout: WorkoutEntity?
+    @Published var editingWorkout: WorkoutEntity
     @Published var exercises: [ExerciseEntity] = []
-    @Published var defaultRestTime: RestTimeEntity?
+    @Published var defaultRestTime: RestTimeEntity
+    
+    private let collectionDataManager = CollectionDataManager()
+    private let workoutDataManager = WorkoutDataManager()
+    private let exerciseDataManager = ExerciseDataManager()
     
     init(parentViewModel: WorkoutCarouselViewModel, editingWorkout: WorkoutEntity? = nil) {
-        self.temporaryWorkoutContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-        self.temporaryWorkoutContext.parent = parentViewModel.mainContext
+        self.mainContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        self.mainContext.parent = parentViewModel.mainContext
         self.parentViewModel = parentViewModel
         
-        if self.temporaryWorkoutContext.undoManager == nil {
-            self.temporaryWorkoutContext.undoManager = UndoManager()
+        if self.mainContext.undoManager == nil {
+            self.mainContext.undoManager = UndoManager()
         }
-        self.temporaryWorkoutContext.undoManager?.levelsOfUndo = 10
-        self.temporaryWorkoutContext.undoManager?.beginUndoGrouping()
+        self.mainContext.undoManager?.levelsOfUndo = 10
+        self.mainContext.undoManager?.beginUndoGrouping()
         
-        if editingWorkout != nil {
-            let workoutFetchRequest: NSFetchRequest<WorkoutEntity> = WorkoutEntity.fetchRequest()
-            workoutFetchRequest.predicate = NSPredicate(format: "SELF == %@", editingWorkout!.objectID)
-            do {
-                self.editingWorkout = try self.temporaryWorkoutContext.fetch(workoutFetchRequest).first
-            } catch {
-                print("Error fetching workout: \(error)")
-            }
-            self.exercises = self.editingWorkout?.exercises?.array as? [ExerciseEntity] ?? []
-            
-            self.defaultRestTime = editingWorkout?.restTimes?.first { restTime in
-                (restTime as? RestTimeEntity)?.isDefault == true
-            } as? RestTimeEntity
-            if self.defaultRestTime == nil {
-                addDefaultRestTime(withDuration: Constants.DefaultValues.restTimeDuration)
-            }
+        self.editingWorkout = WorkoutEntity()
+        self.defaultRestTime = RestTimeEntity()
+        
+        if let workout = editingWorkout, let workoutToEdit = workoutDataManager.fetchWorkout(workout: workout, in: self.mainContext) {
+ 
+            self.editingWorkout = workoutToEdit
+            self.exercises = workoutDataManager.fetchExercises(for: workoutToEdit, in: self.mainContext)
             
         } else {
-            addWorkout()
-            addDefaultRestTime(withDuration: Constants.DefaultValues.restTimeDuration)
+            let newWorkoutPosition = (parentViewModel.workouts.last?.position ?? -1) + 1
+            self.editingWorkout = workoutDataManager.createDefaultWorkout(position: newWorkoutPosition, in: self.mainContext)
+        }
+        
+        //Setup default workout rest time
+        if let defaultRestTime = workoutDataManager.fetchDefaultRestTime(for: self.editingWorkout, in: self.mainContext) {
+            self.defaultRestTime = defaultRestTime
+        } else {
+            self.defaultRestTime = createDefaultRestTime(withDuration: Constants.DefaultValues.restTimeDuration)
+            self.editingWorkout.addToRestTimes(self.defaultRestTime)
         }
         
         //Ignore Workout and default RestTime creation for undo/redo
-        self.temporaryWorkoutContext.undoManager?.endUndoGrouping()
-        self.temporaryWorkoutContext.undoManager?.removeAllActions()
-    }
-    
-    func addWorkout() {
-        let newWorkout = WorkoutEntity(context: temporaryWorkoutContext)
-        newWorkout.uuid = UUID()
-        newWorkout.name = Constants.Design.Placeholders.noWorkoutName
-        newWorkout.position = (parentViewModel.workouts.last?.position ?? -1) + 1
-        self.editingWorkout = newWorkout
+        self.mainContext.undoManager?.endUndoGrouping()
+        self.mainContext.undoManager?.removeAllActions()
     }
     
     func renameWorkout(newName: String) {
-        self.editingWorkout?.name = newName
+        self.editingWorkout.name = newName
     }
     
-    func addExerciseToWorkout(newExercise: ExerciseEntity) {
-        let exerciseFetchRequest: NSFetchRequest<ExerciseEntity> = ExerciseEntity.fetchRequest()
-        exerciseFetchRequest.predicate = NSPredicate(format: "SELF == %@", newExercise.objectID)
-        
-        do {
-            let fetchedExercise  = try self.temporaryWorkoutContext.fetch(exerciseFetchRequest).first!
-            self.exercises.append(fetchedExercise)
-            self.temporaryWorkoutContext.undoManager?.registerUndo(withTarget: self, selector: #selector(redoExerciseDelete(_ :)), object: fetchedExercise)
-            self.editingWorkout?.addToExercises(fetchedExercise)
-        } catch {
-            print("Error fetching exercise for temporary context: \(error)")
-        }
-    }
-    
-    func addDefaultRestTime(withDuration duration: Int) {
-        let newDefaultRestTime = RestTimeEntity(context: temporaryWorkoutContext)
+    func createDefaultRestTime(withDuration duration: Int) -> RestTimeEntity {
+        let newDefaultRestTime = RestTimeEntity(context: mainContext)
         newDefaultRestTime.uuid = UUID()
         newDefaultRestTime.isDefault = true
         newDefaultRestTime.duration = Int32(duration)
-        editingWorkout?.addToRestTimes(newDefaultRestTime)
-        self.defaultRestTime = newDefaultRestTime
+        editingWorkout.addToRestTimes(newDefaultRestTime)
+        
+        return newDefaultRestTime
     }
     
     func updateDefaultRestTime(duration: Int) {
-        self.defaultRestTime?.duration = Int32(duration)
+        self.defaultRestTime.duration = Int32(duration)
     }
     
     func deleteExercise(exerciseEntity: ExerciseEntity) {
         if let index = exercises.firstIndex(of: exerciseEntity) {
             exercises.remove(at: index)
         }
-        self.temporaryWorkoutContext.delete(exerciseEntity)
+        self.mainContext.delete(exerciseEntity)
     }
     
     func deleteWorkoutExercise(at offsets: IndexSet) {
         let exercisesToDelete = offsets.map { self.exercises[$0] }
         exercisesToDelete.forEach { exercise in
-            self.temporaryWorkoutContext.undoManager?.registerUndo(withTarget: self, selector: #selector(undoExerciseDelete(_ :)), object: exercise)
+            self.mainContext.undoManager?.registerUndo(withTarget: self, selector: #selector(undoExerciseDelete(_ :)), object: exercise)
             self.exercises.remove(atOffsets: offsets)
-            self.temporaryWorkoutContext.delete(exercise)
+            self.mainContext.delete(exercise)
         }
     }
     
     @objc func undoExerciseDelete(_ exercise: ExerciseEntity) {
-        temporaryWorkoutContext.undoManager?.registerUndo(withTarget: self, selector: #selector(redoExerciseDelete(_ :)), object: exercise)
+        mainContext.undoManager?.registerUndo(withTarget: self, selector: #selector(redoExerciseDelete(_ :)), object: exercise)
         var low: Int = 0
         var high = exercises.count
         
@@ -133,55 +115,51 @@ class WorkoutEditTemporaryViewModel: ObservableObject {
     }
     
     @objc func redoExerciseDelete(_ exercise: ExerciseEntity) {
-        temporaryWorkoutContext.undoManager?.registerUndo(withTarget: self, selector: #selector(undoExerciseDelete(_ :)), object: exercise)
+        mainContext.undoManager?.registerUndo(withTarget: self, selector: #selector(undoExerciseDelete(_ :)), object: exercise)
         if let index = exercises.firstIndex(of: exercise) {
             exercises.remove(at: index)
         }
-        self.temporaryWorkoutContext.delete(exercise)
+        self.mainContext.delete(exercise)
     }
     
     func reorderWorkoutExercise(from source: IndexSet, to destination: Int) {
         exercises.move(fromOffsets: source, toOffset: destination)
         
         exercises.enumerated().forEach{ index, exercise in
-            editingWorkout?.removeFromExercises(exercise)
-            editingWorkout?.insertIntoExercises(exercise, at: index)
+            editingWorkout.removeFromExercises(exercise)
+            editingWorkout.insertIntoExercises(exercise, at: index)
             exercise.order=Int16(index)
         }
     }
     
     func saveWorkout() {
-        saveTemporaryContext()
         do {
-            try temporaryWorkoutContext.parent?.save()
+            if editingWorkout.collection == nil, let collectionToUpdate = collectionDataManager.fetchCollection(collection: parentViewModel.workoutCollection, in: self.mainContext) {
+                editingWorkout.collection = collectionToUpdate
+            }
+            try mainContext.save()
+            parentViewModel.saveContext()
+            parentViewModel.refreshData()
         } catch {
-            print("Error saving workout main context: \(error)")
+            print("Error saving workout context: \(error)")
         }
-        parentViewModel.refreshData()
     }
     
     func discardWorkout() {
-        temporaryWorkoutContext.rollback()
+        mainContext.rollback()
     }
     
-    private func saveTemporaryContext() {
-        do {
-            try temporaryWorkoutContext.save()
-        } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-        }
+    func refreshData() {
+        self.exercises = workoutDataManager.fetchExercises(for: self.editingWorkout, in: self.mainContext)
     }
     
     func undo() {
-        temporaryWorkoutContext.undoManager?.undo()
+        mainContext.undoManager?.undo()
         self.objectWillChange.send()
     }
     
     func redo() {
-        temporaryWorkoutContext.undoManager?.redo()
+        mainContext.undoManager?.redo()
         self.objectWillChange.send()
     }
 }
