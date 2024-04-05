@@ -38,6 +38,10 @@
 		3F64E4A72BBC042F000567D8 /* UserDefaultsKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F64E4A62BBC042F000567D8 /* UserDefaultsKeys.swift */; };
 		3F64E4A92BBC0779000567D8 /* WorkoutEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F64E4A82BBC0779000567D8 /* WorkoutEvent.swift */; };
 		3F64E4AB2BBC54AF000567D8 /* ActiveWorkoutItemRepresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F64E4AA2BBC54AF000567D8 /* ActiveWorkoutItemRepresentation.swift */; };
+		3F64E4AD2BBEAB93000567D8 /* ErrorMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F64E4AC2BBEAB93000567D8 /* ErrorMessageView.swift */; };
+		3F64E4AF2BBEADE6000567D8 /* ActiveWorkoutExerciseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F64E4AE2BBEADE6000567D8 /* ActiveWorkoutExerciseView.swift */; };
+		3F64E4B12BBEB425000567D8 /* ActiveWorkoutRestTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F64E4B02BBEB425000567D8 /* ActiveWorkoutRestTimeView.swift */; };
+		3F64E4B32BBFBEE6000567D8 /* ActiveWorkoutError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F64E4B22BBFBEE6000567D8 /* ActiveWorkoutError.swift */; };
 		3F6BDEDF26455E160079EC84 /* WorkoutDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6BDEDE26455E160079EC84 /* WorkoutDetailView.swift */; };
 		3F6BDEFB264572B40079EC84 /* ActionEditSwitchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6BDEFA264572B40079EC84 /* ActionEditSwitchView.swift */; };
 		3F866697264542D400124E44 /* SweatSketchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F866696264542D400124E44 /* SweatSketchApp.swift */; };
@@ -98,6 +102,10 @@
 		3F64E4A62BBC042F000567D8 /* UserDefaultsKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKeys.swift; sourceTree = "<group>"; };
 		3F64E4A82BBC0779000567D8 /* WorkoutEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutEvent.swift; sourceTree = "<group>"; };
 		3F64E4AA2BBC54AF000567D8 /* ActiveWorkoutItemRepresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveWorkoutItemRepresentation.swift; sourceTree = "<group>"; };
+		3F64E4AC2BBEAB93000567D8 /* ErrorMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessageView.swift; sourceTree = "<group>"; };
+		3F64E4AE2BBEADE6000567D8 /* ActiveWorkoutExerciseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveWorkoutExerciseView.swift; sourceTree = "<group>"; };
+		3F64E4B02BBEB425000567D8 /* ActiveWorkoutRestTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveWorkoutRestTimeView.swift; sourceTree = "<group>"; };
+		3F64E4B22BBFBEE6000567D8 /* ActiveWorkoutError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveWorkoutError.swift; sourceTree = "<group>"; };
 		3F6BDEDE26455E160079EC84 /* WorkoutDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutDetailView.swift; sourceTree = "<group>"; };
 		3F6BDEFA264572B40079EC84 /* ActionEditSwitchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionEditSwitchView.swift; sourceTree = "<group>"; };
 		3F866693264542D400124E44 /* SweatSketch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SweatSketch.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -278,6 +286,8 @@
 			isa = PBXGroup;
 			children = (
 				3F64E4A42BBBF39F000567D8 /* ActiveWorkoutView.swift */,
+				3F64E4AE2BBEADE6000567D8 /* ActiveWorkoutExerciseView.swift */,
+				3F64E4B02BBEB425000567D8 /* ActiveWorkoutRestTimeView.swift */,
 			);
 			path = Launching;
 			sourceTree = "<group>";
@@ -341,6 +351,7 @@
 				3F4AB5482BA9F9D2005836E7 /* WeightType.swift */,
 				3F64E4A82BBC0779000567D8 /* WorkoutEvent.swift */,
 				3F64E4AA2BBC54AF000567D8 /* ActiveWorkoutItemRepresentation.swift */,
+				3F64E4B22BBFBEE6000567D8 /* ActiveWorkoutError.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -373,6 +384,7 @@
 				3F0955682BB7E4E000AEAF51 /* WorkoutPlanningModalBackgroundView.swift */,
 				3F14CFC22BB29FB100FD6C7E /* DurationPickerEditView.swift */,
 				3F14CFC42BB2A71000FD6C7E /* DurationView.swift */,
+				3F64E4AC2BBEAB93000567D8 /* ErrorMessageView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -490,14 +502,17 @@
 				3F598CC22B8FAD7500117D59 /* WorkoutPlanningMainBackgroundView.swift in Sources */,
 				3F14CFCB2BB2FD8900FD6C7E /* ActionTimedEditView.swift in Sources */,
 				3F31A2E9264C0AD800DF3980 /* WorkoutCarouselCardView.swift in Sources */,
+				3F64E4AD2BBEAB93000567D8 /* ErrorMessageView.swift in Sources */,
 				3F14CFCD2BB3065F00FD6C7E /* ActionSetsNRepsEditView.swift in Sources */,
 				3F1936DF2B98CCAF007978CA /* WorkoutCarouselMainView.swift in Sources */,
+				3F64E4B32BBFBEE6000567D8 /* ActiveWorkoutError.swift in Sources */,
 				3F0955672BB7E0F900AEAF51 /* RestTimeEditCoordinator.swift in Sources */,
 				3F8D788F2B92DC9B006BFD18 /* SecondaryButtonLabelStyleModifier.swift in Sources */,
 				3FF16BA02B10C15800D5F610 /* ExerciseView.swift in Sources */,
 				3F64E49F2BBBF251000567D8 /* ActiveWorkoutViewModel.swift in Sources */,
 				3F64E4A52BBBF39F000567D8 /* ActiveWorkoutView.swift in Sources */,
 				3FB7E6C32BA476E300ECAEDE /* WorkoutListCoordinator.swift in Sources */,
+				3F64E4AF2BBEADE6000567D8 /* ActiveWorkoutExerciseView.swift in Sources */,
 				3F14CFC72BB2EE8800FD6C7E /* ActionSetsNRepsView.swift in Sources */,
 				3FCE2C2A2BA21DD1004B4E62 /* Coordinator.swift in Sources */,
 				3F598CBA2B8F7F6B00117D59 /* MaterialCardBackgroundModifier.swift in Sources */,
@@ -512,6 +527,7 @@
 				3F4AB5492BA9F9D2005836E7 /* WeightType.swift in Sources */,
 				3FF16B9E2B109F5500D5F610 /* WorkoutEditView.swift in Sources */,
 				3F09556B2BB7ED3F00AEAF51 /* RestTimeEditPopover.swift in Sources */,
+				3F64E4B12BBEB425000567D8 /* ActiveWorkoutRestTimeView.swift in Sources */,
 				3F866697264542D400124E44 /* SweatSketchApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

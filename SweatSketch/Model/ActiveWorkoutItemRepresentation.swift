@@ -9,48 +9,32 @@ import Foundation
 
 struct ActiveWorkoutItemRepresentation: Identifiable, Equatable {
     var id: UUID
-    
-    var name: String?
-    var superSetName: String?
-    var entityUUID: UUID?
+    var name: String
     var type: ActiveWorkoutItemType?
     enum ActiveWorkoutItemType {
-        case reps, timed, rest
+        case exercise, rest
     }
-    var reps: Int16?
-    var repsMax: Bool?
-    var duration: Int32?
-    
-    init(name: String? = nil, superSetName: String? = nil, entityUUID: UUID? = nil, type: ActiveWorkoutItemType? = nil, reps: Int16? = nil, repsMax: Bool? = nil, duration: Int32? = nil) {
-            self.id = UUID()
-            self.entityUUID = entityUUID
-            self.name = name
-            self.superSetName = superSetName
-            self.type = type
-            self.reps = reps
-            self.repsMax = repsMax
-            self.duration = duration
-        }
+    var status: ActiveItemStatus?
+    enum ActiveItemStatus {
+        case new, inProgress, finished
+    }
+    var restTimeDuration: Int32?
 }
 
 extension RestTimeEntity {
-    func toActiveItemRepresentation() -> ActiveWorkoutItemRepresentation {
-        return ActiveWorkoutItemRepresentation(name: self.name, entityUUID: self.uuid, type: .rest, duration: self.duration)
+    func toActiveItemRepresentation() throws -> ActiveWorkoutItemRepresentation {
+        guard let uuid = self.uuid else {
+            throw ActiveWorkoutError.invalidItemUUID
+        }
+        return ActiveWorkoutItemRepresentation(id: uuid, name: Constants.Design.Placeholders.restPeriodLabel, type: .rest, status: .new, restTimeDuration: self.duration)
     }
 }
 
-extension ExerciseActionEntity {
-    func restTimeToActiveItemRepresentation(name: String) -> ActiveWorkoutItemRepresentation {
-        return ActiveWorkoutItemRepresentation(entityUUID: self.uuid, type: .rest, duration: self.duration)
-    }
-    func setNrepsActionToActiveItemRepresentation(name: String, superSetName: String? = nil) -> ActiveWorkoutItemRepresentation {
-        if self.repsMax {
-            return ActiveWorkoutItemRepresentation(name: name, superSetName: superSetName, entityUUID: self.uuid, type: .reps, repsMax: true)
-        } else {
-            return ActiveWorkoutItemRepresentation(name: name, superSetName: superSetName, entityUUID: self.uuid, type: .reps, reps: self.reps)
+extension ExerciseEntity {
+    func toActiveWorkoutItemRepresentation() throws -> ActiveWorkoutItemRepresentation {
+        guard let uuid = self.uuid else {
+            throw ActiveWorkoutError.invalidItemUUID
         }
-    }
-    func timedActionToActiveItemRepresentation(name: String, superSetName: String? = nil) -> ActiveWorkoutItemRepresentation {
-        return ActiveWorkoutItemRepresentation(name: name, superSetName: superSetName, entityUUID: self.uuid, type: .timed, duration: self.duration)
+        return ActiveWorkoutItemRepresentation(id: uuid, name: self.name ?? Constants.Design.Placeholders.noExerciseName, type: .exercise, status: .new)
     }
 }
