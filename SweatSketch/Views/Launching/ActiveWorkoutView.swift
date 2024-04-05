@@ -100,9 +100,6 @@ struct ActiveWorkoutView: View {
                             }
                         }
                     })
-                   
-                    
-                    
                 }
             }
             .accentColor(Constants.Design.Colors.textColorHighEmphasis)

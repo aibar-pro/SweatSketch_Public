@@ -38,19 +38,3 @@ extension ExerciseEntity {
         return ActiveWorkoutItemRepresentation(id: uuid, name: self.name ?? Constants.Design.Placeholders.noExerciseName, type: .exercise, status: .new)
     }
 }
-//
-//extension ExerciseActionEntity {
-//    func restTimeToActiveItemRepresentation(name: String) -> ActiveWorkoutItemRepresentation {
-//        return ActiveWorkoutItemRepresentation(entityUUID: self.uuid, type: .rest, duration: self.duration)
-//    }
-//    func setNrepsActionToActiveItemRepresentation(name: String, superSetName: String? = nil) -> ActiveWorkoutItemRepresentation {
-//        if self.repsMax {
-//            return ActiveWorkoutItemRepresentation(name: name, superSetName: superSetName, entityUUID: self.uuid, type: .reps, repsMax: true)
-//        } else {
-//            return ActiveWorkoutItemRepresentation(name: name, superSetName: superSetName, entityUUID: self.uuid, type: .reps, reps: self.reps)
-//        }
-//    }
-//    func timedActionToActiveItemRepresentation(name: String, superSetName: String? = nil) -> ActiveWorkoutItemRepresentation {
-//        return ActiveWorkoutItemRepresentation(name: name, superSetName: superSetName, entityUUID: self.uuid, type: .timed, duration: self.duration)
-//    }
-//}
