@@ -21,7 +21,7 @@
         <attribute name="uuid" attributeType="UUID" usesScalarValueType="NO"/>
         <relationship name="exerciseActions" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="ExerciseActionEntity" inverseName="exercise" inverseEntity="ExerciseActionEntity"/>
         <relationship name="restTime" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="RestTimeEntity" inverseName="followingExercise" inverseEntity="RestTimeEntity"/>
-        <relationship name="workoutPlan" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WorkoutEntity" inverseName="exercises" inverseEntity="WorkoutEntity"/>
+        <relationship name="workout" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WorkoutEntity" inverseName="exercises" inverseEntity="WorkoutEntity"/>
     </entity>
     <entity name="RestTimeEntity" representedClassName="RestTimeEntity" syncable="YES" codeGenerationType="class">
         <attribute name="duration" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
@@ -31,11 +31,21 @@
         <relationship name="followingExercise" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ExerciseEntity" inverseName="restTime" inverseEntity="ExerciseEntity"/>
         <relationship name="workout" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WorkoutEntity" inverseName="restTimes" inverseEntity="WorkoutEntity"/>
     </entity>
+    <entity name="WorkoutCollectionEntity" representedClassName="WorkoutCollectionEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="position" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="type" optional="YES" attributeType="String"/>
+        <attribute name="uuid" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="parentCollection" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WorkoutCollectionEntity" inverseName="subCollections" inverseEntity="WorkoutCollectionEntity"/>
+        <relationship name="subCollections" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="WorkoutCollectionEntity" inverseName="parentCollection" inverseEntity="WorkoutCollectionEntity"/>
+        <relationship name="workouts" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="WorkoutEntity" inverseName="collection" inverseEntity="WorkoutEntity"/>
+    </entity>
     <entity name="WorkoutEntity" representedClassName="WorkoutEntity" syncable="YES" codeGenerationType="class">
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="position" optional="YES" attributeType="Integer 16" defaultValueString="1" usesScalarValueType="YES"/>
         <attribute name="uuid" attributeType="UUID" usesScalarValueType="NO"/>
-        <relationship name="exercises" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="ExerciseEntity" inverseName="workoutPlan" inverseEntity="ExerciseEntity"/>
+        <relationship name="collection" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WorkoutCollectionEntity" inverseName="workouts" inverseEntity="WorkoutCollectionEntity"/>
+        <relationship name="exercises" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="ExerciseEntity" inverseName="workout" inverseEntity="ExerciseEntity"/>
         <relationship name="restTimes" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="RestTimeEntity" inverseName="workout" inverseEntity="RestTimeEntity"/>
     </entity>
 </model>

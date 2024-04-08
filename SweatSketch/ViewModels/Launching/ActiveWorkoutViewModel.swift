@@ -11,21 +11,18 @@ class ActiveWorkoutViewModel: ObservableObject {
     
     let activeWorkoutContext: NSManagedObjectContext
     
+    //TODO: Change optional
     @Published var activeWorkout: WorkoutEntity?
     var items = [ActiveWorkoutItemRepresentation]()
     @Published var activeItem: ActiveWorkoutItemRepresentation?
+    
+    private let workoutDataManager = WorkoutDataManager()
     
     init(context: NSManagedObjectContext, activeWorkoutUUID: UUID) {
         self.activeWorkoutContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         self.activeWorkoutContext.parent = context
         
-        let workoutFetchRequest: NSFetchRequest<WorkoutEntity> = WorkoutEntity.fetchRequest()
-        workoutFetchRequest.predicate = NSPredicate(format: "uuid == %@", activeWorkoutUUID as CVarArg)
-        do {
-            self.activeWorkout = try self.activeWorkoutContext.fetch(workoutFetchRequest).first
-        } catch {
-            print("Error fetching workout: \(error)")
-        }
+        self.activeWorkout = workoutDataManager.fetchWorkout(by: activeWorkoutUUID, in: self.activeWorkoutContext)
         
         fetchActiveWorkoutItems()
         self.activeItem = items.first

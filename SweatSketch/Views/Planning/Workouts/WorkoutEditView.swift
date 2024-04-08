@@ -86,7 +86,7 @@ struct WorkoutEditView: View {
                     }
                     .padding(.horizontal, Constants.Design.spacing)
                     
-                    Text(viewModel.editingWorkout?.name ?? Constants.Design.Placeholders.noWorkoutName)
+                    Text(viewModel.editingWorkout.name ?? Constants.Design.Placeholders.noWorkoutName)
                         .font(.title2.bold())
                         .lineLimit(2)
                         .padding(.horizontal, Constants.Design.spacing)
@@ -249,8 +249,8 @@ struct WorkoutEditView: View {
                             HStack (alignment: .center, spacing: Constants.Design.spacing/4) {
                                 Image(systemName: "timer")
                                    
-                                if let defaultRestTime = viewModel.defaultRestTime, currentEditingState != .restTime {
-                                    DurationView(durationInSeconds: Int(defaultRestTime.duration))
+                                if currentEditingState != .restTime {
+                                    DurationView(durationInSeconds: Int(viewModel.defaultRestTime.duration))
                                 } else {
                                     Text(Constants.Design.Placeholders.noDuration)
                                 }
@@ -301,7 +301,7 @@ struct WorkoutEditView_Previews: PreviewProvider {
         let workoutEditModel = WorkoutEditTemporaryViewModel(parentViewModel: workoutViewModel, editingWorkout: workoutViewModel.workouts[0])
         let workoutEditCoordinator = WorkoutEditCoordinator(viewModel: workoutEditModel)
         
-        WorkoutEditView(viewModel: workoutEditCoordinator.viewModel)
+        WorkoutEditView(viewModel: workoutEditModel)
             .environmentObject(workoutEditCoordinator)
 
     }

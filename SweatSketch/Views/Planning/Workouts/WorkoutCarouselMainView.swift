@@ -18,15 +18,60 @@ struct WorkoutCarouselMainView: View {
     @State var screenTitle: String = Constants.Design.Placeholders.noWorkoutName
     
     var body: some View {
-        GeometryReader { geoReader in
+        VStack (spacing: Constants.Design.spacing/2) {
+            HStack (alignment: .center) {
+                Button (action: {
+                    coordinator.enterCollections()
+                }) {
+                    HStack {
+                        Image(systemName: "chevron.backward")
+                        Text("Collections")
+                    }
+                    .padding(.vertical, Constants.Design.spacing/2)
+                    .padding(.trailing, Constants.Design.spacing/2)
+                }
+                
+                Spacer()
+                
+                HStack {
+                    Button(action: {
+                        coordinator.goToAddWorkout()
+                    }) {
+                        Image(systemName: "plus")
+                            .padding(.vertical, Constants.Design.spacing/2)
+                            .padding(.horizontal, Constants.Design.spacing/2)
+                    }
+                    
+                    
+                    Menu {
+                        Button("Edit workout") {
+                            coordinator.goToEditWorkout()
+                        }
+                        
+                        Button("Reorder or delete workouts") {
+                            coordinator.goToWorkoutLst()
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
+                            .padding(.vertical, Constants.Design.spacing/2)
+                            .padding(.leading, Constants.Design.spacing/2)
+                    }
+                    .disabled(isCarouselDisabled())
+                }
+            }
+            .font(.title3)
+            .padding(.horizontal, Constants.Design.spacing)
             
-            if viewModel.workouts.count>0 {
-                ZStack {
-                    VStack (alignment: .leading, spacing: Constants.Design.spacing) {
-                        HStack {
+            GeometryReader { geoReader in
+                if !isCarouselDisabled() {
+                    ZStack {
+                        VStack (alignment: .leading, spacing: Constants.Design.spacing/2) {
+                            
                             Text(screenTitle)
                                 .font(.title2.bold())
                                 .lineLimit(2)
+                                .padding(.horizontal, Constants.Design.spacing)
+                                .frame(height: min(geoReader.size.height*0.1, 55)) //no preserve space in iOS14
                                 .onAppear(perform: {
                                     if let workoutNameToDisplay = viewModel.workouts[coordinator.presentedWorkoutIndex].name {
                                         screenTitle = workoutNameToDisplay
@@ -42,60 +87,40 @@ struct WorkoutCarouselMainView: View {
                                     }
                                 })
                             
-                            
-                            Spacer()
-                            HStack {
-                                Button(action: coordinator.goToAddWorkout, label: {
-                                    Image(systemName: "plus")
-                                        .font(.title2)
-                                })
-                                
-                                Menu {
-                                    Button("Edit workout") {
-                                        coordinator.goToEditWorkout()
-                                    }
-                                    
-                                    Button("Reorder or delete workouts") {
-                                        coordinator.goToWorkoutLst()
-                                    }
-                                } label: {
-                                    Image(systemName: "ellipsis.circle")
-                                        .font(.title2)
-                                }
-                            }
+                            WorkoutCarouselCardView(viewModel: viewModel, presentedWorkoutIndex: $coordinator.presentedWorkoutIndex)
                         }
-                        .padding(.horizontal, Constants.Design.spacing)
-                        .frame(height: min(geoReader.size.height*0.1, 55))
                         
-                        WorkoutCarouselCardView(viewModel: viewModel, presentedWorkoutIndex: $coordinator.presentedWorkoutIndex)
+                        Button (action: {
+                            print("Active workout index: \(coordinator.presentedWorkoutIndex) Workout count: \(viewModel.workouts.count)")
+                            coordinator.startWorkout()
+                        }) {
+                            Text("Go")
+                                .accentButtonLabelStyleModifier()
+                        }
+                        .padding(.top, -50)
+                        .frame(width: geoReader.size.width, height: geoReader.size.height, alignment: .bottom)
                     }
-                    
-                    Button (action: {
-                        print("Active workout index: \(coordinator.presentedWorkoutIndex) Workout count: \(viewModel.workouts.count)")
-                        coordinator.startWorkout()
-                    }) {
-                        Text("Go")
-                            .accentButtonLabelStyleModifier()
+                } else {
+                    VStack {
+                        Text("No workouts")
+                            .font(.title.bold())
+                        Button(action: {
+                            coordinator.goToAddWorkout()
+                            
+                        }, label: {
+                            Text("Add workout")
+                                .accentButtonLabelStyleModifier()
+                        })
                     }
-                    .padding(.top, -50)
-                    .frame(width: geoReader.size.width, height: geoReader.size.height, alignment: .bottom)
-                }
-                .frame(height: geoReader.size.height, alignment: .topLeading)
-            } else {
-                VStack {
-                    Text("No workouts")
-                        .font(.title.bold())
-                    Button(action: {
-                        coordinator.goToAddWorkout()
-                        
-                    }, label: {
-                        Text("Add workout")
-                            .accentButtonLabelStyleModifier()
-                    })
+                    .frame(width: geoReader.size.width, height: geoReader.size.height, alignment: .center)
                 }
             }
         }
         .accentColor(Constants.Design.Colors.textColorHighEmphasis)
+    }
+    
+    func isCarouselDisabled() -> Bool {
+        return viewModel.workouts.isEmpty
     }
     
     func setSheetBackgroundColor() {

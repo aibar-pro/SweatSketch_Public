@@ -12,30 +12,29 @@ class RestTimeEditTemporaryViewModel: ObservableObject {
     private let parentViewModel: WorkoutEditTemporaryViewModel
     private let temporaryRestTimeContext: NSManagedObjectContext
 
-    @Published var editingWorkout: WorkoutEntity?
+    @Published var editingWorkout: WorkoutEntity
     @Published var exercises: [ExerciseEntity] = []
     @Published var defaultRestTime: RestTimeEntity?
     @Published var editingRestTime: RestTimeEntity?
     var isNewRestTime: Bool = false
     
+    let workoutDataManager = WorkoutDataManager()
+    
     init(parentViewModel: WorkoutEditTemporaryViewModel) {
         self.parentViewModel = parentViewModel
         self.temporaryRestTimeContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-        self.temporaryRestTimeContext.parent = parentViewModel.temporaryWorkoutContext
+        self.temporaryRestTimeContext.parent = parentViewModel.mainContext
         
-        if let parentWorkout = parentViewModel.editingWorkout {
-            let workoutFetchRequest: NSFetchRequest<WorkoutEntity> = WorkoutEntity.fetchRequest()
-            workoutFetchRequest.predicate = NSPredicate(format: "SELF == %@", parentWorkout.objectID)
+        self.editingWorkout = WorkoutEntity()
+        self.exercises = []
+        
+        if let workoutToEdit = workoutDataManager.fetchWorkout(workout: parentViewModel.editingWorkout, in: self.temporaryRestTimeContext) {
             
-            do {
-                self.editingWorkout = try self.temporaryRestTimeContext.fetch(workoutFetchRequest).first
-            } catch {
-                print("Error fetching exercise for temporary context: \(error)")
-            }
+            self.editingWorkout = workoutToEdit
             
-            self.exercises = self.editingWorkout?.exercises?.array as? [ExerciseEntity] ?? []
+            self.exercises = workoutDataManager.fetchExercises(for: workoutToEdit, in: self.temporaryRestTimeContext)
             
-            self.defaultRestTime = self.editingWorkout?.restTimes?.first { restTime in
+            self.defaultRestTime = workoutToEdit.restTimes?.first { restTime in
                 (restTime as? RestTimeEntity)?.isDefault == true
             } as? RestTimeEntity
         }
@@ -47,7 +46,7 @@ class RestTimeEditTemporaryViewModel: ObservableObject {
         newRestTime.isDefault = false
         newRestTime.followingExercise = exercise
         newRestTime.duration = defaultRestTime?.duration ?? Int32(Constants.DefaultValues.restTimeDuration)
-        editingWorkout?.addToRestTimes(newRestTime)
+        editingWorkout.addToRestTimes(newRestTime)
         self.editingRestTime = newRestTime
         isNewRestTime = true
     }

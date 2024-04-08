@@ -48,7 +48,7 @@ struct RestTimeEditView: View {
                         }
                         .padding(.horizontal, Constants.Design.spacing)
                     
-                        Text(viewModel.editingWorkout?.name ?? Constants.Design.Placeholders.noWorkoutName)
+                        Text(viewModel.editingWorkout.name ?? Constants.Design.Placeholders.noWorkoutName)
                         .font(.title2.bold())
                         .lineLimit(2)
                         .padding(.horizontal, Constants.Design.spacing)

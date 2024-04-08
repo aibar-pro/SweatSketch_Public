@@ -11,32 +11,35 @@ import CoreData
 class ExerciseEditTemporaryViewModel: ObservableObject {
 
     private let parentViewModel: WorkoutEditTemporaryViewModel
-    private let temporaryExerciseContext: NSManagedObjectContext
+    private let mainContext: NSManagedObjectContext
     
-    @Published var editingExercise: ExerciseEntity?
+    @Published var editingExercise: ExerciseEntity
     @Published var exerciseActions: [ExerciseActionEntity] = []
     @Published var editingAction: ExerciseActionEntity?
-    @Published var restTime: ExerciseActionEntity?
+    @Published var restTimeBetweenActions: ExerciseActionEntity
     
     private var isNewExercise: Bool = false
     
+    private let workoutDataManager = WorkoutDataManager()
+    private let exerciseDataManager = ExerciseDataManager()
+    
     init(parentViewModel: WorkoutEditTemporaryViewModel, editingExercise: ExerciseEntity? = nil) {
         self.parentViewModel = parentViewModel
-        self.temporaryExerciseContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-        self.temporaryExerciseContext.parent = parentViewModel.temporaryWorkoutContext
+        self.mainContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        self.mainContext.parent = parentViewModel.mainContext
         
-        if editingExercise != nil {
-            let exerciseFetchRequest: NSFetchRequest<ExerciseEntity> = ExerciseEntity.fetchRequest()
-            exerciseFetchRequest.predicate = NSPredicate(format: "SELF == %@", editingExercise!.objectID)
-            do {
-                self.editingExercise = try self.temporaryExerciseContext.fetch(exerciseFetchRequest).first
-            } catch {
-                print("Error fetching exercise for temporary context: \(error)")
-            }
+        self.editingExercise = ExerciseEntity()
+        self.restTimeBetweenActions = ExerciseActionEntity()
+        
+        if let exercise = editingExercise, let exerciseToEdit = exerciseDataManager.fetchExercise(exercise: exercise, in: self.mainContext) {
             
-            self.exerciseActions = (self.editingExercise?.exerciseActions?.array as? [ExerciseActionEntity])?.filter{ !$0.isRestTime } ?? []
+            self.editingExercise = exerciseToEdit
+            
+            self.exerciseActions = exerciseDataManager.fetchActions(for: exerciseToEdit, in: self.mainContext)
+            
+            //TODO: Extract to method
             self.exerciseActions.forEach{
-                switch ExerciseType.from(rawValue: self.editingExercise?.type) {
+                switch ExerciseType.from(rawValue: self.editingExercise.type) {
                 case .timed:
                     if $0.type == nil { $0.type = ExerciseActionType.timed.rawValue }
                     if $0.duration < 1 { $0.duration = Int32(1) }
@@ -47,38 +50,26 @@ class ExerciseEditTemporaryViewModel: ObservableObject {
                 default: break
                 }
             }
-            
-            self.restTime = (self.editingExercise?.exerciseActions?.array as? [ExerciseActionEntity])?.first(where: { $0.isRestTime })
-            if self.restTime == nil {
-                let defaultDuration = parentViewModel.defaultRestTime?.duration ?? Int32(Constants.DefaultValues.restTimeDuration)
-                addOrUpdateDefaultRestTime(withDuration: Int(defaultDuration))
-            }
-            
         } else {
             self.isNewExercise = true
-            addExercise()
-            let defaultDuration = parentViewModel.defaultRestTime?.duration ?? Int32(Constants.DefaultValues.restTimeDuration)
-            addOrUpdateDefaultRestTime(withDuration: Int(defaultDuration))
+            self.editingExercise = exerciseDataManager.createDefaultExercise(position: Int16(parentViewModel.exercises.count), in: self.mainContext)
+        }
+        
+        if let restTimeBetweenActions = exerciseDataManager.fetchRestTimeBetweenActions(for: self.editingExercise, in: self.mainContext) {
+            self.restTimeBetweenActions = restTimeBetweenActions
+        } else {
+            self.restTimeBetweenActions = exerciseDataManager.createDefaultRestTimeBetweenActions(for: Int(parentViewModel.defaultRestTime.duration), in: self.mainContext)
+            self.editingExercise.addToExerciseActions(self.restTimeBetweenActions)
         }
     }
     
-    func addExercise() {
-        let newExercise = ExerciseEntity(context: temporaryExerciseContext)
-        newExercise.uuid = UUID()
-        newExercise.name = Constants.Design.Placeholders.noExerciseName
-        newExercise.order = (parentViewModel.exercises.last?.order ?? -1) + 1
-        newExercise.type = ExerciseType.setsNreps.rawValue
-        self.editingExercise = newExercise
-        addExerciseAction()
-    }
-    
     func addExerciseAction() {
-        let newExerciseAction = ExerciseActionEntity(context: temporaryExerciseContext)
+        let newExerciseAction = ExerciseActionEntity(context: mainContext)
         newExerciseAction.uuid = UUID()
         newExerciseAction.name = Constants.Design.Placeholders.noActionName
-        newExerciseAction.order = Int16(editingExercise?.exerciseActions?.count ?? 0)
+        newExerciseAction.order = Int16(editingExercise.exerciseActions?.count ?? 0)
         
-        switch ExerciseType.from(rawValue: self.editingExercise?.type) {
+        switch ExerciseType.from(rawValue: self.editingExercise.type) {
         case .timed:
             newExerciseAction.type = ExerciseActionType.timed.rawValue
             newExerciseAction.duration = 1
@@ -88,31 +79,23 @@ class ExerciseEditTemporaryViewModel: ObservableObject {
             newExerciseAction.reps = 1
         }
         
-        editingExercise?.addToExerciseActions(newExerciseAction)
+        editingExercise.addToExerciseActions(newExerciseAction)
         exerciseActions.append(newExerciseAction)
         setEditingAction(newExerciseAction)
     }
     
-    func addOrUpdateDefaultRestTime(withDuration duration: Int) {
-        if self.restTime == nil {
-            let newRestTime = ExerciseActionEntity(context: temporaryExerciseContext)
-            newRestTime.uuid = UUID()
-            newRestTime.isRestTime = true
-            newRestTime.duration = Int32(duration)
-            editingExercise?.addToExerciseActions(newRestTime)
-            self.restTime = newRestTime
-        } else {
-            self.restTime?.duration = Int32(duration)
-        }
+    
+    func updateDefaultRestTime(withDuration duration: Int) {
+        self.restTimeBetweenActions.duration = Int32(duration)
     }
     
     func renameExercise(newName: String) {
-        self.editingExercise?.name = newName
+        self.editingExercise.name = newName
         self.objectWillChange.send()
     }
     
     func setSupersets(superset: Int) {
-        self.editingExercise?.superSets = Int16(superset)
+        self.editingExercise.superSets = Int16(superset)
         self.objectWillChange.send()
     }
     
@@ -120,7 +103,7 @@ class ExerciseEditTemporaryViewModel: ObservableObject {
         exerciseActions.forEach{ action in
             let actionType = ExerciseActionType.from(rawValue: action.type).rawValue
             if actionType.isEmpty || actionType == ExerciseActionType.unknown.rawValue {
-                switch ExerciseType.from(rawValue: self.editingExercise?.type) {
+                switch ExerciseType.from(rawValue: self.editingExercise.type) {
                 case .timed:
                     action.type = ExerciseActionType.timed.rawValue
                     if action.duration < 1 { action.duration = Int32(1) }
@@ -132,7 +115,7 @@ class ExerciseEditTemporaryViewModel: ObservableObject {
                 }
             }
         }
-        self.editingExercise?.type = type.rawValue
+        self.editingExercise.type = type.rawValue
         self.objectWillChange.send()
     }
     
@@ -151,7 +134,7 @@ class ExerciseEditTemporaryViewModel: ObservableObject {
     
     func saveFilteredExerciseActions() {
         let filteredActions = exerciseActions.filter { action in
-            switch ExerciseType.from(rawValue: editingExercise?.type) {
+            switch ExerciseType.from(rawValue: editingExercise.type) {
                 case .setsNreps:
                     return ExerciseActionType.from(rawValue: action.type) == .setsNreps
                 case .timed:
@@ -172,7 +155,7 @@ class ExerciseEditTemporaryViewModel: ObservableObject {
         }
         
         itemsToDelete.forEach{ item in
-            self.temporaryExerciseContext.delete(item)
+            self.mainContext.delete(item)
         }
     }
     
@@ -180,7 +163,7 @@ class ExerciseEditTemporaryViewModel: ObservableObject {
         let actionsToDelete = offsets.map { self.exerciseActions[$0] }
         actionsToDelete.forEach { exerciseAction in
             self.exerciseActions.remove(atOffsets: offsets)
-            self.temporaryExerciseContext.delete(exerciseAction)
+            self.mainContext.delete(exerciseAction)
         }
     }
     
@@ -188,8 +171,8 @@ class ExerciseEditTemporaryViewModel: ObservableObject {
         exerciseActions.move(fromOffsets: source, toOffset: destination)
         
         exerciseActions.enumerated().forEach{ index, exerciseAction in
-            editingExercise?.removeFromExerciseActions(exerciseAction)
-            editingExercise?.insertIntoExerciseActions(exerciseAction, at: index)
+            editingExercise.removeFromExerciseActions(exerciseAction)
+            editingExercise.insertIntoExerciseActions(exerciseAction, at: index)
             exerciseAction.order=Int16(index)
         }
     }
@@ -207,21 +190,20 @@ class ExerciseEditTemporaryViewModel: ObservableObject {
     }
     
     func saveExercise() {
+        saveFilteredExerciseActions()
         do {
-            try temporaryExerciseContext.save()
-            if let exerciseToAdd = self.editingExercise, isNewExercise {
-                parentViewModel.addExerciseToWorkout(newExercise: exerciseToAdd)
+            if editingExercise.workout == nil, let workoutToUpdate = workoutDataManager.fetchWorkout(workout: parentViewModel.editingWorkout, in: self.mainContext) {
+                editingExercise.workout = workoutToUpdate
             }
-            parentViewModel.objectWillChange.send()
+            try mainContext.save()
+            parentViewModel.refreshData()
         } catch {
             print("Error saving exercise temporary context: \(error)")
         }
     }
     
     func discardExercise() {
-        if let exerciseToDiscard = self.editingExercise, isNewExercise {
-                temporaryExerciseContext.delete(exerciseToDiscard)
-        }
+        
     }
     
 }

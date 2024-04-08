@@ -17,9 +17,9 @@ class WorkoutCarouselCoordinator: ObservableObject, Coordinator {
     var childCoordinators = [Coordinator]()
     var rootViewController = UIViewController()
     
-    let workoutEvent: PassthroughSubject<WorkoutEvent, Never>
+    let workoutEvent: PassthroughSubject<WorkoutEventType, Never>
     
-    init(dataContext: NSManagedObjectContext, workoutEvent: PassthroughSubject<WorkoutEvent, Never>) {
+    init(dataContext: NSManagedObjectContext, workoutEvent: PassthroughSubject<WorkoutEventType, Never>) {
         rootViewController = UIViewController()
         viewModel = WorkoutCarouselViewModel(context: dataContext)
         self.workoutEvent = workoutEvent
@@ -29,6 +29,10 @@ class WorkoutCarouselCoordinator: ObservableObject, Coordinator {
         if let launchedWorkout = viewModel.workouts[presentedWorkoutIndex].uuid {
             workoutEvent.send(.started(launchedWorkout))
         }
+    }
+    
+    func enterCollections() {
+        workoutEvent.send(.enterCollections)
     }
     
     func goToAddWorkout() {
@@ -57,7 +61,7 @@ class WorkoutCarouselCoordinator: ObservableObject, Coordinator {
     }
     
     func goToWorkoutLst() {
-        let temporaryWorkoutListViewModel = WorkoutListTemporaryViewModel(parentViewModel: viewModel)
+        let temporaryWorkoutListViewModel = WorkoutListTemporaryViewModel(parentViewModel: viewModel, workoutCollection: viewModel.workoutCollection)
         let workoutListCoordinator = WorkoutListCoordinator(viewModel: temporaryWorkoutListViewModel)
         
         workoutListCoordinator.start()
