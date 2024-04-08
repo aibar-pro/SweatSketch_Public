@@ -21,15 +21,14 @@ struct WorkoutCarouselCardView: View {
             let cardHeight: CGFloat = geoReader.size.height * 0.95
             
             HStack(alignment: .center, spacing: cardSpacing) {
-                ForEach(viewModel.workouts, id: \.self) { plan in
-                    WorkoutDetailView(workoutEntity: plan)
+                ForEach(viewModel.workouts, id: \.id) { workout in
+                    WorkoutDetailView(workoutRepresentation: workout)
                         .padding(.all, Constants.Design.spacing/2)
                         .materialCardBackgroundModifier()
                         .frame(width: cardWidth, height: cardHeight, alignment: .top)
-                        .animation(Animation.bouncy(duration: 0.5))
-                    
                 }
             }
+            .animation(Animation.bouncy(duration: 0.5))
             .modifier(SnapCarouselModifier(items: viewModel.workouts.count, itemWidth: cardWidth, itemSpacing: cardSpacing, screenWidth: geoReader.size.width, currentIndex: $presentedWorkoutIndex))
         }
     }
@@ -37,9 +36,15 @@ struct WorkoutCarouselCardView: View {
 
 struct WorkoutPlanCarouselView_Previews: PreviewProvider {
     static var previews: some View {
+
         let persistenceController = PersistenceController.preview
         
-        WorkoutCarouselCardView(viewModel: WorkoutCarouselViewModel(context: persistenceController.container.viewContext), presentedWorkoutIndex: .constant(0))
+        let collectionDataManager = CollectionDataManager()
+        let firstCollection = collectionDataManager.fetchFirstUserCollection(in: persistenceController.container.viewContext)
+        
+        let workoutViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext, collectionUUID: firstCollection?.uuid)
+        
+        WorkoutCarouselCardView(viewModel: workoutViewModel, presentedWorkoutIndex: .constant(0))
 
     }
 }

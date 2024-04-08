@@ -11,21 +11,18 @@ class ActiveWorkoutViewModel: ObservableObject {
     
     let activeWorkoutContext: NSManagedObjectContext
     
+    //TODO: Change optional
     @Published var activeWorkout: WorkoutEntity?
     var items = [ActiveWorkoutItemRepresentation]()
     @Published var activeItem: ActiveWorkoutItemRepresentation?
+    
+    private let workoutDataManager = WorkoutDataManager()
     
     init(context: NSManagedObjectContext, activeWorkoutUUID: UUID) {
         self.activeWorkoutContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         self.activeWorkoutContext.parent = context
         
-        let workoutFetchRequest: NSFetchRequest<WorkoutEntity> = WorkoutEntity.fetchRequest()
-        workoutFetchRequest.predicate = NSPredicate(format: "uuid == %@", activeWorkoutUUID as CVarArg)
-        do {
-            self.activeWorkout = try self.activeWorkoutContext.fetch(workoutFetchRequest).first
-        } catch {
-            print("Error fetching workout: \(error)")
-        }
+        self.activeWorkout = workoutDataManager.fetchWorkout(by: activeWorkoutUUID, in: self.activeWorkoutContext)
         
         fetchActiveWorkoutItems()
         self.activeItem = items.first
@@ -60,7 +57,7 @@ class ActiveWorkoutViewModel: ObservableObject {
                             let newItem = try exerciseRestTime.toActiveItemRepresentation()
                             items.append(newItem)
                         } else {
-                            let newItem = ActiveWorkoutItemRepresentation(id: UUID(), name: Constants.Design.Placeholders.restPeriodLabel, type: .rest, restTimeDuration: Int32(Constants.DefaultValues.restTimeDuration))
+                            let newItem = ActiveWorkoutItemRepresentation(id: UUID(), name: Constants.Placeholders.restPeriodLabel, type: .rest, restTimeDuration: Int32(Constants.DefaultValues.restTimeDuration))
                             items.append(newItem)
                         }
                     }
@@ -75,19 +72,19 @@ class ActiveWorkoutViewModel: ObservableObject {
 //                if let exerciseActions = (exercise.element.exerciseActions?.array as? [ExerciseActionEntity])?.filter({!$0.isRestTime}) {
 //                    exerciseActions.enumerated().forEach({ action in
 //                        if ExerciseActionType.from(rawValue: action.element.type) == .setsNreps || (ExerciseActionType.from(rawValue: action.element.type) == .unknown && ExerciseType.from(rawValue: exercise.element.type) == .setsNreps) {
-//                            let newItem = action.element.setNrepsActionToActiveItemRepresentation(name: action.element.name ?? exercise.element.name ?? Constants.Design.Placeholders.noActionName)
+//                            let newItem = action.element.setNrepsActionToActiveItemRepresentation(name: action.element.name ?? exercise.element.name ?? Constants.Placeholders.noActionName)
 //                            items.append(newItem)
 //                        }
 //                        if ExerciseActionType.from(rawValue: action.element.type) == .timed || (ExerciseActionType.from(rawValue: action.element.type) == .unknown && ExerciseType.from(rawValue: exercise.element.type) == .timed){
-//                            let newItem = action.element.timedActionToActiveItemRepresentation(name: action.element.name ?? exercise.element.name ?? Constants.Design.Placeholders.noActionName)
+//                            let newItem = action.element.timedActionToActiveItemRepresentation(name: action.element.name ?? exercise.element.name ?? Constants.Placeholders.noActionName)
 //                            items.append(newItem)
 //                        }
 //                        if action.element != exerciseActions.last {
 //                            if let exerciseRestTime = (exercise.element.exerciseActions?.array as? [ExerciseActionEntity])?.first(where: { $0.isRestTime}) {
-//                                let newItem = exerciseRestTime.restTimeToActiveItemRepresentation(name: Constants.Design.Placeholders.restPeriodLabel)
+//                                let newItem = exerciseRestTime.restTimeToActiveItemRepresentation(name: Constants.Placeholders.restPeriodLabel)
 //                                items.append(newItem)
 //                            } else {
-//                                let newItem = ActiveWorkoutItemRepresentation(name: Constants.Design.Placeholders.restPeriodLabel, type: .rest, duration: defaultWorkoutRestTimeDuration)
+//                                let newItem = ActiveWorkoutItemRepresentation(name: Constants.Placeholders.restPeriodLabel, type: .rest, duration: defaultWorkoutRestTimeDuration)
 //                                items.append(newItem)
 //                            }
 //                        }

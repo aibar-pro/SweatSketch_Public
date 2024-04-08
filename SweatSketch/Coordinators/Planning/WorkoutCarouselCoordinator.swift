@@ -12,27 +12,29 @@ import Combine
 class WorkoutCarouselCoordinator: ObservableObject, Coordinator {
     
     var viewModel: WorkoutCarouselViewModel
-    @Published var presentedWorkoutIndex: Int = 0
     
     var childCoordinators = [Coordinator]()
     var rootViewController = UIViewController()
     
-    let workoutEvent: PassthroughSubject<WorkoutEvent, Never>
+    let workoutEvent: PassthroughSubject<WorkoutEventType, Never>
     
-    init(dataContext: NSManagedObjectContext, workoutEvent: PassthroughSubject<WorkoutEvent, Never>) {
+    init(dataContext: NSManagedObjectContext, workoutEvent: PassthroughSubject<WorkoutEventType, Never>, collectionUUID: UUID?) {
         rootViewController = UIViewController()
-        viewModel = WorkoutCarouselViewModel(context: dataContext)
+        viewModel = WorkoutCarouselViewModel(context: dataContext, collectionUUID: collectionUUID)
         self.workoutEvent = workoutEvent
     }
     
-    func startWorkout() {
-        if let launchedWorkout = viewModel.workouts[presentedWorkoutIndex].uuid {
-            workoutEvent.send(.started(launchedWorkout))
-        }
+    func startWorkout(workoutIndex: Int) {
+        let launchedWorkoutUUID = viewModel.workouts[workoutIndex].id
+        workoutEvent.send(.started(launchedWorkoutUUID))
+    }
+    
+    func enterCollections() {
+        workoutEvent.send(.enterCollections)
     }
     
     func goToAddWorkout() {
-        let temporaryWorkoutAddViewModel = WorkoutEditTemporaryViewModel(parentViewModel: viewModel, editingWorkout: nil)
+        let temporaryWorkoutAddViewModel = WorkoutEditViewModel(parentViewModel: viewModel, editingWorkoutUUID: nil)
         let workoutAddCoordinator = WorkoutEditCoordinator(viewModel: temporaryWorkoutAddViewModel)
         
         workoutAddCoordinator.start()
@@ -44,9 +46,9 @@ class WorkoutCarouselCoordinator: ObservableObject, Coordinator {
         viewModel.objectWillChange.send()
     }
     
-    func goToEditWorkout() {
-        let editingWorkout = viewModel.workouts[presentedWorkoutIndex]
-        let temporaryWorkoutEditViewModel = WorkoutEditTemporaryViewModel(parentViewModel: viewModel, editingWorkout: editingWorkout)
+    func goToEditWorkout(workoutIndex: Int) {
+        let editingWorkoutUUID = viewModel.workouts[workoutIndex].id
+        let temporaryWorkoutEditViewModel = WorkoutEditViewModel(parentViewModel: viewModel, editingWorkoutUUID: editingWorkoutUUID)
         let workoutEditCoordinator = WorkoutEditCoordinator(viewModel: temporaryWorkoutEditViewModel)
         
         workoutEditCoordinator.start()
@@ -57,7 +59,7 @@ class WorkoutCarouselCoordinator: ObservableObject, Coordinator {
     }
     
     func goToWorkoutLst() {
-        let temporaryWorkoutListViewModel = WorkoutListTemporaryViewModel(parentViewModel: viewModel)
+        let temporaryWorkoutListViewModel = WorkoutListViewModel(parentViewModel: viewModel, workoutCollection: viewModel.workoutCollection)
         let workoutListCoordinator = WorkoutListCoordinator(viewModel: temporaryWorkoutListViewModel)
         
         workoutListCoordinator.start()

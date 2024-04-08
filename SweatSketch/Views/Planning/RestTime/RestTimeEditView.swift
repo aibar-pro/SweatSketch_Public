@@ -9,7 +9,7 @@ import SwiftUI
 
 struct RestTimeEditView: View {
     @EnvironmentObject var coordinator: RestTimeEditCoordinator
-    @ObservedObject var viewModel: RestTimeEditTemporaryViewModel
+    @ObservedObject var viewModel: RestTimeEditViewModel
     
     enum EditingState {
         case none
@@ -48,7 +48,7 @@ struct RestTimeEditView: View {
                         }
                         .padding(.horizontal, Constants.Design.spacing)
                     
-                        Text(viewModel.editingWorkout?.name ?? Constants.Design.Placeholders.noWorkoutName)
+                        Text(viewModel.editingWorkout.name ?? Constants.Placeholders.noWorkoutName)
                         .font(.title2.bold())
                         .lineLimit(2)
                         .padding(.horizontal, Constants.Design.spacing)
@@ -107,7 +107,7 @@ struct RestTimeEditView: View {
                                             }
                                         }
                                         
-                                        Text(exercise.name ?? Constants.Design.Placeholders.noExerciseName)
+                                        Text(exercise.name ?? Constants.Placeholders.noExerciseName)
                                             .padding(Constants.Design.spacing)
                                             .frame(width: geoReader.size.width - 2 * Constants.Design.spacing, alignment: .leading)
                                             .materialCardBackgroundModifier()
@@ -137,9 +137,17 @@ struct RestTimeEditView_Preview : PreviewProvider {
     
     static var previews: some View {
         let persistenceController = PersistenceController.preview
-        let workoutCarouselViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext)
-        let workoutEditViewModel = WorkoutEditTemporaryViewModel(parentViewModel: workoutCarouselViewModel, editingWorkout: workoutCarouselViewModel.workouts[0])
-        let restTimeEditViewModel = RestTimeEditTemporaryViewModel(parentViewModel: workoutEditViewModel)
+        
+        let collectionDataManager = CollectionDataManager()
+        let firstCollection = collectionDataManager.fetchFirstUserCollection(in: persistenceController.container.viewContext)!
+        
+        let workoutCarouselViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext, collectionUUID: firstCollection.uuid)
+        
+        let workoutForPreview = collectionDataManager.fetchWorkouts(for: firstCollection, in: workoutCarouselViewModel.mainContext).first!
+        let workoutEditModel = WorkoutEditViewModel(parentViewModel: workoutCarouselViewModel, editingWorkoutUUID: workoutForPreview.uuid)
+        
+        
+        let restTimeEditViewModel = RestTimeEditViewModel(parentViewModel: workoutEditModel)
         
         RestTimeEditView(viewModel: restTimeEditViewModel)
             .environmentObject(RestTimeEditCoordinator(viewModel: restTimeEditViewModel))

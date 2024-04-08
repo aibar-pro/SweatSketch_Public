@@ -20,7 +20,7 @@ struct ActiveWorkoutView: View {
             VStack (alignment: .center, spacing: Constants.Design.spacing) {
                 
                 HStack{
-                    Text(viewModel.activeWorkout?.name ?? Constants.Design.Placeholders.noWorkoutName)
+                    Text(viewModel.activeWorkout?.name ?? Constants.Placeholders.noWorkoutName)
                         .font(.title2.bold())
                         .lineLimit(2)
                     
@@ -68,7 +68,7 @@ struct ActiveWorkoutView: View {
                                                 })
                                                 .frame(width: gReader.size.width * 0.6)
                                         case .none:
-                                            ErrorMessageView(text: Constants.Design.Placeholders.activeWorkoutItemError)
+                                            ErrorMessageView(text: Constants.Placeholders.activeWorkoutItemError)
                                                 .fixedSize()
                                         }
                                     } else {
@@ -116,7 +116,7 @@ struct ActiveWorkoutView_Previews: PreviewProvider {
         let workoutEvent = appCoordinator.workoutEvent
         
         let workoutViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext)
-        let workoutUUID = workoutViewModel.workouts[0].uuid!
+        let workoutUUID = workoutViewModel.workouts[0].id
         
         let activeWorkoutCoordinator = ActiveWorkoutCoordinator(dataContext: persistenceController.container.viewContext, activeWorkoutUUID: workoutUUID, workoutEvent: workoutEvent)
         

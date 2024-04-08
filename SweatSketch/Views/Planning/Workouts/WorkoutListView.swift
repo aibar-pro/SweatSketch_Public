@@ -10,7 +10,7 @@ import SwiftUI
 struct WorkoutListView: View {
     
     @EnvironmentObject var coordinator: WorkoutListCoordinator
-    @ObservedObject var viewModel: WorkoutListTemporaryViewModel
+    @ObservedObject var viewModel: WorkoutListViewModel
     
     @State private var editMode = EditMode.active
     
@@ -48,7 +48,7 @@ struct WorkoutListView: View {
                     List {
                         ForEach(viewModel.workouts, id: \.self) { plan in
                             
-                            Text(plan.name ?? Constants.Design.Placeholders.noWorkoutName)
+                            Text(plan.name ?? Constants.Placeholders.noWorkoutName)
                                 .font(.title3)
                                 .lineLimit(3)
                                 .padding(.horizontal, Constants.Design.spacing/2)
@@ -102,7 +102,7 @@ struct WorkoutListView_Previews: PreviewProvider {
         
         let persistenceController = PersistenceController.preview
         let workoutViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext)
-        let workoutListModel = WorkoutListTemporaryViewModel(parentViewModel: workoutViewModel)
+        let workoutListModel = WorkoutListViewModel(parentViewModel: workoutViewModel, workoutCollection: workoutViewModel.workoutCollection)
         let workoutCoordinator = WorkoutListCoordinator(viewModel: workoutListModel)
         
         WorkoutListView(viewModel: workoutCoordinator.viewModel)

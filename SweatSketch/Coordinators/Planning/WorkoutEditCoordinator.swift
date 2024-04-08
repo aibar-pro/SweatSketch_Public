@@ -9,12 +9,12 @@ import SwiftUI
 
 class WorkoutEditCoordinator: ObservableObject, Coordinator {
     
-    var viewModel: WorkoutEditTemporaryViewModel
+    var viewModel: WorkoutEditViewModel
     
     var rootViewController = UIViewController()
     var childCoordinators = [Coordinator]()
     
-    init(viewModel: WorkoutEditTemporaryViewModel) {
+    init(viewModel: WorkoutEditViewModel) {
         rootViewController = UIViewController()
         self.viewModel = viewModel
     }
@@ -26,7 +26,7 @@ class WorkoutEditCoordinator: ObservableObject, Coordinator {
     }
     
     func goToAddExercise() {
-        let temporaryExerciseAddViewModel = ExerciseEditTemporaryViewModel(parentViewModel: viewModel, editingExercise: nil)
+        let temporaryExerciseAddViewModel = ExerciseEditViewModel(parentViewModel: viewModel, editingExercise: nil)
         let exerciseAddCoordinator = ExerciseEditCoordinator(viewModel: temporaryExerciseAddViewModel)
         
         exerciseAddCoordinator.start()
@@ -38,7 +38,7 @@ class WorkoutEditCoordinator: ObservableObject, Coordinator {
     }
     
     func goToAdvancedEditRestPeriod() {
-        let temporaryRestTimeViewModel = RestTimeEditTemporaryViewModel(parentViewModel: viewModel)
+        let temporaryRestTimeViewModel = RestTimeEditViewModel(parentViewModel: viewModel)
         let restTimeCoordinator = RestTimeEditCoordinator(viewModel: temporaryRestTimeViewModel)
         
         restTimeCoordinator.start()
@@ -50,7 +50,7 @@ class WorkoutEditCoordinator: ObservableObject, Coordinator {
     }
     
     func goToEditWorkout(exerciseToEdit: ExerciseEntity) {
-        let temporaryExerciseEditViewModel = ExerciseEditTemporaryViewModel(parentViewModel: viewModel, editingExercise: exerciseToEdit)
+        let temporaryExerciseEditViewModel = ExerciseEditViewModel(parentViewModel: viewModel, editingExercise: exerciseToEdit)
         let exerciseEditCoordinator = ExerciseEditCoordinator(viewModel: temporaryExerciseEditViewModel)
         
         exerciseEditCoordinator.start()

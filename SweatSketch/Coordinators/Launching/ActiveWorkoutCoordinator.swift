@@ -16,9 +16,9 @@ class ActiveWorkoutCoordinator: ObservableObject, Coordinator {
     var rootViewController = UIViewController()
     var childCoordinators = [Coordinator]()
     
-    let workoutEvent: PassthroughSubject<WorkoutEvent, Never>
+    let workoutEvent: PassthroughSubject<WorkoutEventType, Never>
     
-    init(dataContext: NSManagedObjectContext, activeWorkoutUUID: UUID, workoutEvent: PassthroughSubject<WorkoutEvent, Never>) {
+    init(dataContext: NSManagedObjectContext, activeWorkoutUUID: UUID, workoutEvent: PassthroughSubject<WorkoutEventType, Never>) {
         rootViewController = UIViewController()
         viewModel = ActiveWorkoutViewModel(context: dataContext, activeWorkoutUUID: activeWorkoutUUID)
         self.workoutEvent = workoutEvent
@@ -33,7 +33,12 @@ class ActiveWorkoutCoordinator: ObservableObject, Coordinator {
     }
     
     func finishWorkout(){
-        workoutEvent.send(.finished)
+        if let lastOpenedCollectionUUID = UserDefaults.standard.string(forKey: UserDefaultsKeys.lastOpenedCollectionUUID),
+           let collectionUUID = UUID(uuidString: lastOpenedCollectionUUID) {
+            workoutEvent.send(.openCollection(collectionUUID))
+        } else {
+            workoutEvent.send(.finished)
+        }
         print("Active Workout Coordinator: Finish")
     }
 }

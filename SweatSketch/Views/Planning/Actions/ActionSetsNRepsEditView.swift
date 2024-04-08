@@ -12,12 +12,13 @@ struct ActionSetsNRepsEditView: View {
     @ObservedObject var actionEntity: ExerciseActionEntity
     
     var editTitle: Bool = false
+    var editSets: Bool = true
     
     var body: some View {
         VStack (alignment: .leading, spacing: Constants.Design.spacing/2) {
             if editTitle {
                 TextField("Edit name", text: Binding(
-                    get: { self.actionEntity.name ?? Constants.Design.Placeholders.noActionName },
+                    get: { self.actionEntity.name ?? Constants.Placeholders.noActionName },
                     set: { self.actionEntity.name = $0 }
                 ))
                 .padding(.horizontal, Constants.Design.spacing/2)
@@ -29,19 +30,20 @@ struct ActionSetsNRepsEditView: View {
             }
             
             HStack (alignment: .center, spacing: Constants.Design.spacing/4) {
-                Picker("Sets", selection: Binding(
-                    get: { Int(self.actionEntity.sets) },
-                    set: {
-                        self.actionEntity.sets = Int16($0)
-                        self.actionEntity.objectWillChange.send()
-                })) {
-                    ForEach(1...99, id: \.self) {
-                        Text("\($0)").tag($0)
-                    }
+                if editSets {
+                    Picker("Sets", selection: Binding(
+                        get: { Int(self.actionEntity.sets) },
+                        set: {
+                            self.actionEntity.sets = Int16($0)
+                            self.actionEntity.objectWillChange.send()
+                        })) {
+                            ForEach(1...99, id: \.self) {
+                                Text("\($0)").tag($0)
+                            }
+                        }
+                        .labelsHidden()
+                        .pickerStyle(MenuPickerStyle())
                 }
-                .labelsHidden()
-                .pickerStyle(MenuPickerStyle())
-                
                 Text("x")
                 
                 Picker("Reps", selection: Binding(
@@ -81,13 +83,24 @@ struct ActionSetsNRepsEditView_Previews: PreviewProvider {
 
     static var previews: some View {
         let persistenceController = PersistenceController.preview
-        let workoutCarouselViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext)
-        let workoutEditViewModel = WorkoutEditTemporaryViewModel(parentViewModel: workoutCarouselViewModel, editingWorkout: workoutCarouselViewModel.workouts[0])
-        let exerciseEditViewModel = ExerciseEditTemporaryViewModel(parentViewModel: workoutEditViewModel, editingExercise: workoutEditViewModel.exercises[2])
         
-        let action = exerciseEditViewModel.exerciseActions[2]
+        let collectionDataManager = CollectionDataManager()
+        let firstCollection = collectionDataManager.fetchFirstUserCollection(in: persistenceController.container.viewContext)!
+        let workoutForPreview = collectionDataManager.fetchWorkouts(for: firstCollection, in: persistenceController.container.viewContext).first!
         
-        ActionSetsNRepsEditView(actionEntity: action, editTitle: true)
+        let workoutDataManager = WorkoutDataManager()
+        
+        let exerciseForPreview = workoutDataManager.fetchExercises(for: workoutForPreview, in: persistenceController.container.viewContext)[1]
+        
+        let exerciseDataManager = ExerciseDataManager()
+        
+        let actionForPreview = exerciseDataManager.fetchActions(for: exerciseForPreview, in: persistenceController.container.viewContext)[0]
+        
+        VStack (spacing: 50) {
+            ActionSetsNRepsEditView(actionEntity: actionForPreview, editTitle: true)
+            
+            ActionSetsNRepsEditView(actionEntity: actionForPreview, editSets: false)
+        }
         
     }
 }

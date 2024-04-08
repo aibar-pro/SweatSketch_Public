@@ -31,5 +31,5 @@ struct ErrorMessageView: View {
 }
 
 #Preview {
-    ErrorMessageView(text: Constants.Design.Placeholders.activeWorkoutItemError)
+    ErrorMessageView(text: Constants.Placeholders.activeWorkoutItemError)
 }

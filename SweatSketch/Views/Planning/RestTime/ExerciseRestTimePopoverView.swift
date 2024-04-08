@@ -9,15 +9,10 @@ import SwiftUI
 
 struct ExerciseRestTimePopoverView: View {
     
-    @ObservedObject var restActionEntity: ExerciseActionEntity
-    @Binding var showPopover: Bool
-    @State var duration: Int
+    var onSave: (_ : Int) -> Void
+    var onDiscard: () -> Void
     
-    init(restActionEntity: ExerciseActionEntity, showPopover: Binding<Bool>) {
-        self.restActionEntity = restActionEntity
-        self._showPopover = showPopover
-        self.duration = Int(restActionEntity.duration)
-    }
+    @State var duration: Int = Constants.DefaultValues.restTimeDuration
     
     var body: some View {
         VStack (alignment: .leading, spacing: Constants.Design.spacing) {
@@ -26,7 +21,7 @@ struct ExerciseRestTimePopoverView: View {
                     .font(.title3.bold())
                 Spacer()
                 Button(action: {
-                    showPopover.toggle()
+                    onDiscard()
                 }) {
                     Image(systemName: "xmark")
                 }
@@ -46,14 +41,13 @@ struct ExerciseRestTimePopoverView: View {
             HStack (spacing: Constants.Design.spacing) {
                 Spacer()
                 Button(action: {
-                    showPopover.toggle()
+                    onDiscard()
                 }) {
                     Text("Cancel")
                         .secondaryButtonLabelStyleModifier()
                 }
                 Button(action: {
-                    self.restActionEntity.duration = Int32(duration)
-                    showPopover.toggle()
+                    onSave(duration)
                 }) {
                     Text("Done")
                         .bold()
@@ -68,13 +62,6 @@ struct ExerciseRestTimePopoverView: View {
 struct ExerciseRestTimePopoverView_Preview: PreviewProvider {
     
     static var previews: some View {
-        let persistenceController = PersistenceController.preview
-        let workoutCarouselViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext)
-        let workoutEditViewModel = WorkoutEditTemporaryViewModel(parentViewModel: workoutCarouselViewModel, editingWorkout: workoutCarouselViewModel.workouts[0])
-        let exerciseEditViewModel = ExerciseEditTemporaryViewModel(parentViewModel: workoutEditViewModel, editingExercise: workoutEditViewModel.exercises[2])
-        
-        let action = exerciseEditViewModel.exerciseActions[0]
-        
-        ExerciseRestTimePopoverView(restActionEntity: action, showPopover: .constant(true))
+        ExerciseRestTimePopoverView(onSave: {_ in}, onDiscard: {})
     }
 }

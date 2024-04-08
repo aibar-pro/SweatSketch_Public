@@ -7,7 +7,9 @@
 
 import Foundation
 
-enum WorkoutEvent {
+enum WorkoutEventType {
     case started(UUID)
     case finished
+    case enterCollections
+    case openCollection(UUID)
 }
