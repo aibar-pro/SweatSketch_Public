@@ -9,57 +9,60 @@ import SwiftUI
 
 struct ActionListView: View {
     
-    @ObservedObject var exerciseEntity: ExerciseEntity
+    @ObservedObject var exercise: ExerciseViewRepresentation
     
     var body: some View {
         
-        let exerciseType = ExerciseType.from(rawValue: exerciseEntity.type)
-        
-        //TODO: Consider viewmodel usage
-        if let actions = (exerciseEntity.exerciseActions?.array as? [ExerciseActionEntity])?.filter({ !$0.isRestTime }) {
-            VStack (alignment: .leading) {
-                switch exerciseType {
-                case .setsNreps:
-                    ScrollView(.horizontal) {
-                        HStack {
-                            ForEach(actions, id: \.self) { action in
-                                HStack (spacing: 0){
-                                    ActionSetsNRepsView(actionEntity: action)
-                                    Text(action != actions.last ? "," : "")
-                                }
+        VStack (alignment: .leading) {
+            switch exercise.type {
+            case .setsNreps:
+                    HStack (spacing: 0) {
+                        ForEach(exercise.actions.indices, id: \.self) { index in
+                            HStack (spacing: 0) {
+                                ActionSetsNRepsView(action: exercise.actions[index])
+                                    .layoutPriority(1)
+                                    .truncationMode(.tail)
+                                Text(index != exercise.actions.endIndex - 1 ? ", " : "")
+                                    .truncationMode(.tail)
                             }
                         }
                     }
-                case .timed:
-                    ScrollView(.horizontal) {
-                        HStack {
-                            ForEach(actions, id: \.self) { action in
-                                HStack (spacing: 0){
-                                    ActionTimedView(actionEntity: action)
-                                    Text(action != actions.last ? "," : "")
-                                }
+                    .truncationMode(.tail)
+                    .lineLimit(1)
+            case .timed:
+                    HStack {
+                        ForEach(exercise.actions.indices, id: \.self) { index in
+                            HStack (spacing: 0){
+                                ActionTimedView(action: exercise.actions[index])
+                                    .truncationMode(.tail)
+                                    .layoutPriority(1)
+                                Text(index != exercise.actions.endIndex - 1 ? "," : "")
+                                    .truncationMode(.tail)
                             }
+                            .truncationMode(.tail)
+                            .layoutPriority(-Double(index))
                         }
                     }
-                case .mixed:
-                    ForEach(actions, id: \.self) { action in
-  
-                        let actionType = ExerciseActionType.from(rawValue: action.type)
-                        
-                        switch actionType {
+                    .truncationMode(.tail)
+                    .lineLimit(1)
+            case .mixed:
+                VStack (alignment: .leading, spacing: Constants.Design.spacing/2) {
+                    ForEach(exercise.actions.indices, id: \.self) { index in
+                        switch exercise.actions[index].type {
                         case .setsNreps:
-                            ActionSetsNRepsView(actionEntity: action,showTitle: true)
-                                .padding(.bottom, action != actions.last ?  Constants.Design.spacing/4 : 0)
+                            ActionSetsNRepsView(action: exercise.actions[index], showTitle: true, showSets: false)
+                                .truncationMode(.tail)
                         case .timed:
-                            ActionTimedView(actionEntity: action, showTitle: true)
-                                .padding(.bottom, action != actions.last ?  Constants.Design.spacing/4 : 0)
+                            ActionTimedView(action: exercise.actions[index], showTitle: true)
+                                .truncationMode(.tail)
                         default:
-                            Text(Constants.Design.Placeholders.noActionDetails)
+                            Text(Constants.Placeholders.noActionDetails)
                         }
                     }
-                case .unknown: 
-                    Text(Constants.Design.Placeholders.noExerciseDetails)
                 }
+                .lineLimit(1)
+            case .unknown:
+                Text(Constants.Placeholders.noExerciseDetails)
             }
         }
     }
@@ -68,18 +71,24 @@ struct ActionListView: View {
 struct ActionListView_Previews: PreviewProvider {
     static var previews: some View {
         let persistenceController = PersistenceController.preview
-        let workoutCarouselViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext)
-       
-        let exercise = workoutCarouselViewModel.workouts[0].exercises![0] as! ExerciseEntity
-        let exercise1 = workoutCarouselViewModel.workouts[0].exercises![1] as! ExerciseEntity
-        let exercise2 = workoutCarouselViewModel.workouts[0].exercises![2] as! ExerciseEntity
         
-        VStack (spacing: 50) {
-            ActionListView(exerciseEntity: exercise)
-    
-            ActionListView(exerciseEntity: exercise1)
-
-            ActionListView(exerciseEntity: exercise2)
+        let collectionDataManager = CollectionDataManager()
+        let firstCollection = collectionDataManager.fetchFirstUserCollection(in: persistenceController.container.viewContext)!
+        let workoutForPreview = collectionDataManager.fetchWorkouts(for: firstCollection, in: persistenceController.container.viewContext).first!
+        
+        let workoutDataManager = WorkoutDataManager()
+        
+        let exerciseForPreview0 = workoutDataManager.fetchExercises(for: workoutForPreview, in: persistenceController.container.viewContext)[0]
+        let exerciseForPreview1 = workoutDataManager.fetchExercises(for: workoutForPreview, in: persistenceController.container.viewContext)[1]
+        let exerciseForPreview2 = workoutDataManager.fetchExercises(for: workoutForPreview, in: persistenceController.container.viewContext)[2]
+        
+        VStack (spacing: 100) {
+            ActionListView(exercise: exerciseForPreview0.toExerciseViewRepresentation()!)
+            
+            ActionListView(exercise: exerciseForPreview1.toExerciseViewRepresentation()!)
+            
+            ActionListView(exercise: exerciseForPreview2.toExerciseViewRepresentation()!)
+            
         }
     }
 }

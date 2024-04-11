@@ -32,7 +32,7 @@ struct ActiveWorkoutExerciseView: View {
             
             VStack (alignment: .leading, spacing: Constants.Design.spacing/2) {
                 if ExerciseType.from(rawValue: exercise.type) != .mixed {
-                    Text(exercise.name ?? Constants.Design.Placeholders.noActionName)
+                    Text(exercise.name ?? Constants.Placeholders.noActionName)
                         .font(.subheadline)
                         .lineLimit(3)
                         .multilineTextAlignment(.leading)
@@ -50,7 +50,7 @@ struct ActiveWorkoutExerciseView: View {
                             .font(.headline.bold())
                     case .mixed:
                         VStack (alignment: .leading, spacing: Constants.Design.spacing/2)  {
-                            Text(currentAction.name ?? Constants.Design.Placeholders.noActionName)
+                            Text(currentAction.name ?? Constants.Placeholders.noActionName)
                                 .font(.subheadline)
                                 .lineLimit(3)
                                 .multilineTextAlignment(.leading)
@@ -63,11 +63,11 @@ struct ActiveWorkoutExerciseView: View {
                                 DurationView(durationInSeconds: Int(currentAction.duration))
                                     .font(.headline.bold())
                             default:
-                                Text(Constants.Design.Placeholders.noActionDetails)
+                                Text(Constants.Placeholders.noActionDetails)
                             }
                         }
                     default:
-                        Text(Constants.Design.Placeholders.noActionDetails)
+                        Text(Constants.Placeholders.noActionDetails)
                     }
                     
                     HStack {

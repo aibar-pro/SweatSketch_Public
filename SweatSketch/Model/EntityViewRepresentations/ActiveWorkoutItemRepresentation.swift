@@ -26,7 +26,7 @@ extension RestTimeEntity {
         guard let uuid = self.uuid else {
             throw ActiveWorkoutError.invalidItemUUID
         }
-        return ActiveWorkoutItemRepresentation(id: uuid, name: Constants.Design.Placeholders.restPeriodLabel, type: .rest, status: .new, restTimeDuration: self.duration)
+        return ActiveWorkoutItemRepresentation(id: uuid, name: Constants.Placeholders.restPeriodLabel, type: .rest, status: .new, restTimeDuration: self.duration)
     }
 }
 
@@ -35,6 +35,6 @@ extension ExerciseEntity {
         guard let uuid = self.uuid else {
             throw ActiveWorkoutError.invalidItemUUID
         }
-        return ActiveWorkoutItemRepresentation(id: uuid, name: self.name ?? Constants.Design.Placeholders.noExerciseName, type: .exercise, status: .new)
+        return ActiveWorkoutItemRepresentation(id: uuid, name: self.name ?? Constants.Placeholders.noExerciseName, type: .exercise, status: .new)
     }
 }

@@ -9,8 +9,24 @@ import Foundation
 import SwiftUI
 
 enum Constants {
+    enum Placeholders {
+        static let noCollectionName = "Untitled Collection"
+        static let noWorkoutName = "Untitled Workout"
+        static let noExerciseName = "Untitled Exercise"
+        static let noActionName = "Untitled Action"
+        static let noRestTimeName = "Untitled Rest Period"
+        
+        static let noExerciseDetails = "No Exercise details"
+        static let noActionDetails = "No Action details"
+        
+        static let noDuration = "-:-:-"
+        
+        static let restPeriodLabel = "Rest Time"
+        
+        static let activeWorkoutItemError = "Error fetching workout item"
+    }
+    
     enum Design {
-
         static let cornerRadius = CGFloat(16)
         static let spacing = CGFloat(20)
         
@@ -24,29 +40,15 @@ enum Constants {
             static let textColorHighEmphasis = Color.primary.opacity(0.87)
             static let textColorMediumEmphasis = Color.primary.opacity(0.6)
         }
-        
-        enum Placeholders {
-            static let noCollectionName = "Untitled Collection"
-            static let noWorkoutName = "Untitled Workout"
-            static let noExerciseName = "Untitled Exercise"
-            static let noActionName = "Untitled Action"
-            static let noRestTimeName = "Untitled Rest Period"
-            
-            static let noExerciseDetails = "No Exercise details"
-            static let noActionDetails = "No Action details"
-            
-            static let noDuration = "-:-:-"
-            
-            static let restPeriodLabel = "Rest Time"
-            
-            static let activeWorkoutItemError = "Error fetching workout item"
-        }
     }
     
     enum DefaultValues {
+        static let defaultWorkoutCollectionName = "Default Collection"
+        static let importedWorkoutCollectionName = "Imported Workouts"
+        
         static let setsCount = 1
         static let repsCount = 1
-        static let actionDuration = 1
+        static let actionDuration = 30
         static let supersetCount = 1
         static let restTimeDuration = 60
     }

@@ -9,20 +9,26 @@ import SwiftUI
 
 struct ActionSetsNRepsView: View {
     
-    @ObservedObject var actionEntity: ExerciseActionEntity
+    var action: ExerciseActionViewRepresentation
     
     var showTitle: Bool = false
+    var showSets: Bool = true
     
     var body: some View {
         HStack (alignment: .top) {
             if showTitle {
-                Text("\(actionEntity.name ?? Constants.Design.Placeholders.noActionName),")
+                Text("\(action.name),")
             }
             
-            if actionEntity.sets > 0, (actionEntity.repsMax || actionEntity.reps > 0) {
-                Text("\(actionEntity.sets)x\(actionEntity.repsMax ? "MAX" : String(actionEntity.reps))")
-            } else {
-                Text(Constants.Design.Placeholders.noActionDetails)
+            HStack (alignment: .center, spacing: 0) {
+                if showSets {
+                    Text("\(action.sets)")
+                }
+                if action.repsMax {
+                    Text("xMAX")
+                } else {
+                    Text("x\(action.reps)")
+                }
             }
         }
     }
@@ -32,12 +38,21 @@ struct ActionSetsNRepsView_Previews: PreviewProvider {
 
     static var previews: some View {
         let persistenceController = PersistenceController.preview
-        let workoutCarouselViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext)
-        let workoutEditViewModel = WorkoutEditTemporaryViewModel(parentViewModel: workoutCarouselViewModel, editingWorkout: workoutCarouselViewModel.workouts[0])
-        let exerciseEditViewModel = ExerciseEditTemporaryViewModel(parentViewModel: workoutEditViewModel, editingExercise: workoutEditViewModel.exercises[2])
         
-        let action = exerciseEditViewModel.exerciseActions[1]
+        let collectionDataManager = CollectionDataManager()
+        let firstCollection = collectionDataManager.fetchFirstUserCollection(in: persistenceController.container.viewContext)!
+        let workoutForPreview = collectionDataManager.fetchWorkouts(for: firstCollection, in: persistenceController.container.viewContext).first!
         
-        ActionSetsNRepsView(actionEntity: action, showTitle: true)
+        let workoutDataManager = WorkoutDataManager()
+        
+        let exerciseForPreview = workoutDataManager.fetchExercises(for: workoutForPreview, in: persistenceController.container.viewContext)[1]
+        
+        let actionForPreview = (exerciseForPreview.toExerciseViewRepresentation()?.actions[0])!
+        
+        VStack (spacing: 50) {
+            ActionSetsNRepsView(action: actionForPreview, showTitle: true)
+            
+            ActionSetsNRepsView(action: actionForPreview, showSets: false)
+        }
     }
 }

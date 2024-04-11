@@ -29,7 +29,22 @@ class WorkoutCollectionCoordinator: ObservableObject, Coordinator {
         rootViewController.view.backgroundColor = .clear
     }
     
-    func goToWorkoutCollection() {
-        workoutEvent.send(.finished)
+    func goToWorkoutCollection(collectionUUID: UUID) {
+        workoutEvent.send(.openCollection(collectionUUID))
+        UserDefaults.standard.set(collectionUUID.uuidString, forKey: UserDefaultsKeys.lastOpenedCollectionUUID)
+    }
+    
+    func goToMoveWorkout(movingWorkout: WorkoutCollectionWorkoutViewRepresentation) {
+        let collectionAddViewModel = WorkoutCollectionWorkoutMoveViewModel(parentViewModel: viewModel, movingWorkout: movingWorkout)
+        let collectionAddCoordinator = WorkoutCollectionWorkoutMoveCoordinator(viewModel: collectionAddViewModel)
+        
+        collectionAddCoordinator.start()
+        childCoordinators.append(collectionAddCoordinator)
+        
+        let addCollectionViewController = collectionAddCoordinator.rootViewController
+        addCollectionViewController.modalPresentationStyle = .formSheet
+        rootViewController.present(addCollectionViewController, animated: true)
+        
+        viewModel.objectWillChange.send()
     }
 }

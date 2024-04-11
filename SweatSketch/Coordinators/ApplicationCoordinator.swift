@@ -40,9 +40,11 @@ class ApplicationCoordinator: ObservableObject, Coordinator {
                 case .started(let workoutUUID):
                     showActiveWorkout(with: workoutUUID)
                 case .finished:
-                    showWorkoutCarousel()
+                    showWorkoutCarousel(with: nil)
                 case .enterCollections:
                     showWorkoutCollection()
+                case .openCollection(let collectionUUID):
+                    showWorkoutCarousel(with: collectionUUID)
                 }
             }
             .store(in: &cancellables)
@@ -59,10 +61,10 @@ class ApplicationCoordinator: ObservableObject, Coordinator {
         self.rootViewController.viewControllers = [activeWorkoutCoordinator.rootViewController]
     }
     
-    private func showWorkoutCarousel() {
+    private func showWorkoutCarousel(with collectionUUID: UUID?) {
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.activeWorkoutUUID)
             
-        let workoutPlanningCoordinator = WorkoutCarouselCoordinator(dataContext: dataContext, workoutEvent: self.workoutEvent)
+        let workoutPlanningCoordinator = WorkoutCarouselCoordinator(dataContext: dataContext, workoutEvent: self.workoutEvent, collectionUUID: collectionUUID)
         workoutPlanningCoordinator.start()
             
         self.childCoordinators.append(workoutPlanningCoordinator)
@@ -83,9 +85,13 @@ class ApplicationCoordinator: ObservableObject, Coordinator {
         if let activeWorkoutUUIDString = UserDefaults.standard.string(forKey: UserDefaultsKeys.activeWorkoutUUID),
            let workoutUUID = UUID(uuidString: activeWorkoutUUIDString) {
             workoutEvent.send(.started(workoutUUID))
+        } else if let lastOpenedCollectionUUID = UserDefaults.standard.string(forKey: UserDefaultsKeys.lastOpenedCollectionUUID),
+        let collectionUUID = UUID(uuidString: lastOpenedCollectionUUID) {
+            workoutEvent.send(.openCollection(collectionUUID))
+            print("Nothing in UserDefaults. Open last collection")
         } else {
             workoutEvent.send(.finished)
-            print("Nothing in UserDefaults")
+            print("Open default collection")
         }
     }
     

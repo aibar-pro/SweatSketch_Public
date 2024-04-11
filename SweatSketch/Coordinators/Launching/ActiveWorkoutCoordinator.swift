@@ -33,7 +33,12 @@ class ActiveWorkoutCoordinator: ObservableObject, Coordinator {
     }
     
     func finishWorkout(){
-        workoutEvent.send(.finished)
+        if let lastOpenedCollectionUUID = UserDefaults.standard.string(forKey: UserDefaultsKeys.lastOpenedCollectionUUID),
+           let collectionUUID = UUID(uuidString: lastOpenedCollectionUUID) {
+            workoutEvent.send(.openCollection(collectionUUID))
+        } else {
+            workoutEvent.send(.finished)
+        }
         print("Active Workout Coordinator: Finish")
     }
 }

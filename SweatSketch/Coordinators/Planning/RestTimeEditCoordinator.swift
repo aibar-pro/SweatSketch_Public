@@ -9,11 +9,11 @@ import SwiftUI
 
 class RestTimeEditCoordinator: ObservableObject, Coordinator {
     
-    var viewModel: RestTimeEditTemporaryViewModel
+    var viewModel: RestTimeEditViewModel
     
     var rootViewController = UIViewController()
     
-    init(viewModel: RestTimeEditTemporaryViewModel) {
+    init(viewModel: RestTimeEditViewModel) {
         rootViewController = UIViewController()
         self.viewModel = viewModel
     }

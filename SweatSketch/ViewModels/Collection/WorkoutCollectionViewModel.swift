@@ -9,45 +9,57 @@ import CoreData
 
 class WorkoutCollectionViewModel: ObservableObject {
     
-    let collectionContext: NSManagedObjectContext
+    let mainContext: NSManagedObjectContext
     
-    @Published var collections = [WorkoutCollectionRepresentation]()
+    @Published var collections = [WorkoutCollectionViewRepresentation]()
+    
+    private let collectionDataManager = CollectionDataManager()
     
     init(context: NSManagedObjectContext) {
-        self.collectionContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-        self.collectionContext.parent = context
+        self.mainContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        self.mainContext.parent = context
         
-        let collectionFetchRequest: NSFetchRequest<WorkoutCollectionEntity> = WorkoutCollectionEntity.fetchRequest()
-        let sortDescriptor = NSSortDescriptor(key: "position", ascending: true)
-        collectionFetchRequest.sortDescriptors = [sortDescriptor]
+        refreshData()
         
-        do {
-            let result = try context.fetch(collectionFetchRequest)
-            self.collections = result.compactMap { transform(collectionEntity: $0) }
-        } catch {
-            print("Error fetching collections: \(error)")
+        setupWorkoutCatalog()
+    }
+    
+    func addCollection(with name: String) {
+        collectionDataManager.createCollection(with: name, in: mainContext)
+        setupWorkoutCatalog()
+    }
+    
+    private func setupWorkoutCatalog() {
+        let backgroundContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        backgroundContext.parent = self.mainContext
+        backgroundContext.perform {
+            self.collectionDataManager.setupCollectionCatalog(in: backgroundContext)
+            do {
+                if backgroundContext.hasChanges {
+                    try backgroundContext.save()
+                    print("Setting up default collection")
+                    DispatchQueue.main.async { [weak self] in
+                        do {
+                            try self?.mainContext.save()
+                            try self?.mainContext.parent?.save()
+                        } catch {
+                            print("Error saving main context in background context: \(error)")
+                        }
+                        self?.refreshData()
+                    }
+                }
+            } catch {
+                print("Error saving in background context: \(error)")
+            }
         }
     }
     
-    private func transform(collectionEntity: WorkoutCollectionEntity) -> WorkoutCollectionRepresentation? {
-        guard let id = collectionEntity.uuid else { return nil }
-        
-        let workouts = collectionEntity.workouts?.array as? [WorkoutEntity] ?? []
-//        
-//        let workouts = ((collectionEntity.workouts?.array as? [WorkoutEntity])?.compactMap { workoutEntity in
-//            guard let workoutId = workoutEntity.uuid else { return nil }
-//            return WorkoutCollectionWorkoutRepresentation(id: workoutId, name: workoutEntity.name ?? Constants.Design.Placeholders.noWorkoutName)
-//        } ?? []) as [WorkoutCollectionWorkoutRepresentation]
-        
-        let subCollections = (collectionEntity.subCollections?.array as? [WorkoutCollectionEntity])?.compactMap {
-            transform(collectionEntity: $0)
-        } ?? []
-        
-        return WorkoutCollectionRepresentation(
-            id: id,
-            name: collectionEntity.name ?? "Unnamed Collection",
-            subCollections: subCollections,
-            workouts: workouts
-        )
+    func refreshData() {
+        DispatchQueue.main.async { [weak self] in
+            if let context = self?.mainContext, let fetchedRootCollections = self?.collectionDataManager.fetchRootCollections(in: context) {
+                self?.collections = fetchedRootCollections.compactMap { $0.toWorkoutCollectionRepresentation() }
+            }
+        }
     }
+
 }

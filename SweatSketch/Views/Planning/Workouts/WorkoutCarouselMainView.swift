@@ -15,7 +15,7 @@ struct WorkoutCarouselMainView: View {
     //Changes in EnvironmentObject doesn't invalidate the View
     @ObservedObject var viewModel: WorkoutCarouselViewModel
     
-    @State var screenTitle: String = Constants.Design.Placeholders.noWorkoutName
+    @State var presentedWorkoutIndex: Int = 0
     
     var body: some View {
         VStack (spacing: Constants.Design.spacing/2) {
@@ -25,7 +25,7 @@ struct WorkoutCarouselMainView: View {
                 }) {
                     HStack {
                         Image(systemName: "chevron.backward")
-                        Text("Collections")
+                        Text("Catalog")
                     }
                     .padding(.vertical, Constants.Design.spacing/2)
                     .padding(.trailing, Constants.Design.spacing/2)
@@ -45,7 +45,7 @@ struct WorkoutCarouselMainView: View {
                     
                     Menu {
                         Button("Edit workout") {
-                            coordinator.goToEditWorkout()
+                            coordinator.goToEditWorkout(workoutIndex: presentedWorkoutIndex)
                         }
                         
                         Button("Reorder or delete workouts") {
@@ -67,32 +67,17 @@ struct WorkoutCarouselMainView: View {
                     ZStack {
                         VStack (alignment: .leading, spacing: Constants.Design.spacing/2) {
                             
-                            Text(screenTitle)
+                            Text(viewModel.workouts[presentedWorkoutIndex].name)
                                 .font(.title2.bold())
                                 .lineLimit(2)
                                 .padding(.horizontal, Constants.Design.spacing)
                                 .frame(height: min(geoReader.size.height*0.1, 55)) //no preserve space in iOS14
-                                .onAppear(perform: {
-                                    if let workoutNameToDisplay = viewModel.workouts[coordinator.presentedWorkoutIndex].name {
-                                        screenTitle = workoutNameToDisplay
-                                    } else {
-                                        screenTitle = Constants.Design.Placeholders.noWorkoutName
-                                    }
-                                })
-                                .onChange(of: coordinator.presentedWorkoutIndex, perform: { newValue in
-                                    if let workoutNameToDisplay = viewModel.workouts[newValue].name {
-                                        screenTitle = workoutNameToDisplay
-                                    } else {
-                                        screenTitle = Constants.Design.Placeholders.noWorkoutName
-                                    }
-                                })
                             
-                            WorkoutCarouselCardView(viewModel: viewModel, presentedWorkoutIndex: $coordinator.presentedWorkoutIndex)
+                            WorkoutCarouselCardView(viewModel: viewModel, presentedWorkoutIndex: $presentedWorkoutIndex)
                         }
                         
                         Button (action: {
-                            print("Active workout index: \(coordinator.presentedWorkoutIndex) Workout count: \(viewModel.workouts.count)")
-                            coordinator.startWorkout()
+                            coordinator.startWorkout(workoutIndex: presentedWorkoutIndex)
                         }) {
                             Text("Go")
                                 .accentButtonLabelStyleModifier()
@@ -138,9 +123,9 @@ struct WorkoutCarouselView_Previews: PreviewProvider {
         let persistenceController = PersistenceController.preview
         let appCoordinator = ApplicationCoordinator(dataContext: persistenceController.container.viewContext)
         let workoutEvent = appCoordinator.workoutEvent
-        let carouselCoordinator = WorkoutCarouselCoordinator(dataContext: persistenceController.container.viewContext, workoutEvent: workoutEvent)
+        let carouselCoordinator = WorkoutCarouselCoordinator(dataContext: persistenceController.container.viewContext, workoutEvent: workoutEvent, collectionUUID: nil)
         
-        WorkoutCarouselMainView(viewModel: carouselCoordinator.viewModel)
+        WorkoutCarouselMainView(viewModel: carouselCoordinator.viewModel, presentedWorkoutIndex: 0)
             .environmentObject(carouselCoordinator)
     }
 }

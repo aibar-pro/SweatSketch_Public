@@ -9,11 +9,11 @@ import SwiftUI
 
 class ExerciseEditCoordinator: ObservableObject, Coordinator {
     
-    var viewModel: ExerciseEditTemporaryViewModel
+    var viewModel: ExerciseEditViewModel
     
     var rootViewController = UIViewController()
     
-    init(viewModel: ExerciseEditTemporaryViewModel) {
+    init(viewModel: ExerciseEditViewModel) {
         rootViewController = UIViewController()
         self.viewModel = viewModel
     }
