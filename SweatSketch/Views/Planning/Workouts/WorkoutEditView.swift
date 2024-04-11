@@ -10,10 +10,9 @@ import SwiftUI
 struct WorkoutEditView: View {
     
     @EnvironmentObject var coordinator: WorkoutEditCoordinator
-    @ObservedObject var viewModel: WorkoutEditTemporaryViewModel
+    @ObservedObject var viewModel: WorkoutEditViewModel
     
     @GestureState var titlePress = false
-    @State private var newWorkoutName : String = ""
     
     enum EditingState {
         case none
@@ -24,9 +23,6 @@ struct WorkoutEditView: View {
     @State private var currentEditingState: EditingState = .none
     
     var body: some View {
-        
-        let exercises = viewModel.exercises
-       
         ZStack {
             GeometryReader { gReader in
                 VStack (alignment: .leading, spacing: Constants.Design.spacing/2) {
@@ -35,9 +31,6 @@ struct WorkoutEditView: View {
                             switch self.currentEditingState {
                             case .none:
                                 coordinator.discardWorkoutEdit()
-                            case .name:
-                                newWorkoutName.removeAll()
-                                currentEditingState = .none
                             default:
                                 currentEditingState = .none
                             }
@@ -57,7 +50,7 @@ struct WorkoutEditView: View {
                         }
                         .padding(.vertical, Constants.Design.spacing/2)
                         .padding(.horizontal, Constants.Design.spacing/2)
-                        .disabled(!viewModel.canUndo)
+                        .disabled(!viewModel.canUndo || currentEditingState != .none)
                         
                         Button(action: {
                             viewModel.redo()
@@ -66,7 +59,7 @@ struct WorkoutEditView: View {
                         }
                         .padding(.vertical, Constants.Design.spacing/2)
                         .padding(.horizontal, Constants.Design.spacing/2)
-                        .disabled(!viewModel.canRedo)
+                        .disabled(!viewModel.canRedo || currentEditingState != .none)
                         
                         Spacer()
                         
@@ -86,7 +79,7 @@ struct WorkoutEditView: View {
                     }
                     .padding(.horizontal, Constants.Design.spacing)
                     
-                    Text(viewModel.editingWorkout.name ?? Constants.Design.Placeholders.noWorkoutName)
+                    Text(viewModel.editingWorkout.name ?? Constants.Placeholders.noWorkoutName)
                         .font(.title2.bold())
                         .lineLimit(2)
                         .padding(.horizontal, Constants.Design.spacing)
@@ -101,7 +94,6 @@ struct WorkoutEditView: View {
                                       if currentEditingState == .none {
                                           currentEditingState = .name
                                       } else {
-                                          newWorkoutName.removeAll()
                                           currentEditingState = .none
                                       }
                                         
@@ -111,9 +103,11 @@ struct WorkoutEditView: View {
                     
                     ZStack {
                         List {
-                            ForEach (exercises, id: \.self) { exercise in
+                            ForEach (viewModel.exercises, id: \.self) { exercise in
                                 HStack (alignment: .top){
-                                    ExerciseView(exerciseEntity: exercise)
+                                    if let exerciseRepresentation = exercise.toExerciseViewRepresentation(){
+                                        ExerciseView(exerciseRepresentation: exerciseRepresentation)
+                                    }
                                     Spacer()
                                     Button(action: {
                                         print("Edit exercise: \(exercise.name ?? "")")
@@ -145,7 +139,7 @@ struct WorkoutEditView: View {
                         .environment(\.editMode,
                                       .constant(currentEditingState == .list ? EditMode.active : EditMode.inactive))
                         .animation(.easeInOut(duration: 0.25))
-                        .onChange(of: exercises.count==0, perform: { _ in
+                        .onChange(of: viewModel.exercises.count==0, perform: { _ in
                             if currentEditingState == .list {
                                 currentEditingState = .none
                             }
@@ -153,73 +147,28 @@ struct WorkoutEditView: View {
                         
                         VStack {
                             if currentEditingState == .name {
-                                VStack (alignment: .leading, spacing: Constants.Design.spacing) {
-                                    HStack {
-                                        Text("New workout name")
-                                            .font(.title3.bold())
-                                        Spacer()
-                                        Button(action: {
-                                            newWorkoutName.removeAll()
-                                            currentEditingState = .none
-                                        }) {
-                                            Image(systemName: "xmark")
-                                        }
-                                    }
-                                    
-                                    TextField("New name", text: $newWorkoutName)
-                                        .padding(.horizontal, Constants.Design.spacing/2)
-                                        .padding(.vertical, Constants.Design.spacing)
-                                        .background(
-                                            RoundedRectangle(cornerRadius: Constants.Design.cornerRadius)
-                                                .stroke(Constants.Design.Colors.backgroundStartColor)
-                                        )
-                                    
-                                    HStack (spacing: Constants.Design.spacing) {
-                                        Spacer()
-                                        Button(action: {
-                                            newWorkoutName.removeAll()
-                                            currentEditingState = .none
-                                        }) {
-                                            Text("Cancel")
-                                                .secondaryButtonLabelStyleModifier()
-                                        }
-                                        Button(action: {
-                                            viewModel.renameWorkout(newName: newWorkoutName)
-                                            newWorkoutName.removeAll()
-                                            currentEditingState = .none
-                                        }) {
-                                            Text("Rename")
-                                                .bold()
-                                                .primaryButtonLabelStyleModifier()
-                                        }
-                                        .disabled(newWorkoutName.isEmpty)
-                                    }
-                                }
-                                .padding(Constants.Design.spacing)
-                                .materialCardBackgroundModifier()
-                                .padding(.horizontal, Constants.Design.spacing)
-                                
+                                RenamePopoverView(title: "New workout name", onRename: { newName in
+                                    viewModel.renameWorkout(newName: newName)
+                                    currentEditingState = .none
+                                }, onDiscard: {
+                                    currentEditingState = .none
+                                })
                             }
                             
                             Spacer()
                             
                             if currentEditingState == .restTime {
-                                if viewModel.defaultRestTime != nil {
-                                    DefaultRestTimePopoverView(showPopover: Binding(
-                                        get: {
-                                            switch currentEditingState {
-                                            case .restTime:
-                                                return true
-                                            default:
-                                                return false
-                                            }
-                                        }, 
-                                        set: {_ in
-                                                currentEditingState = .none
-                                        }))
-                                        .padding(Constants.Design.spacing)
-                                        .materialCardBackgroundModifier()
-                                }
+                                WorkoutDefaultRestTimePopoverView(onSave: { newDuration in
+                                    viewModel.updateDefaultRestTime(duration: newDuration)
+                                    currentEditingState = .none
+                                }, onDiscard: {
+                                    currentEditingState = .none
+                                }, onAdvancedEdit: {
+                                    coordinator.goToAdvancedEditRestPeriod()
+                                    currentEditingState = .none
+                                }, duration: Int(viewModel.defaultRestTime.duration))
+                                    .padding(Constants.Design.spacing)
+                                    .materialCardBackgroundModifier()
                             }
                         }
                     }
@@ -252,7 +201,7 @@ struct WorkoutEditView: View {
                                 if currentEditingState != .restTime {
                                     DurationView(durationInSeconds: Int(viewModel.defaultRestTime.duration))
                                 } else {
-                                    Text(Constants.Design.Placeholders.noDuration)
+                                    Text(Constants.Placeholders.noDuration)
                                 }
                             }
                             .padding(Constants.Design.spacing/2)
@@ -297,8 +246,16 @@ struct WorkoutEditView_Previews: PreviewProvider {
     static var previews: some View {
         
         let persistenceController = PersistenceController.preview
-        let workoutViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext)
-        let workoutEditModel = WorkoutEditTemporaryViewModel(parentViewModel: workoutViewModel, editingWorkout: workoutViewModel.workouts[0])
+        
+        let collectionDataManager = CollectionDataManager()
+        let firstCollection = collectionDataManager.fetchFirstUserCollection(in: persistenceController.container.viewContext)
+        
+        let workoutViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext, collectionUUID: firstCollection?.uuid)
+        
+        let workoutForPreview = collectionDataManager.fetchWorkouts(for: firstCollection!, in: workoutViewModel.mainContext).first
+        
+        let workoutEditModel = WorkoutEditViewModel(parentViewModel: workoutViewModel, editingWorkoutUUID: workoutForPreview?.uuid)
+        
         let workoutEditCoordinator = WorkoutEditCoordinator(viewModel: workoutEditModel)
         
         WorkoutEditView(viewModel: workoutEditModel)

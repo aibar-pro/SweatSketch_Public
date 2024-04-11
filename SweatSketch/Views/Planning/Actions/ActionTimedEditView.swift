@@ -17,7 +17,7 @@ struct ActionTimedEditView: View {
         VStack (alignment: .leading, spacing: Constants.Design.spacing/2) {
             if editTitle {
                 TextField("Edit name", text: Binding(
-                    get: { self.actionEntity.name ?? Constants.Design.Placeholders.noActionName },
+                    get: { self.actionEntity.name ?? Constants.Placeholders.noActionName },
                     set: { self.actionEntity.name = $0 }
                 ))
                 .padding(.horizontal, Constants.Design.spacing/2)
@@ -41,8 +41,8 @@ struct ActionTimedEditView_Preview : PreviewProvider {
     static var previews: some View {
         let persistenceController = PersistenceController.preview
         let workoutCarouselViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext)
-        let workoutEditViewModel = WorkoutEditTemporaryViewModel(parentViewModel: workoutCarouselViewModel, editingWorkout: workoutCarouselViewModel.workouts[0])
-        let exerciseEditViewModel = ExerciseEditTemporaryViewModel(parentViewModel: workoutEditViewModel, editingExercise: workoutEditViewModel.exercises[2])
+        let workoutEditViewModel = WorkoutEditViewModel(parentViewModel: workoutCarouselViewModel, editingWorkoutUUID: workoutCarouselViewModel.workouts[0].id)
+        let exerciseEditViewModel = ExerciseEditViewModel(parentViewModel: workoutEditViewModel, editingExercise: workoutEditViewModel.exercises[2])
         
         let action = exerciseEditViewModel.exerciseActions[0]
         

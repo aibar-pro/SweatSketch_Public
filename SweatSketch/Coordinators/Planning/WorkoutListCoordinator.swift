@@ -9,11 +9,11 @@ import SwiftUI
 
 class WorkoutListCoordinator: ObservableObject, Coordinator {
     
-    let viewModel: WorkoutListTemporaryViewModel
+    let viewModel: WorkoutListViewModel
     
     var rootViewController = UIViewController()
     
-    init(viewModel: WorkoutListTemporaryViewModel) {
+    init(viewModel: WorkoutListViewModel) {
         rootViewController = UIViewController()
         self.viewModel = viewModel
     }

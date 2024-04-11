@@ -1,14 +1,13 @@
 //
-//  WorkoutListTemporaryViewModel.swift
+//  WorkoutListViewModel.swift
 //  SweatSketch
 //
 //  Created by aibaranchikov on 13.03.2024.
 //
 
-import Foundation
 import CoreData
 
-class WorkoutListTemporaryViewModel: ObservableObject {
+class WorkoutListViewModel: ObservableObject {
 
     private let temporaryWorkoutListContext: NSManagedObjectContext
     private let parentViewModel: WorkoutCarouselViewModel

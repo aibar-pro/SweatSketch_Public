@@ -12,31 +12,92 @@ struct WorkoutCollectionMainView: View {
     @EnvironmentObject var coordinator: WorkoutCollectionCoordinator
     
     var body: some View {
-        VStack {
-            Button("To carousel") {
-                coordinator.goToWorkoutCollection()
-            }
-            .padding(50)
+        VStack (alignment: .leading, spacing: Constants.Design.spacing){
+            HStack {
+                Text("Workout Catalog")
+                    .font(.title2.bold())
+                    .lineLimit(2)
+                    
+                Spacer()
                 
-            List {
-                ForEach(viewModel.collections, id: \.id) { collection in
-                    Section(header: Text(collection.name)) {
-                        ForEach(collection.subCollections, id: \.id) { subCollection in
-                            DisclosureGroup(subCollection.name) {
-                                ForEach(subCollection.workouts, id: \.self) { workout in
-                                    Text(workout.name ?? "AAAA")
+                Button(action: {
+                    coordinator.goToAddCollection()
+                }) {
+                    Image(systemName: "plus")
+                }
+            }
+            .padding(.horizontal, Constants.Design.spacing)
+            
+            ScrollView {
+                LazyVStack (alignment: .leading, spacing: Constants.Design.spacing/2){
+                    ForEach(viewModel.collections, id: \.id) { collection in
+                        Section(header:
+                            HStack {
+                                Text(collection.name)
+                                .font(.headline)
+                                    .lineLimit(2)
+//                                Spacer()
+//                                Button(action: {
+//                                    coordinator.goToWorkoutCollection(collectionUUID: collection.id)
+//                                }) {
+//                                    Image(systemName: "ellipsis")
+//                                }
+                            }
+                            .padding(.vertical, Constants.Design.spacing/2)
+                        ) {
+                            if !collection.workouts.isEmpty {
+                                HStack(alignment: .center) {
+                                    VStack (alignment: .leading, spacing: Constants.Design.spacing/2) {
+                                        ForEach(collection.workouts, id: \.self) { workout in
+                                            Text(workout.name ?? Constants.Placeholders.noWorkoutName)
+                                                .padding(.leading, Constants.Design.spacing)
+                                        }
+                                    }
+                                    Spacer()
+                                    Button(action: {
+                                        coordinator.goToWorkoutCollection(collectionUUID: collection.id)
+                                    }) {
+                                        Image(systemName: "chevron.forward")
+                                    }
                                 }
                             }
-                        }
-                        
-                        ForEach(collection.workouts, id: \.self) { workout in
-                            Text(workout.name ?? "AAAA")
+                            ForEach(collection.subCollections, id: \.id) { subCollection in
+                                DisclosureGroup(
+                                    content: {
+                                        HStack(alignment: .center) {
+                                            VStack (alignment: .leading, spacing: Constants.Design.spacing/2) {
+                                                ForEach(subCollection.workouts, id: \.self) { workout in
+                                                    Text(workout.name ?? Constants.Placeholders.noWorkoutName)
+                                                        .padding(.leading, Constants.Design.spacing)
+                                                }
+                                            }
+                                            Spacer()
+                                            Button(action: {
+                                                coordinator.goToWorkoutCollection(collectionUUID: subCollection.id)
+                                            }) {
+                                                Image(systemName: "chevron.forward")
+                                            }
+                                        }
+                                        .padding(.vertical, Constants.Design.spacing/2)
+                                    },
+                                    label: {
+                                        Text(subCollection.name)
+                                            .font(.subheadline)
+                                            .padding(.bottom, Constants.Design.spacing/2)
+                                    }
+                                )
+                                .padding(.leading, Constants.Design.spacing)
+    
+                            }
                         }
                     }
                 }
-            
             }
+            .padding(.horizontal, Constants.Design.spacing)
+           
         }
+        .accentColor(Constants.Design.Colors.textColorMediumEmphasis)
+        
     }
 }
 

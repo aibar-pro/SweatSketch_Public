@@ -9,20 +9,16 @@ import SwiftUI
 
 struct ActionTimedView: View {
     
-    @ObservedObject var actionEntity: ExerciseActionEntity
+    var action: ExerciseActionViewViewModel
     
     var showTitle: Bool = false
     
     var body: some View {
         HStack (alignment: .top) {
             if showTitle {
-                Text("\(actionEntity.name ?? Constants.Design.Placeholders.noActionName),")
+                Text("\(action.name),")
             }
-            if actionEntity.duration > 0 {
-                DurationView(durationInSeconds: Int(actionEntity.duration))
-            } else {
-                Text(Constants.Design.Placeholders.noActionDetails)
-            }
+            DurationView(durationInSeconds: Int(action.duration))
         }
     }
 }
@@ -31,12 +27,17 @@ struct ActionTimedView_Preview : PreviewProvider {
 
     static var previews: some View {
         let persistenceController = PersistenceController.preview
-        let workoutCarouselViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext)
-        let workoutEditViewModel = WorkoutEditTemporaryViewModel(parentViewModel: workoutCarouselViewModel, editingWorkout: workoutCarouselViewModel.workouts[0])
-        let exerciseEditViewModel = ExerciseEditTemporaryViewModel(parentViewModel: workoutEditViewModel, editingExercise: workoutEditViewModel.exercises[2])
         
-        let action = exerciseEditViewModel.exerciseActions[0]
+        let collectionDataManager = CollectionDataManager()
+        let firstCollection = collectionDataManager.fetchFirstUserCollection(in: persistenceController.container.viewContext)!
+        let workoutForPreview = collectionDataManager.fetchWorkouts(for: firstCollection, in: persistenceController.container.viewContext).first!
         
-        ActionTimedView(actionEntity: action, showTitle: true)
+        let workoutDataManager = WorkoutDataManager()
+        
+        let exerciseForPreview = workoutDataManager.fetchExercises(for: workoutForPreview, in: persistenceController.container.viewContext)[0]
+        
+        let actionForPreview = (exerciseForPreview.toExerciseViewRepresentation()?.actions[0])!
+            
+        ActionTimedView(action: actionForPreview, showTitle: true)
     }
 }

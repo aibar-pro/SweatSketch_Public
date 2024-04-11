@@ -9,25 +9,23 @@ import SwiftUI
 
 struct ExerciseView: View {
     
-    @ObservedObject var exerciseEntity: ExerciseEntity
+    @ObservedObject var exerciseRepresentation: ExerciseViewViewModel
     
     var body: some View {
         VStack (alignment: .leading) {
-            let exerciseType = ExerciseType.from(rawValue: exerciseEntity.type)
-            
             HStack (alignment: .top){
-                Image(systemName: exerciseType.iconName)
+                Image(systemName: exerciseRepresentation.type.iconName)
                     .padding(Constants.Design.spacing/4)
                     .frame(width: Constants.Design.spacing*1.5)
                 
                 VStack (alignment: .leading) {
                     HStack (alignment: .top) {
-                        Text(exerciseEntity.name ?? Constants.Design.Placeholders.noExerciseName)
+                        Text(exerciseRepresentation.name)
                             .font(.title2)
                             .lineLimit(2)
                         Spacer()
-                        if exerciseType == .mixed {
-                            Text("x\(exerciseEntity.superSets)")
+                        if exerciseRepresentation.type == .mixed {
+                            Text("x\(exerciseRepresentation.superSets)")
                                 .font(.title2)
                                 .padding(.trailing, Constants.Design.spacing/4)
                         } else {
@@ -36,7 +34,7 @@ struct ExerciseView: View {
                     }
                     .padding(.bottom, Constants.Design.spacing/4)
                     
-                    ActionListView(exerciseEntity: exerciseEntity)
+                    ActionListView(exercise: exerciseRepresentation)
                         .foregroundSecondaryColorModifier()
                 }
             }
@@ -48,16 +46,15 @@ struct ExerciseView_Previews: PreviewProvider {
     static var previews: some View {
         
         let persistenceController = PersistenceController.preview
-        let workoutCarouselViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext)
-       
-        let exercise = workoutCarouselViewModel.workouts[0].exercises![0] as! ExerciseEntity
-        let exercise1 = workoutCarouselViewModel.workouts[0].exercises![1] as! ExerciseEntity
-        let exercise2 = workoutCarouselViewModel.workouts[0].exercises![2] as! ExerciseEntity
         
-        VStack (spacing: 50) {
-            ExerciseView(exerciseEntity: exercise)
-            ExerciseView(exerciseEntity: exercise1)
-            ExerciseView(exerciseEntity: exercise2)
-        }
+        let collectionDataManager = CollectionDataManager()
+        let firstCollection = collectionDataManager.fetchFirstUserCollection(in: persistenceController.container.viewContext)
+        let workoutForPreview = collectionDataManager.fetchWorkouts(for: firstCollection!, in: persistenceController.container.viewContext).first!
+        
+        let workoutDataManager = WorkoutDataManager()
+        let exercise = workoutDataManager.fetchExercises(for: workoutForPreview, in: persistenceController.container.viewContext).first!
+        
+        let exerciseRepresentation = exercise.toExerciseViewRepresentation()!
+        ExerciseView(exerciseRepresentation: exerciseRepresentation)
     }
 }

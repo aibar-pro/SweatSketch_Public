@@ -23,13 +23,17 @@ struct ActionEditSwitchView: View {
             if isEditing {
                 ActionSetsNRepsEditView(actionEntity: actionEntity)
             } else {
-                ActionSetsNRepsView(actionEntity: actionEntity)
+                if let actionRepresentation = actionEntity.toExerciseActionViewRepresentation() {
+                    ActionSetsNRepsView(action: actionRepresentation)
+                }
             }
         case .timed:
             if isEditing {
                 ActionTimedEditView(actionEntity: actionEntity)
             } else {
-                ActionTimedView(actionEntity: actionEntity)
+                if let actionRepresentation = actionEntity.toExerciseActionViewRepresentation() {
+                    ActionTimedView(action: actionRepresentation)
+                }
             }
         case .mixed:
             if isEditing {
@@ -51,26 +55,30 @@ struct ActionEditSwitchView: View {
                     .padding(.bottom, Constants.Design.spacing/2)
                     switch ExerciseActionType.from(rawValue: actionEntity.type) {
                     case .setsNreps:
-                        ActionSetsNRepsEditView(actionEntity: actionEntity, editTitle: true)
+                        ActionSetsNRepsEditView(actionEntity: actionEntity, editTitle: true, editSets: false)
                     case .timed:
                         ActionTimedEditView(actionEntity: actionEntity, editTitle: true)
                     case .unknown:
-                        Text(Constants.Design.Placeholders.noActionDetails)
+                        Text(Constants.Placeholders.noActionDetails)
                     }
                 }
             } else {
                 switch ExerciseActionType.from(rawValue: actionEntity.type) {
                 case .setsNreps:
-                    ActionSetsNRepsView(actionEntity: actionEntity, showTitle: true)
+                    if let actionRepresentation = actionEntity.toExerciseActionViewRepresentation() {
+                        ActionSetsNRepsView(action: actionRepresentation, showTitle: true, showSets: false)
+                    }
                 case .timed:
-                    ActionTimedView(actionEntity: actionEntity,showTitle: true)
+                    if let actionRepresentation = actionEntity.toExerciseActionViewRepresentation() {
+                        ActionTimedView(action: actionRepresentation, showTitle: true)
+                    }
                 case .unknown:
-                    Text(Constants.Design.Placeholders.noActionDetails)
+                    Text(Constants.Placeholders.noActionDetails)
                 }
             }
         
         case .unknown:
-            Text(Constants.Design.Placeholders.noActionDetails)
+            Text(Constants.Placeholders.noActionDetails)
         }
     }
 }
@@ -80,30 +88,24 @@ struct ActionEditSwitchView_Previews: PreviewProvider {
     static var previews: some View {
 
         let persistenceController = PersistenceController.preview
-        let workoutCarouselViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext)
-        let workoutEditViewModel = WorkoutEditTemporaryViewModel(parentViewModel: workoutCarouselViewModel, editingWorkout: workoutCarouselViewModel.workouts[0])
-        let exerciseEditViewModel = ExerciseEditTemporaryViewModel(parentViewModel: workoutEditViewModel, editingExercise: workoutEditViewModel.exercises[0])
         
-        let action = exerciseEditViewModel.exerciseActions[0]
-        let exerciseType = exerciseEditViewModel.editingExercise.type
+        let collectionDataManager = CollectionDataManager()
+        let firstCollection = collectionDataManager.fetchFirstUserCollection(in: persistenceController.container.viewContext)!
+        let workoutForPreview = collectionDataManager.fetchWorkouts(for: firstCollection, in: persistenceController.container.viewContext).first!
         
-//        let isEditingBinding = Binding<Bool>(
-//            get: {
-//                true
-//            },
-//            set: { isEditing in
-//                if isEditing {
-//                    exerciseEditViewModel.setEditingAction(action)
-//                } else {
-//                    exerciseEditViewModel.clearEditingAction()
-//                }
-//            }
-//        )
+        let workoutDataManager = WorkoutDataManager()
+        
+        let exerciseForPreview = workoutDataManager.fetchExercises(for: workoutForPreview, in: persistenceController.container.viewContext)[2]
+        
+        let exerciseDataManager = ExerciseDataManager()
+        
+        let actionForPreview = exerciseDataManager.fetchActions(for: exerciseForPreview, in: persistenceController.container.viewContext)[1]
+        
         
         VStack (spacing: 50 ) {
-            ActionEditSwitchView(actionEntity: action, isEditing: .constant(false), exerciseType: ExerciseType.from(rawValue: exerciseType))
+            ActionEditSwitchView(actionEntity: actionForPreview, isEditing: .constant(false), exerciseType: ExerciseType.from(rawValue: exerciseForPreview.type))
             
-            ActionEditSwitchView(actionEntity: action, isEditing: .constant(true), exerciseType: ExerciseType.from(rawValue: exerciseType))
+            ActionEditSwitchView(actionEntity: actionForPreview, isEditing: .constant(true), exerciseType: ExerciseType.from(rawValue: exerciseForPreview.type))
                 
         }
 

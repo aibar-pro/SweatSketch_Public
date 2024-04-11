@@ -1,14 +1,13 @@
 //
-//  NewWorkoutModel.swift
+//  WorkoutEditViewModel.swift
 //  MyWorkoutPlanner
 //
 //  Created by aibaranchikov on 29.11.2023.
 //
 
-import Foundation
 import CoreData
 
-class WorkoutEditTemporaryViewModel: ObservableObject {
+class WorkoutEditViewModel: ObservableObject {
     
     private let parentViewModel: WorkoutCarouselViewModel
     let mainContext: NSManagedObjectContext
@@ -20,14 +19,14 @@ class WorkoutEditTemporaryViewModel: ObservableObject {
     }
     
     @Published var editingWorkout: WorkoutEntity
-    @Published var exercises: [ExerciseEntity] = []
+    @Published var exercises = [ExerciseEntity]()
     @Published var defaultRestTime: RestTimeEntity
     
     private let collectionDataManager = CollectionDataManager()
     private let workoutDataManager = WorkoutDataManager()
     private let exerciseDataManager = ExerciseDataManager()
     
-    init(parentViewModel: WorkoutCarouselViewModel, editingWorkout: WorkoutEntity? = nil) {
+    init(parentViewModel: WorkoutCarouselViewModel, editingWorkoutUUID: UUID? = nil) {
         self.mainContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         self.mainContext.parent = parentViewModel.mainContext
         self.parentViewModel = parentViewModel
@@ -41,22 +40,20 @@ class WorkoutEditTemporaryViewModel: ObservableObject {
         self.editingWorkout = WorkoutEntity()
         self.defaultRestTime = RestTimeEntity()
         
-        if let workout = editingWorkout, let workoutToEdit = workoutDataManager.fetchWorkout(workout: workout, in: self.mainContext) {
+        if let workoutUUID = editingWorkoutUUID, let workoutToEdit = workoutDataManager.fetchWorkout(by: workoutUUID, in: self.mainContext) {
  
             self.editingWorkout = workoutToEdit
             self.exercises = workoutDataManager.fetchExercises(for: workoutToEdit, in: self.mainContext)
             
         } else {
-            let newWorkoutPosition = (parentViewModel.workouts.last?.position ?? -1) + 1
-            self.editingWorkout = workoutDataManager.createDefaultWorkout(position: newWorkoutPosition, in: self.mainContext)
+            self.editingWorkout = collectionDataManager.createWorkout(for: self.parentViewModel.workoutCollection, in: self.mainContext)
         }
         
         //Setup default workout rest time
         if let defaultRestTime = workoutDataManager.fetchDefaultRestTime(for: self.editingWorkout, in: self.mainContext) {
             self.defaultRestTime = defaultRestTime
         } else {
-            self.defaultRestTime = createDefaultRestTime(withDuration: Constants.DefaultValues.restTimeDuration)
-            self.editingWorkout.addToRestTimes(self.defaultRestTime)
+            self.defaultRestTime = workoutDataManager.createDefaultRestTime(for: self.editingWorkout, in: self.mainContext)
         }
         
         //Ignore Workout and default RestTime creation for undo/redo
@@ -66,6 +63,14 @@ class WorkoutEditTemporaryViewModel: ObservableObject {
     
     func renameWorkout(newName: String) {
         self.editingWorkout.name = newName
+    }
+    
+    //Used for correct implementation of add exercise undo
+    func addExerciseToWorkout(newExercise: ExerciseEntity) {
+        if let fetchedExercise = exerciseDataManager.fetchExercise(exercise: newExercise, in: self.mainContext) {
+            self.mainContext.undoManager?.registerUndo(withTarget: self, selector: #selector(redoExerciseDelete(_ :)), object: fetchedExercise)
+            self.editingWorkout.addToExercises(fetchedExercise)
+        }
     }
     
     func createDefaultRestTime(withDuration duration: Int) -> RestTimeEntity {
@@ -105,7 +110,7 @@ class WorkoutEditTemporaryViewModel: ObservableObject {
         
         while low < high {
             let mid = low + (high - low) / 2
-            if exercises[mid].order < exercise.order {
+            if exercises[mid].position < exercise.position {
                 low = mid + 1
             } else {
                 high = mid
@@ -128,15 +133,12 @@ class WorkoutEditTemporaryViewModel: ObservableObject {
         exercises.enumerated().forEach{ index, exercise in
             editingWorkout.removeFromExercises(exercise)
             editingWorkout.insertIntoExercises(exercise, at: index)
-            exercise.order=Int16(index)
+            exercise.position=Int16(index)
         }
     }
     
     func saveWorkout() {
         do {
-            if editingWorkout.collection == nil, let collectionToUpdate = collectionDataManager.fetchCollection(collection: parentViewModel.workoutCollection, in: self.mainContext) {
-                editingWorkout.collection = collectionToUpdate
-            }
             try mainContext.save()
             parentViewModel.saveContext()
             parentViewModel.refreshData()
@@ -151,6 +153,7 @@ class WorkoutEditTemporaryViewModel: ObservableObject {
     
     func refreshData() {
         self.exercises = workoutDataManager.fetchExercises(for: self.editingWorkout, in: self.mainContext)
+        self.objectWillChange.send()
     }
     
     func undo() {
