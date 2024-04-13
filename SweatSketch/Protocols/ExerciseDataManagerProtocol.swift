@@ -13,6 +13,7 @@ protocol ExerciseDataManagerProtocol {
     func createRestTimeBetweenActions(for: ExerciseEntity, with duration: Int, in context: NSManagedObjectContext) -> ExerciseActionEntity
     
     func fetchExercise(exercise: ExerciseEntity, in context: NSManagedObjectContext) -> ExerciseEntity?
+    func fetchExercise(by uuid: UUID, in context: NSManagedObjectContext) -> ExerciseEntity?
     func fetchActions(for exercise: ExerciseEntity, in context: NSManagedObjectContext) -> [ExerciseActionEntity]
     func fetchRestTimeBetweenActions(for exercise: ExerciseEntity, in context: NSManagedObjectContext) -> ExerciseActionEntity?
     

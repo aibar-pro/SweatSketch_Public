@@ -44,6 +44,7 @@ enum Constants {
     
     enum DefaultValues {
         static let defaultWorkoutCollectionName = "Default Collection"
+        static let importedWorkoutCollectionName = "Imported Workouts"
         
         static let setsCount = 1
         static let repsCount = 1
