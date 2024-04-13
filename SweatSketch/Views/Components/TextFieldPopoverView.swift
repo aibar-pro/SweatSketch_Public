@@ -1,5 +1,5 @@
 //
-//  RenamePopoverView.swift
+//  TextFieldPopoverView.swift
 //  SweatSketch
 //
 //  Created by aibaranchikov on 09.04.2024.
@@ -7,19 +7,21 @@
 
 import SwiftUI
 
-struct RenamePopoverView: View {
+struct TextFieldPopoverView: View {
     
     @State var newName: String = ""
     
-    var title: String = "New name"
+    var popoverTitle: String = "Add Object"
+    var textFieldLabel: String = "Enter object name..."
+    var buttonLabel: String = "Add"
     
-    var onRename: (_ : String) -> Void
+    var onDone: (_ : String) -> Void
     var onDiscard: () -> Void
     
     var body: some View {
         VStack (alignment: .leading, spacing: Constants.Design.spacing) {
             HStack {
-                Text(title)
+                Text(popoverTitle)
                     .font(.title3.bold())
                 Spacer()
                 Button(action: {
@@ -30,7 +32,7 @@ struct RenamePopoverView: View {
                 }
             }
             
-            TextField(title, text: $newName)
+            TextField(textFieldLabel, text: $newName)
                 .padding(.horizontal, Constants.Design.spacing/2)
                 .padding(.vertical, Constants.Design.spacing)
                 .background(
@@ -48,10 +50,10 @@ struct RenamePopoverView: View {
                         .secondaryButtonLabelStyleModifier()
                 }
                 Button(action: {
-                    onRename(newName)
+                    onDone(newName)
                     newName.removeAll()
                 }) {
-                    Text("Rename")
+                    Text(buttonLabel)
                         .bold()
                         .primaryButtonLabelStyleModifier()
                 }
@@ -65,5 +67,5 @@ struct RenamePopoverView: View {
 }
 
 #Preview {
-    RenamePopoverView(title: "New entity name", onRename: {_ in }, onDiscard: {})
+    TextFieldPopoverView(popoverTitle: "Rename Entity", textFieldLabel: "Enter new name", buttonLabel: "Rename", onDone: {_ in }, onDiscard: {})
 }

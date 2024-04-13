@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ActionSetsNRepsView: View {
     
-    var action: ExerciseActionViewViewModel
+    var action: ExerciseActionViewRepresentation
     
     var showTitle: Bool = false
     var showSets: Bool = true

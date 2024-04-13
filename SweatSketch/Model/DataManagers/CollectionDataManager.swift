@@ -22,46 +22,32 @@ class CollectionDataManager: CollectionDataManagerProtocol {
         }
     }
     
-    func fetchCollectionsWithoutParent(in context: NSManagedObjectContext) -> [WorkoutCollectionEntity] {
-        let fetchRequest: NSFetchRequest<WorkoutCollectionEntity> = WorkoutCollectionEntity.fetchRequest()
+    func fetchRootCollections(in context: NSManagedObjectContext, excludingTypes excludedTypes: [WorkoutCollectionType] = []) -> [WorkoutCollectionEntity] {
+            let fetchRequest: NSFetchRequest<WorkoutCollectionEntity> = WorkoutCollectionEntity.fetchRequest()
+    
+            var fetchPredicates = [NSPredicate(format: "parentCollection == nil")]
         
-        fetchRequest.predicate = NSPredicate(format: "parentCollection == nil")
+            if !excludedTypes.isEmpty {
+                let typePredicates = excludedTypes.map { NSPredicate(format: "type != %@", $0.rawValue) }
+                let typeExclusionPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: typePredicates)
+                let nilTypePredicate = NSPredicate(format: "type == nil")
+                let compoundTypePredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [nilTypePredicate, typeExclusionPredicate])
+                fetchPredicates.append(compoundTypePredicate)
+            }
         
-        let sortDescriptor = NSSortDescriptor(key: "position", ascending: true)
-        fetchRequest.sortDescriptors = [sortDescriptor]
+            fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: fetchPredicates)
         
-        do {
-            let collectionsToReturn = try context.fetch(fetchRequest)
-            return collectionsToReturn
-        } catch {
-            print("Error fetching collections: \(error)")
-            return []
+            let sortDescriptor = NSSortDescriptor(key: "position", ascending: true)
+            fetchRequest.sortDescriptors = [sortDescriptor]
+    
+            do {
+                let collectionsToReturn = try context.fetch(fetchRequest)
+                return collectionsToReturn
+            } catch {
+                print("Error fetching collections: \(error)")
+                return []
+            }
         }
-    }
-    func fetchNonSystemCollectionsWithoutParent(in context: NSManagedObjectContext) -> [WorkoutCollectionEntity] {
-        let fetchRequest: NSFetchRequest<WorkoutCollectionEntity> = WorkoutCollectionEntity.fetchRequest()
-
-        let withoutParentPredicate = NSPredicate(format: "parentCollection == nil")
-        let notDefaultPredicate = NSPredicate(format: "type != %@", WorkoutCollectionType.defaultCollection.rawValue)
-        let notImportedPredicate = NSPredicate(format: "type != %@", WorkoutCollectionType.imported.rawValue)
-        let noTypePredicate = NSPredicate(format: "type == nil")
-        
-        let systemTypePredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [notDefaultPredicate, notImportedPredicate])
-        let typePrecicate = NSCompoundPredicate(orPredicateWithSubpredicates: [noTypePredicate, systemTypePredicate])
-        
-        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [withoutParentPredicate, typePrecicate])
-        
-        let sortDescriptor = NSSortDescriptor(key: "position", ascending: true)
-        fetchRequest.sortDescriptors = [sortDescriptor]
-
-        do {
-            let collectionsToReturn = try context.fetch(fetchRequest)
-            return collectionsToReturn
-        } catch {
-            print("Error fetching collections: \(error)")
-            return []
-        }
-    }
     
     func fetchFirstUserCollection(in context: NSManagedObjectContext) -> WorkoutCollectionEntity? {
         let fetchRequest: NSFetchRequest<WorkoutCollectionEntity> = WorkoutCollectionEntity.fetchRequest()
@@ -173,10 +159,10 @@ class CollectionDataManager: CollectionDataManagerProtocol {
         return newCollection
     }
     
-    func createCollection(in context: NSManagedObjectContext) -> WorkoutCollectionEntity {
+    func createCollection(with name: String?, in context: NSManagedObjectContext) -> WorkoutCollectionEntity {
         let newCollection = WorkoutCollectionEntity(context: context)
         newCollection.uuid = UUID()
-        newCollection.name = Constants.Placeholders.noCollectionName
+        newCollection.name = name ?? Constants.Placeholders.noCollectionName
         newCollection.type = WorkoutCollectionType.user.rawValue
         newCollection.position = calculateNewCollectionPosition(ofType: .user, in: context)
         
@@ -211,31 +197,30 @@ class CollectionDataManager: CollectionDataManagerProtocol {
         }
         print("Setup Default Collection: WORKOUTS ASSIGNED \(workoutsWithoutCollection.count)")
         
-        let rootCollections = self.fetchNonSystemCollectionsWithoutParent(in: context)
-        for (index, collection) in rootCollections.enumerated() {
+        let rootUserCollections = fetchRootCollections(in: context, excludingTypes: [.defaultCollection, .imported])
+        for (index, collection) in rootUserCollections.enumerated() {
             collection.position = Int16(index)
         }
         
-        defaultCollectionToSetup.position = Int16(rootCollections.count)
+        defaultCollectionToSetup.position = Int16(rootUserCollections.count)
         print("Setup Default Collection: ADJUSTED POSITION \(defaultCollectionToSetup.position)")
         
         if let importedCollection = fetchSystemCollection(ofType: .imported, in: context) {
-            importedCollection.position = Int16(rootCollections.count + 1)
-            print("Setup Imported Collection: ADJUSTED POSITION")
+            importedCollection.position = defaultCollectionToSetup.position + 1
+            print("Setup Imported Collection: ADJUSTED POSITION \(importedCollection.position)")
         }
     }
     
     func calculateNewCollectionPosition(ofType: WorkoutCollectionType, in context: NSManagedObjectContext) -> Int16 {
-        let rootCollections = fetchNonSystemCollectionsWithoutParent(in: context)
+        let rootCollections = fetchRootCollections(in: context, excludingTypes: [.defaultCollection, .imported])
         
-        print(rootCollections.count)
+        let lastCollectionPosition = rootCollections.last?.position ?? -1
+ 
         switch ofType {
         case .imported:
-            return Int16(rootCollections.count+1)
-        case .defaultCollection:
-            return Int16(rootCollections.count)
+            return lastCollectionPosition + 2
         default:
-            return Int16(max(rootCollections.count - 1, 0))
+            return lastCollectionPosition + 1
         }
     }
     

@@ -12,7 +12,7 @@ class WorkoutCarouselViewModel: ObservableObject {
     let mainContext: NSManagedObjectContext
     var workoutCollection: WorkoutCollectionEntity
     
-    @Published var workouts = [WorkoutViewViewModel]()
+    @Published var workouts = [WorkoutViewRepresentation]()
     
     private let collectionDataManager = CollectionDataManager()
     
@@ -71,24 +71,9 @@ class WorkoutCarouselViewModel: ObservableObject {
     func refreshData() {
         DispatchQueue.main.async { [weak self] in
             if let context = self?.mainContext, let collection = self?.workoutCollection, let fetchedWorkouts = self?.collectionDataManager.fetchWorkouts(for: collection, in: context) {
-                fetchedWorkouts.forEach({
-                   print("\($0.name ?? "Untitled"). Exercise count: \($0.exercises?.count)")
-                })
-                self?.workouts = fetchedWorkouts.compactMap({ workout in
-                    workout.toWorkoutViewRepresentation()
-                })
+                self?.workouts = fetchedWorkouts.compactMap({ $0.toWorkoutViewRepresentation() })
             }
         }
-//        let fetchedWorkouts = self.collectionDataManager.fetchWorkouts(for: workoutCollection, in: self.mainContext)
-//        fetchedWorkouts.forEach({
-//            print("\($0.name ?? "Untitled"). Exercise count: \($0.exercises?.count)")
-//        })
-//        self.workouts = fetchedWorkouts.compactMap({
-//            let workout = $0.toWorkoutViewRepresentation()
-//            print("Representation. Exercise count: \($0.exercises?.count)")
-//            return workout
-//        })
-        
     }
     
     func saveContext() {

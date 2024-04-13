@@ -7,8 +7,8 @@
 
 import Foundation
 
-class ExerciseActionViewViewModel: Identifiable, Equatable, ObservableObject {
-    static func == (lhs: ExerciseActionViewViewModel, rhs: ExerciseActionViewViewModel) -> Bool {
+class ExerciseActionViewRepresentation: Identifiable, Equatable, ObservableObject {
+    static func == (lhs: ExerciseActionViewRepresentation, rhs: ExerciseActionViewRepresentation) -> Bool {
         return 
             lhs.id == rhs.id &&
             lhs.name == rhs.name &&
@@ -41,7 +41,7 @@ class ExerciseActionViewViewModel: Identifiable, Equatable, ObservableObject {
 }
 
 extension ExerciseActionEntity {
-    func toExerciseActionViewRepresentation() -> ExerciseActionViewViewModel? {
-        return ExerciseActionViewViewModel(action: self)
+    func toExerciseActionViewRepresentation() -> ExerciseActionViewRepresentation? {
+        return ExerciseActionViewRepresentation(action: self)
     }
 }

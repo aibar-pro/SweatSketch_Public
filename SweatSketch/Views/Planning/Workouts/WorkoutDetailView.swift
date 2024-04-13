@@ -9,7 +9,7 @@ import SwiftUI
 
 struct WorkoutDetailView: View {
     
-    @ObservedObject var workoutRepresentation: WorkoutViewViewModel
+    @ObservedObject var workoutRepresentation: WorkoutViewRepresentation
     
     var body: some View {
         GeometryReader { geoReader in

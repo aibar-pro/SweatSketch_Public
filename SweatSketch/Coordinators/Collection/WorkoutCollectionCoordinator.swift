@@ -34,9 +34,9 @@ class WorkoutCollectionCoordinator: ObservableObject, Coordinator {
         UserDefaults.standard.set(collectionUUID.uuidString, forKey: UserDefaultsKeys.lastOpenedCollectionUUID)
     }
     
-    func goToAddCollection() {
-        let collectionAddViewModel = WorkoutCollectionEditViewModel(parentViewModel: viewModel, editingCollectionUUID: nil)
-        let collectionAddCoordinator = WorkoutCollectionEditCoordinator(viewModel: collectionAddViewModel)
+    func goToMoveWorkout(movingWorkout: WorkoutCollectionWorkoutViewRepresentation) {
+        let collectionAddViewModel = WorkoutCollectionWorkoutMoveViewModel(parentViewModel: viewModel, movingWorkout: movingWorkout)
+        let collectionAddCoordinator = WorkoutCollectionWorkoutMoveCoordinator(viewModel: collectionAddViewModel)
         
         collectionAddCoordinator.start()
         childCoordinators.append(collectionAddCoordinator)

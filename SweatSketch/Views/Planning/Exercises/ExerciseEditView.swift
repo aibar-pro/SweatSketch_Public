@@ -142,7 +142,7 @@ struct ExerciseEditView: View {
                         }
                         VStack {
                             if currentEditingState == .name {
-                                RenamePopoverView(title: "New exercise name", onRename: { newName in
+                                TextFieldPopoverView(popoverTitle: "Rename Exercise", textFieldLabel: "Enter new name", buttonLabel: "Rename", onDone: { newName in
                                     viewModel.renameExercise(newName: newName)
                                     currentEditingState = .none
                                 }, onDiscard: {

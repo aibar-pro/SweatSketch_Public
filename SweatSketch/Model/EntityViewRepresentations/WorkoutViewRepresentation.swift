@@ -7,8 +7,8 @@
 
 import CoreData
 
-class WorkoutViewViewModel: Identifiable, Equatable, ObservableObject {
-    static func == (lhs: WorkoutViewViewModel, rhs: WorkoutViewViewModel) -> Bool {
+class WorkoutViewRepresentation: Identifiable, Equatable, ObservableObject {
+    static func == (lhs: WorkoutViewRepresentation, rhs: WorkoutViewRepresentation) -> Bool {
         return 
             lhs.id == rhs.id &&
             lhs.name == rhs.name &&
@@ -17,7 +17,7 @@ class WorkoutViewViewModel: Identifiable, Equatable, ObservableObject {
     
     let id: UUID
     var name: String
-    var exercises = [ExerciseViewViewModel]()
+    var exercises = [ExerciseViewRepresentation]()
     
     private let workoutDataManager = WorkoutDataManager()
     
@@ -27,17 +27,15 @@ class WorkoutViewViewModel: Identifiable, Equatable, ObservableObject {
         self.name = workout.name ?? Constants.Placeholders.noWorkoutName
         
         let fetchedExercises = workoutDataManager.fetchExercises(for: workout, in: context)
-        self.exercises = fetchedExercises.compactMap({ exercise in
-            exercise.toExerciseViewRepresentation()
-        })
+        self.exercises = fetchedExercises.compactMap({ $0.toExerciseViewRepresentation() })
     }
 }
 
 extension WorkoutEntity {
-    func toWorkoutViewRepresentation() -> WorkoutViewViewModel? {
+    func toWorkoutViewRepresentation() -> WorkoutViewRepresentation? {
         guard let context = self.managedObjectContext else {
             return nil
         }
-        return WorkoutViewViewModel(workout: self, in: context)
+        return WorkoutViewRepresentation(workout: self, in: context)
     }
 }

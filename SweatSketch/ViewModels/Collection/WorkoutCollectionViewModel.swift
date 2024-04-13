@@ -11,7 +11,7 @@ class WorkoutCollectionViewModel: ObservableObject {
     
     let mainContext: NSManagedObjectContext
     
-    @Published var collections = [WorkoutCollectionRepresentation]()
+    @Published var collections = [WorkoutCollectionViewRepresentation]()
     
     private let collectionDataManager = CollectionDataManager()
     
@@ -19,9 +19,17 @@ class WorkoutCollectionViewModel: ObservableObject {
         self.mainContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         self.mainContext.parent = context
         
-        let fetchedRootCollections = collectionDataManager.fetchNonSystemCollectionsWithoutParent(in: self.mainContext)
-        self.collections = fetchedRootCollections.compactMap { transform(collectionEntity: $0) }
+        refreshData()
         
+        setupWorkoutCatalog()
+    }
+    
+    func addCollection(with name: String) {
+        collectionDataManager.createCollection(with: name, in: mainContext)
+        setupWorkoutCatalog()
+    }
+    
+    private func setupWorkoutCatalog() {
         let backgroundContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         backgroundContext.parent = self.mainContext
         backgroundContext.perform {
@@ -47,25 +55,11 @@ class WorkoutCollectionViewModel: ObservableObject {
     }
     
     func refreshData() {
-        let fetchedRootCollections = collectionDataManager.fetchCollectionsWithoutParent(in: self.mainContext)
-        self.collections = fetchedRootCollections.compactMap { transform(collectionEntity: $0) }
-    }
-    
-    private func transform(collectionEntity: WorkoutCollectionEntity) -> WorkoutCollectionRepresentation? {
-        guard let id = collectionEntity.uuid else { return nil }
-        
-        let workouts = collectionDataManager.fetchWorkouts(for: collectionEntity, in: self.mainContext)
-        
-        let fetchedSubCollections = collectionDataManager.fetchSubCollections(for: collectionEntity, in: self.mainContext)
-        let subCollections = fetchedSubCollections.compactMap {
-            transform(collectionEntity: $0)
+        DispatchQueue.main.async { [weak self] in
+            if let context = self?.mainContext, let fetchedRootCollections = self?.collectionDataManager.fetchRootCollections(in: context) {
+                self?.collections = fetchedRootCollections.compactMap { $0.toWorkoutCollectionRepresentation() }
+            }
         }
-        
-        return WorkoutCollectionRepresentation(
-            id: id,
-            name: (collectionEntity.name ?? "Unnamed Collection") + ": \(collectionEntity.position)",
-            subCollections: subCollections,
-            workouts: workouts
-        )
     }
+
 }

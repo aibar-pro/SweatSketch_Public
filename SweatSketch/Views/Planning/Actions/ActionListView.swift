@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ActionListView: View {
     
-    @ObservedObject var exercise: ExerciseViewViewModel
+    @ObservedObject var exercise: ExerciseViewRepresentation
     
     var body: some View {
         

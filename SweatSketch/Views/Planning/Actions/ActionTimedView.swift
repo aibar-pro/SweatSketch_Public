@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ActionTimedView: View {
     
-    var action: ExerciseActionViewViewModel
+    var action: ExerciseActionViewRepresentation
     
     var showTitle: Bool = false
     

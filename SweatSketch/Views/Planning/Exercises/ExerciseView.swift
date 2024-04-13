@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ExerciseView: View {
     
-    @ObservedObject var exerciseRepresentation: ExerciseViewViewModel
+    @ObservedObject var exerciseRepresentation: ExerciseViewRepresentation
     
     var body: some View {
         VStack (alignment: .leading) {

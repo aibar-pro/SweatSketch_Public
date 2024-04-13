@@ -7,8 +7,8 @@
 
 import CoreData
 
-class ExerciseViewViewModel: Identifiable, Equatable, ObservableObject {
-    static func == (lhs: ExerciseViewViewModel, rhs: ExerciseViewViewModel) -> Bool {
+class ExerciseViewRepresentation: Identifiable, Equatable, ObservableObject {
+    static func == (lhs: ExerciseViewRepresentation, rhs: ExerciseViewRepresentation) -> Bool {
         return 
             lhs.id == rhs.id &&
             lhs.name == rhs.name &&
@@ -21,7 +21,7 @@ class ExerciseViewViewModel: Identifiable, Equatable, ObservableObject {
     let id: UUID
     var name: String
     var type: ExerciseType
-    var actions = [ExerciseActionViewViewModel]()
+    var actions = [ExerciseActionViewRepresentation]()
     var restTimeBetweenActions: ExerciseActionEntity?
     var superSets: Int16
     
@@ -34,9 +34,7 @@ class ExerciseViewViewModel: Identifiable, Equatable, ObservableObject {
         self.type = ExerciseType.from(rawValue: exercise.type)
         
         let fetchedActions = exerciseDataManager.fetchActions(for: exercise, in: context)
-        self.actions = fetchedActions.compactMap({ action in
-            action.toExerciseActionViewRepresentation()
-        })
+        self.actions = fetchedActions.compactMap({ $0.toExerciseActionViewRepresentation() })
         
         self.restTimeBetweenActions = exerciseDataManager.fetchRestTimeBetweenActions(for: exercise, in: context) ?? ExerciseActionEntity()
         self.superSets = exercise.superSets
@@ -44,10 +42,10 @@ class ExerciseViewViewModel: Identifiable, Equatable, ObservableObject {
 }
 
 extension ExerciseEntity {
-    func toExerciseViewRepresentation() -> ExerciseViewViewModel? {
+    func toExerciseViewRepresentation() -> ExerciseViewRepresentation? {
         guard let context = self.managedObjectContext else {
             return nil
         }
-        return ExerciseViewViewModel(exercise: self, in: context)
+        return ExerciseViewRepresentation(exercise: self, in: context)
     }
 }
