@@ -99,6 +99,20 @@ class ExerciseDataManager: ExerciseDataManagerProtocol {
         }
     }
     
+    func fetchExercise(by uuid: UUID, in context: NSManagedObjectContext) -> ExerciseEntity? {
+        let fetchRequest: NSFetchRequest<ExerciseEntity> = ExerciseEntity.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "uuid = %@", uuid as CVarArg)
+        fetchRequest.fetchLimit = 1
+        
+        do {
+            let exerciseToReturn = try context.fetch(fetchRequest).first
+            return exerciseToReturn
+        } catch {
+           print("Error fetching exercise by UUID: \(error)")
+           return nil
+        }
+    }
+    
     func calculateNewActionPosition(for exercise: ExerciseEntity, in context: NSManagedObjectContext) -> Int16 {
         let actionCount = (fetchActions(for: exercise, in: context).last?.position ?? -1) + 1
         return Int16(actionCount)

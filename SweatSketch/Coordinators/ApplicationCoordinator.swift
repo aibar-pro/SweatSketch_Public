@@ -53,12 +53,22 @@ class ApplicationCoordinator: ObservableObject, Coordinator {
     private func showActiveWorkout(with workoutUUID: UUID) {
         UserDefaults.standard.set(workoutUUID.uuidString, forKey: UserDefaultsKeys.activeWorkoutUUID)
         
-        let activeWorkoutCoordinator = ActiveWorkoutCoordinator(dataContext: dataContext, activeWorkoutUUID: workoutUUID, workoutEvent: self.workoutEvent)
-        activeWorkoutCoordinator.start()
-        
-        self.childCoordinators.append(activeWorkoutCoordinator)
-        self.rootViewController.popToRootViewController(animated: true)
-        self.rootViewController.viewControllers = [activeWorkoutCoordinator.rootViewController]
+        do {
+//            let phonyUUID = UUID()
+//            let activeWorkoutCoordinator = try ActiveWorkoutCoordinator(dataContext: dataContext, activeWorkoutUUID: phonyUUID, workoutEvent: self.workoutEvent)
+            let activeWorkoutCoordinator = try ActiveWorkoutCoordinator(dataContext: dataContext, activeWorkoutUUID: workoutUUID, workoutEvent: self.workoutEvent)
+            activeWorkoutCoordinator.start()
+            
+            self.childCoordinators.append(activeWorkoutCoordinator)
+            self.rootViewController.popToRootViewController(animated: true)
+            self.rootViewController.viewControllers = [activeWorkoutCoordinator.rootViewController]
+        } catch ActiveWorkoutError.invalidWorkoutUUID {
+            UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.activeWorkoutUUID)
+            checkActiveWorkoutValue()
+            print("Error launching workout with UUID: \(workoutUUID.uuidString). Returning to collection")
+        } catch {
+            print("Error launching workout with UUID: \(workoutUUID.uuidString)")
+        }
     }
     
     private func showWorkoutCarousel(with collectionUUID: UUID?) {

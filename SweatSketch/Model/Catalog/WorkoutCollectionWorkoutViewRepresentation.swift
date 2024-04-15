@@ -24,9 +24,6 @@ class WorkoutCollectionWorkoutViewRepresentation: Identifiable, Equatable, Obser
 
 extension WorkoutEntity {
     func toWorkoutCollectionWorkoutRepresentation() -> WorkoutCollectionWorkoutViewRepresentation? {
-        guard let context = self.managedObjectContext else {
-            return nil
-        }
         return WorkoutCollectionWorkoutViewRepresentation(workout: self)
     }
 }

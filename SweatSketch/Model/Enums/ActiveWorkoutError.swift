@@ -6,5 +6,5 @@
 //
 
 enum ActiveWorkoutError: Error {
-    case invalidItemUUID
+    case invalidWorkoutUUID
 }
