@@ -93,8 +93,6 @@ struct WorkoutCollectionMergeView_Previews: PreviewProvider {
         let collectionDataManager = CollectionDataManager()
         let firstCollection = collectionDataManager.fetchFirstUserCollection(in: persistenceController.container.viewContext)
         
-        let workoutForPreview = collectionDataManager.fetchWorkouts(for: firstCollection!, in: persistenceController.container.viewContext).first
-        
         let workoutMergeModel = WorkoutCollectionMergeViewModel(parentViewModel: collectionsViewModel, sourceCollection: firstCollection!.toWorkoutCollectionRepresentation()!)
         
         let workoutMergeCoordinator = WorkoutCollectionMergeCoordinator(viewModel: workoutMergeModel)

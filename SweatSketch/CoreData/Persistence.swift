@@ -44,6 +44,11 @@ struct PersistenceController {
         workout.name = "Test Workout Auto \(0) Test Workout Auto Test Workout Auto"
         workout.position = Int16(0)
         workout.collection = subCollection
+        let defaultRestTime = RestTimeEntity(context: viewContext)
+        defaultRestTime.uuid = UUID()
+        defaultRestTime.isDefault = true
+        defaultRestTime.duration = 180
+        defaultRestTime.workout = workout
         
         let workout2 = WorkoutEntity(context: viewContext)
         workout2.uuid = UUID()
@@ -60,11 +65,13 @@ struct PersistenceController {
         newExerciseTimedAction.uuid = UUID()
         newExerciseTimedAction.position = Int16(1)
         newExerciseTimedAction.duration = Int32.random(in: 600...10000)
+        newExerciseTimedAction.type = ExerciseActionType.timed.rawValue
         newTimedExercise.addToExerciseActions(newExerciseTimedAction)
         let newExerciseTimedAction1 = ExerciseActionEntity(context: viewContext)
         newExerciseTimedAction1.uuid = UUID()
         newExerciseTimedAction1.position = Int16(2)
         newExerciseTimedAction1.duration = Int32.random(in: 50000...100000)
+        newExerciseTimedAction1.type = ExerciseActionType.timed.rawValue
         newTimedExercise.addToExerciseActions(newExerciseTimedAction1)
         workout.addToExercises(newTimedExercise)
         
@@ -76,11 +83,13 @@ struct PersistenceController {
         let newExerciseSNRAction = ExerciseActionEntity(context: viewContext)
         newExerciseSNRAction.uuid = UUID()
         newExerciseSNRAction.position = Int16(1)
+        newExerciseSNRAction.type = ExerciseActionType.setsNreps.rawValue
         newExerciseSNRAction.sets = Int16(3)
         newExerciseSNRAction.reps = Int16(12)
         let newExerciseSNRMAXAction = ExerciseActionEntity(context: viewContext)
         newExerciseSNRMAXAction.uuid = UUID()
         newExerciseSNRMAXAction.position = Int16(2)
+        newExerciseSNRMAXAction.type = ExerciseActionType.setsNreps.rawValue
         newExerciseSNRMAXAction.sets = Int16(5)
         newExerciseSNRMAXAction.repsMax = true
         newSNRExercise.addToExerciseActions(newExerciseSNRAction)

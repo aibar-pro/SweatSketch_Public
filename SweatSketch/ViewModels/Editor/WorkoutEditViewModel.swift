@@ -26,6 +26,7 @@ class WorkoutEditViewModel: ObservableObject {
     private let workoutDataManager = WorkoutDataManager()
     private let exerciseDataManager = ExerciseDataManager()
     
+    //TODO: change to init?
     init(parentViewModel: WorkoutCarouselViewModel, editingWorkoutUUID: UUID? = nil) {
         self.mainContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         self.mainContext.parent = parentViewModel.mainContext

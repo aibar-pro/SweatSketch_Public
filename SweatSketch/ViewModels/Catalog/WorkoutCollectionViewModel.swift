@@ -25,7 +25,7 @@ class WorkoutCollectionViewModel: ObservableObject {
     }
     
     func addCollection(with name: String) {
-        collectionDataManager.createCollection(with: name, in: mainContext)
+        let _ = collectionDataManager.createCollection(with: name, in: mainContext)
         setupWorkoutCatalog()
     }
     
