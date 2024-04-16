@@ -51,6 +51,7 @@
 		3F64E4C02BC116DB000567D8 /* WorkoutCollectionWorkoutViewRepresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F64E4BF2BC116DB000567D8 /* WorkoutCollectionWorkoutViewRepresentation.swift */; };
 		3F6BDEDF26455E160079EC84 /* WorkoutDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6BDEDE26455E160079EC84 /* WorkoutDetailView.swift */; };
 		3F6BDEFB264572B40079EC84 /* ActionEditSwitchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6BDEFA264572B40079EC84 /* ActionEditSwitchView.swift */; };
+		3F7559EF2BCE7406009E71B8 /* ActiveWorkoutRestTimeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F7559EE2BCE7406009E71B8 /* ActiveWorkoutRestTimeViewModel.swift */; };
 		3F866697264542D400124E44 /* SweatSketchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F866696264542D400124E44 /* SweatSketchApp.swift */; };
 		3F866699264542D400124E44 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F866698264542D400124E44 /* ContentView.swift */; };
 		3F86669B264542D600124E44 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3F86669A264542D600124E44 /* Assets.xcassets */; };
@@ -147,6 +148,7 @@
 		3F64E4BF2BC116DB000567D8 /* WorkoutCollectionWorkoutViewRepresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutCollectionWorkoutViewRepresentation.swift; sourceTree = "<group>"; };
 		3F6BDEDE26455E160079EC84 /* WorkoutDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutDetailView.swift; sourceTree = "<group>"; };
 		3F6BDEFA264572B40079EC84 /* ActionEditSwitchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionEditSwitchView.swift; sourceTree = "<group>"; };
+		3F7559EE2BCE7406009E71B8 /* ActiveWorkoutRestTimeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveWorkoutRestTimeViewModel.swift; sourceTree = "<group>"; };
 		3F866693264542D400124E44 /* SweatSketch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SweatSketch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F866696264542D400124E44 /* SweatSketchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SweatSketchApp.swift; sourceTree = "<group>"; };
 		3F866698264542D400124E44 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -339,6 +341,7 @@
 			children = (
 				3F64E49E2BBBF251000567D8 /* ActiveWorkoutViewModel.swift */,
 				3FFFC2042BCD445B00287AF1 /* ActiveWorkoutExerciseViewModel.swift */,
+				3F7559EE2BCE7406009E71B8 /* ActiveWorkoutRestTimeViewModel.swift */,
 			);
 			path = Player;
 			sourceTree = "<group>";
@@ -687,6 +690,7 @@
 				3FA2B4762BC3EDAC00268250 /* ExerciseDataManager.swift in Sources */,
 				3FA2B47F2BC3F96E00268250 /* ExerciseDataManagerProtocol.swift in Sources */,
 				3F31A2E9264C0AD800DF3980 /* WorkoutCarouselCardView.swift in Sources */,
+				3F7559EF2BCE7406009E71B8 /* ActiveWorkoutRestTimeViewModel.swift in Sources */,
 				3FADAE402BCA7CA100D207AB /* WorkoutCollectionMergeCoordinator.swift in Sources */,
 				3F9955E12BC53184004CD0A9 /* WorkoutCollectionWorkoutMoveViewModel.swift in Sources */,
 				3F64E4AD2BBEAB93000567D8 /* ErrorMessageView.swift in Sources */,

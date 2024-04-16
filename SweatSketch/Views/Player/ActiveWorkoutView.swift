@@ -60,7 +60,7 @@ struct ActiveWorkoutView: View {
                                         .padding(.horizontal, Constants.Design.spacing)
                                         
                                     case .rest:
-                                        ActiveWorkoutRestTimeView(restTime: item, doneRequested: {
+                                        ActiveWorkoutRestTimeView(viewModel: ActiveWorkoutRestTimeViewModel(restTimeRepresentation: item), doneRequested: {
                                             viewModel.nextItem()
                                         }, returnRequested: {
                                             viewModel.previousItem()
@@ -68,6 +68,7 @@ struct ActiveWorkoutView: View {
                                         .id(item.id)
                                         .padding(Constants.Design.spacing)
                                         .materialCardBackgroundModifier()
+                                        .padding(.horizontal, Constants.Design.spacing)
                                     }
                                 } else {
                                     Text(item.title)
@@ -81,43 +82,6 @@ struct ActiveWorkoutView: View {
                                 }
                                 
                             }
-//                                VStack (alignment: .center, spacing: Constants.Design.spacing) {
-//                                    if viewModel.isActiveItem(item: item) {
-//                                        switch item.type {
-//                                        case .exercise:
-//                                            if let exercise = viewModel.getExercise(from: item) {
-//                                                ActiveWorkoutExerciseView(exercise: exercise, doneRequested: {
-//                                                    viewModel.nextItem()
-//                                                    
-//                                                }, returnRequested: {
-//                                                    viewModel.previousItem()
-//                                                })
-//                                                .frame(width: gReader.size.width * 0.75)
-//                                            }
-//                                        case .rest:
-//                                                ActiveWorkoutRestTimeView(restTime: item, doneRequested: {
-//                                                    viewModel.nextItem()
-//                                                }, returnRequested: {
-//                                                    viewModel.previousItem()
-//                                                })
-//                                                .frame(width: gReader.size.width * 0.6)
-//                                        case .none:
-//                                            ErrorMessageView(text: Constants.Placeholders.activeWorkoutItemError)
-//                                                .fixedSize()
-//                                        }
-//                                    } else {
-//                                        Text(item.name)
-//                                            .font(.subheadline)
-//                                            .lineLimit(3)
-//                                            .multilineTextAlignment(.center)
-//                                    }
-//                                }
-//                                .id(item.id)
-//                                .padding(Constants.Design.spacing)
-//                                .materialCardBackgroundModifier()
-//                                .opacity(viewModel.isActiveItem(item: item) ? 1 : 0.4)
-//                                
-//                            }
                         }
                     }
                     .onChange(of: viewModel.activeItem) { _ in

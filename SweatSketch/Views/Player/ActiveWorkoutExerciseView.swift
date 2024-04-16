@@ -15,13 +15,11 @@ struct ActiveWorkoutExerciseView: View {
     var returnRequested: () -> ()
     
     var body: some View {
-//        GeometryReader { geoReader in
         VStack (alignment: .leading, spacing: Constants.Design.spacing/2) {
             HStack (alignment: .center, spacing: Constants.Design.spacing/2) {
                 Button(action: { 
                     if viewModel.isFirstAction {
                         returnRequested()
-                        print("RETURN")
                     } else {
                         viewModel.previousAction()
                     }
@@ -33,27 +31,23 @@ struct ActiveWorkoutExerciseView: View {
                 Spacer()
                 
                 if !viewModel.actions.isEmpty, let currentAction = viewModel.currentAction {
-                    
-//                    VStack (alignment: .center, spacing: Constants.Design.spacing){
                         
-                        switch currentAction.type {
-                        case .setsNreps:
-                            if let repsMax = currentAction.repsMax, repsMax {
-                                Text("xMAX")
-                                    .font(.title2.bold())
-                            } else if let reps = currentAction.reps {
-                                Text("x\(reps)")
-                                    .font(.title2.bold())
-                            }
-                        default:
-                            if let duration = currentAction.duration {
-                                CountdownTimerView(timeRemaining: Int(duration))
-                                    .font(.title2.bold())
-                            }
+                    switch currentAction.type {
+                    case .setsNreps:
+                        if let repsMax = currentAction.repsMax, repsMax {
+                            Text("xMAX")
+                                .font(.headline.bold())
+                        } else if let reps = currentAction.reps {
+                            Text("x\(reps)")
+                                .font(.headline.bold())
                         }
-                        
-                        
-//                    }
+                    default:
+                        if let duration = currentAction.duration {
+                            CountdownTimerView(timeRemaining: $viewModel.currentActionTimeRemaining)
+                                .font(.headline.bold())
+                                .onChange(of: duration, perform: { newValue in print("CHANGE")})
+                        }
+                    }
                 } else {
                     ErrorMessageView(text: Constants.Placeholders.noActionDetails)
                 }
@@ -63,10 +57,8 @@ struct ActiveWorkoutExerciseView: View {
                 Button(action: {
                     if viewModel.isLastAction {
                         doneRequested()
-                        print("DONE")
                     } else {
                         viewModel.nextAction()
-                        print("NEXT")
                     }
                 }){
                     Image(systemName: "chevron.forward")
@@ -78,20 +70,17 @@ struct ActiveWorkoutExerciseView: View {
                 .font(.headline)
                 .lineLimit(3)
                 .multilineTextAlignment(.leading)
-                .padding(.horizontal, Constants.Design.spacing)
             
             if viewModel.exerciseTitle != viewModel.currentAction?.title {
                 Text(viewModel.exerciseTitle)
                     .font(.subheadline)
                     .lineLimit(1)
                     .multilineTextAlignment(.leading)
-                    .padding(.horizontal, Constants.Design.spacing)
             }
             
             if let currentIndex = viewModel.actions.firstIndex(where: {$0 == viewModel.currentAction }) {
                 ProgressBarView(totalSections: viewModel.actions.count, currentSection: currentIndex)
                     .frame(height: 25)
-                    .padding(.horizontal, Constants.Design.spacing)
             }
         }
     }
@@ -107,8 +96,7 @@ struct ActiveWorkoutExerciseView_Previews: PreviewProvider {
         
         let workoutForPreview = collectionDataManager.fetchWorkouts(for: firstCollection!, in: persistenceController.container.viewContext).first
         
-        let exerciseForPreview = try! ActiveWorkoutViewRepresentation(workoutUUID: (workoutForPreview?.uuid)!, in: persistenceController.container.viewContext).items[2]
-//        let exerciseForPreview = (workoutForPreview?.exercises![0] as! ExerciseEntity).toActiveWorkoutItemRepresentation()!
+        let exerciseForPreview = try! ActiveWorkoutViewRepresentation(workoutUUID: (workoutForPreview?.uuid)!, in: persistenceController.container.viewContext).items[4]
         
         let exerciseModel = ActiveWorkoutExerciseViewModel(exerciseRepresentation: exerciseForPreview)
         

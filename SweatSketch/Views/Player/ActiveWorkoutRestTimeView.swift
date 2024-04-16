@@ -9,7 +9,8 @@ import SwiftUI
 
 struct ActiveWorkoutRestTimeView: View {
     
-    let restTime: ActiveWorkoutItemViewRepresentation
+    @ObservedObject var viewModel: ActiveWorkoutRestTimeViewModel
+    
     var doneRequested: () -> ()
     var returnRequested: () -> ()
     
@@ -21,14 +22,12 @@ struct ActiveWorkoutRestTimeView: View {
             }
             Spacer()
             VStack (alignment: .center, spacing: Constants.Design.spacing/2) {
-                Text(restTime.title)
+                Text(viewModel.title)
                     .font(.headline.bold())
                     .lineLimit(3)
                     .multilineTextAlignment(.leading)
-                
-                if let timeRemaining = restTime.restTimeDuration {
-                    CountdownTimerView(timeRemaining: Int(timeRemaining))
-                }
+
+                CountdownTimerView(timeRemaining: $viewModel.restTimeRemaining)
             }
             Spacer()
             
@@ -52,7 +51,9 @@ struct ActiveWorkoutRestTimeView_Previews: PreviewProvider {
         
         let restTimeForPreview = try! ActiveWorkoutViewRepresentation(workoutUUID: (workoutForPreview?.uuid)!, in: persistenceController.container.viewContext).items[1]
         
-        ActiveWorkoutRestTimeView(restTime: restTimeForPreview, doneRequested: {}, returnRequested: {})
+        let restTimeModel = ActiveWorkoutRestTimeViewModel(restTimeRepresentation: restTimeForPreview)
+        
+        ActiveWorkoutRestTimeView(viewModel: restTimeModel, doneRequested: {}, returnRequested: {})
     }
 }
 

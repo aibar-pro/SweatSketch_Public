@@ -9,9 +9,8 @@ import SwiftUI
 
 struct CountdownTimerView: View {
     
-    @State var timeRemaining: Int
+    @Binding var timeRemaining: Int
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    
     
     var body: some View {
         HStack (alignment: .center, spacing: Constants.Design.spacing/2) {
@@ -27,6 +26,5 @@ struct CountdownTimerView: View {
 }
 
 #Preview {
-    CountdownTimerView(timeRemaining: 100
-    )
+    CountdownTimerView(timeRemaining: .constant(100))
 }

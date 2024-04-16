@@ -10,6 +10,7 @@ import Foundation
 class ActiveWorkoutExerciseViewModel: ObservableObject {
     
     @Published var currentAction: ActiveWorkoutItemActionViewRepresentation?
+    @Published var currentActionTimeRemaining: Int = 0
     
     let exerciseTitle: String
     var actions: [ActiveWorkoutItemActionViewRepresentation]
@@ -25,20 +26,29 @@ class ActiveWorkoutExerciseViewModel: ObservableObject {
         self.exerciseTitle = exerciseRepresentation.title
         self.actions = exerciseRepresentation.actions
         
-        self.currentAction = self.actions.first
+        if let firstAction = self.actions.first {
+            setCurrentAction(for: firstAction)
+        }
+    }
+    
+    private func setCurrentAction(for action: ActiveWorkoutItemActionViewRepresentation) {
+        currentAction = action
+        if [.timed, .rest].contains(action.type), let actionDuration = action.duration {
+            currentActionTimeRemaining = Int(actionDuration)
+        }
     }
 
     func nextAction() {
         if let currentAction = self.currentAction, let currentIndex = self.actions.firstIndex(where: {$0 == currentAction }) {
             let nextIndex = min(currentIndex+1, actions.count-1)
-            self.currentAction = actions[nextIndex]
+            setCurrentAction(for: actions[nextIndex])
         }
     }
     
     func previousAction() {
         if let currentAction = self.currentAction, let currentIndex = self.actions.firstIndex(where: {$0 == currentAction }) {
             let nextIndex = max(currentIndex-1, 0)
-            self.currentAction = actions[nextIndex]
+            setCurrentAction(for: actions[nextIndex])
         }
     }
 }
