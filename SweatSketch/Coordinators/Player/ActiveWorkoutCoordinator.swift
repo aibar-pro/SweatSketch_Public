@@ -30,13 +30,27 @@ class ActiveWorkoutCoordinator: ObservableObject, Coordinator {
         rootViewController.view.backgroundColor = .clear
         
         print("Active Workout Coordinator: Start")
+        viewModel.startTimer()
+    }
+    
+    func workoutCompleted() {
+        let workoutDuration = viewModel.workoutDuration
+        let view = ActiveWorkoutCompletedView(workoutDuration: workoutDuration,onDismiss: viewModel.startTimer).environmentObject(self)
+        
+        let workoutCompletedController = UIHostingController(rootView: view)
+        workoutCompletedController.modalPresentationStyle = .formSheet
+        rootViewController.present(workoutCompletedController, animated: true)
+        
+        viewModel.cancelTimer()
     }
     
     func finishWorkout(){
         if let lastOpenedCollectionUUID = UserDefaults.standard.string(forKey: UserDefaultsKeys.lastOpenedCollectionUUID),
            let collectionUUID = UUID(uuidString: lastOpenedCollectionUUID) {
+            rootViewController.dismiss(animated: true)
             workoutEvent.send(.openCollection(collectionUUID))
         } else {
+            rootViewController.dismiss(animated: true)
             workoutEvent.send(.finished)
         }
         print("Active Workout Coordinator: Finish")

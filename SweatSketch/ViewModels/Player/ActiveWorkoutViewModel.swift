@@ -6,6 +6,7 @@
 //
 
 import CoreData
+import Combine
 
 class ActiveWorkoutViewModel: ObservableObject {
     
@@ -17,6 +18,9 @@ class ActiveWorkoutViewModel: ObservableObject {
     
     private let workoutDataManager = WorkoutDataManager()
     
+    @Published var workoutDuration: Int = 0
+    var cancellables: Set<AnyCancellable> = []
+    
     init(activeWorkoutUUID: UUID, in context: NSManagedObjectContext) throws {
         self.mainContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         self.mainContext.parent = context
@@ -26,6 +30,22 @@ class ActiveWorkoutViewModel: ObservableObject {
         self.activeWorkout = workoutRepresentation
         self.items = workoutRepresentation.items
         self.activeItem = items.first
+    }
+    
+    func startTimer(){
+//        Timer.publish(every: 1, on: .main, in: .common)
+//           .autoconnect()
+//           .sink { [weak self] _ in
+//               guard let self = self else { return }
+//               
+//               self.workoutDuration += 1
+//           }
+//           .store(in: &cancellables)
+    }
+    
+    func cancelTimer() {
+//        cancellables.forEach { $0.cancel() }
+//        cancellables.removeAll()
     }
     
     func isActiveItem(item: ActiveWorkoutItemViewRepresentation) -> Bool {

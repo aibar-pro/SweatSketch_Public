@@ -26,7 +26,7 @@ struct ActiveWorkoutView: View {
                     Spacer()
                     
                     Button(action: {
-                        coordinator.finishWorkout()
+                        coordinator.workoutCompleted()
                     }) {
                         Image(systemName: "stop")
                             .secondaryButtonLabelStyleModifier()
