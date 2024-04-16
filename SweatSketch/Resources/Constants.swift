@@ -24,6 +24,8 @@ enum Constants {
         static let restPeriodLabel = "Rest Time"
         
         static let activeWorkoutItemError = "Error fetching workout item"
+        
+        static let workoutSummaryTitle = "Workout Complete!"
     }
     
     enum Design {
@@ -33,7 +35,7 @@ enum Constants {
         enum Colors {
             static let backgroundStartColor = Color(.backgroundGradientStart).opacity(0.87)
             static let backgroundEndColor = Color(.backgroundGradientEnd).opacity(0.87)
-            static let backgroundAccentColor = Color(.backgroundAccent).opacity(0.75)
+            static let backgroundAccentColor = Color(.backgroundAccent).opacity(0.87)
             static let buttonAccentBackgroundColor = Color(.accent).opacity(0.87)
             static let buttonPrimaryBackgroundColor = Color(.backgroundGradientStart).opacity(0.87)
             static let buttonSecondaryBackgroundColor = Color.secondary.opacity(0.05)

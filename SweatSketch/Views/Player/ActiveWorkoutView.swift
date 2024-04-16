@@ -26,7 +26,7 @@ struct ActiveWorkoutView: View {
                     Spacer()
                     
                     Button(action: {
-                        coordinator.finishWorkout()
+                        coordinator.goToWorkoutSummary()
                     }) {
                         Image(systemName: "stop")
                             .secondaryButtonLabelStyleModifier()
@@ -50,7 +50,11 @@ struct ActiveWorkoutView: View {
                                     switch item.type {
                                     case .exercise:
                                         ActiveWorkoutExerciseView(viewModel: ActiveWorkoutExerciseViewModel(exerciseRepresentation: item), doneRequested: {
-                                            viewModel.nextItem()
+                                            if viewModel.isLastItem {
+                                                coordinator.goToWorkoutSummary()
+                                            } else {
+                                                viewModel.nextItem()
+                                            }
                                         }, returnRequested: {
                                             viewModel.previousItem()
                                         })

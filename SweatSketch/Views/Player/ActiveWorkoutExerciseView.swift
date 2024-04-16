@@ -45,7 +45,6 @@ struct ActiveWorkoutExerciseView: View {
                         if let duration = currentAction.duration {
                             CountdownTimerView(timeRemaining: $viewModel.currentActionTimeRemaining)
                                 .font(.headline.bold())
-                                .onChange(of: duration, perform: { newValue in print("CHANGE")})
                         }
                     }
                 } else {

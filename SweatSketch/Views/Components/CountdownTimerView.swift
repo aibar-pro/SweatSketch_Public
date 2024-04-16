@@ -10,7 +10,7 @@ import SwiftUI
 struct CountdownTimerView: View {
     
     @Binding var timeRemaining: Int
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     var body: some View {
         HStack (alignment: .center, spacing: Constants.Design.spacing/2) {
