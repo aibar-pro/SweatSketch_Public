@@ -9,10 +9,11 @@ import SwiftUI
 
 struct WorkoutListView: View {
     
-    @EnvironmentObject var coordinator: WorkoutListCoordinator
     @ObservedObject var viewModel: WorkoutListViewModel
     
     @State private var editMode = EditMode.active
+    var onSubmit: () -> Void
+    var onDiscard: () -> Void
     
     var body: some View {
         GeometryReader { geoReader in
@@ -72,14 +73,14 @@ struct WorkoutListView: View {
                     
                     HStack {
                         Button(action: {
-                            coordinator.discardlWorkoutListChanges()
+                            onDiscard()
                         }) {
                             Text("Cancel")
                                 .secondaryButtonLabelStyleModifier()
                         }
                         
                         Button(action: {
-                            coordinator.saveWorkoutListChanges()
+                            onSubmit()
                         }) {
                             Text("Done")
                                 .bold()
@@ -90,6 +91,7 @@ struct WorkoutListView: View {
                     .padding(.horizontal, Constants.Design.spacing)
                     .frame(width: geoReader.size.width, alignment: .trailing)
                 }
+                .onDisappear(perform: onDiscard)
                 
             }
             .accentColor(Constants.Design.Colors.textColorHighEmphasis)
@@ -103,9 +105,7 @@ struct WorkoutListView_Previews: PreviewProvider {
         let persistenceController = PersistenceController.preview
         let workoutViewModel = WorkoutCarouselViewModel(context: persistenceController.container.viewContext)
         let workoutListModel = WorkoutListViewModel(parentViewModel: workoutViewModel, workoutCollection: workoutViewModel.workoutCollection)
-        let workoutCoordinator = WorkoutListCoordinator(viewModel: workoutListModel)
         
-        WorkoutListView(viewModel: workoutCoordinator.viewModel)
-            .environmentObject(workoutCoordinator)
+        WorkoutListView(viewModel: workoutListModel, onSubmit: {}, onDiscard: {})
     }
 }

@@ -24,6 +24,8 @@ enum Constants {
         static let restPeriodLabel = "Rest Time"
         
         static let activeWorkoutItemError = "Error fetching workout item"
+        
+        static let workoutSummaryTitle = "Workout Complete!"
     }
     
     enum Design {

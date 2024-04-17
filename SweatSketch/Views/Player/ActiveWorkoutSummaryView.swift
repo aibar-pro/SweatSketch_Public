@@ -1,5 +1,5 @@
 //
-//  ActiveWorkoutCompletedView.swift
+//  ActiveWorkoutSummaryView.swift
 //  SweatSketch
 //
 //  Created by aibaranchikov on 16.04.2024.
@@ -7,17 +7,17 @@
 
 import SwiftUI
 
-struct ActiveWorkoutCompletedView: View {
+struct ActiveWorkoutSummaryView: View {
     @EnvironmentObject var coordinator: ActiveWorkoutCoordinator
     let workoutDuration: Int
     var onDismiss: () -> Void = {}
     
     var body: some View {
         ZStack {
-            ActiveWorkoutCompletedBackgroundView()
+            ActiveWorkoutSummaryBackgroundView()
             
             VStack (alignment: .center, spacing: Constants.Design.spacing) {
-                Text("Workout Completed!")
+                Text(Constants.Placeholders.workoutSummaryTitle)
                     .font(.title.bold())
                 HStack (alignment: .center, spacing: Constants.Design.spacing/2) {
                     Image(systemName: "timer")
@@ -25,7 +25,7 @@ struct ActiveWorkoutCompletedView: View {
                         .font(.title2)
                 }
                 Button(action: {
-                    coordinator.finishWorkout()
+                    coordinator.goToCollection()
                 }) {
                     Text("Proceed")
                         .accentButtonLabelStyleModifier()
@@ -55,7 +55,7 @@ struct ActiveWorkoutCompletedView_Previews: PreviewProvider {
         
         let activeWorkoutCoordinator = try! ActiveWorkoutCoordinator(dataContext: persistenceController.container.viewContext, activeWorkoutUUID: workoutUUID, workoutEvent: workoutEvent)
         
-        ActiveWorkoutCompletedView(workoutDuration: 100)
+        ActiveWorkoutSummaryView(workoutDuration: 100)
             .environmentObject(activeWorkoutCoordinator)
     }
 }
