@@ -19,7 +19,7 @@ class WorkoutListCoordinator: ObservableObject, Coordinator {
     }
     
     func start() {
-        let view = WorkoutListView(viewModel: viewModel).environmentObject(self)
+        let view = WorkoutListView(viewModel: viewModel, onSubmit: { self.saveWorkoutListChanges() }, onDiscard: { self.discardlWorkoutListChanges() })
         rootViewController = UIHostingController(rootView: view)
     }
     

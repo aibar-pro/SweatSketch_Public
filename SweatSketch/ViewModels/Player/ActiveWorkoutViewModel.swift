@@ -15,11 +15,15 @@ class ActiveWorkoutViewModel: ObservableObject {
     let activeWorkout: ActiveWorkoutViewRepresentation
     var items = [ActiveWorkoutItemViewRepresentation]()
     @Published var activeItem: ActiveWorkoutItemViewRepresentation?
+    var isLastItem: Bool {
+        return activeItem == items.last
+    }
     
     private let workoutDataManager = WorkoutDataManager()
     
-    @Published var workoutDuration: Int = 0
-    var cancellables: Set<AnyCancellable> = []
+    var totalWorkoutDuration: Int = 0
+    private var workoutTimer: AnyCancellable?
+    private var timerIsActive = false
     
     init(activeWorkoutUUID: UUID, in context: NSManagedObjectContext) throws {
         self.mainContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
@@ -33,19 +37,18 @@ class ActiveWorkoutViewModel: ObservableObject {
     }
     
     func startTimer(){
-//        Timer.publish(every: 1, on: .main, in: .common)
-//           .autoconnect()
-//           .sink { [weak self] _ in
-//               guard let self = self else { return }
-//               
-//               self.workoutDuration += 1
-//           }
-//           .store(in: &cancellables)
+        timerIsActive = true
+        workoutTimer = Timer.publish(every: 1, on: .main, in: .common)
+            .autoconnect()
+            .sink { [weak self] _ in
+                guard let self = self, self.timerIsActive else { return }
+                self.totalWorkoutDuration += 1
+            }
     }
     
-    func cancelTimer() {
-//        cancellables.forEach { $0.cancel() }
-//        cancellables.removeAll()
+    func stopTimer() {
+        timerIsActive = false
+        workoutTimer?.cancel()
     }
     
     func isActiveItem(item: ActiveWorkoutItemViewRepresentation) -> Bool {
