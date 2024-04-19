@@ -8,27 +8,37 @@
 import SwiftUI
 
 struct WidgetActionInfoLabelView: View {
-    let action: ActiveWorkoutActionModel
+    var title: String
+    var repsCount: Int16?
+    var repsMax: Bool?
+    var duration: Int?
     
     var body: some View {
         
         HStack(alignment: .top) {
-            Text(action.title)
+            Text(title)
             Spacer()
-            if let duration = action.duration {
-                HStack (alignment: .center) {
+            if let duration = duration {
+                HStack(alignment: .center) {
                     Image(systemName: "timer")
-                    DurationView(durationInSeconds: duration)
+                    let futureEndDate = futureDate(fromDuration: duration)
+                    Text(futureEndDate, style: .timer)
                 }
-            } else if let maximumRepetitions = action.repsMax, maximumRepetitions {
+            } else if let maximumRepetitions = repsMax, maximumRepetitions {
                 Text("xMAX")
-            } else if let reps = action.repsCount {
+            } else if let reps = repsCount {
                 Text("x\(reps)")
             }
         }
     }
+    
+    func futureDate(fromDuration duration: Int) -> Date {
+        let now = Date()
+        return Calendar.current.date(byAdding: .second, value: duration, to: now)!
+    }
 }
 
+
 #Preview {
-    WidgetActionInfoLabelView(action: ActiveWorkoutActionModel(id: UUID(), title: "Untitled", totalActions: 10, currentAction: 6))
+    WidgetActionInfoLabelView(title: "Untitled", duration: 200)
 }

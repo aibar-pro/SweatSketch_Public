@@ -12,8 +12,8 @@ class ActiveWorkoutItemActionViewRepresentation: Identifiable, Equatable, Observ
         return 
             lhs.id == rhs.id &&
             lhs.entityUUID == rhs.entityUUID &&
-//            lhs.title == rhs.title &&
-//            lhs.type == rhs.type &&
+            lhs.title == rhs.title &&
+            lhs.type == rhs.type &&
             lhs.duration == rhs.duration &&
             lhs.reps == rhs.reps &&
             lhs.repsMax == rhs.repsMax
@@ -77,5 +77,17 @@ extension ExerciseActionEntity {
             }
         }
         
+    }
+}
+
+extension ActiveWorkoutActionAttributes.ActiveWorkoutActionStatus {
+    init(action: ActiveWorkoutItemActionViewRepresentation, totalActions: Int, currentAction: Int) {
+        self.actionID = action.id
+        self.title = action.title
+        self.repsCount = action.reps
+        self.repsMax = action.repsMax
+        if let duration = action.duration { self.duration = Int(duration) }
+        self.totalActions = totalActions
+        self.currentAction = currentAction
     }
 }

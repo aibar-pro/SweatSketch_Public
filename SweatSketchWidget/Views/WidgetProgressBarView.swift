@@ -37,7 +37,6 @@ struct WidgetProgressBarView: View {
                     .stroke(WidgetConstants.Colors.lowEmphasisColor)
                     .foregroundColor(Color.clear)
                     .frame(width: barGeometry.size.width, height: barGeometry.size.height)
-                    
             }
         }
     }
