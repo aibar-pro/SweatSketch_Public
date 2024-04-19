@@ -105,41 +105,4 @@ extension ActiveWorkoutActionAttributes {
     ActiveWorkoutActionAttributes.ContentState.action2
     ActiveWorkoutActionAttributes.ContentState.action3
     ActiveWorkoutActionAttributes.ContentState.action4
-=======
-extension SweatSketchWidgetAttributes {
-    fileprivate static var preview: SweatSketchWidgetAttributes {
-        SweatSketchWidgetAttributes(name: "World")
-    }
-}
-
-extension SweatSketchWidgetAttributes.ContentState {
-    fileprivate static var action0: SweatSketchWidgetAttributes.ContentState {
-        SweatSketchWidgetAttributes.ContentState(action: ActiveWorkoutActionModel(id: UUID(), title: "Treadmill Run", duration: 60, totalActions: 1, currentAction: 0))
-     }
-     
-     fileprivate static var action1: SweatSketchWidgetAttributes.ContentState {
-         SweatSketchWidgetAttributes.ContentState(action: ActiveWorkoutActionModel(id: UUID(), title: "Bench Press", repsCount: 12, totalActions: 4, currentAction: 2))
-     }
-    
-    fileprivate static var action2: SweatSketchWidgetAttributes.ContentState {
-        SweatSketchWidgetAttributes.ContentState(action: ActiveWorkoutActionModel(id: UUID(), title: "Bench Press", repsMax: true, totalActions: 2, currentAction: 1))
-    }
-    
-    fileprivate static var action3: SweatSketchWidgetAttributes.ContentState {
-        SweatSketchWidgetAttributes.ContentState(action: ActiveWorkoutActionModel(id: UUID(), title: "Deadlift", repsCount: 12, totalActions: 2, currentAction: 0))
-    }
-   
-   fileprivate static var action4: SweatSketchWidgetAttributes.ContentState {
-       SweatSketchWidgetAttributes.ContentState(action: ActiveWorkoutActionModel(id: UUID(), title: "Burpees", repsMax: true, totalActions: 2, currentAction: 1))
-   }
-}
-
-#Preview("Notification", as: .content, using: SweatSketchWidgetAttributes.preview) {
-   SweatSketchWidgetLiveActivity()
-} contentStates: {
-    SweatSketchWidgetAttributes.ContentState.action0
-    SweatSketchWidgetAttributes.ContentState.action1
-    SweatSketchWidgetAttributes.ContentState.action2
-    SweatSketchWidgetAttributes.ContentState.action3
-    SweatSketchWidgetAttributes.ContentState.action4
 }

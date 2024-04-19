@@ -44,7 +44,7 @@ struct ActionTimedEditView_Preview : PreviewProvider {
         let workoutEditViewModel = WorkoutEditViewModel(parentViewModel: workoutCarouselViewModel, editingWorkoutUUID: workoutCarouselViewModel.workouts[0].id)
         let exerciseEditViewModel = ExerciseEditViewModel(parentViewModel: workoutEditViewModel, editingExercise: workoutEditViewModel.exercises[2])
         
-        let action = exerciseEditViewModel.exerciseActions[0]
+        let action = exerciseEditViewModel.editingExerciseActions[0]
         
         ActionTimedEditView(actionEntity: action, editTitle: true)
     }

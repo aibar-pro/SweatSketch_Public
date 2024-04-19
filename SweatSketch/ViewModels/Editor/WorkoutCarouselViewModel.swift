@@ -55,8 +55,11 @@ class WorkoutCarouselViewModel: ObservableObject {
         } else if let collection = collectionDataManager.fetchFirstUserCollection(in: self.mainContext) {
             return collection
         } 
-        else {
+        else if let fetchedDefaultCollection = collectionDataManager.fetchSystemCollection(ofType: .defaultCollection, in: self.mainContext){
+            return fetchedDefaultCollection
+        } else {
             let newDefaultCollection = collectionDataManager.createDefaultCollection(in: self.mainContext)
+            print("CREATED DEFAULT COLLECTION")
             self.saveContext()
             return newDefaultCollection
         }

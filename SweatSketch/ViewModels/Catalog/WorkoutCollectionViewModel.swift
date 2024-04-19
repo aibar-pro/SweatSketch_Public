@@ -61,5 +61,14 @@ class WorkoutCollectionViewModel: ObservableObject {
             }
         }
     }
+    
+    func saveContext() {
+        do {
+            try mainContext.save()
+            try mainContext.parent?.save()
+        } catch {
+            print("Error saving workout move context: \(error)")
+        }
+    }
 
 }

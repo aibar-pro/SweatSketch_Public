@@ -26,7 +26,6 @@ class ExerciseDataManager: ExerciseDataManagerProtocol {
         let newAction = ExerciseActionEntity(context: context)
         
         newAction.uuid = UUID()
-        newAction.name = Constants.Placeholders.noActionName
         newAction.isRestTime = false
         newAction.position = calculateNewActionPosition(for: exercise, in: context)
         
@@ -34,6 +33,9 @@ class ExerciseDataManager: ExerciseDataManagerProtocol {
         case .timed:
             newAction.type = ExerciseActionType.timed.rawValue
             newAction.duration = Int32(Constants.DefaultValues.actionDuration)
+        case .mixed:
+            newAction.name = Constants.Placeholders.noActionName
+            fallthrough
         default:
             newAction.type = ExerciseActionType.setsNreps.rawValue
             newAction.sets = Int16(Constants.DefaultValues.setsCount)
