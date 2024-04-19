@@ -19,6 +19,7 @@ class ActiveWorkoutViewModel: ObservableObject {
     var isLastItem: Bool {
         return activeItem == items.last
     }
+
     private let workoutDataManager = WorkoutDataManager()
     
     var totalWorkoutDuration: Int = 0
