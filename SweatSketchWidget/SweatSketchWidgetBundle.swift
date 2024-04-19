@@ -11,7 +11,7 @@ import SwiftUI
 @main
 struct SweatSketchWidgetBundle: WidgetBundle {
     var body: some Widget {
-//        SweatSketchWidget()
+        SweatSketchWidget()
         SweatSketchWidgetLiveActivity()
     }
 }

@@ -49,7 +49,7 @@ struct ActiveWorkoutView: View {
                                 if viewModel.isActiveItem(item: item) {
                                     switch item.type {
                                     case .exercise:
-                                        ActiveWorkoutExerciseView(viewModel: ActiveWorkoutExerciseViewModel(exerciseRepresentation: item), doneRequested: {
+                                        ActiveWorkoutExerciseView(viewModel: ActiveWorkoutExerciseViewModel(parentViewModel: viewModel, exerciseRepresentation: item), doneRequested: {
                                             if viewModel.isLastItem {
                                                 coordinator.goToWorkoutSummary()
                                             } else {
@@ -64,7 +64,7 @@ struct ActiveWorkoutView: View {
                                         .padding(.horizontal, Constants.Design.spacing)
                                         
                                     case .rest:
-                                        ActiveWorkoutRestTimeView(viewModel: ActiveWorkoutRestTimeViewModel(restTimeRepresentation: item), doneRequested: {
+                                        ActiveWorkoutRestTimeView(viewModel: ActiveWorkoutRestTimeViewModel(parentViewModel: viewModel,restTimeRepresentation: item), doneRequested: {
                                             viewModel.nextItem()
                                         }, returnRequested: {
                                             viewModel.previousItem()

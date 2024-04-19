@@ -25,7 +25,3 @@ struct WidgetBackgroundView: View {
 #Preview {
     WidgetBackgroundView()
 }
-
-//#Preview("Notification",as: .content, using: ) {
-//    WidgetBackgroundView()
-//}
