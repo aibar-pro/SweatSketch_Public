@@ -8,30 +8,20 @@
 import SwiftUI
 
 struct ProgressBarView: View {
-    var totalSections: Int
+    @State var totalSections: Int
     var currentSection: Int
     
     @State private var isAnimating = false
     
     var body: some View {
         GeometryReader { barGeometry in
-            ZStack(alignment: .leading) {
+            ForEach(0..<totalSections, id: \.self) { section in
                 RoundedRectangle(cornerRadius: Constants.Design.cornerRadius)
-                    .foregroundColor(Constants.Design.Colors.buttonSecondaryBackgroundColor)
-                    .frame(width: barGeometry.size.width, height: barGeometry.size.height)
-                
-                
-                RoundedRectangle(cornerRadius: Constants.Design.cornerRadius)
-                    .foregroundColor(Constants.Design.Colors.backgroundEndColor)
-                    .frame(width: (barGeometry.size.width / CGFloat(totalSections)) * CGFloat(currentSection+1), height: barGeometry.size.height)
+                    .padding(Constants.Design.spacing/10)
+                    .foregroundColor(section == currentSection ? Constants.Design.Colors.buttonPrimaryBackgroundColor : Constants.Design.Colors.backgroundEndColor)
+                    .frame(width: barGeometry.size.width / CGFloat(totalSections), height: barGeometry.size.height)
+                    .offset(x: CGFloat(section)*(barGeometry.size.width / CGFloat(totalSections)))
                     .animation(.linear, value: currentSection)
-                
-                if currentSection > 0 {
-                    RoundedRectangle(cornerRadius: Constants.Design.cornerRadius)
-                        .foregroundColor(Constants.Design.Colors.buttonPrimaryBackgroundColor)
-                        .frame(width: (barGeometry.size.width / CGFloat(totalSections)) * CGFloat(currentSection), height: barGeometry.size.height)
-                        .animation(.linear, value: currentSection)
-                }
             }
         }
     }

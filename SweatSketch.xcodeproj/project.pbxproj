@@ -108,6 +108,8 @@
 		3FCE2C2A2BA21DD1004B4E62 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCE2C292BA21DD1004B4E62 /* Coordinator.swift */; };
 		3FCE2C2C2BA310EA004B4E62 /* WorkoutCarouselCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCE2C2B2BA310EA004B4E62 /* WorkoutCarouselCoordinator.swift */; };
 		3FCE2C2F2BA4450D004B4E62 /* ApplicationCoordinatorRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCE2C2E2BA4450D004B4E62 /* ApplicationCoordinatorRepresentable.swift */; };
+		3FE268BF2BD3820D00830144 /* ActiveWorkoutLiveActivityIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE268BE2BD3820D00830144 /* ActiveWorkoutLiveActivityIntent.swift */; };
+		3FE268C02BD3820D00830144 /* ActiveWorkoutLiveActivityIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE268BE2BD3820D00830144 /* ActiveWorkoutLiveActivityIntent.swift */; };
 		3FE361CF2BCFB6D6004405FB /* WidgetConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE361CD2BCFB6D6004405FB /* WidgetConstants.swift */; };
 		3FF097D72BB54EDC0043DE3F /* ForegroundSecondaryColorModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF097D62BB54EDC0043DE3F /* ForegroundSecondaryColorModifier.swift */; };
 		3FF097DB2BB5AD720043DE3F /* WorkoutDefaultRestTimePopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF097DA2BB5AD720043DE3F /* WorkoutDefaultRestTimePopoverView.swift */; };
@@ -248,6 +250,8 @@
 		3FCE2C292BA21DD1004B4E62 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		3FCE2C2B2BA310EA004B4E62 /* WorkoutCarouselCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutCarouselCoordinator.swift; sourceTree = "<group>"; };
 		3FCE2C2E2BA4450D004B4E62 /* ApplicationCoordinatorRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationCoordinatorRepresentable.swift; sourceTree = "<group>"; };
+		3FE268BE2BD3820D00830144 /* ActiveWorkoutLiveActivityIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveWorkoutLiveActivityIntent.swift; sourceTree = "<group>"; };
+		3FE268C22BD3891600830144 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3FE361CD2BCFB6D6004405FB /* WidgetConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetConstants.swift; sourceTree = "<group>"; };
 		3FF097D62BB54EDC0043DE3F /* ForegroundSecondaryColorModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForegroundSecondaryColorModifier.swift; sourceTree = "<group>"; };
 		3FF097DA2BB5AD720043DE3F /* WorkoutDefaultRestTimePopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutDefaultRestTimePopoverView.swift; sourceTree = "<group>"; };
@@ -524,6 +528,7 @@
 		3F86668A264542D300124E44 = {
 			isa = PBXGroup;
 			children = (
+				3FE268C22BD3891600830144 /* README.md */,
 				3F866695264542D400124E44 /* SweatSketch */,
 				3F755A012BCEC563009E71B8 /* SweatSketchWidget */,
 				3F866694264542D400124E44 /* Products */,
@@ -555,6 +560,7 @@
 				3F09555D2BB7DA6600AEAF51 /* CoreData */,
 				3F8666B026454C8300124E44 /* Helpers */,
 				3F86669C264542D600124E44 /* Preview Content */,
+				3FE268C12BD3821700830144 /* AppIntents */,
 			);
 			path = SweatSketch;
 			sourceTree = "<group>";
@@ -619,6 +625,14 @@
 				3FCE2C292BA21DD1004B4E62 /* Coordinator.swift */,
 			);
 			path = Protocols;
+			sourceTree = "<group>";
+		};
+		3FE268C12BD3821700830144 /* AppIntents */ = {
+			isa = PBXGroup;
+			children = (
+				3FE268BE2BD3820D00830144 /* ActiveWorkoutLiveActivityIntent.swift */,
+			);
+			path = AppIntents;
 			sourceTree = "<group>";
 		};
 		3FF097D82BB554430043DE3F /* Modifiers */ = {
@@ -793,6 +807,7 @@
 				3F48F3DA2BCFCA3B00E224CE /* WidgetActionInfoLabelView.swift in Sources */,
 				3F755A1D2BCECD35009E71B8 /* WidgetBackgroundView.swift in Sources */,
 				3F755A072BCEC563009E71B8 /* SweatSketchWidget.swift in Sources */,
+				3FE268C02BD3820D00830144 /* ActiveWorkoutLiveActivityIntent.swift in Sources */,
 				3F755A092BCEC563009E71B8 /* AppIntent.swift in Sources */,
 				3F755A032BCEC563009E71B8 /* SweatSketchWidgetBundle.swift in Sources */,
 				3F755A052BCEC563009E71B8 /* SweatSketchWidgetLiveActivity.swift in Sources */,
@@ -812,6 +827,7 @@
 				3F14CFC92BB2F27A00FD6C7E /* ActionTimedView.swift in Sources */,
 				3FADAE3A2BCA6C7900D207AB /* WorkoutCollectionMoveViewModel.swift in Sources */,
 				3F64E4A92BBC0779000567D8 /* WorkoutEventType.swift in Sources */,
+				3FE268BF2BD3820D00830144 /* ActiveWorkoutLiveActivityIntent.swift in Sources */,
 				3FA2B4742BC3C4B400268250 /* WorkoutDataManager.swift in Sources */,
 				3FADAE3C2BCA79C500D207AB /* WorkoutCollectionMergeViewModel.swift in Sources */,
 				3F9955EB2BC6D6CC004CD0A9 /* WorkoutViewRepresentation.swift in Sources */,

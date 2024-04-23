@@ -55,6 +55,7 @@ struct ActiveWorkoutExerciseView: View {
                 ProgressBarView(totalSections: viewModel.actions.count, currentSection: currentIndex)
                     .frame(height: 25)
             }
+            
             HStack (alignment: .center, spacing: Constants.Design.spacing/2) {
                 Button(action: {
                     if viewModel.isFirstAction {

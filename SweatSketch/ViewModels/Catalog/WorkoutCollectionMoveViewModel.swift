@@ -49,10 +49,10 @@ class WorkoutCollectionMoveViewModel: ObservableObject {
     func saveContext() {
         do {
             try mainContext.save()
-            try mainContext.parent?.save()
+            parentViewModel.saveContext()
             parentViewModel.refreshData()
         } catch {
-            print("Error saving workout move context: \(error)")
+            print("Error saving collection move context: \(error)")
         }
     }
     

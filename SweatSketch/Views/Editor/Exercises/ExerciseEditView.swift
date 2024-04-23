@@ -229,7 +229,7 @@ struct ExerciseEditView: View {
     }
     
     private func isListEditDisabled() -> Bool {
-        return viewModel.exerciseActions.isEmpty || [.name, .action, .rest].contains(currentEditingState)
+        return viewModel.editingExerciseActions.isEmpty || [.name, .action, .rest].contains(currentEditingState)
     }
     
 //    private func isListDisabled() -> Bool {
