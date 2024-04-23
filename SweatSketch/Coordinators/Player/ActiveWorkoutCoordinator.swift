@@ -35,7 +35,13 @@ class ActiveWorkoutCoordinator: ObservableObject, Coordinator {
     }
     
     func goToWorkoutSummary() {
+        viewModel.stopTimer()
+        Task {
+            await viewModel.endActivity()
+        }
+        
         let workoutDuration = viewModel.totalWorkoutDuration
+        
         let view = ActiveWorkoutSummaryView(workoutDuration: workoutDuration, onDismiss: {
             self.viewModel.startTimer()
             self.viewModel.startActivity()
@@ -44,11 +50,6 @@ class ActiveWorkoutCoordinator: ObservableObject, Coordinator {
         let workoutCompletedController = UIHostingController(rootView: view)
         workoutCompletedController.modalPresentationStyle = .formSheet
         rootViewController.present(workoutCompletedController, animated: true)
-        
-        viewModel.stopTimer()
-        Task {
-            await viewModel.endActivity()
-        }
     }
     
     func goToCollection(){

@@ -31,7 +31,6 @@ class WorkoutCollectionCoordinator: ObservableObject, Coordinator {
     
     func goToWorkoutCollection(collectionUUID: UUID) {
         workoutEvent.send(.openCollection(collectionUUID))
-        UserDefaults.standard.set(collectionUUID.uuidString, forKey: UserDefaultsKeys.lastOpenedCollectionUUID)
     }
     
     func goToMoveWorkout(movingWorkout: WorkoutCollectionWorkoutViewRepresentation) {
