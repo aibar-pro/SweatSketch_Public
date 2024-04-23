@@ -8,8 +8,11 @@ A workout contains exercises, which consist of actions. Actions have a type: set
 The app supports workout plans like the following one. 
 
 > 10 min treadmill run
+
 > 1x12, 1x10, 1x8 benchpress
+
 > 3x12 incline dumbbell press
+
 > (superset, 3 times) 3 min treadmill + 12 deadlift + max lat pulldowns + 5 burpees 
 
 The user can add rest times between actions and exercises. It can be either default for the whole workout and automatically applied between each exercise and action or customized for each exercise.
