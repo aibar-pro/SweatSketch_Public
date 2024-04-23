@@ -16,6 +16,6 @@ enum WidgetConstants {
         static let supportColor = Color.secondary.opacity(0.05)
         static let highEmphasisColor = Color.primary.opacity(0.87)
         static let mediumEmphasisColor = Color.primary.opacity(0.6)
-        static let lowEmphasisColor = Color.primary.opacity(0.3)
+        static let lowEmphasisColor = Color.primary.opacity(0.1)
     }
 }
