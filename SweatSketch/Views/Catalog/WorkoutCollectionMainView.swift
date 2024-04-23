@@ -19,6 +19,8 @@ struct WorkoutCollectionMainView: View {
     }
     @State private var currentEditingState: EditingState = .none
     
+    @State private var searchText: String = ""
+    
     var body: some View {
         VStack (alignment: .leading, spacing: Constants.Design.spacing){
             HStack (alignment: .center){
@@ -28,6 +30,150 @@ struct WorkoutCollectionMainView: View {
                     
                 Spacer()
                 
+                UserProfileButtonView(onClick: {})
+                
+//                Button(action: {
+//                    currentEditingState = .newCollection
+//                }) {
+//                    Image(systemName: "plus")
+//                        .padding(.vertical, Constants.Design.spacing/2)
+//                        .padding(.horizontal, Constants.Design.spacing/2)
+//                }
+//
+//                Menu {
+//                    Button("Edit Catalog") {
+//                        
+//                    }
+//                    
+//                    Button("One more action") {
+//                        
+//                    }
+//                } label: {
+//                    Image(systemName: "ellipsis.circle")
+//                        .padding(.vertical, Constants.Design.spacing/2)
+//                        .padding(.leading, Constants.Design.spacing/2)
+//                }
+            }
+            .padding(.horizontal, Constants.Design.spacing/2)
+            
+            VStack {
+                ZStack {
+                    GeometryReader { listGeo in
+                        ScrollView {
+                            LazyVStack (alignment: .leading, spacing: Constants.Design.spacing/2){
+                                ForEach(viewModel.collections, id: \.id) { collection in
+                                    Section(header:
+                                        HStack (alignment: .center) {
+                                            Button(action: {
+                                                coordinator.goToWorkoutCollection(collectionUUID: collection.id)
+                                            }) {
+                                                
+                                                Text(collection.name)
+                                                    .font(.headline)
+                                                    .lineLimit(2)
+                                                    .padding(.vertical, Constants.Design.spacing/4)
+                                                    .padding(.trailing, Constants.Design.spacing/2)
+                                            }
+                                            
+                                            Spacer()
+                                            
+                                            Menu {
+                                               Button("Rename Collection") {
+                           
+                                               }
+                                                
+                                                Button("Move Collection") {
+                                                    coordinator.goToMoveCollection(movingCollection: collection)
+                                                }
+                           
+                                               Button("Merge Collection") {
+                                                   coordinator.goToMergeCollection(sourceCollection: collection)
+                                               }
+                                           } label: {
+                                               Image(systemName: "ellipsis")
+                                                   .padding(.leading, Constants.Design.spacing/2)
+                                                   .padding(.vertical, Constants.Design.spacing/4)
+                                           }
+                                        }
+                                    ) {
+                                        LazyVStack (alignment: .leading, spacing: Constants.Design.spacing/2) {
+                                            ForEach(collection.workouts, id: \.id) { workout in
+                                                WorkoutCollectionWorkoutRowView(workoutRepresentation: workout, onMoveRequested: { workout in
+                                                    print(workout.name)
+                                                    coordinator.goToMoveWorkout(movingWorkout: workout)
+                                                })
+                                                .padding(Constants.Design.spacing/2)
+                                                .materialCardBackgroundModifier()
+                                            }
+                                            ForEach(collection.subCollections, id: \.id) { subCollection in
+                                                Section(header:
+                                                    HStack (alignment: .center) {
+                                                        Button(action: {
+                                                            coordinator.goToWorkoutCollection(collectionUUID: subCollection.id)
+                                                        }) {
+                                                            Text(subCollection.name)
+                                                                .font(.subheadline)
+                                                                .lineLimit(1)
+                                                                .padding(.vertical, Constants.Design.spacing/4)
+                                                                .padding(.trailing, Constants.Design.spacing/2)
+                                                        }
+                                                    
+                                                        Spacer()
+                                                        
+                                                        Menu {
+                                                           Button("Rename Collection") {
+                                       
+                                                           }
+                                       
+                                                            Button("Move Collection") {
+                                                                coordinator.goToMoveCollection(movingCollection: subCollection)
+                                                            }
+                                       
+                                                           Button("Merge Collection") {
+                                                               coordinator.goToMergeCollection(sourceCollection: subCollection)
+                                                           }
+                                                       } label: {
+                                                           Image(systemName: "ellipsis")
+                                                               .padding(.leading, Constants.Design.spacing/2)
+                                                               .padding(.vertical, Constants.Design.spacing/4)
+                                                       }
+                                                    }
+                                                ) {
+                                                    ForEach(subCollection.workouts, id: \.id) { workout in
+                                                        WorkoutCollectionWorkoutRowView(workoutRepresentation: workout, onMoveRequested: { workout in
+                                                            print(workout.name)
+                                                            coordinator.goToMoveWorkout(movingWorkout: workout)
+                                                        })
+                                                        .padding(Constants.Design.spacing/2)
+                                                        .materialCardBackgroundModifier()
+                                                    }
+                                                    .padding(.leading, Constants.Design.spacing/2)
+                                                }
+                                                .padding(.leading, Constants.Design.spacing/2)
+                                            }
+                                        }
+                                        .padding(.bottom, Constants.Design.spacing)
+                                    }
+                                }
+                            }
+                        }
+                        .padding(.horizontal, Constants.Design.spacing)
+                        .opacity(currentEditingState != .none ? 0.2 : 1)
+                        .disabled(currentEditingState != .none)
+                    }
+                    VStack{
+                        if currentEditingState == .newCollection {
+                            TextFieldPopoverView(popoverTitle: "Add Collection", textFieldLabel: "Enter collection name", buttonLabel: "Add", onDone: { newName in
+                                viewModel.addCollection(with: newName)
+                                currentEditingState = .none
+                            }, onDiscard: {
+                                currentEditingState = .none
+                            })
+                        }
+                        Spacer()
+                    }
+                }
+                
                 Button(action: {
                     currentEditingState = .newCollection
                 }) {
@@ -35,133 +181,10 @@ struct WorkoutCollectionMainView: View {
                         .padding(.vertical, Constants.Design.spacing/2)
                         .padding(.horizontal, Constants.Design.spacing/2)
                 }
-
-                Menu {
-                    Button("Edit Catalog") {
-                        
-                    }
-                    
-                    Button("One more action") {
-                        
-                    }
-                } label: {
-                    Image(systemName: "ellipsis.circle")
-                        .padding(.vertical, Constants.Design.spacing/2)
-                        .padding(.leading, Constants.Design.spacing/2)
-                }
             }
-            .padding(.horizontal, Constants.Design.spacing/2)
             
-            ZStack {
-                GeometryReader { listGeo in
-                    ScrollView {
-                        LazyVStack (alignment: .leading, spacing: Constants.Design.spacing/2){
-                            ForEach(viewModel.collections, id: \.id) { collection in
-                                Section(
-                                    header:
-                                        HStack {
-                                            Text(collection.name)
-                                                .font(.headline)
-                                                .lineLimit(2)
-                                                .padding(.vertical, Constants.Design.spacing/2)
-                                            Spacer()
-                                            Text("\(getWorkoutCount(for: collection))")
-                                        }
-                                ) {
-                                    if !collection.workouts.isEmpty {
-                                        HStack(alignment: .center, spacing: Constants.Design.spacing/4) {
-                                            
-                                            VStack (alignment: .leading, spacing: Constants.Design.spacing/4) {
-                                                ForEach(collection.workouts, id: \.id) { workout in
-                                                    WorkoutCollectionWorkoutRowView(workoutRepresentation: workout, onMoveRequested: { workout in
-                                                        print(workout.name)
-                                                        coordinator.goToMoveWorkout(movingWorkout: workout)
-                                                    })
-                                                        .padding(Constants.Design.spacing/2)
-                                                        .frame(width: listGeo.size.width*0.75, alignment: .topLeading)
-                                                        .materialCardBackgroundModifier()
-                                                }
-                                            }
-                                            Spacer()
-                                            Button(action: {
-                                                coordinator.goToWorkoutCollection(collectionUUID: collection.id)
-                                            }) {
-                                                Image(systemName: "chevron.forward")
-                                                    .padding(.vertical, Constants.Design.spacing)
-                                                    .padding(.leading, Constants.Design.spacing*0.75)
-                                                    .padding(.trailing, Constants.Design.spacing/2)
-                                                    .background(
-                                                        RoundedRectangle(cornerRadius: Constants.Design.cornerRadius)
-                                                            .fill(Constants.Design.Colors.buttonPrimaryBackgroundColor))
-                                            }
-                                        }
-                                    }
-                                    ForEach(collection.subCollections, id: \.id) { subCollection in
-                                        DisclosureGroup(content: {
-                                            if !subCollection.workouts.isEmpty {
-                                                HStack(alignment: .center) {
-                                                    VStack (alignment: .leading, spacing: Constants.Design.spacing/2) {
-                                                        ForEach(subCollection.workouts, id: \.id) { workout in
-                                                            WorkoutCollectionWorkoutRowView(workoutRepresentation: workout, onMoveRequested: { workout in
-                                                                print(workout.name)
-                                                                coordinator.goToMoveWorkout(movingWorkout: workout)
-                                                            })
-                                                                .padding(Constants.Design.spacing/2)
-                                                                .frame(width: listGeo.size.width*0.75 - Constants.Design.spacing/2, alignment: .topLeading)
-                                                                .materialCardBackgroundModifier()
-                                                                .padding(.leading, Constants.Design.spacing/2)
-                                                        }
-                                                    }
-                                                    Spacer()
-                                                    Button(action: {
-                                                        coordinator.goToWorkoutCollection(collectionUUID: subCollection.id)
-                                                    }) {
-                                                        Image(systemName: "chevron.forward")
-                                                            .padding(.vertical, Constants.Design.spacing)
-                                                            .padding(.leading, Constants.Design.spacing*0.75)
-                                                            .padding(.trailing, Constants.Design.spacing/2)
-                                                            .background(
-                                                                RoundedRectangle(cornerRadius: Constants.Design.cornerRadius)
-                                                                    .fill(Constants.Design.Colors.buttonPrimaryBackgroundColor))
-                                                        
-                                                    }
-                                                }
-                                            }
-                                        }, label: {
-                                            HStack {
-                                                Text(subCollection.name)
-                                                    .font(.headline)
-                                                    .lineLimit(2)
-                                                    .padding(.leading, Constants.Design.spacing/2)
-                                                    .padding(.vertical, Constants.Design.spacing/2)
-                                                Spacer()
-                                                Text("\(getWorkoutCount(for: subCollection))")
-                                            }
-                                        })
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    .padding(.horizontal, Constants.Design.spacing)
-                    .opacity(currentEditingState != .none ? 0.2 : 1)
-                    .disabled(currentEditingState != .none)
-                }
-                VStack{
-                    if currentEditingState == .newCollection {
-                        TextFieldPopoverView(popoverTitle: "Add Collection", textFieldLabel: "Enter collection name", buttonLabel: "Add", onDone: { newName in
-                            viewModel.addCollection(with: newName)
-                            currentEditingState = .none
-                        }, onDiscard: {
-                            currentEditingState = .none
-                        })
-                    }
-                    Spacer()
-                }
-            }
-           
         }
-        .accentColor(Constants.Design.Colors.textColorMediumEmphasis)
+        .accentColor(Constants.Design.Colors.textColorHighEmphasis)
         
     }
     

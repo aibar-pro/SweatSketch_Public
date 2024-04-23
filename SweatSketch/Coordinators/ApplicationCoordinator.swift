@@ -54,8 +54,6 @@ class ApplicationCoordinator: ObservableObject, Coordinator {
         UserDefaults.standard.set(workoutUUID.uuidString, forKey: UserDefaultsKeys.activeWorkoutUUID)
         
         do {
-//            let phonyUUID = UUID()
-//            let activeWorkoutCoordinator = try ActiveWorkoutCoordinator(dataContext: dataContext, activeWorkoutUUID: phonyUUID, workoutEvent: self.workoutEvent)
             let activeWorkoutCoordinator = try ActiveWorkoutCoordinator(dataContext: dataContext, activeWorkoutUUID: workoutUUID, workoutEvent: self.workoutEvent)
             activeWorkoutCoordinator.start()
             
@@ -73,10 +71,14 @@ class ApplicationCoordinator: ObservableObject, Coordinator {
     
     private func showWorkoutCarousel(with collectionUUID: UUID?) {
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.activeWorkoutUUID)
-            
+        
         let workoutPlanningCoordinator = WorkoutCarouselCoordinator(dataContext: dataContext, workoutEvent: self.workoutEvent, collectionUUID: collectionUUID)
         workoutPlanningCoordinator.start()
-            
+        
+        if let openedCollectionUUID = workoutPlanningCoordinator.viewModel.workoutCollection.uuid {
+            UserDefaults.standard.set(openedCollectionUUID.uuidString, forKey: UserDefaultsKeys.lastOpenedCollectionUUID)
+        }
+        
         self.childCoordinators.append(workoutPlanningCoordinator)
         self.rootViewController.popToRootViewController(animated: true)
         self.rootViewController.viewControllers = [workoutPlanningCoordinator.rootViewController]
@@ -98,7 +100,7 @@ class ApplicationCoordinator: ObservableObject, Coordinator {
         } else if let lastOpenedCollectionUUID = UserDefaults.standard.string(forKey: UserDefaultsKeys.lastOpenedCollectionUUID),
         let collectionUUID = UUID(uuidString: lastOpenedCollectionUUID) {
             workoutEvent.send(.openCollection(collectionUUID))
-            print("Nothing in UserDefaults. Open last collection")
+            print("No active workout in UserDefaults. Opening last collection")
         } else {
             workoutEvent.send(.finished)
             print("Open default collection")

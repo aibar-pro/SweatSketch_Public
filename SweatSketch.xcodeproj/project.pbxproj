@@ -108,6 +108,7 @@
 		3FCE2C2A2BA21DD1004B4E62 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCE2C292BA21DD1004B4E62 /* Coordinator.swift */; };
 		3FCE2C2C2BA310EA004B4E62 /* WorkoutCarouselCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCE2C2B2BA310EA004B4E62 /* WorkoutCarouselCoordinator.swift */; };
 		3FCE2C2F2BA4450D004B4E62 /* ApplicationCoordinatorRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCE2C2E2BA4450D004B4E62 /* ApplicationCoordinatorRepresentable.swift */; };
+		3FD3DBEF2BE9FF4600863AC1 /* UserProfileButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD3DBEE2BE9FF4600863AC1 /* UserProfileButtonView.swift */; };
 		3FE268BF2BD3820D00830144 /* ActiveWorkoutLiveActivityIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE268BE2BD3820D00830144 /* ActiveWorkoutLiveActivityIntent.swift */; };
 		3FE268C02BD3820D00830144 /* ActiveWorkoutLiveActivityIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE268BE2BD3820D00830144 /* ActiveWorkoutLiveActivityIntent.swift */; };
 		3FE361CF2BCFB6D6004405FB /* WidgetConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE361CD2BCFB6D6004405FB /* WidgetConstants.swift */; };
@@ -250,6 +251,7 @@
 		3FCE2C292BA21DD1004B4E62 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		3FCE2C2B2BA310EA004B4E62 /* WorkoutCarouselCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutCarouselCoordinator.swift; sourceTree = "<group>"; };
 		3FCE2C2E2BA4450D004B4E62 /* ApplicationCoordinatorRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationCoordinatorRepresentable.swift; sourceTree = "<group>"; };
+		3FD3DBEE2BE9FF4600863AC1 /* UserProfileButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileButtonView.swift; sourceTree = "<group>"; };
 		3FE268BE2BD3820D00830144 /* ActiveWorkoutLiveActivityIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveWorkoutLiveActivityIntent.swift; sourceTree = "<group>"; };
 		3FE268C22BD3891600830144 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3FE361CD2BCFB6D6004405FB /* WidgetConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetConstants.swift; sourceTree = "<group>"; };
@@ -363,6 +365,7 @@
 		3F4795282BA9869C0097E1EE /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				3FD3DBF02BE9FF5000863AC1 /* User */,
 				3F64E4BA2BBFE49C000567D8 /* Catalog */,
 				3F09555F2BB7DAAC00AEAF51 /* Editor */,
 				3F64E4A32BBBF390000567D8 /* Player */,
@@ -627,6 +630,14 @@
 			path = Protocols;
 			sourceTree = "<group>";
 		};
+		3FD3DBF02BE9FF5000863AC1 /* User */ = {
+			isa = PBXGroup;
+			children = (
+				3FD3DBEE2BE9FF4600863AC1 /* UserProfileButtonView.swift */,
+			);
+			path = User;
+			sourceTree = "<group>";
+		};
 		3FE268C12BD3821700830144 /* AppIntents */ = {
 			isa = PBXGroup;
 			children = (
@@ -882,6 +893,7 @@
 				3F7559EF2BCE7406009E71B8 /* ActiveWorkoutRestTimeViewModel.swift in Sources */,
 				3F7559F32BCE7DBA009E71B8 /* ActiveWorkoutSummaryBackgroundView.swift in Sources */,
 				3FADAE402BCA7CA100D207AB /* WorkoutCollectionMergeCoordinator.swift in Sources */,
+				3FD3DBEF2BE9FF4600863AC1 /* UserProfileButtonView.swift in Sources */,
 				3F9955E12BC53184004CD0A9 /* WorkoutCollectionWorkoutMoveViewModel.swift in Sources */,
 				3F64E4AD2BBEAB93000567D8 /* ErrorMessageView.swift in Sources */,
 				3F14CFCD2BB3065F00FD6C7E /* ActionSetsNRepsEditView.swift in Sources */,

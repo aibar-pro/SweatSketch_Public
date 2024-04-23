@@ -13,28 +13,22 @@ struct WorkoutCollectionWorkoutRowView: View {
     var onMoveRequested: (_ workout: WorkoutCollectionWorkoutViewRepresentation) -> ()
     
     var body: some View {
-        HStack {
-            Text(workoutRepresentation.name)
-                .lineLimit(2)
-            
-            Spacer()
-            
-            Menu {
-                Button("Move workout") {
-                    onMoveRequested(workoutRepresentation)
-                }
-                
-                Button("One more action") {
-                    
-                }
-                
-            } label: {
-                Image(systemName: "ellipsis")
-                    .padding(.vertical, Constants.Design.spacing/2)
-                    .padding(.leading, Constants.Design.spacing/2)
-            }
-        }
+        Menu {
+           Button("Move Workout") {
+               onMoveRequested(workoutRepresentation)
+           }
 
+           Button("Share Workout") {
+
+           }
+       } label: {
+           HStack{
+               Text(workoutRepresentation.name)
+                   .lineLimit(1)
+                   .multilineTextAlignment(.leading)
+               Spacer()
+           }
+       }
     }
 }
 

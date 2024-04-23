@@ -20,9 +20,9 @@ class WorkoutCollectionMergeCoordinator: ObservableObject, Coordinator {
     }
     
     func start() {
-//        let view = WorkoutCollectionWorkoutMoveView(viewModel: self.viewModel).environmentObject(self)
-//        rootViewController = UIHostingController(rootView: view)
-//        rootViewController.view.backgroundColor = .clear
+        let view = WorkoutCollectionMergeView(viewModel: self.viewModel).environmentObject(self)
+        rootViewController = UIHostingController(rootView: view)
+        rootViewController.view.backgroundColor = .clear
     }
     
     func saveMove(to collection: WorkoutCollectionViewRepresentation){

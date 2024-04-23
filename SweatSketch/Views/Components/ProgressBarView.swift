@@ -15,18 +15,24 @@ struct ProgressBarView: View {
     
     var body: some View {
         GeometryReader { barGeometry in
-            ForEach(0..<totalSections, id: \.self) { section in
+            ZStack(alignment: .center) {
                 RoundedRectangle(cornerRadius: Constants.Design.cornerRadius)
-                    .padding(Constants.Design.spacing/10)
-                    .foregroundColor(section == currentSection ? Constants.Design.Colors.buttonPrimaryBackgroundColor : Constants.Design.Colors.backgroundEndColor)
-                    .frame(width: barGeometry.size.width / CGFloat(totalSections), height: barGeometry.size.height)
-                    .offset(x: CGFloat(section)*(barGeometry.size.width / CGFloat(totalSections)))
-                    .animation(.linear, value: currentSection)
+                    .foregroundColor(Constants.Design.Colors.textColorlowEmphasis)
+                    .frame(width: barGeometry.size.width, height: barGeometry.size.height)
+
+                HStack (alignment: .center, spacing: Constants.Design.spacing/2) {
+                    ForEach(0..<totalSections, id: \.self) { section in
+                        RoundedRectangle(cornerRadius: Constants.Design.cornerRadius-Constants.Design.spacing/2)
+                            .foregroundColor(section == currentSection ? Constants.Design.Colors.backgroundAccentColor : Constants.Design.Colors.backgroundEndColor)
+                    }
+                }
+                .padding(.horizontal, Constants.Design.spacing/2)
+                .padding(.vertical, Constants.Design.spacing/4)
             }
         }
     }
 }
 
 #Preview {
-    ProgressBarView(totalSections: 10, currentSection: 2)
+    ProgressBarView(totalSections: 3, currentSection: 2)
 }
