@@ -16,7 +16,7 @@ struct ActionListEditView: View {
         GeometryReader { listGeo in
             ScrollViewReader { scrollProxy in
                 List {
-                    ForEach(viewModel.exerciseActions.filter { action in
+                    ForEach(viewModel.editingExerciseActions.filter { action in
                         switch ExerciseType.from(rawValue: viewModel.editingExercise.type) {
                         case .setsNreps:
                             return ExerciseActionType.from(rawValue: action.type) == .setsNreps
@@ -108,7 +108,7 @@ struct ActionListEditView: View {
                         }
                     }
                 }
-                .onChange(of: viewModel.exerciseActions.count==0, perform: { _ in
+                .onChange(of: viewModel.editingExerciseActions.count==0, perform: { _ in
                     if currentEditingState == .list {
                         currentEditingState = .none
                     }
@@ -122,7 +122,7 @@ struct ActionListEditView: View {
     }
     
     private func isListDisabled() -> Bool {
-        return viewModel.exerciseActions.isEmpty || [.name, .rest].contains(currentEditingState)
+        return viewModel.editingExerciseActions.isEmpty || [.name, .rest].contains(currentEditingState)
     }
     
     private func getRowHeightMultiplier(exerciseType: ExerciseType, actionType: ExerciseActionType, actionIsEditing: Bool) -> CGFloat {
