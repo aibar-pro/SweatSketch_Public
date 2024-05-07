@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-struct MaterialCardBackgroundModifier: ViewModifier {
+fileprivate struct MaterialCardBackgroundModifier: ViewModifier {
     
     let cornerRadius: CGFloat = Constants.Design.cornerRadius
     

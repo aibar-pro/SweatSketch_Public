@@ -9,7 +9,7 @@ import CoreData
 
 class WorkoutEditViewModel: ObservableObject {
     
-    private let parentViewModel: WorkoutCarouselViewModel
+    private let parentViewModel: WorkoutCollectionViewModel
     let mainContext: NSManagedObjectContext
     var canUndo: Bool {
         return mainContext.undoManager?.canUndo ?? false
@@ -27,7 +27,7 @@ class WorkoutEditViewModel: ObservableObject {
     private let exerciseDataManager = ExerciseDataManager()
     
     //TODO: change to init?
-    init(parentViewModel: WorkoutCarouselViewModel, editingWorkoutUUID: UUID? = nil) {
+    init(parentViewModel: WorkoutCollectionViewModel, editingWorkoutUUID: UUID? = nil) {
         self.mainContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         self.mainContext.parent = parentViewModel.mainContext
         self.parentViewModel = parentViewModel

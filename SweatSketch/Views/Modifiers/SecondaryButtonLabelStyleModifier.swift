@@ -18,10 +18,8 @@ struct SecondaryButtonLabelStyleModifier: ViewModifier {
             .padding(.horizontal, Constants.Design.spacing*1.25)
             .padding(.vertical, Constants.Design.spacing*0.75)
             .background(
-                ZStack {
-                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                        .fill(color)
-                }
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .fill(color)
             )
     }
 }
