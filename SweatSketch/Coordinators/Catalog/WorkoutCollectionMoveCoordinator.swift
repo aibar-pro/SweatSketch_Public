@@ -20,9 +20,9 @@ class WorkoutCollectionMoveCoordinator: ObservableObject, Coordinator {
     }
     
     func start() {
-//        let view = WorkoutCollectionWorkoutMoveView(viewModel: self.viewModel).environmentObject(self)
-//        rootViewController = UIHostingController(rootView: view)
-//        rootViewController.view.backgroundColor = .clear
+        let view = WorkoutCollectionMoveView(viewModel: self.viewModel).environmentObject(self)
+        rootViewController = UIHostingController(rootView: view)
+        rootViewController.view.backgroundColor = .clear
     }
     
     func saveMove(to collection: WorkoutCollectionViewRepresentation? = nil){

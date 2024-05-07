@@ -34,15 +34,43 @@ class WorkoutCollectionCoordinator: ObservableObject, Coordinator {
     }
     
     func goToMoveWorkout(movingWorkout: WorkoutCollectionWorkoutViewRepresentation) {
-        let collectionAddViewModel = WorkoutCollectionWorkoutMoveViewModel(parentViewModel: viewModel, movingWorkout: movingWorkout)
-        let collectionAddCoordinator = WorkoutCollectionWorkoutMoveCoordinator(viewModel: collectionAddViewModel)
+        let workoutMoveViewModel = WorkoutCollectionWorkoutMoveViewModel(parentViewModel: viewModel, movingWorkout: movingWorkout)
+        let workoutMoveCoordinator = WorkoutCollectionWorkoutMoveCoordinator(viewModel: workoutMoveViewModel)
         
-        collectionAddCoordinator.start()
-        childCoordinators.append(collectionAddCoordinator)
+        workoutMoveCoordinator.start()
+        childCoordinators.append(workoutMoveCoordinator)
         
-        let addCollectionViewController = collectionAddCoordinator.rootViewController
-        addCollectionViewController.modalPresentationStyle = .formSheet
-        rootViewController.present(addCollectionViewController, animated: true)
+        let moveWorkoutViewController = workoutMoveCoordinator.rootViewController
+        moveWorkoutViewController.modalPresentationStyle = .formSheet
+        rootViewController.present(moveWorkoutViewController, animated: true)
+        
+        viewModel.objectWillChange.send()
+    }
+    
+    func goToMoveCollection(movingCollection: WorkoutCollectionViewRepresentation) {
+        let collectionMoveViewModel = WorkoutCollectionMoveViewModel(parentViewModel: viewModel, movingCollection: movingCollection)
+        let collectionMoveCoordinator = WorkoutCollectionMoveCoordinator(viewModel: collectionMoveViewModel)
+        
+        collectionMoveCoordinator.start()
+        childCoordinators.append(collectionMoveCoordinator)
+        
+        let moveCollectionViewController = collectionMoveCoordinator.rootViewController
+        moveCollectionViewController.modalPresentationStyle = .formSheet
+        rootViewController.present(moveCollectionViewController, animated: true)
+        
+        viewModel.objectWillChange.send()
+    }
+    
+    func goToMergeCollection(sourceCollection: WorkoutCollectionViewRepresentation) {
+        let collectionMergeViewModel = WorkoutCollectionMergeViewModel(parentViewModel: viewModel, sourceCollection: sourceCollection)
+        let collectionMergeCoordinator = WorkoutCollectionMergeCoordinator(viewModel: collectionMergeViewModel)
+        
+        collectionMergeCoordinator.start()
+        childCoordinators.append(collectionMergeCoordinator)
+        
+        let mergeCollectionViewController = collectionMergeCoordinator.rootViewController
+        mergeCollectionViewController.modalPresentationStyle = .formSheet
+        rootViewController.present(mergeCollectionViewController, animated: true)
         
         viewModel.objectWillChange.send()
     }
