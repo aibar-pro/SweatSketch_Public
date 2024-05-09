@@ -1,5 +1,5 @@
 //
-//  EmailPasswordView.swift
+//  LoginPasswordView.swift
 //  SweatSketch
 //
 //  Created by aibaranchikov on 09.05.2024.
@@ -7,17 +7,16 @@
 
 import SwiftUI
 
-struct EmailPasswordView: View {
-    @Binding var email: String
-    @Binding var password: String
+struct LoginPasswordView: View {
+    @Binding var user: UserCredentialModel
     
     var body: some View {
         if #available(iOS 16.0, *) {
             Form {
-                TextField("Email", text: $email)
+                TextField("Email", text: $user.login)
                     .disableAutocorrection(true)
                     .textInputAutocapitalization(.never)
-                SecureField("Password", text: $password)
+                SecureField("Password", text: $user.password)
                     .disableAutocorrection(true)
                     .textInputAutocapitalization(.never)
             }
@@ -25,10 +24,10 @@ struct EmailPasswordView: View {
         } else {
             VStack {
                 VStack (spacing: Constants.Design.spacing/2) {
-                    TextField("Email", text: $email)
+                    TextField("Email", text: $user.login)
                         .disableAutocorrection(true)
                     Divider()
-                    SecureField("Password", text: $password)
+                    SecureField("Password", text: $user.password)
                 }
                 .padding(Constants.Design.spacing)
                 .materialCardBackgroundModifier()
@@ -41,5 +40,5 @@ struct EmailPasswordView: View {
 }
 
 #Preview {
-    EmailPasswordView(email: .constant("e@mail.com"), password: .constant("qwerty"))
+    LoginPasswordView(user: .constant(UserCredentialModel(login: "@ss", password: "123")))
 }

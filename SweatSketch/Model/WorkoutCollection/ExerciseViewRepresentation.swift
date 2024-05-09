@@ -25,14 +25,13 @@ class ExerciseViewRepresentation: Identifiable, Equatable, ObservableObject {
     var restTimeBetweenActions: ExerciseActionEntity?
     var superSets: Int16
     
-    private let exerciseDataManager = ExerciseDataManager()
-    
     init?(exercise: ExerciseEntity, in context: NSManagedObjectContext) {
         guard let id = exercise.uuid else { return nil }
         self.id = id
         self.name = exercise.name ?? Constants.Placeholders.noExerciseName
         self.type = ExerciseType.from(rawValue: exercise.type)
         
+        let exerciseDataManager = ExerciseDataManager()
         let fetchedActions = exerciseDataManager.fetchActions(for: exercise, in: context)
         self.actions = fetchedActions.compactMap({ $0.toExerciseActionViewRepresentation() })
         

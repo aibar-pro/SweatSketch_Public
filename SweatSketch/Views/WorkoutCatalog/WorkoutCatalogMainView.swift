@@ -21,6 +21,8 @@ struct WorkoutCatalogMainView: View {
     
     @State private var searchText: String = ""
     
+    @State private var isLoggedIn: Bool = false
+    
     var body: some View {
         VStack (alignment: .leading, spacing: Constants.Design.spacing){
             HStack (alignment: .center){
@@ -30,7 +32,11 @@ struct WorkoutCatalogMainView: View {
                     
                 Spacer()
                 
-                UserProfileButtonView(onClick: coordinator.goToProfile)
+                if isLoggedIn {
+                    Text("USER")
+                } else {
+                    UserProfileButtonView(onClick: coordinator.goToProfile)
+                }
                 
 //                Button(action: {
 //                    currentEditingState = .newCollection
@@ -189,7 +195,7 @@ struct WorkoutCatalogMainView: View {
         
     }
     
-    private func getWorkoutCount(for collection: WorkoutCollectionViewRepresentation) -> Int {
+    private func getWorkoutCount(for collection: WorkoutCatalogCollectionViewRepresentation) -> Int {
         if collection.workouts.isEmpty {
             return 0
         } else {

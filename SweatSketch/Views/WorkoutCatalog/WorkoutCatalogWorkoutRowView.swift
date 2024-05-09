@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct WorkoutCatalogWorkoutRowView: View {
-    @ObservedObject var workoutRepresentation: WorkoutCollectionWorkoutViewRepresentation
+    @ObservedObject var workoutRepresentation: WorkoutCatalogWorkoutViewRepresentation
     
-    var onMoveRequested: (_ workout: WorkoutCollectionWorkoutViewRepresentation) -> ()
+    var onMoveRequested: (_ workout: WorkoutCatalogWorkoutViewRepresentation) -> ()
     
     var body: some View {
         Menu {
