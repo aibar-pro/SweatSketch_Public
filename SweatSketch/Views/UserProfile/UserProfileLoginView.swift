@@ -11,7 +11,7 @@ struct UserProfileLoginView: View {
     @State var email: String = ""
     @State var password: String = ""
     
-    var onLogin: () -> Void = {}
+    var onLogin: (_ email: String, _ password: String) -> Void = { email, password in }
     var onDismiss: () -> Void = {}
     
     var body: some View {
@@ -32,7 +32,9 @@ struct UserProfileLoginView: View {
                 
                 EmailPasswordView(email: $email, password: $password)
                 
-                Button(action: onLogin) {
+                Button(action: {
+                    onLogin(email, password)
+                }) {
                     Text("Login")
                         .accentButtonLabelStyleModifier()
                 }

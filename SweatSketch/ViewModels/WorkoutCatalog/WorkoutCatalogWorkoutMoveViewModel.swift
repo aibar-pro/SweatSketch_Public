@@ -11,13 +11,13 @@ class WorkoutCatalogWorkoutMoveViewModel: ObservableObject {
     
     private let mainContext: NSManagedObjectContext
     private let parentViewModel: WorkoutCatalogViewModel
-    var movingWorkout: WorkoutCollectionWorkoutViewRepresentation
-    var collections = [WorkoutCollectionViewRepresentation]()
+    var movingWorkout: WorkoutCatalogWorkoutViewRepresentation
+    var collections = [WorkoutCatalogCollectionViewRepresentation]()
     
     private let collectionDataManager = CollectionDataManager()
     private let workoutDataManager = WorkoutDataManager()
     
-    init(parentViewModel: WorkoutCatalogViewModel, movingWorkout: WorkoutCollectionWorkoutViewRepresentation) {
+    init(parentViewModel: WorkoutCatalogViewModel, movingWorkout: WorkoutCatalogWorkoutViewRepresentation) {
         self.mainContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         self.mainContext.parent = parentViewModel.mainContext
         
@@ -29,7 +29,7 @@ class WorkoutCatalogWorkoutMoveViewModel: ObservableObject {
         self.collections = fetchedRootCollections.compactMap({ $0.toWorkoutCollectionRepresentation(includeWorkouts: false)})
     }
     
-    func moveWorkout(to collection: WorkoutCollectionViewRepresentation) {
+    func moveWorkout(to collection: WorkoutCatalogCollectionViewRepresentation) {
         if let fetchedWorkout = workoutDataManager.fetchWorkout(by: movingWorkout.id, in: mainContext), let fetchedCollection = collectionDataManager.fetchCollection(by: collection.id, in: mainContext) {
             fetchedWorkout.collection = fetchedCollection
         }

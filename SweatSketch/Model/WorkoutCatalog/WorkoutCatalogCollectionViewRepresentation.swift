@@ -1,5 +1,5 @@
 //
-//  WorkoutCollectionViewRepresentation.swift
+//  WorkoutCatalogCollectionViewRepresentation.swift
 //  SweatSketch
 //
 //  Created by aibaranchikov on 06.04.2024.
@@ -7,8 +7,8 @@
 
 import CoreData
 
-class WorkoutCollectionViewRepresentation: Identifiable, Equatable, ObservableObject {
-    static func == (lhs: WorkoutCollectionViewRepresentation, rhs: WorkoutCollectionViewRepresentation) -> Bool {
+class WorkoutCatalogCollectionViewRepresentation: Identifiable, Equatable, ObservableObject {
+    static func == (lhs: WorkoutCatalogCollectionViewRepresentation, rhs: WorkoutCatalogCollectionViewRepresentation) -> Bool {
         return
             lhs.id == rhs.id &&
             lhs.name == rhs.name &&
@@ -18,8 +18,8 @@ class WorkoutCollectionViewRepresentation: Identifiable, Equatable, ObservableOb
     
     let id: UUID
     var name: String = ""
-    var subCollections = [WorkoutCollectionViewRepresentation]()
-    var workouts = [WorkoutCollectionWorkoutViewRepresentation]()
+    var subCollections = [WorkoutCatalogCollectionViewRepresentation]()
+    var workouts = [WorkoutCatalogWorkoutViewRepresentation]()
     
     private let collectionDataManager = CollectionDataManager()
     
@@ -56,10 +56,10 @@ class WorkoutCollectionViewRepresentation: Identifiable, Equatable, ObservableOb
 }
 
 extension WorkoutCollectionEntity {
-    func toWorkoutCollectionRepresentation(includeSubCollections: Bool = true, includeWorkouts: Bool = true) -> WorkoutCollectionViewRepresentation? {
+    func toWorkoutCollectionRepresentation(includeSubCollections: Bool = true, includeWorkouts: Bool = true) -> WorkoutCatalogCollectionViewRepresentation? {
         guard let context = self.managedObjectContext else {
             return nil
         }
-        return WorkoutCollectionViewRepresentation(collection: self, in: context, includeSubCollections: includeSubCollections, includeWorkouts: includeWorkouts)
+        return WorkoutCatalogCollectionViewRepresentation(collection: self, in: context, includeSubCollections: includeSubCollections, includeWorkouts: includeWorkouts)
     }
 }

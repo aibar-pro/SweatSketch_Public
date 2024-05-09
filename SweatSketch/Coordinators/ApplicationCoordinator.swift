@@ -39,8 +39,6 @@ class ApplicationCoordinator: ObservableObject, Coordinator {
                 switch event {
                 case .workoutStarted(let workoutUUID):
                     showActiveWorkout(with: workoutUUID)
-//                case .workoutFinished:
-//                    showWorkoutCarousel(with: nil)
                 case .catalogRequested:
                     showWorkoutCollection()
                 case .collectionRequested(let collectionUUID):
