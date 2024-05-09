@@ -16,7 +16,7 @@ class ApplicationCoordinator: ObservableObject, Coordinator {
     
     let dataContext: NSManagedObjectContext
     
-    let workoutEvent = PassthroughSubject<WorkoutEventType, Never>()
+    let applicationEvent = PassthroughSubject<ApplicationEventType, Never>()
     var cancellables = Set<AnyCancellable>()
     
     init(dataContext: NSManagedObjectContext) {
@@ -31,20 +31,22 @@ class ApplicationCoordinator: ObservableObject, Coordinator {
     }
     
     private func setupEventSubscription() {
-        workoutEvent
+        applicationEvent
             .print("App Coordinator: Workout Event")
             .sink { [weak self] event in
                 guard let self = self else { return }
                 
                 switch event {
-                case .started(let workoutUUID):
+                case .workoutStarted(let workoutUUID):
                     showActiveWorkout(with: workoutUUID)
-                case .finished:
-                    showWorkoutCarousel(with: nil)
-                case .enterCollections:
+//                case .workoutFinished:
+//                    showWorkoutCarousel(with: nil)
+                case .catalogRequested:
                     showWorkoutCollection()
-                case .openCollection(let collectionUUID):
-                    showWorkoutCarousel(with: collectionUUID)
+                case .collectionRequested(let collectionUUID):
+                    showWorkoutCollection(with: collectionUUID)
+                case .profileRequested:
+                    showProfile()
                 }
             }
             .store(in: &cancellables)
@@ -54,7 +56,7 @@ class ApplicationCoordinator: ObservableObject, Coordinator {
         UserDefaults.standard.set(workoutUUID.uuidString, forKey: UserDefaultsKeys.activeWorkoutUUID)
         
         do {
-            let activeWorkoutCoordinator = try ActiveWorkoutCoordinator(dataContext: dataContext, activeWorkoutUUID: workoutUUID, workoutEvent: self.workoutEvent)
+            let activeWorkoutCoordinator = try ActiveWorkoutCoordinator(dataContext: dataContext, activeWorkoutUUID: workoutUUID, applicationEvent: self.applicationEvent)
             activeWorkoutCoordinator.start()
             
             self.childCoordinators.append(activeWorkoutCoordinator)
@@ -69,23 +71,23 @@ class ApplicationCoordinator: ObservableObject, Coordinator {
         }
     }
     
-    private func showWorkoutCarousel(with collectionUUID: UUID?) {
+    private func showWorkoutCollection(with collectionUUID: UUID?) {
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.activeWorkoutUUID)
         
-        let workoutPlanningCoordinator = WorkoutCarouselCoordinator(dataContext: dataContext, workoutEvent: self.workoutEvent, collectionUUID: collectionUUID)
-        workoutPlanningCoordinator.start()
+        let workoutCollectionCoordinator = WorkoutCollectionCoordinator(dataContext: dataContext, applicationEvent: self.applicationEvent, collectionUUID: collectionUUID)
+        workoutCollectionCoordinator.start()
         
-        if let openedCollectionUUID = workoutPlanningCoordinator.viewModel.workoutCollection.uuid {
+        if let openedCollectionUUID = workoutCollectionCoordinator.viewModel.workoutCollection.uuid {
             UserDefaults.standard.set(openedCollectionUUID.uuidString, forKey: UserDefaultsKeys.lastOpenedCollectionUUID)
         }
         
-        self.childCoordinators.append(workoutPlanningCoordinator)
+        self.childCoordinators.append(workoutCollectionCoordinator)
         self.rootViewController.popToRootViewController(animated: true)
-        self.rootViewController.viewControllers = [workoutPlanningCoordinator.rootViewController]
+        self.rootViewController.viewControllers = [workoutCollectionCoordinator.rootViewController]
     }
     
     private func showWorkoutCollection() {
-        let workoutCollectionCoordinator = WorkoutCollectionCoordinator(dataContext: dataContext, workoutEvent: self.workoutEvent)
+        let workoutCollectionCoordinator = WorkoutCatalogCoordinator(dataContext: dataContext, applicationEvent: self.applicationEvent)
         workoutCollectionCoordinator.start()
             
         self.childCoordinators.append(workoutCollectionCoordinator)
@@ -93,17 +95,30 @@ class ApplicationCoordinator: ObservableObject, Coordinator {
         self.rootViewController.viewControllers = [workoutCollectionCoordinator.rootViewController]
     }
     
+    private func showProfile() {
+        let loginCoordinator = UserProfileCoordinator(applicationEvent: self.applicationEvent)
+        loginCoordinator.start()
+        
+        let loginViewController = loginCoordinator.rootViewController
+        loginViewController.modalPresentationStyle = .formSheet
+        rootViewController.present(loginViewController, animated: true)
+        
+//        self.childCoordinators.append(loginCoordinator)
+//        self.rootViewController.popToRootViewController(animated: true)
+//        self.rootViewController.viewControllers = [loginCoordinator.rootViewController]
+    }
+    
     func checkActiveWorkoutValue() {
         if let activeWorkoutUUIDString = UserDefaults.standard.string(forKey: UserDefaultsKeys.activeWorkoutUUID),
            let workoutUUID = UUID(uuidString: activeWorkoutUUIDString) {
-            workoutEvent.send(.started(workoutUUID))
+            applicationEvent.send(.workoutStarted(workoutUUID))
         } else if let lastOpenedCollectionUUID = UserDefaults.standard.string(forKey: UserDefaultsKeys.lastOpenedCollectionUUID),
         let collectionUUID = UUID(uuidString: lastOpenedCollectionUUID) {
-            workoutEvent.send(.openCollection(collectionUUID))
+            applicationEvent.send(.collectionRequested(collectionUUID))
             print("No active workout in UserDefaults. Opening last collection")
         } else {
-            workoutEvent.send(.finished)
-            print("Open default collection")
+            applicationEvent.send(.collectionRequested(nil))
+            print("Opening default collection")
         }
     }
     

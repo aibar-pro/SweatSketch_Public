@@ -18,7 +18,7 @@ struct ActiveWorkoutSummaryBackgroundView: View {
             Image(systemName: "fireworks")
                 .font(.system(size: 400))
                 .rotationEffect(Angle(degrees: isAnimating ? 5 : -5))
-                .foregroundColor(elementColor)
+                .customForegroundColorModifier(elementColor)
                 .scaleEffect(isAnimating ? 1.25 : 1.0)
                 .onAppear {
                     withAnimation(Animation.easeInOut(duration: 3).repeatForever(autoreverses: true)) {

@@ -42,6 +42,7 @@ enum Constants {
             static let textColorHighEmphasis = Color.primary.opacity(0.87)
             static let textColorMediumEmphasis = Color.primary.opacity(0.6)
             static let textColorlowEmphasis = Color.primary.opacity(0.1)
+            static let linkColor = Color(.link).opacity(0.87)
         }
     }
     

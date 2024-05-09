@@ -92,7 +92,7 @@ struct ActiveWorkoutExerciseView_Previews: PreviewProvider {
         let persistenceController = PersistenceController.preview
         
         let appCoordinator = ApplicationCoordinator(dataContext: persistenceController.container.viewContext)
-        let workoutEvent = appCoordinator.workoutEvent
+        let applicationEvent = appCoordinator.applicationEvent
         
         let collectionDataManager = CollectionDataManager()
         let firstCollection = collectionDataManager.fetchFirstUserCollection(in: persistenceController.container.viewContext)
@@ -101,7 +101,7 @@ struct ActiveWorkoutExerciseView_Previews: PreviewProvider {
         
         let workoutUUID = (workoutForPreview?.uuid)!
         
-        let activeWorkoutCoordinator = try! ActiveWorkoutCoordinator(dataContext: persistenceController.container.viewContext, activeWorkoutUUID: workoutUUID, workoutEvent: workoutEvent)
+        let activeWorkoutCoordinator = try! ActiveWorkoutCoordinator(dataContext: persistenceController.container.viewContext, activeWorkoutUUID: workoutUUID, applicationEvent: applicationEvent)
         
         let exerciseForPreview = try! ActiveWorkoutViewRepresentation(workoutUUID: (workoutForPreview?.uuid)!, in: persistenceController.container.viewContext).items[4]
         
