@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-struct PrimaryButtonLabelStyleModifier: ViewModifier {
+fileprivate struct PrimaryButtonLabelStyleModifier: ViewModifier {
     
     let cornerRadius: CGFloat = Constants.Design.cornerRadius
     let color: Color = Constants.Design.Colors.buttonPrimaryBackgroundColor
@@ -18,12 +18,8 @@ struct PrimaryButtonLabelStyleModifier: ViewModifier {
             .padding(.horizontal, Constants.Design.spacing*1.25)
             .padding(.vertical, Constants.Design.spacing*0.75)
             .background(
-                ZStack {
-//                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-//                        .stroke(Color.accentColor, lineWidth: 2)
-                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                        .fill(color)
-                }
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .fill(color)
             )
     }
 }

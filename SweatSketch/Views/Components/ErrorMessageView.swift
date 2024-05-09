@@ -17,7 +17,7 @@ struct ErrorMessageView: View {
             
             Text(text)
         }
-        .foregroundColor(color)
+        .customForegroundColorModifier(color)
         .padding(.all, Constants.Design.spacing)
         .background(
             ZStack {
