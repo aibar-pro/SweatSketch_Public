@@ -37,7 +37,7 @@ The app supports light and dark color schemes inherited from system preferences.
 
 ## Screenshot Gallery
 
-![Carousel](/SweatSketch/Resouces/AppDemos/SweatSketchDemo_1.png =250x250) ![Workout Edit](/SweatSketch/Resouces/AppDemos/SweatSketchDemo_2.png =250x250)
-![Exercise Edit](/SweatSketch/Resouces/AppDemos/SweatSketchDemo_3.png =250x250) ![Active Workout](/SweatSketch/Resouces/AppDemos/SweatSketchDemo_4.png =250x250)
-![Activity](/SweatSketch/Resouces/AppDemos/SweatSketchDemo_5.png =250x250) ![Catalog](/SweatSketch/Resouces/AppDemos/SweatSketchDemo_6.png =250x250)
+![Carousel](./Resources/AppDemos/SweatSketchDemo_1.png) ![Workout Edit](./Resources/AppDemos/SweatSketchDemo_2.png)
+![Exercise Edit](./Resources/AppDemos/SweatSketchDemo_3.png) ![Active Workout](./Resources/AppDemos/SweatSketchDemo_4.png)
+![Activity](./Resources/AppDemos/SweatSketchDemo_5.png) ![Catalog](./Resources/AppDemos/SweatSketchDemo_6.png)
 
