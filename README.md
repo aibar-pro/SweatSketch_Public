@@ -1,6 +1,8 @@
 #  SweatSketch: Sketch, Sweat, and Succeed
 The “SweatSketch: Sketch, Sweat, and Succeed” is a lightweight app for taking gym notes regarding the workout program and weight-lifting results.
 
+![UI_demo](https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif)
+
 I haven’t conducted any marketing research since this is a playground project. It covers only my needs as a sole user. I started this project in 2021 with an iOS14 target. When I resurrected it in early 2024, I decided not to update the target, whereas, in a corporate environment, you have to support the largest number of devices possible.
 
 A workout contains exercises, which consist of actions. Actions have a type: sets-n-reps and timed. Sets-n-reps actions later will include weight type information: dumbbell, barbell, machine, body. The weight type input will streamline the result logging flow.
@@ -8,11 +10,8 @@ A workout contains exercises, which consist of actions. Actions have a type: set
 The app supports workout plans like the following one. 
 
 > 10 min treadmill run
-
 > 1x12, 1x10, 1x8 benchpress
-
 > 3x12 incline dumbbell press
-
 > (superset, 3 times) 3 min treadmill + 12 deadlift + max lat pulldowns + 5 burpees 
 
 The user can add rest times between actions and exercises. It can be either default for the whole workout and automatically applied between each exercise and action or customized for each exercise.

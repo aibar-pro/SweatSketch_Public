@@ -19,13 +19,12 @@ class WorkoutViewRepresentation: Identifiable, Equatable, ObservableObject {
     var name: String
     var exercises = [ExerciseViewRepresentation]()
     
-    private let workoutDataManager = WorkoutDataManager()
-    
     init?(workout: WorkoutEntity, in context: NSManagedObjectContext) {
         guard let id = workout.uuid else { return nil }
         self.id = id
         self.name = workout.name ?? Constants.Placeholders.noWorkoutName
         
+        let workoutDataManager = WorkoutDataManager()
         let fetchedExercises = workoutDataManager.fetchExercises(for: workout, in: context)
         self.exercises = fetchedExercises.compactMap({ $0.toExerciseViewRepresentation() })
     }

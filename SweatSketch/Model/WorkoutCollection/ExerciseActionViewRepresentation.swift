@@ -7,7 +7,7 @@
 
 import Foundation
 
-class ExerciseActionViewRepresentation: Identifiable, Equatable, ObservableObject {
+class ExerciseActionViewRepresentation: Identifiable, Equatable {
     static func == (lhs: ExerciseActionViewRepresentation, rhs: ExerciseActionViewRepresentation) -> Bool {
         return 
             lhs.id == rhs.id &&

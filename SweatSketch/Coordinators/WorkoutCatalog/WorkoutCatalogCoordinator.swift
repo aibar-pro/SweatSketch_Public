@@ -38,7 +38,7 @@ class WorkoutCatalogCoordinator: ObservableObject, Coordinator {
     }
     
     
-    func goToMoveWorkout(movingWorkout: WorkoutCollectionWorkoutViewRepresentation) {
+    func goToMoveWorkout(movingWorkout: WorkoutCatalogWorkoutViewRepresentation) {
         let workoutMoveViewModel = WorkoutCatalogWorkoutMoveViewModel(parentViewModel: viewModel, movingWorkout: movingWorkout)
         let workoutMoveCoordinator = WorkoutCatalogWorkoutMoveCoordinator(viewModel: workoutMoveViewModel)
         
@@ -50,7 +50,7 @@ class WorkoutCatalogCoordinator: ObservableObject, Coordinator {
         rootViewController.present(moveWorkoutViewController, animated: true)
     }
     
-    func goToMoveCollection(movingCollection: WorkoutCollectionViewRepresentation) {
+    func goToMoveCollection(movingCollection: WorkoutCatalogCollectionViewRepresentation) {
         let collectionMoveViewModel = WorkoutCatalogCollectionMoveViewModel(parentViewModel: viewModel, movingCollection: movingCollection)
         let collectionMoveCoordinator = WorkoutCatalogCollectionMoveCoordinator(viewModel: collectionMoveViewModel)
         
@@ -62,7 +62,7 @@ class WorkoutCatalogCoordinator: ObservableObject, Coordinator {
         rootViewController.present(moveCollectionViewController, animated: true)
     }
     
-    func goToMergeCollection(sourceCollection: WorkoutCollectionViewRepresentation) {
+    func goToMergeCollection(sourceCollection: WorkoutCatalogCollectionViewRepresentation) {
         let collectionMergeViewModel = WorkoutCatalogCollectionMergeViewModel(parentViewModel: viewModel, sourceCollection: sourceCollection)
         let collectionMergeCoordinator = WorkoutCatalogCollectionMergeCoordinator(viewModel: collectionMergeViewModel)
         

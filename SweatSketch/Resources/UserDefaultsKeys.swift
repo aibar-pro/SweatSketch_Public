@@ -8,4 +8,5 @@
 struct UserDefaultsKeys {
     static let activeWorkoutUUID = "activeWorkoutUUID"
     static let lastOpenedCollectionUUID = "lastOpenedCollectionUUID"
+    static let isUserLoggedIn = "isUserLoggedIn"
 }

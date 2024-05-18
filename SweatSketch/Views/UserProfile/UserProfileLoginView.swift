@@ -8,10 +8,9 @@
 import SwiftUI
 
 struct UserProfileLoginView: View {
-    @State var email: String = ""
-    @State var password: String = ""
+    @State var user = UserCredentialModel()
     
-    var onLogin: () -> Void = {}
+    var onLogin: (_ user: UserCredentialModel) -> Void = { user in }
     var onDismiss: () -> Void = {}
     
     var body: some View {
@@ -30,9 +29,11 @@ struct UserProfileLoginView: View {
                 Text("Login to your account")
                     .font(.subheadline)
                 
-                EmailPasswordView(email: $email, password: $password)
+                LoginPasswordView(user: $user)
                 
-                Button(action: onLogin) {
+                Button(action: {
+                    onLogin(user)
+                }) {
                     Text("Login")
                         .accentButtonLabelStyleModifier()
                 }
@@ -62,5 +63,5 @@ struct UserProfileLoginView: View {
 }
 
 #Preview {
-    UserProfileLoginView()
+    UserProfileLoginView(user: UserCredentialModel())
 }

@@ -11,7 +11,7 @@ class WorkoutCatalogViewModel: ObservableObject {
     
     let mainContext: NSManagedObjectContext
     
-    @Published var collections = [WorkoutCollectionViewRepresentation]()
+    @Published var collections = [WorkoutCatalogCollectionViewRepresentation]()
     
     private let collectionDataManager = CollectionDataManager()
     

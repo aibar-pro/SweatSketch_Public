@@ -24,10 +24,24 @@ class UserProfileCoordinator: ObservableObject, Coordinator {
     }
     
     func start() {
-        let view = UserProfileLoginView(onLogin: {
+        let view = UserProfileLoginView(onLogin: { user in
                 print("LOGIN COORDINATOR: LOGIN")
-                self.rootViewController.dismiss(animated: true)
-                self.applicationEvent.send(.catalogRequested)
+
+                NetworkService.login(user: user){ [weak self] result in
+                    DispatchQueue.main.async {
+                        guard let strongSelf = self else { return }
+                        
+                        switch result {
+                        case .success(let response):
+                            print("LOGGED IN: \(response.accessToken)")
+                            self?.rootViewController.dismiss(animated: true)
+                            self?.applicationEvent.send(.catalogRequested)
+                            UserDefaults.standard.set(true, forKey: UserDefaultsKeys.isUserLoggedIn)
+                        case .failure(let error):
+                            print("LOGIN ERROR \(error.localizedDescription)")
+                        }
+                    }
+                }
             }, onDismiss: {
                 print("LOGIN COORDINATOR: DISMISS")
                 self.rootViewController.dismiss(animated: true)
