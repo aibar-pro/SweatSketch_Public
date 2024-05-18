@@ -63,15 +63,15 @@ extension ExerciseActionEntity {
         guard let uuid = self.uuid else { return nil }
         
         if self.isRestTime {
-            if self.duration > 0 {
+            if self.duration >= 0 {
                 return ActiveWorkoutItemActionViewRepresentation(entityUUID: uuid, type: .rest, duration: self.duration)
             } else { return nil }
         } else {
             switch ExerciseActionType.from(rawValue: self.type) {
             case .setsNreps:
-                return ActiveWorkoutItemActionViewRepresentation(entityUUID: uuid, title: self.name ?? exerciseName, type: .setsNreps, reps: self.reps, repsMax: self.repsMax)
+                return ActiveWorkoutItemActionViewRepresentation(entityUUID: uuid, title: exerciseName ?? self.name, type: .setsNreps, reps: self.reps, repsMax: self.repsMax)
             case .timed:
-                return ActiveWorkoutItemActionViewRepresentation(entityUUID: uuid, title: self.name ?? exerciseName, type: .timed, duration: self.duration)
+                return ActiveWorkoutItemActionViewRepresentation(entityUUID: uuid, title: exerciseName ?? self.name, type: .timed, duration: self.duration)
             default:
                 return nil
             }

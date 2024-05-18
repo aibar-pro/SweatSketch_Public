@@ -19,6 +19,8 @@
 		3F14CFCB2BB2FD8900FD6C7E /* ActionTimedEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F14CFCA2BB2FD8900FD6C7E /* ActionTimedEditView.swift */; };
 		3F14CFCD2BB3065F00FD6C7E /* ActionSetsNRepsEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F14CFCC2BB3065F00FD6C7E /* ActionSetsNRepsEditView.swift */; };
 		3F1936DF2B98CCAF007978CA /* WorkoutCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1936DE2B98CCAF007978CA /* WorkoutCollectionView.swift */; };
+		3F2451C42BF882F80069DF1F /* SweatSketch_Demo_Login.gif in Resources */ = {isa = PBXBuildFile; fileRef = 3F2451C32BF882F80069DF1F /* SweatSketch_Demo_Login.gif */; };
+		3F2451C62BF883570069DF1F /* SweatSketch_Demo_ActiveWorkout.gif in Resources */ = {isa = PBXBuildFile; fileRef = 3F2451C52BF883570069DF1F /* SweatSketch_Demo_ActiveWorkout.gif */; };
 		3F2A8F3B2B16298E00F184ED /* WorkoutCollectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2A8F3A2B16298E00F184ED /* WorkoutCollectionViewModel.swift */; };
 		3F2A8F412B171BE500F184ED /* ExerciseEditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2A8F402B171BE500F184ED /* ExerciseEditViewModel.swift */; };
 		3F2A8F432B1723EC00F184ED /* WorkoutEditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2A8F422B1723EC00F184ED /* WorkoutEditViewModel.swift */; };
@@ -164,6 +166,8 @@
 		3F14CFCA2BB2FD8900FD6C7E /* ActionTimedEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionTimedEditView.swift; sourceTree = "<group>"; };
 		3F14CFCC2BB3065F00FD6C7E /* ActionSetsNRepsEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSetsNRepsEditView.swift; sourceTree = "<group>"; };
 		3F1936DE2B98CCAF007978CA /* WorkoutCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutCollectionView.swift; sourceTree = "<group>"; };
+		3F2451C32BF882F80069DF1F /* SweatSketch_Demo_Login.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = SweatSketch_Demo_Login.gif; sourceTree = "<group>"; };
+		3F2451C52BF883570069DF1F /* SweatSketch_Demo_ActiveWorkout.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = SweatSketch_Demo_ActiveWorkout.gif; sourceTree = "<group>"; };
 		3F2A8F3A2B16298E00F184ED /* WorkoutCollectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutCollectionViewModel.swift; sourceTree = "<group>"; };
 		3F2A8F402B171BE500F184ED /* ExerciseEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseEditViewModel.swift; sourceTree = "<group>"; };
 		3F2A8F422B1723EC00F184ED /* WorkoutEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutEditViewModel.swift; sourceTree = "<group>"; };
@@ -306,6 +310,7 @@
 		3F09555E2BB7DA7800AEAF51 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				3F2451C72BF883620069DF1F /* AppDemos */,
 				3F598CBD2B8F9F1600117D59 /* Constants.swift */,
 				3F86669A264542D600124E44 /* Assets.xcassets */,
 				3F64E4A62BBC042F000567D8 /* UserDefaultsKeys.swift */,
@@ -363,6 +368,15 @@
 				3F5B22952BECA91D0026C957 /* UserProfile */,
 			);
 			path = Coordinators;
+			sourceTree = "<group>";
+		};
+		3F2451C72BF883620069DF1F /* AppDemos */ = {
+			isa = PBXGroup;
+			children = (
+				3F2451C52BF883570069DF1F /* SweatSketch_Demo_ActiveWorkout.gif */,
+				3F2451C32BF882F80069DF1F /* SweatSketch_Demo_Login.gif */,
+			);
+			path = AppDemos;
 			sourceTree = "<group>";
 		};
 		3F2A8F3C2B16299900F184ED /* ViewModels */ = {
@@ -829,7 +843,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3F2451C42BF882F80069DF1F /* SweatSketch_Demo_Login.gif in Resources */,
 				3F86669B264542D600124E44 /* Assets.xcassets in Resources */,
+				3F2451C62BF883570069DF1F /* SweatSketch_Demo_ActiveWorkout.gif in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
