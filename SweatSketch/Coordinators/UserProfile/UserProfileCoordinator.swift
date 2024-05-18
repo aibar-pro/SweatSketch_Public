@@ -24,14 +24,12 @@ class UserProfileCoordinator: ObservableObject, Coordinator {
     }
     
     func start() {
-        let view = UserProfileLoginView(onLogin: { email, password in
+        let view = UserProfileLoginView(onLogin: { user in
                 print("LOGIN COORDINATOR: LOGIN")
-                    
-                let userCredentials = UserCredentialModel(email: email, password: password)
-            
-                NetworkService.login(user: userCredentials){ [weak self] result in
+
+                NetworkService.login(user: user){ [weak self] result in
                     DispatchQueue.main.async {
-                        guard let strongSelf = self else { return }
+                        guard self != nil else { return }
                         
                         switch result {
                         case .success(let response):

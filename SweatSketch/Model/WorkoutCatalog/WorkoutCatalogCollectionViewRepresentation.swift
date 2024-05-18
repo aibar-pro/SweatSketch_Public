@@ -21,37 +21,33 @@ class WorkoutCatalogCollectionViewRepresentation: Identifiable, Equatable, Obser
     var subCollections = [WorkoutCatalogCollectionViewRepresentation]()
     var workouts = [WorkoutCatalogWorkoutViewRepresentation]()
     
-    private let collectionDataManager = CollectionDataManager()
-    
     init?(collection: WorkoutCollectionEntity, in context: NSManagedObjectContext, includeSubCollections: Bool = true, includeWorkouts: Bool = true) {
         guard let id = collection.uuid else { return nil }
         self.id = id
-        switch WorkoutCollectionType.from(rawValue: collection.type) {
-        case .defaultCollection:
-            self.name = collection.name ?? Constants.DefaultValues.defaultWorkoutCollectionName
-        case .imported:
-            self.name = collection.name ?? Constants.DefaultValues.importedWorkoutCollectionName
-        default:
-            self.name = collection.name ?? Constants.Placeholders.noCollectionName
-        }
+        self.name = collection.name ?? WorkoutCatalogCollectionViewRepresentation.defaultName(for: collection)
+        
+        let collectionDataManager = CollectionDataManager()
         
         if includeSubCollections {
-            fetchSubCollections(collection, context)
+            let fetchedSubCollections = collectionDataManager.fetchSubCollections(for: collection, in: context)
+            subCollections = fetchedSubCollections.compactMap({ $0.toWorkoutCollectionRepresentation() })
         }
         
         if includeWorkouts {
-            fetchWorkouts(collection, context)
+            let fetchedWorkouts = collectionDataManager.fetchWorkouts(for: collection, in: context)
+            workouts = fetchedWorkouts.compactMap({ $0.toWorkoutCollectionWorkoutRepresentation() })
         }
     }
     
-    private func fetchWorkouts(_ collection: WorkoutCollectionEntity, _ context: NSManagedObjectContext) {
-        let fetchedWorkouts = collectionDataManager.fetchWorkouts(for: collection, in: context)
-        self.workouts = fetchedWorkouts.compactMap({ $0.toWorkoutCollectionWorkoutRepresentation() })
-    }
-    
-    private func fetchSubCollections(_ collection: WorkoutCollectionEntity, _ context: NSManagedObjectContext) {
-        let fetchedSubCollections = collectionDataManager.fetchSubCollections(for: collection, in: context)
-        self.subCollections = fetchedSubCollections.compactMap({ $0.toWorkoutCollectionRepresentation() })
+    private static func defaultName(for collection: WorkoutCollectionEntity) -> String {
+        switch WorkoutCollectionType.from(rawValue: collection.type) {
+        case .defaultCollection:
+            return Constants.DefaultValues.defaultWorkoutCollectionName
+        case .imported:
+            return Constants.DefaultValues.importedWorkoutCollectionName
+        default:
+            return Constants.Placeholders.noCollectionName
+        }
     }
 }
 

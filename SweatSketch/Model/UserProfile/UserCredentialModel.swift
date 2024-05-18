@@ -7,12 +7,7 @@
 
 import Foundation
 
-class UserCredentialModel: Encodable {
-    let username: String
-    let password: String
-    
-    init(email: String, password: String) {
-        self.username = email
-        self.password = password
-    }
+struct UserCredentialModel: Codable {
+    var login: String = ""
+    var password: String = ""
 }
