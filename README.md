@@ -37,7 +37,7 @@ The app supports light and dark color schemes inherited from system preferences.
 
 ## Screenshot Gallery
 
-![Carousel](https://github.com/aibar-pro/SweatSketch_Public/blob/b7a0a88470c2ad98e361dcafae8e0081bdbf6878/SweatSketch/Resources/AppDemos/SweatSketchDemo_1.png =250x250) ![Workout Edit](https://github.com/aibar-pro/SweatSketch_Public/blob/b7a0a88470c2ad98e361dcafae8e0081bdbf6878/SweatSketch/Resources/AppDemos/SweatSketchDemo_2.png =250x250)
-![Exercise Edit](https://github.com/aibar-pro/SweatSketch_Public/blob/b7a0a88470c2ad98e361dcafae8e0081bdbf6878/SweatSketch/Resources/AppDemos/SweatSketchDemo_3.png =250x250) ![Active Workout](https://github.com/aibar-pro/SweatSketch_Public/blob/b7a0a88470c2ad98e361dcafae8e0081bdbf6878/SweatSketch/Resources/AppDemos/SweatSketchDemo_4.png =250x250)
-![Activity](https://github.com/aibar-pro/SweatSketch_Public/blob/b7a0a88470c2ad98e361dcafae8e0081bdbf6878/SweatSketch/Resources/AppDemos/SweatSketchDemo_5.png =250x250) ![Catalog](https://github.com/aibar-pro/SweatSketch_Public/blob/b7a0a88470c2ad98e361dcafae8e0081bdbf6878/SweatSketch/Resources/AppDemos/SweatSketchDemo_6.png =250x250)
+![Carousel](./Resources/AppDemos/SweatSketchDemo_1.png) ![Workout Edit](./Resources/AppDemos/SweatSketchDemo_2.png)
+![Exercise Edit](./Resources/AppDemos/SweatSketchDemo_3.png) ![Active Workout](./Resources/AppDemos/SweatSketchDemo_4.png)
+![Activity](./Resources/AppDemos/SweatSketchDemo_5.png) ![Catalog](./Resources/AppDemos/SweatSketchDemo_6.png)
 
