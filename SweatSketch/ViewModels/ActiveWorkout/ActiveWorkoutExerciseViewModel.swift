@@ -11,7 +11,7 @@ import ActivityKit
 class ActiveWorkoutExerciseViewModel: ObservableObject {
     
     @Published var currentAction: ActiveWorkoutItemActionViewRepresentation?
-    @Published var currentActionTimeRemaining: Int = 0
+    @Published var currentActionDuration: Int = 0
     
     let parentViewModel: ActiveWorkoutViewModel
     
@@ -39,7 +39,7 @@ class ActiveWorkoutExerciseViewModel: ObservableObject {
         currentAction = action
         
         if [.timed, .rest].contains(action.type), let actionDuration = action.duration {
-            currentActionTimeRemaining = Int(actionDuration)
+            currentActionDuration = Int(actionDuration)
         }
         
         Task {

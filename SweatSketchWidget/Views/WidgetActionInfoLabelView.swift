@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import WidgetKit
 
 struct WidgetActionInfoLabelView: View {
     var title: String
@@ -18,12 +19,9 @@ struct WidgetActionInfoLabelView: View {
         HStack(alignment: .top) {
             Text(title)
             Spacer()
+
             if let duration = duration {
-                HStack(alignment: .center) {
-                    Image(systemName: "timer")
-                    let futureEndDate = futureDate(fromDuration: duration)
-                    Text(futureEndDate, style: .timer)
-                }
+                CountdownTimerLabelView(timeRemaining: duration)
             } else if let maximumRepetitions = repsMax, maximumRepetitions {
                 Text("xMAX")
             } else if let reps = repsCount {
@@ -31,14 +29,4 @@ struct WidgetActionInfoLabelView: View {
             }
         }
     }
-    
-    func futureDate(fromDuration duration: Int) -> Date {
-        let now = Date()
-        return Calendar.current.date(byAdding: .second, value: duration, to: now)!
-    }
-}
-
-
-#Preview {
-    WidgetActionInfoLabelView(title: "Untitled", duration: 200)
 }
