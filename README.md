@@ -1,7 +1,7 @@
 #  SweatSketch: Sketch, Sweat, and Succeed
 The “SweatSketch: Sketch, Sweat, and Succeed” is a lightweight app for taking gym notes regarding the workout program and weight-lifting results.
 
-![UI_demo](https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif)
+![UI_demo](https://github.com/aibar-pro/SweatSketch_public/tree/main/SweatSketch/Resources/AppDemos/SweatSketch_Demo_ActiveWorkout.gif)
 
 I haven’t conducted any marketing research since this is a playground project. It covers only my needs as a sole user. I started this project in 2021 with an iOS14 target. When I resurrected it in early 2024, I decided not to update the target, whereas, in a corporate environment, you have to support the largest number of devices possible.
 

@@ -29,7 +29,7 @@ class UserProfileCoordinator: ObservableObject, Coordinator {
 
                 NetworkService.login(user: user){ [weak self] result in
                     DispatchQueue.main.async {
-                        guard let strongSelf = self else { return }
+                        guard self != nil else { return }
                         
                         switch result {
                         case .success(let response):

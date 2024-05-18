@@ -46,7 +46,7 @@ class ActiveWorkoutViewRepresentation: Identifiable, Equatable, ObservableObject
         var items = [ActiveWorkoutItemViewRepresentation]()
         
         for (index, exercise) in fetchedExercises.enumerated() {
-            if let exerciseRepresentation = exercise.toActiveWorkoutItemRepresentation() {
+            if let exerciseRepresentation = exercise.toActiveWorkoutItemRepresentation(defaultWorkoutRestTimeUUID: fetchedDefaultRestTime?.uuid, defaultWorkoutRestTimeDuration: fetchedDefaultRestTime?.duration) {
                 //Add rest period between exercises: custom or default
                 if index > 0 {
                     if let fetchedRestTime = workoutDataManager.fetchRestTime(for: exercise, in: context), let restTimeRepresentation = fetchedRestTime.toActiveWorkoutItemRepresentation() {
