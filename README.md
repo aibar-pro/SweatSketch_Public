@@ -36,8 +36,9 @@ Data is managed and passed through ViewModels, including temporary ViewModels fo
 The app supports light and dark color schemes inherited from system preferences.
 
 ## Screenshot Gallery
-
-![Carousel](./Resources/AppDemos/SweatSketchDemo_1.png) ![Workout Edit](./Resources/AppDemos/SweatSketchDemo_2.png)
-![Exercise Edit](./Resources/AppDemos/SweatSketchDemo_3.png) ![Active Workout](./Resources/AppDemos/SweatSketchDemo_4.png)
-![Activity](./Resources/AppDemos/SweatSketchDemo_5.png) ![Catalog](./Resources/AppDemos/SweatSketchDemo_6.png)
-
+<img src="./SweatSketch/Resources/AppDemos/SweatSketchDemo_1.png" alt="Carousel" width="300" height="auto">
+<img src="./SweatSketch/Resources/AppDemos/SweatSketchDemo_2.png" alt="Workout Edit" width="300" height="auto">
+<img src="./SweatSketch/Resources/AppDemos/SweatSketchDemo_3.png" alt="Exercise Edit" width="300" height="auto">
+<img src="./SweatSketch/Resources/AppDemos/SweatSketchDemo_4.png" alt="Active Workout" width="300" height="auto">
+<img src="./SweatSketch/Resources/AppDemos/SweatSketchDemo_5.png" alt="Activity" width="300" height="auto">
+<img src="./SweatSketch/Resources/AppDemos/SweatSketchDemo_6.png" alt="Catalog" width="300" height="auto">
