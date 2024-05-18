@@ -1,7 +1,7 @@
 #  SweatSketch: Sketch, Sweat, and Succeed
 The “SweatSketch: Sketch, Sweat, and Succeed” is a lightweight app for taking gym notes regarding the workout program and weight-lifting results.
 
-![UI_demo](https://github.com/aibar-pro/SweatSketch_public/tree/main/SweatSketch/Resources/AppDemos/SweatSketch_Demo_ActiveWorkout.gif)
+![UI_demo](https://github.com/aibar-pro/SweatSketch_Public/blob/b7a0a88470c2ad98e361dcafae8e0081bdbf6878/SweatSketch/Resources/AppDemos/SweatSketch_Demo_ActiveWorkout.gif)
 
 I haven’t conducted any marketing research since this is a playground project. It covers only my needs as a sole user. I started this project in 2021 with an iOS14 target. When I resurrected it in early 2024, I decided not to update the target, whereas, in a corporate environment, you have to support the largest number of devices possible.
 
@@ -34,4 +34,10 @@ Data is managed and passed through ViewModels, including temporary ViewModels fo
 
 ## Miscellaneous Features
 The app supports light and dark color schemes inherited from system preferences.
+
+## Screenshot Gallery
+
+![Carousel](https://github.com/aibar-pro/SweatSketch_Public/blob/b7a0a88470c2ad98e361dcafae8e0081bdbf6878/SweatSketch/Resources/AppDemos/SweatSketchDemo_1.png =250x250) ![Workout Edit](https://github.com/aibar-pro/SweatSketch_Public/blob/b7a0a88470c2ad98e361dcafae8e0081bdbf6878/SweatSketch/Resources/AppDemos/SweatSketchDemo_2.png =250x250)
+![Exercise Edit](https://github.com/aibar-pro/SweatSketch_Public/blob/b7a0a88470c2ad98e361dcafae8e0081bdbf6878/SweatSketch/Resources/AppDemos/SweatSketchDemo_3.png =250x250) ![Active Workout](https://github.com/aibar-pro/SweatSketch_Public/blob/b7a0a88470c2ad98e361dcafae8e0081bdbf6878/SweatSketch/Resources/AppDemos/SweatSketchDemo_4.png =250x250)
+![Activity](https://github.com/aibar-pro/SweatSketch_Public/blob/b7a0a88470c2ad98e361dcafae8e0081bdbf6878/SweatSketch/Resources/AppDemos/SweatSketchDemo_5.png =250x250) ![Catalog](https://github.com/aibar-pro/SweatSketch_Public/blob/b7a0a88470c2ad98e361dcafae8e0081bdbf6878/SweatSketch/Resources/AppDemos/SweatSketchDemo_6.png =250x250)
 
