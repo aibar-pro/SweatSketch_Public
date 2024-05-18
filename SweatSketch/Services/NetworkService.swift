@@ -8,7 +8,7 @@
 import Foundation
 
 class NetworkService {
-    static func login(user: UserCredentialModel, completion: @escaping (Result<UserTokenModel, Error>) -> Void) {
+    static func login(user: UserCredentialModel, completion: @escaping (Result<AuthTokenModel, Error>) -> Void) {
         guard let url = URL(string: "http://0.0.0.0:8080/login") else { return }
         
         var request = URLRequest(url: url)
@@ -28,7 +28,7 @@ class NetworkService {
             }
             
             do {
-                let decodedData = try JSONDecoder().decode(UserTokenModel.self, from: data)
+                let decodedData = try JSONDecoder().decode(AuthTokenModel.self, from: data)
                 completion(.success(decodedData))
             } catch {
                 completion(.failure(error))

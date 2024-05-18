@@ -7,8 +7,8 @@
 
 import Foundation
 
-class UserTokenModel: Codable {
+struct AuthTokenModel: Codable {
     let accessToken: String
     let refreshToken: String
-//    let expires_in: Int
+    let expiresIn: UInt64
 }

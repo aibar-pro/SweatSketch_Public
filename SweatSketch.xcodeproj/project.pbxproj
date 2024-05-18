@@ -38,10 +38,10 @@
 		3F598CBE2B8F9F1600117D59 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F598CBD2B8F9F1600117D59 /* Constants.swift */; };
 		3F598CC22B8FAD7500117D59 /* WorkoutPlanningMainBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F598CC12B8FAD7500117D59 /* WorkoutPlanningMainBackgroundView.swift */; };
 		3F5B22902BEC94F70026C957 /* UserProfileLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5B228F2BEC94F70026C957 /* UserProfileLoginView.swift */; };
-		3F5B22922BECA0590026C957 /* EmailPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5B22912BECA0590026C957 /* EmailPasswordView.swift */; };
+		3F5B22922BECA0590026C957 /* LoginPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5B22912BECA0590026C957 /* LoginPasswordView.swift */; };
 		3F5B22942BECA8160026C957 /* UserProfileCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5B22932BECA8160026C957 /* UserProfileCoordinator.swift */; };
 		3F5B22982BECCA860026C957 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5B22972BECCA860026C957 /* NetworkService.swift */; };
-		3F5B229B2BECCBB50026C957 /* UserTokenModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5B229A2BECCBB50026C957 /* UserTokenModel.swift */; };
+		3F5B229B2BECCBB50026C957 /* AuthTokenModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5B229A2BECCBB50026C957 /* AuthTokenModel.swift */; };
 		3F5B229E2BECCCE00026C957 /* UserCredentialModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5B229D2BECCCE00026C957 /* UserCredentialModel.swift */; };
 		3F64E49F2BBBF251000567D8 /* ActiveWorkoutViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F64E49E2BBBF251000567D8 /* ActiveWorkoutViewModel.swift */; };
 		3F64E4A22BBBF387000567D8 /* ActiveWorkoutCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F64E4A12BBBF387000567D8 /* ActiveWorkoutCoordinator.swift */; };
@@ -182,10 +182,10 @@
 		3F598CBD2B8F9F1600117D59 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		3F598CC12B8FAD7500117D59 /* WorkoutPlanningMainBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutPlanningMainBackgroundView.swift; sourceTree = "<group>"; };
 		3F5B228F2BEC94F70026C957 /* UserProfileLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileLoginView.swift; sourceTree = "<group>"; };
-		3F5B22912BECA0590026C957 /* EmailPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailPasswordView.swift; sourceTree = "<group>"; };
+		3F5B22912BECA0590026C957 /* LoginPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginPasswordView.swift; sourceTree = "<group>"; };
 		3F5B22932BECA8160026C957 /* UserProfileCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileCoordinator.swift; sourceTree = "<group>"; };
 		3F5B22972BECCA860026C957 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
-		3F5B229A2BECCBB50026C957 /* UserTokenModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserTokenModel.swift; sourceTree = "<group>"; };
+		3F5B229A2BECCBB50026C957 /* AuthTokenModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthTokenModel.swift; sourceTree = "<group>"; };
 		3F5B229D2BECCCE00026C957 /* UserCredentialModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCredentialModel.swift; sourceTree = "<group>"; };
 		3F64E49E2BBBF251000567D8 /* ActiveWorkoutViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveWorkoutViewModel.swift; sourceTree = "<group>"; };
 		3F64E4A12BBBF387000567D8 /* ActiveWorkoutCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveWorkoutCoordinator.swift; sourceTree = "<group>"; };
@@ -451,7 +451,7 @@
 		3F5B229C2BECCBBA0026C957 /* UserProfile */ = {
 			isa = PBXGroup;
 			children = (
-				3F5B229A2BECCBB50026C957 /* UserTokenModel.swift */,
+				3F5B229A2BECCBB50026C957 /* AuthTokenModel.swift */,
 				3F5B229D2BECCCE00026C957 /* UserCredentialModel.swift */,
 			);
 			path = UserProfile;
@@ -695,7 +695,7 @@
 				3F9955E62BC56901004CD0A9 /* TextFieldPopoverView.swift */,
 				3FFFC2002BCD115300287AF1 /* ProgressBarView.swift */,
 				3FFFC2022BCD2EA500287AF1 /* CountdownTimerView.swift */,
-				3F5B22912BECA0590026C957 /* EmailPasswordView.swift */,
+				3F5B22912BECA0590026C957 /* LoginPasswordView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -879,7 +879,7 @@
 				3F9955E92BC58788004CD0A9 /* ExerciseViewRepresentation.swift in Sources */,
 				3FFFC1FA2BCBBEB500287AF1 /* ActiveWorkoutItemViewRepresentation.swift in Sources */,
 				3FCE2C242BA1FC3B004B4E62 /* WorkoutCollectionListViewModel.swift in Sources */,
-				3F5B229B2BECCBB50026C957 /* UserTokenModel.swift in Sources */,
+				3F5B229B2BECCBB50026C957 /* AuthTokenModel.swift in Sources */,
 				3F0955692BB7E4E000AEAF51 /* WorkoutPlanningModalBackgroundView.swift in Sources */,
 				3FFFC2012BCD115300287AF1 /* ProgressBarView.swift in Sources */,
 				3F4AB5472BA9F9B9005836E7 /* ExerciseActionType.swift in Sources */,
@@ -900,7 +900,7 @@
 				3F6BDEDF26455E160079EC84 /* WorkoutDetailView.swift in Sources */,
 				3F477D8E2BC829A20011A3B3 /* ActionListEditView.swift in Sources */,
 				3F2A8F3B2B16298E00F184ED /* WorkoutCollectionViewModel.swift in Sources */,
-				3F5B22922BECA0590026C957 /* EmailPasswordView.swift in Sources */,
+				3F5B22922BECA0590026C957 /* LoginPasswordView.swift in Sources */,
 				3F5B229E2BECCCE00026C957 /* UserCredentialModel.swift in Sources */,
 				3F9955E72BC56901004CD0A9 /* TextFieldPopoverView.swift in Sources */,
 				3F48F3D62BCFC6A100E224CE /* ActiveWorkoutActionAttributes.swift in Sources */,
