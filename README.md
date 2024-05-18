@@ -36,7 +36,6 @@ Data is managed and passed through ViewModels, including temporary ViewModels fo
 The app supports light and dark color schemes inherited from system preferences.
 
 ## Screenshot Gallery
-
 <img src="./SweatSketch/Resources/AppDemos/SweatSketchDemo_1.png" alt="Carousel" width="300" height="auto">
 <img src="./SweatSketch/Resources/AppDemos/SweatSketchDemo_2.png" alt="Workout Edit" width="300" height="auto">
 <img src="./SweatSketch/Resources/AppDemos/SweatSketchDemo_3.png" alt="Exercise Edit" width="300" height="auto">
