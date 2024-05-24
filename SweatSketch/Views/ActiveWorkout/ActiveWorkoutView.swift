@@ -53,10 +53,10 @@ struct ActiveWorkoutView: View {
                                             if viewModel.isLastItem {
                                                 coordinator.goToWorkoutSummary()
                                             } else {
-                                                viewModel.nextItem()
+                                                viewModel.nextActiveWorkoutItem()
                                             }
                                         }, returnRequested: {
-                                            viewModel.previousItem()
+                                            viewModel.previousActiveWorkoutItem()
                                         })
                                         .id(item.id)
                                         .padding(Constants.Design.spacing)
@@ -65,9 +65,9 @@ struct ActiveWorkoutView: View {
                                         
                                     case .rest:
                                         ActiveWorkoutRestTimeView(viewModel: ActiveWorkoutRestTimeViewModel(parentViewModel: viewModel,restTimeRepresentation: item), doneRequested: {
-                                            viewModel.nextItem()
+                                            viewModel.nextActiveWorkoutItem()
                                         }, returnRequested: {
-                                            viewModel.previousItem()
+                                            viewModel.previousActiveWorkoutItem()
                                         })
                                         .id(item.id)
                                         .padding(Constants.Design.spacing)

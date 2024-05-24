@@ -42,7 +42,7 @@ struct ActiveWorkoutExerciseView: View {
                         }
                     default:
                         if currentAction.duration != nil {
-                            CountdownTimerView(timeRemaining: $viewModel.currentActionTimeRemaining)
+                            CountdownTimerView(timeRemaining: viewModel.currentActionDuration)
                                 .font(.headline.bold())
                         }
                     }

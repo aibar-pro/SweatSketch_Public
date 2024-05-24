@@ -8,23 +8,17 @@
 import SwiftUI
 
 struct CountdownTimerView: View {
-    
-    @Binding var timeRemaining: Int
-    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    var timeRemaining: Int
     
     var body: some View {
         HStack (alignment: .center, spacing: Constants.Design.spacing/2) {
             Image(systemName: "timer")
-            DurationView(durationInSeconds: timeRemaining)
-                .onReceive(timer) { time in
-                    if timeRemaining > 0 {
-                        timeRemaining -= 1
-                    }
-                }
+            
+            CountdownTimerLabelView(timeRemaining: timeRemaining)
         }
     }
 }
 
 #Preview {
-    CountdownTimerView(timeRemaining: .constant(100))
+    CountdownTimerView(timeRemaining: 5)
 }

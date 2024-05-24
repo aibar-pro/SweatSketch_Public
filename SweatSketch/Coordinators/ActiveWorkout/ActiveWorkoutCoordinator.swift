@@ -12,6 +12,7 @@ import Combine
 class ActiveWorkoutCoordinator: ObservableObject, Coordinator {
     
     var viewModel: ActiveWorkoutViewModel
+    var activeWorkoutService: ActiveWorkoutService
     
     var rootViewController = UIViewController()
     var childCoordinators = [Coordinator]()
@@ -20,7 +21,11 @@ class ActiveWorkoutCoordinator: ObservableObject, Coordinator {
     
     init(dataContext: NSManagedObjectContext, activeWorkoutUUID: UUID, applicationEvent: PassthroughSubject<ApplicationEventType, Never>) throws {
         rootViewController = UIViewController()
-        viewModel = try ActiveWorkoutViewModel(activeWorkoutUUID: activeWorkoutUUID, in: dataContext)
+        
+        self.activeWorkoutService = ActiveWorkoutService.shared
+        self.viewModel = try ActiveWorkoutViewModel(activeWorkoutUUID: activeWorkoutUUID, in: dataContext)
+        self.activeWorkoutService.workoutManager = self.viewModel
+        
         self.applicationEvent = applicationEvent
     }
     

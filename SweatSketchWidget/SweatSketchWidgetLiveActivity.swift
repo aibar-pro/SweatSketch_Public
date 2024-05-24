@@ -16,13 +16,29 @@ struct SweatSketchWidgetLiveActivity: Widget {
             ZStack {
                 WidgetBackgroundView()
                 
-                VStack (alignment: .leading) {
+                VStack (alignment: .leading, spacing: 12) {
                     WidgetActionInfoLabelView(title: context.state.title, repsCount: context.state.repsCount, repsMax: context.state.repsMax, duration: context.state.duration)
                     .font(.headline.bold())
                     .foregroundStyle(WidgetConstants.Colors.highEmphasisColor)
                     
                     WidgetProgressBarView(totalSections: context.state.totalActions, currentSection: context.state.currentAction)
-                        .frame(height: 20)
+                        .frame(height: 24)
+                    
+                    if #available(iOS 17.0, *) {
+                        HStack(alignment: .top) {
+                            Button(intent: ActiveWorkoutPreviousItemIntent()) {
+                                Image(systemName: "chevron.backward")
+                                    .padding(.vertical, 8)
+                                    .padding(.horizontal, 8)
+                            }
+                            Spacer()
+                            Button(intent: ActiveWorkoutNextItemIntent()) {
+                                Image(systemName: "chevron.forward")
+                                    .padding(.vertical, 8)
+                                    .padding(.horizontal, 16)
+                            }
+                        }
+                    }
                 }
                 .padding(16)
                 
@@ -32,24 +48,34 @@ struct SweatSketchWidgetLiveActivity: Widget {
 
         } dynamicIsland: { context in
             DynamicIsland {
-                // Expanded UI goes here.  Compose the expanded UI through
-                // various regions, like leading/trailing/center/bottom
-                DynamicIslandExpandedRegion(.leading) {
-                    Image(systemName: context.state.iconName)
-                       .foregroundStyle(WidgetConstants.Colors.iconColor)
-                       .padding(.leading, 16)
-                }
-                
                 DynamicIslandExpandedRegion(.bottom) {
-                    VStack (alignment: .leading) {
+                    VStack (alignment: .leading, spacing: 8) {
                         WidgetActionInfoLabelView(title: context.state.title, repsCount: context.state.repsCount, repsMax: context.state.repsMax, duration: context.state.duration)
-                            .font(.headline.bold())
-                            .foregroundStyle(WidgetConstants.Colors.highEmphasisColor)
+                        .font(.headline.bold())
+                        .foregroundStyle(WidgetConstants.Colors.highEmphasisColor)
                         
                         WidgetProgressBarView(totalSections: context.state.totalActions, currentSection: context.state.currentAction)
-                            .frame(height: 20)
+                            .frame(height: 16)
+                        
+                        if #available(iOS 17.0, *) {
+                            HStack(alignment: .top) {
+                                Button(intent: ActiveWorkoutPreviousItemIntent()) {
+                                    Image(systemName: "chevron.backward")
+                                        .padding(.vertical, 4)
+                                        .padding(.horizontal, 4)
+                                }
+                                .tint(WidgetConstants.Colors.backgroundStartColor)
+                                Spacer()
+                                Button(intent: ActiveWorkoutNextItemIntent()) {
+                                    Image(systemName: "chevron.forward")
+                                        .padding(.vertical, 4)
+                                        .padding(.horizontal, 8)
+                                }
+                                .tint(WidgetConstants.Colors.accentColor)
+                            }
+                        }
                     }
-                    .padding(16)
+                    .padding(.top, 16)
                 }
             } compactLeading: {
                 Image(systemName: context.state.iconName)

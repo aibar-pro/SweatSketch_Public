@@ -9,7 +9,7 @@ import CoreData
 import Combine
 import ActivityKit
 
-class ActiveWorkoutViewModel: ObservableObject {
+class ActiveWorkoutViewModel: ObservableObject, ActiveWorkoutManagementProtocol {
     
     let mainContext: NSManagedObjectContext
     
@@ -44,14 +44,14 @@ class ActiveWorkoutViewModel: ObservableObject {
         return activeItem == item && activeItem != nil
     }
     
-    func nextItem() {
+    func nextActiveWorkoutItem() {
         if let activeItem = self.activeItem, let currentIndex = self.items.firstIndex(where: {$0 == activeItem }) {
             let nextIndex = min(currentIndex+1, items.count-1)
             self.activeItem = self.items[nextIndex]
         }
     }
     
-    func previousItem() {
+    func previousActiveWorkoutItem() {
         if let activeItem = self.activeItem, let currentIndex = self.items.firstIndex(where: {$0 == activeItem }) {
             let nextIndex = max(currentIndex-1, 0)
             self.activeItem = self.items[nextIndex]
