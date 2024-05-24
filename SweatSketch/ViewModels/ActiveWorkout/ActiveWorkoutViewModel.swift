@@ -9,19 +9,20 @@ import CoreData
 import Combine
 import ActivityKit
 
-class ActiveWorkoutViewModel: ObservableObject {
+class ActiveWorkoutViewModel: ObservableObject, ActiveWorkoutManagementProtocol {
     
     let mainContext: NSManagedObjectContext
     
-    let activeWorkout: ActiveWorkoutViewRepresentation
-    var items = [ActiveWorkoutItemViewRepresentation]()
-    @Published var activeItem: ActiveWorkoutItemViewRepresentation?
-    var isLastItem: Bool {
-        return activeItem == items.last
-    }
+    let activeWorkout: ActiveWorkoutRepresentation
+    
+    var items = [ActiveWorkoutItemRepresentation]()
+    @Published var currentItem: ActiveWorkoutItemRepresentation?
+    @Published var currentAction: ActiveWorkoutActionRepresentation?
+    @Published var currentProgress: (current: Int, total: Int) = (0, 0)
+    @Published var isLastAction: Bool = false
 
     private let workoutDataManager = WorkoutDataManager()
-    
+
     var totalWorkoutDuration: Int = 0
     private var workoutTimer: AnyCancellable?
     private var timerIsActive = false
@@ -33,34 +34,59 @@ class ActiveWorkoutViewModel: ObservableObject {
         self.mainContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         self.mainContext.parent = context
         
-        let workoutRepresentation = try ActiveWorkoutViewRepresentation(workoutUUID: activeWorkoutUUID, in: context)
+        let workoutRepresentation = try ActiveWorkoutRepresentation(workoutUUID: activeWorkoutUUID, in: context)
         
         self.activeWorkout = workoutRepresentation
         self.items = workoutRepresentation.items
-        self.activeItem = items.first
+        self.currentItem = workoutRepresentation.currentItem
+        self.currentAction = activeWorkout.currentAction
+        self.currentProgress = activeWorkout.currentItemProgress()
+        self.isLastAction = activeWorkout.isLastAction()
     }
     
-    func isActiveItem(item: ActiveWorkoutItemViewRepresentation) -> Bool {
-        return activeItem == item && activeItem != nil
+    func isCurrentItem(item: ActiveWorkoutItemRepresentation) -> Bool {
+        return currentItem == item && currentItem != nil
     }
     
-    func nextItem() {
-        if let activeItem = self.activeItem, let currentIndex = self.items.firstIndex(where: {$0 == activeItem }) {
-            let nextIndex = min(currentIndex+1, items.count-1)
-            self.activeItem = self.items[nextIndex]
+    func nextActiveWorkoutItem() {
+        activeWorkout.next()
+        currentItem = activeWorkout.currentItem
+        currentAction = activeWorkout.currentAction
+        currentProgress = activeWorkout.currentItemProgress()
+        Task {
+            await updateActivityContent(
+                ActiveWorkoutActionAttributes.ActiveWorkoutActionStatus(
+                    title: currentAction?.title ?? currentItem?.title ?? Constants.Placeholders.noActionName,
+                    duration: Int(currentAction?.duration ?? 0),
+                    totalActions: currentProgress.total,
+                    currentAction: currentProgress.current))
         }
     }
     
-    func previousItem() {
-        if let activeItem = self.activeItem, let currentIndex = self.items.firstIndex(where: {$0 == activeItem }) {
-            let nextIndex = max(currentIndex-1, 0)
-            self.activeItem = self.items[nextIndex]
+    func previousActiveWorkoutItem() {
+        activeWorkout.previous()
+        currentItem = activeWorkout.currentItem
+        currentAction = activeWorkout.currentAction
+        currentProgress = activeWorkout.currentItemProgress()
+        Task {
+            await updateActivityContent(
+                ActiveWorkoutActionAttributes.ActiveWorkoutActionStatus(
+                    title: currentAction?.title ?? currentItem?.title ?? Constants.Placeholders.noActionName,
+                    duration: Int(currentAction?.duration ?? 0),
+                    totalActions: currentProgress.total,
+                    currentAction: currentProgress.current)
+                )
         }
     }
     
     func startActivity() {
         if #available(iOS 16.1, *) {
-            let initialContent = ActiveWorkoutActionAttributes.ActiveWorkoutActionStatus(title: activeWorkout.title, totalActions: 1, currentAction: 0)
+            let initialContent = ActiveWorkoutActionAttributes.ActiveWorkoutActionStatus(
+                title: currentAction?.title ?? currentItem?.title ?? Constants.Placeholders.noActionName,
+                duration: Int(currentAction?.duration ?? 0),
+                totalActions: currentProgress.total,
+                currentAction: currentProgress.current
+            )
             do {
                 let activity = try Activity<ActiveWorkoutActionAttributes>.request(attributes: ActiveWorkoutActionAttributes(), contentState: initialContent, pushType: nil)
                 self.currentActivity = activity

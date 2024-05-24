@@ -21,7 +21,7 @@ struct WorkoutCatalogCollectionMergeView: View {
                     Button(action: {
                         coordinator.discardMove()
                     }) {
-                        Text("Cancel")
+                        Text(Constants.Placeholders.cancelButtonLabel)
                             .padding(.vertical, Constants.Design.spacing/2)
                             .padding(.trailing, Constants.Design.spacing/2)
                     }
@@ -37,7 +37,7 @@ struct WorkoutCatalogCollectionMergeView: View {
                 .font(.title3)
                 .padding(.horizontal, Constants.Design.spacing)
                 
-                Text("Select a collection to merge")
+                Text(Constants.Placeholders.WorkoutCatalog.mergeDestinationText)
                     .font(.title2.bold())
                     .padding(.horizontal, Constants.Design.spacing)
                 

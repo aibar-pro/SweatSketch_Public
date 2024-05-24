@@ -27,7 +27,7 @@ struct ActiveWorkoutSummaryView: View {
                 Button(action: {
                     coordinator.goToCollection()
                 }) {
-                    Text("Proceed")
+                    Text(Constants.Placeholders.ActiveWorkout.summaryConfirmationButtonLable)
                         .accentButtonLabelStyleModifier()
                 }
             }

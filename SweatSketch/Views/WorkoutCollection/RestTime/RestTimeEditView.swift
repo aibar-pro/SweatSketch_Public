@@ -28,7 +28,7 @@ struct RestTimeEditView: View {
                             Button(action: {
                                 coordinator.discardRestTimeEdit()
                             }) {
-                                Text("Cancel")
+                                Text(Constants.Placeholders.cancelButtonLabel)
                                     .padding(.vertical, Constants.Design.spacing/2)
                                     .padding(.trailing, Constants.Design.spacing/2)
                             }
@@ -39,7 +39,7 @@ struct RestTimeEditView: View {
                             Button(action: {
                                 coordinator.saveRestTimeEdit()
                             }) {
-                                Text("Save")
+                                Text(Constants.Placeholders.saveButtonLabel)
                                     .bold()
                                     .padding(.vertical, Constants.Design.spacing/2)
                                     .padding(.leading, Constants.Design.spacing/2)
@@ -53,8 +53,8 @@ struct RestTimeEditView: View {
                         .lineLimit(2)
                         .padding(.horizontal, Constants.Design.spacing)
                         
-                        HStack(spacing: 0){
-                            Text("Default rest time: ")
+                        HStack(spacing: Constants.Design.spacing/2){
+                            Text(Constants.Placeholders.WorkoutCollection.defaultRestTimeLabel)
                             if let defaultRestTime = viewModel.defaultRestTime?.duration {
                                 DurationView(durationInSeconds: Int(defaultRestTime))
                             }
@@ -89,7 +89,7 @@ struct RestTimeEditView: View {
                                                             if let exerciseRestTime = exercise.restTime {
                                                                 DurationView(durationInSeconds: Int(exerciseRestTime.duration))
                                                             } else {
-                                                                Text("Custom rest time")
+                                                                Text(Constants.Placeholders.WorkoutCollection.customRestTimeAddButtonLabel)
                                                             }
                                                         }
                                                         .primaryButtonLabelStyleModifier()

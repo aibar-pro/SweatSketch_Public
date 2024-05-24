@@ -17,7 +17,7 @@ struct WorkoutRestTimeView: View {
     var body: some View {
         VStack (alignment: .leading, spacing: Constants.Design.spacing) {
             HStack {
-                Text ("Rest between actions")
+                Text (Constants.Placeholders.WorkoutCollection.exerciseRestTimeLabel)
                     .font(.title3.bold())
                 Spacer()
                 Button(action: {
@@ -43,13 +43,13 @@ struct WorkoutRestTimeView: View {
                 Button(action: {
                     onDiscard()
                 }) {
-                    Text("Cancel")
+                    Text(Constants.Placeholders.cancelButtonLabel)
                         .secondaryButtonLabelStyleModifier()
                 }
                 Button(action: {
                     onSave(duration)
                 }) {
-                    Text("Done")
+                    Text(Constants.Placeholders.saveButtonLabel)
                         .bold()
                         .primaryButtonLabelStyleModifier()
                 }

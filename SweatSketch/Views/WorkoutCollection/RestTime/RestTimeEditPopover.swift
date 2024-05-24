@@ -32,13 +32,13 @@ struct RestTimeEditPopover: View {
                 Button(action: {
                     onDiscard()
                 }) {
-                    Text("Cancel")
+                    Text(Constants.Placeholders.cancelButtonLabel)
                         .secondaryButtonLabelStyleModifier()
                 }
                 Button(action: {
                     onDurationChange(duration)
                 }) {
-                    Text("Done")
+                    Text(Constants.Placeholders.saveButtonLabel)
                         .bold()
                         .primaryButtonLabelStyleModifier()
                 }

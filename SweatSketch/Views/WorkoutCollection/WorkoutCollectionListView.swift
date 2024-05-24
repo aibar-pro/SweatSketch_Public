@@ -22,7 +22,7 @@ struct WorkoutCollectionListView: View {
                 
                 VStack (alignment: .leading) {
                     HStack {
-                        Text("Workouts")
+                        Text(Constants.Placeholders.WorkoutCollection.workoutListTitle)
                             .font(.title2.bold())
                             .padding(.top, Constants.Design.spacing)
                         .padding(.horizontal, Constants.Design.spacing)
@@ -75,14 +75,14 @@ struct WorkoutCollectionListView: View {
                         Button(action: {
                             onDiscard()
                         }) {
-                            Text("Cancel")
+                            Text(Constants.Placeholders.cancelButtonLabel)
                                 .secondaryButtonLabelStyleModifier()
                         }
                         
                         Button(action: {
                             onSubmit()
                         }) {
-                            Text("Done")
+                            Text(Constants.Placeholders.saveButtonLabel)
                                 .bold()
                                 .primaryButtonLabelStyleModifier()
                         }
