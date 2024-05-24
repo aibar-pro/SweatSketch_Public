@@ -27,7 +27,7 @@ struct WidgetProgressBarView: View {
                     }
                 }
                 .padding(.horizontal, 4)
-                .padding(.vertical, 2)
+                .padding(.vertical, 4)
             }
         }
     }

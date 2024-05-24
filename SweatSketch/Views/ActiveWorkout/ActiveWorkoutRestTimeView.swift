@@ -23,7 +23,7 @@ struct ActiveWorkoutRestTimeView: View {
                 
                 Spacer()
                 
-                CountdownTimerView(timeRemaining: $viewModel.restTimeRemaining)
+                CountdownTimerView(timeRemaining: viewModel.restTimeDuration)
             }
             .font(.headline.bold())
             

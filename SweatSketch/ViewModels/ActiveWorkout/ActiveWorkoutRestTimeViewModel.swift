@@ -8,7 +8,7 @@
 import Foundation
 
 class ActiveWorkoutRestTimeViewModel: ObservableObject {
-    @Published var restTimeRemaining: Int = 0
+    @Published var restTimeDuration: Int = 0
     let title: String
     
     let parentViewModel: ActiveWorkoutViewModel
@@ -33,6 +33,6 @@ class ActiveWorkoutRestTimeViewModel: ObservableObject {
     }
     
     private func setRestTimeDuration(for duration: Int) {
-        restTimeRemaining = duration
+        restTimeDuration = duration
     }
 }
