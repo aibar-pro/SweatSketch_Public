@@ -24,13 +24,10 @@ struct WorkoutDetailView: View {
                             }
                         }
                     } else {
-                        Text("No exercises")
+                        Text(Constants.Placeholders.WorkoutCollection.emptyWorkoutText)
                     }
                 }
             }
-            .onReceive(workoutRepresentation.objectWillChange, perform: { _ in
-                print("WORKOUT DETAIL VIEW WILL CHANGE. EXERCISES COUNT \(workoutRepresentation.exercises.count)")
-            })
         }
     }
 }

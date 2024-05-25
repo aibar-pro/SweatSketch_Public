@@ -12,35 +12,38 @@ import SwiftUI
 struct SweatSketchWidgetLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: ActiveWorkoutActionAttributes.self) { context in
-            // Lock screen/banner UI goes here
             ZStack {
                 WidgetBackgroundView()
                 
-                VStack (alignment: .leading, spacing: 12) {
+                VStack (alignment: .leading, spacing: WidgetConstants.padding*1.5) {
                     WidgetActionInfoLabelView(title: context.state.title, repsCount: context.state.repsCount, repsMax: context.state.repsMax, duration: context.state.duration)
                     .font(.headline.bold())
                     .foregroundStyle(WidgetConstants.Colors.highEmphasisColor)
                     
                     WidgetProgressBarView(totalSections: context.state.totalActions, currentSection: context.state.currentAction)
-                        .frame(height: 24)
+                        .frame(height: WidgetConstants.padding*3)
                     
                     if #available(iOS 17.0, *) {
                         HStack(alignment: .top) {
                             Button(intent: ActiveWorkoutPreviousItemIntent()) {
                                 Image(systemName: "chevron.backward")
-                                    .padding(.vertical, 8)
-                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, WidgetConstants.padding)
+                                    .padding(.horizontal, WidgetConstants.padding)
+                                    
                             }
+                            .tint(WidgetConstants.Colors.mediumEmphasisColor)
                             Spacer()
                             Button(intent: ActiveWorkoutNextItemIntent()) {
                                 Image(systemName: "chevron.forward")
-                                    .padding(.vertical, 8)
-                                    .padding(.horizontal, 16)
+                                    .fontWeight(.bold)
+                                    .padding(.vertical, WidgetConstants.padding)
+                                    .padding(.horizontal, WidgetConstants.padding*2)
                             }
+                            .tint(WidgetConstants.Colors.highEmphasisColor)
                         }
                     }
                 }
-                .padding(16)
+                .padding(WidgetConstants.padding*2)
                 
             }
             .activityBackgroundTint(WidgetConstants.Colors.backgroundStartColor)
@@ -49,38 +52,39 @@ struct SweatSketchWidgetLiveActivity: Widget {
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.bottom) {
-                    VStack (alignment: .leading, spacing: 8) {
+                    VStack (alignment: .leading, spacing: WidgetConstants.padding) {
                         WidgetActionInfoLabelView(title: context.state.title, repsCount: context.state.repsCount, repsMax: context.state.repsMax, duration: context.state.duration)
                         .font(.headline.bold())
                         .foregroundStyle(WidgetConstants.Colors.highEmphasisColor)
                         
                         WidgetProgressBarView(totalSections: context.state.totalActions, currentSection: context.state.currentAction)
-                            .frame(height: 16)
+                            .frame(height: WidgetConstants.padding*2)
                         
                         if #available(iOS 17.0, *) {
                             HStack(alignment: .top) {
                                 Button(intent: ActiveWorkoutPreviousItemIntent()) {
                                     Image(systemName: "chevron.backward")
-                                        .padding(.vertical, 4)
-                                        .padding(.horizontal, 4)
+                                        .padding(.vertical, WidgetConstants.padding/2)
+                                        .padding(.horizontal, WidgetConstants.padding/2)
                                 }
                                 .tint(WidgetConstants.Colors.backgroundStartColor)
                                 Spacer()
                                 Button(intent: ActiveWorkoutNextItemIntent()) {
                                     Image(systemName: "chevron.forward")
-                                        .padding(.vertical, 4)
-                                        .padding(.horizontal, 8)
+                                        .fontWeight(.bold)
+                                        .padding(.vertical, WidgetConstants.padding/2)
+                                        .padding(.horizontal, WidgetConstants.padding)
                                 }
                                 .tint(WidgetConstants.Colors.accentColor)
                             }
                         }
                     }
-                    .padding(.top, 16)
+                    .padding(.top, WidgetConstants.padding*2)
                 }
             } compactLeading: {
                 Image(systemName: context.state.iconName)
                     .foregroundStyle(WidgetConstants.Colors.iconColor)
-                    .padding(.trailing, 5)
+                    .padding(.trailing, WidgetConstants.padding/2)
             } compactTrailing: {
                 Text("\(context.state.title)")
                     .truncationMode(.tail)

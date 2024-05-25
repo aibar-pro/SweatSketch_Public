@@ -18,4 +18,6 @@ enum WidgetConstants {
         static let mediumEmphasisColor = Color.primary.opacity(0.6)
         static let lowEmphasisColor = Color.primary.opacity(0.1)
     }
+    static let padding = CGFloat(8)
+    static let cornerRadius = CGFloat(8)
 }

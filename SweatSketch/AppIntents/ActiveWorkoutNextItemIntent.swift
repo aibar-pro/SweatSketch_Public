@@ -5,7 +5,6 @@
 //  Created by aibaranchikov on 20.04.2024.
 //
 
-import Foundation
 import AppIntents
 
 @available(iOS 16.1, *)

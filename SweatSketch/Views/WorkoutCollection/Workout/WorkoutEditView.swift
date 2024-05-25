@@ -35,7 +35,7 @@ struct WorkoutEditView: View {
                                 currentEditingState = .none
                             }
                         }) {
-                            Text("Cancel")
+                            Text(Constants.Placeholders.cancelButtonLabel)
                                 .padding(.vertical, Constants.Design.spacing/2)
                                 .padding(.trailing, Constants.Design.spacing/2)
                         }
@@ -70,10 +70,14 @@ struct WorkoutEditView: View {
                                 currentEditingState = .none
                             }
                         }) {
-                            Text(currentEditingState == .list ?  "Done" : "Save")
-                                .bold()
-                                .padding(.vertical, Constants.Design.spacing/2)
-                                .padding(.leading, Constants.Design.spacing/2)
+                            Text(
+                                currentEditingState == .list ?
+                                Constants.Placeholders.doneButtonLabel :
+                                    Constants.Placeholders.saveButtonLabel
+                            )
+                            .bold()
+                            .padding(.vertical, Constants.Design.spacing/2)
+                            .padding(.leading, Constants.Design.spacing/2)
                         }
                         .disabled(isSaveButtonDisable())
                     }
@@ -147,12 +151,16 @@ struct WorkoutEditView: View {
                         
                         VStack {
                             if currentEditingState == .name {
-                                TextFieldPopoverView(popoverTitle: "Rename Workout", textFieldLabel: "Enter new name", buttonLabel: "Rename", onDone: { newName in
-                                    viewModel.renameWorkout(newName: newName)
-                                    currentEditingState = .none
-                                }, onDiscard: {
-                                    currentEditingState = .none
-                                })
+                                TextFieldPopoverView(
+                                    popoverTitle: Constants.Placeholders.WorkoutCollection.renameWorkoutPopupTitle,
+                                    textFieldLabel: Constants.Placeholders.renamePopupText,
+                                    buttonLabel: Constants.Placeholders.renamePopupButtonLabel,
+                                    onDone: { newName in
+                                        viewModel.renameWorkout(newName: newName)
+                                        currentEditingState = .none
+                                    }, onDiscard: {
+                                        currentEditingState = .none
+                                    })
                             }
                             
                             Spacer()

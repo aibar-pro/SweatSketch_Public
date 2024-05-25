@@ -65,7 +65,7 @@ struct ActionListEditView: View {
                                 }
                             }) {
                                 if currentEditingState == .action, viewModel.isEditingAction(action) {
-                                    Text("Done")
+                                    Text(Constants.Placeholders.doneButtonLabel)
                                         .padding(Constants.Design.spacing/2)
                                 } else {
                                     Image(systemName: "ellipsis")

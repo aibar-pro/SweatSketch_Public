@@ -1,5 +1,5 @@
 //
-//  ActiveWorkoutItemViewRepresentation.swift
+//  ActiveWorkoutItemRepresentation.swift
 //  SweatSketch
 //
 //  Created by aibaranchikov on 14.04.2024.
@@ -7,15 +7,14 @@
 
 import CoreData
 
-class ActiveWorkoutItemViewRepresentation: Identifiable, Equatable, ObservableObject {
-    static func == (lhs: ActiveWorkoutItemViewRepresentation, rhs: ActiveWorkoutItemViewRepresentation) -> Bool {
+class ActiveWorkoutItemRepresentation: Identifiable, Equatable, ObservableObject {
+    static func == (lhs: ActiveWorkoutItemRepresentation, rhs: ActiveWorkoutItemRepresentation) -> Bool {
         return
             lhs.id == rhs.id &&
             lhs.entityUUID == rhs.entityUUID &&
             lhs.title == rhs.title &&
             lhs.type == rhs.type &&
             lhs.status == rhs.status &&
-            lhs.restTimeDuration == rhs.restTimeDuration &&
             lhs.actions == rhs.actions
     }
     
@@ -30,8 +29,7 @@ class ActiveWorkoutItemViewRepresentation: Identifiable, Equatable, ObservableOb
     enum ActiveItemStatus {
         case new, inProgress, finished
     }
-    var restTimeDuration: Int32?
-    var actions = [ActiveWorkoutItemActionViewRepresentation]()
+    var actions = [ActiveWorkoutActionRepresentation]()
     
     private let exerciseDataManager = ExerciseDataManager()
     
@@ -39,7 +37,6 @@ class ActiveWorkoutItemViewRepresentation: Identifiable, Equatable, ObservableOb
     init?(entityUUID: UUID, title: String? = nil, type: ActiveWorkoutItemType, restTimeDuration: Int32? = nil, defaultWorkoutRestTimeUUID: UUID? = nil, in context: NSManagedObjectContext) {
         self.id = UUID()
         self.entityUUID = entityUUID
-        
         self.type = type
         
         switch type {
@@ -49,9 +46,11 @@ class ActiveWorkoutItemViewRepresentation: Identifiable, Equatable, ObservableOb
             self.actions = fetchActions(exercise: exercise, defaultWorkoutRestTimeUUID: defaultWorkoutRestTimeUUID, defaultWorkoutRestTimeDuration: restTimeDuration, in: context)
         case .rest:
             self.title = Constants.Placeholders.restPeriodLabel
-            self.restTimeDuration = restTimeDuration
+            if let restTimeAction = ActiveWorkoutActionRepresentation(entityUUID: entityUUID, title: self.title, type: .rest, duration: restTimeDuration) {
+                self.actions = []
+                self.actions.append(restTimeAction)
+            }
         }
-        
         self.status = .new
     }
     
@@ -59,23 +58,23 @@ class ActiveWorkoutItemViewRepresentation: Identifiable, Equatable, ObservableOb
         return actions.filter { $0.type != .rest }.count
     }
     
-    private func fetchActions(exercise: ExerciseEntity, defaultWorkoutRestTimeUUID: UUID? = nil, defaultWorkoutRestTimeDuration: Int32? = nil, in context: NSManagedObjectContext) -> [ActiveWorkoutItemActionViewRepresentation] {
+    private func fetchActions(exercise: ExerciseEntity, defaultWorkoutRestTimeUUID: UUID? = nil, defaultWorkoutRestTimeDuration: Int32? = nil, in context: NSManagedObjectContext) -> [ActiveWorkoutActionRepresentation] {
         let fetchedActions = exerciseDataManager.fetchActions(for: exercise, in: context)
        
-        var exerciseRestTimeRepresentation: ActiveWorkoutItemActionViewRepresentation {
+        var exerciseRestTimeRepresentation: ActiveWorkoutActionRepresentation {
             if let fetchedRestTime = exerciseDataManager.fetchRestTimeBetweenActions(for: exercise, in: context), 
                 let restTimeRepresentation = fetchedRestTime.toActiveWorkoutItemActionViewRepresentation(exerciseName: exercise.name) {
                 return restTimeRepresentation
             } else if let workoutRestTimeUUID = defaultWorkoutRestTimeUUID, 
-                        let workoutRestTimeDuration = defaultWorkoutRestTimeDuration, let workoutRestTimeRepresentation = ActiveWorkoutItemActionViewRepresentation(entityUUID: workoutRestTimeUUID, type: .rest, duration: workoutRestTimeDuration) {
+                        let workoutRestTimeDuration = defaultWorkoutRestTimeDuration, let workoutRestTimeRepresentation = ActiveWorkoutActionRepresentation(entityUUID: workoutRestTimeUUID, type: .rest, duration: workoutRestTimeDuration) {
                 return workoutRestTimeRepresentation
             } else {
                 //TODO: Consider remove force unwrapping
-                return ActiveWorkoutItemActionViewRepresentation(entityUUID: UUID(), type: .rest, duration: Int32(Constants.DefaultValues.restTimeDuration))!
+                return ActiveWorkoutActionRepresentation(entityUUID: UUID(), type: .rest, duration: Int32(Constants.DefaultValues.restTimeDuration))!
             }
         }
         
-        var actions = [ActiveWorkoutItemActionViewRepresentation]()
+        var actions = [ActiveWorkoutActionRepresentation]()
         
         var supersetCount: Int
         var isSuperset = false
@@ -126,17 +125,17 @@ class ActiveWorkoutItemViewRepresentation: Identifiable, Equatable, ObservableOb
 }
 
 extension RestTimeEntity {
-    func toActiveWorkoutItemRepresentation() -> ActiveWorkoutItemViewRepresentation? {
+    func toActiveWorkoutItemRepresentation() -> ActiveWorkoutItemRepresentation? {
         guard let uuid = self.uuid else { return nil }
         guard let context = self.managedObjectContext else { return nil }
-        return ActiveWorkoutItemViewRepresentation(entityUUID: uuid, type: .rest, restTimeDuration: self.duration, in: context)
+        return ActiveWorkoutItemRepresentation(entityUUID: uuid, type: .rest, restTimeDuration: self.duration, in: context)
     }
 }
 
 extension ExerciseEntity {
-    func toActiveWorkoutItemRepresentation(defaultWorkoutRestTimeUUID: UUID? = nil, defaultWorkoutRestTimeDuration: Int32? = nil) -> ActiveWorkoutItemViewRepresentation? {
+    func toActiveWorkoutItemRepresentation(defaultWorkoutRestTimeUUID: UUID? = nil, defaultWorkoutRestTimeDuration: Int32? = nil) -> ActiveWorkoutItemRepresentation? {
         guard let uuid = self.uuid else { return nil }
         guard let context = self.managedObjectContext else { return nil }
-        return ActiveWorkoutItemViewRepresentation(entityUUID: uuid, title: self.name, type: .exercise, restTimeDuration: defaultWorkoutRestTimeDuration, defaultWorkoutRestTimeUUID: defaultWorkoutRestTimeUUID, in: context)
+        return ActiveWorkoutItemRepresentation(entityUUID: uuid, title: self.name, type: .exercise, restTimeDuration: defaultWorkoutRestTimeDuration, defaultWorkoutRestTimeUUID: defaultWorkoutRestTimeUUID, in: context)
     }
 }

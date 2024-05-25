@@ -25,7 +25,7 @@ struct WorkoutCollectionView: View {
                 }) {
                     HStack {
                         Image(systemName: "chevron.backward")
-                        Text("Catalog")
+                        Text(Constants.Placeholders.WorkoutCollection.toCatalogButtonLabel)
                     }
                     .padding(.vertical, Constants.Design.spacing/2)
                     .padding(.trailing, Constants.Design.spacing/2)
@@ -44,11 +44,11 @@ struct WorkoutCollectionView: View {
                     
                     
                     Menu {
-                        Button("Edit workout") {
+                        Button(Constants.Placeholders.WorkoutCollection.editWorkoutButonLabel) {
                             coordinator.goToEditWorkout(workoutIndex: presentedWorkoutIndex)
                         }
                         
-                        Button("Reorder or delete workouts") {
+                        Button(Constants.Placeholders.WorkoutCollection.listWorkoutButonLabel) {
                             coordinator.goToWorkoutLst()
                         }
                     } label: {
@@ -79,7 +79,7 @@ struct WorkoutCollectionView: View {
                         Button (action: {
                             coordinator.startWorkout(workoutIndex: presentedWorkoutIndex)
                         }) {
-                            Text("Go")
+                            Text(Constants.Placeholders.WorkoutCollection.startWorkoutButtonLabel)
                                 .accentButtonLabelStyleModifier()
                         }
                         .padding(.top, -50)
@@ -87,13 +87,13 @@ struct WorkoutCollectionView: View {
                     }
                 } else {
                     VStack {
-                        Text("No workouts")
+                        Text(Constants.Placeholders.WorkoutCollection.emptyCollectionText)
                             .font(.title.bold())
                         Button(action: {
                             coordinator.goToAddWorkout()
                             
                         }, label: {
-                            Text("Add workout")
+                            Text(Constants.Placeholders.WorkoutCollection.emptyCollectionButtonLabel)
                                 .accentButtonLabelStyleModifier()
                         })
                     }

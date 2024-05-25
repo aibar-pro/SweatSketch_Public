@@ -68,11 +68,11 @@ struct ActionSetsNRepsEditView: View {
                     set: {
                         self.actionEntity.repsMax = $0
                         self.actionEntity.objectWillChange.send()
-                })) { Text("MAX") }
+                    })) { Text(Constants.Placeholders.maximumRepetitionsLabel) }
                 .toggleStyle(.switch)
                 .labelsHidden()
                 
-                Text("MAX")
+                Text(Constants.Placeholders.maximumRepetitionsLabel)
                 .padding(Constants.Design.spacing/2)
             }
         }
