@@ -26,6 +26,98 @@ enum Constants {
         static let activeWorkoutItemError = "Error fetching workout item"
         
         static let workoutSummaryTitle = "Workout Complete!"
+        
+        enum WorkoutCatalog {
+            static let title = "Workout Catalog"
+            static let userLoggedInLabel = "User"
+            static let renameCollectionButtonLabel = "Rename Collection"
+            static let moveCollectionButtonLabel = "Move Collection"
+            static let mergeCollectionButtonLabel = "Merge Collection"
+            
+            static let moveWorkoutButtonLabel = "Move Workout"
+            static let shareWorkoutButtonLabel = "Share Workout"
+            
+            static let addCollectionPopupTitle = "Add Collection"
+            static let addCollectionPopupText = "Enter collection name"
+            static let addCollectionPopupButtonLabel = "Add"
+            
+            static let moveDestinationText = "Select a destination"
+            static let moveTopDestinationText = "To the top"
+            
+            static let mergeDestinationText = "Move all workouts to"
+        }
+        
+        enum WorkoutCollection {
+            static let toCatalogButtonLabel = "Catalog"
+            
+            static let editWorkoutButonLabel = "Edit Workout"
+            static let listWorkoutButonLabel = "Reorder or delete workouts"
+            
+            static let startWorkoutButtonLabel = "Go"
+            
+            static let emptyCollectionText = "Empty Collection"
+            static let emptyCollectionButtonLabel = "Add Workout"
+            
+            static let workoutListTitle = "Workouts"
+            
+            static let emptyWorkoutText = "No Exercises yet"
+            
+            static let renameWorkoutPopupTitle = "Rename Workout"
+            static let renameExercisePopupTitle = "Rename Exercise"
+            
+            static let supersetCountLabel = "Superset repetitions"
+            static let actionTypeLabel = "Action type"
+            
+            static let defaultRestTimeTitle = "Default Rest Time"
+            static let defaultRestTimeLabel = "Default Rest Time:"
+            static let customRestTimeText = "Advanced edit"
+            static let customRestTimeAddButtonLabel = "Customize"
+            
+            static let exerciseRestTimeLabel = "Rest Time between actions"
+        }
+        
+        enum ActiveWorkout {
+            static let toActiveItemLabel = "Active item"
+            static let summaryConfirmationButtonLable = "Proceed"
+        }
+        
+        enum UserProfile {
+            static let loginButtonLabel = "Login"
+            
+            static let loginScreenTitle = "Welcome Back!"
+            static let loginScreenText = "Login to your account"
+            
+            static let signupLinkText = "Don't have an account?"
+            
+            static let signupButtonLabel = "Sign Up"
+        }
+        
+        static let saveButtonLabel = "Save"
+        static let doneButtonLabel = "Done"
+        static let cancelButtonLabel = "Cancel"
+        
+        static let renamePopupText = "Enter new name"
+        static let renamePopupButtonLabel = "Rename"
+        
+        static let maximumRepetitionsLabel = "MAX"
+        
+        static let secondsLabel = "seconds"
+        
+        static let emailLabel = "Email"
+        static let passwordLabel = "Password"
+        
+        enum ExerciseTypes {
+            static let setsNreps = "Sets-n-reps"
+            static let timed = "Timed"
+            static let mixed = "Mixed"
+            static let unknown = "Unknown"
+        }
+        
+        enum ExerciseActionTypes {
+            static let setsNreps = "Sets and reps"
+            static let timed = "Timed"
+            static let unknown = "Unknown"
+        }
     }
     
     enum Design {

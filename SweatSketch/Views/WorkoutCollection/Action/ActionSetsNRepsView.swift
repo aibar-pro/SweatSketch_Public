@@ -25,7 +25,7 @@ struct ActionSetsNRepsView: View {
                     Text("\(action.sets)")
                 }
                 if action.repsMax {
-                    Text("xMAX")
+                    Text("x\(Constants.Placeholders.maximumRepetitionsLabel))")
                 } else {
                     Text("x\(action.reps)")
                 }

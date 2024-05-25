@@ -18,7 +18,7 @@ struct WorkoutDefaultRestTimeView: View {
     var body: some View {
         VStack (alignment: .leading, spacing: Constants.Design.spacing) {
             HStack {
-                Text ("Rest between exercises")
+                Text (Constants.Placeholders.WorkoutCollection.defaultRestTimeTitle)
                     .font(.title3.bold())
                 Spacer()
                 Button(action: {
@@ -42,7 +42,7 @@ struct WorkoutDefaultRestTimeView: View {
                         onAdvancedEdit()
                     }) {
                         HStack {
-                            Text("Advanced edit")
+                            Text(Constants.Placeholders.WorkoutCollection.customRestTimeText)
                             Image(systemName: "arrow.up.right")
                         }
                         .customForegroundColorModifier(Constants.Design.Colors.textColorMediumEmphasis)
@@ -55,13 +55,13 @@ struct WorkoutDefaultRestTimeView: View {
                 Button(action: {
                     onDiscard()
                 }) {
-                    Text("Cancel")
+                    Text(Constants.Placeholders.cancelButtonLabel)
                         .secondaryButtonLabelStyleModifier()
                 }
                 Button(action: {
                     onSave(duration)
                 }) {
-                    Text("Done")
+                    Text(Constants.Placeholders.saveButtonLabel)
                         .bold()
                         .primaryButtonLabelStyleModifier()
                 }

@@ -21,9 +21,9 @@ enum ExerciseActionType: String, CaseIterable {
     
     var screenTitle: String {
         switch self {
-        case .setsNreps: return "Sets and reps"
-        case .timed: return "Timed"
-        case .unknown: return "Unknown"
+        case .setsNreps: return Constants.Placeholders.ExerciseActionTypes.setsNreps
+        case .timed: return Constants.Placeholders.ExerciseActionTypes.timed
+        case .unknown: return Constants.Placeholders.ExerciseActionTypes.unknown
         }
     }
 }

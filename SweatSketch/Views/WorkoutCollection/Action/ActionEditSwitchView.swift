@@ -39,7 +39,7 @@ struct ActionEditSwitchView: View {
             if isEditing {
                 VStack (alignment: .leading){
                     HStack{
-                        Text("Action type:")
+                        Text(Constants.Placeholders.WorkoutCollection.actionTypeLabel)
                         Picker("Type", selection:
                                 Binding(
                                     get: { ExerciseActionType.from(rawValue: actionEntity.type ) },
