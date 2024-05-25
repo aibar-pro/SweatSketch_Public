@@ -1,5 +1,5 @@
 //
-//  ActiveWorkoutItemActionViewRepresentation.swift
+//  ActiveWorkoutActionRepresentation.swift
 //  SweatSketch
 //
 //  Created by aibaranchikov on 14.04.2024.
@@ -7,8 +7,8 @@
 
 import Foundation
 
-class ActiveWorkoutItemActionViewRepresentation: Identifiable, Equatable, ObservableObject {
-    static func == (lhs: ActiveWorkoutItemActionViewRepresentation, rhs: ActiveWorkoutItemActionViewRepresentation) -> Bool {
+class ActiveWorkoutActionRepresentation: Identifiable, Equatable, ObservableObject {
+    static func == (lhs: ActiveWorkoutActionRepresentation, rhs: ActiveWorkoutActionRepresentation) -> Bool {
         return 
             lhs.id == rhs.id &&
             lhs.entityUUID == rhs.entityUUID &&
@@ -59,19 +59,19 @@ class ActiveWorkoutItemActionViewRepresentation: Identifiable, Equatable, Observ
 }
 
 extension ExerciseActionEntity {
-    func toActiveWorkoutItemActionViewRepresentation(exerciseName: String?) -> ActiveWorkoutItemActionViewRepresentation? {
+    func toActiveWorkoutItemActionViewRepresentation(exerciseName: String?) -> ActiveWorkoutActionRepresentation? {
         guard let uuid = self.uuid else { return nil }
         
         if self.isRestTime {
             if self.duration >= 0 {
-                return ActiveWorkoutItemActionViewRepresentation(entityUUID: uuid, type: .rest, duration: self.duration)
+                return ActiveWorkoutActionRepresentation(entityUUID: uuid, type: .rest, duration: self.duration)
             } else { return nil }
         } else {
             switch ExerciseActionType.from(rawValue: self.type) {
             case .setsNreps:
-                return ActiveWorkoutItemActionViewRepresentation(entityUUID: uuid, title: exerciseName ?? self.name, type: .setsNreps, reps: self.reps, repsMax: self.repsMax)
+                return ActiveWorkoutActionRepresentation(entityUUID: uuid, title: exerciseName ?? self.name, type: .setsNreps, reps: self.reps, repsMax: self.repsMax)
             case .timed:
-                return ActiveWorkoutItemActionViewRepresentation(entityUUID: uuid, title: exerciseName ?? self.name, type: .timed, duration: self.duration)
+                return ActiveWorkoutActionRepresentation(entityUUID: uuid, title: exerciseName ?? self.name, type: .timed, duration: self.duration)
             default:
                 return nil
             }
@@ -81,7 +81,7 @@ extension ExerciseActionEntity {
 }
 
 extension ActiveWorkoutActionAttributes.ActiveWorkoutActionStatus {
-    init(action: ActiveWorkoutItemActionViewRepresentation, totalActions: Int, currentAction: Int) {
+    init(action: ActiveWorkoutActionRepresentation, totalActions: Int, currentAction: Int) {
         self.actionID = action.id
         self.title = action.title
         self.repsCount = action.reps

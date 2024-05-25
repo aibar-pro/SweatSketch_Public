@@ -23,10 +23,10 @@ struct UserProfileLoginView: View {
                     .imageScale(.large)
                     .padding(.top, Constants.Design.spacing)
                 
-                Text("Welcome Back")
+                Text(Constants.Placeholders.UserProfile.loginScreenTitle)
                     .font(.title)
                 
-                Text("Login to your account")
+                Text(Constants.Placeholders.UserProfile.loginScreenText)
                     .font(.subheadline)
                 
                 LoginPasswordView(user: $user)
@@ -34,7 +34,7 @@ struct UserProfileLoginView: View {
                 Button(action: {
                     onLogin(user)
                 }) {
-                    Text("Login")
+                    Text(Constants.Placeholders.UserProfile.loginButtonLabel)
                         .accentButtonLabelStyleModifier()
                 }
                 
@@ -43,13 +43,13 @@ struct UserProfileLoginView: View {
                 
                 
                 HStack(alignment: .center) {
-                    Text("Don't have an account?")
+                    Text(Constants.Placeholders.UserProfile.signupLinkText)
                         .customForegroundColorModifier(Constants.Design.Colors.textColorMediumEmphasis)
                     
                     Button(action: {
                         print("SIGNUP_CLICK")
                     }) {
-                        Text("Sign up")
+                        Text(Constants.Placeholders.UserProfile.signupButtonLabel)
                             .fontWeight(.bold)
                             .customForegroundColorModifier(Constants.Design.Colors.linkColor)
                     }

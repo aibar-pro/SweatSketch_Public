@@ -22,7 +22,7 @@ struct ProgressBarView: View {
 
                 HStack (alignment: .center, spacing: Constants.Design.spacing/2) {
                     ForEach(0..<totalSections, id: \.self) { section in
-                        RoundedRectangle(cornerRadius: Constants.Design.cornerRadius-Constants.Design.spacing/2)
+                        RoundedRectangle(cornerRadius: Constants.Design.cornerRadius)
                             .customForegroundColorModifier(section == currentSection ? Constants.Design.Colors.backgroundAccentColor : Constants.Design.Colors.backgroundEndColor)
                     }
                 }

@@ -38,7 +38,7 @@ struct DurationView: View {
             if seconds > 9 { result.append("\(seconds)") }
             else { result.append("0\(seconds)") }
         } else {
-            result.append("\(seconds) seconds")
+            result.append("\(seconds) \(Constants.Placeholders.secondsLabel)")
         }
         
                                             

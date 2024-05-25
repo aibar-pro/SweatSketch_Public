@@ -21,7 +21,7 @@ struct WorkoutCatalogCollectionMoveView: View {
                     Button(action: {
                         coordinator.discardMove()
                     }) {
-                        Text("Cancel")
+                        Text(Constants.Placeholders.cancelButtonLabel)
                             .padding(.vertical, Constants.Design.spacing/2)
                             .padding(.trailing, Constants.Design.spacing/2)
                     }
@@ -36,7 +36,7 @@ struct WorkoutCatalogCollectionMoveView: View {
                 .font(.title3)
                 .padding(.horizontal, Constants.Design.spacing)
                 
-                Text("Select a collection")
+                Text(Constants.Placeholders.WorkoutCatalog.moveDestinationText)
                     .font(.title2.bold())
                     .padding(.horizontal, Constants.Design.spacing)
                 
@@ -57,7 +57,7 @@ struct WorkoutCatalogCollectionMoveView: View {
                             Button(action: {
                                 coordinator.saveMove(to: nil)
                             }) {
-                                Text("To the top")
+                                Text(Constants.Placeholders.WorkoutCatalog.moveTopDestinationText)
                                     .font(.headline)
                             }
                             Spacer()

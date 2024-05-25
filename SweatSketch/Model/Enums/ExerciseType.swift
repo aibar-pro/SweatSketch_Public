@@ -22,10 +22,10 @@ enum ExerciseType: String {
     
     var screenTitle: String {
         switch self {
-        case .setsNreps: return "Sets-n-reps"
-        case .timed: return "Timed"
-        case .mixed: return "Mixed"
-        case .unknown: return "Unknown"
+        case .setsNreps: return Constants.Placeholders.ExerciseTypes.setsNreps
+        case .timed: return Constants.Placeholders.ExerciseTypes.timed
+        case .mixed: return Constants.Placeholders.ExerciseTypes.mixed
+        case .unknown: return Constants.Placeholders.ExerciseTypes.unknown
         }
     }
 }

@@ -1,0 +1,62 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    ":" : {
+
+    },
+    "%@" : {
+
+    },
+    "%@," : {
+
+    },
+    "defaultRestTimeLabel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest Time"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отдых"
+          }
+        }
+      }
+    },
+    "Go to next action in active workout" : {
+
+    },
+    "Go to previous action in active workout" : {
+
+    },
+    "Hello, World!" : {
+
+    },
+    "Next action" : {
+
+    },
+    "Previous action" : {
+
+    },
+    "x" : {
+
+    },
+    "x%@" : {
+
+    },
+    "x%@)" : {
+
+    },
+    "x%d" : {
+
+    },
+    "xMAX" : {
+
+    }
+  },
+  "version" : "1.0"
+}

@@ -14,13 +14,13 @@ struct WorkoutCatalogWorkoutRowView: View {
     
     var body: some View {
         Menu {
-           Button("Move Workout") {
+            Button(Constants.Placeholders.WorkoutCatalog.moveWorkoutButtonLabel) {
                onMoveRequested(workoutRepresentation)
-           }
+            }
 
-           Button("Share Workout") {
+            Button(Constants.Placeholders.WorkoutCatalog.shareWorkoutButtonLabel) {
 
-           }
+            }
        } label: {
            HStack{
                Text(workoutRepresentation.name)
