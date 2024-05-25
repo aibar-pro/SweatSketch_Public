@@ -26,39 +26,17 @@ struct WorkoutCatalogMainView: View {
     var body: some View {
         VStack (alignment: .leading, spacing: Constants.Design.spacing){
             HStack (alignment: .center){
-                Text("Workout Catalog")
+                Text(Constants.Placeholders.WorkoutCatalog.title)
                     .font(.title2.bold())
                     .lineLimit(2)
                     
                 Spacer()
                 
                 if isLoggedIn {
-                    Text("USER")
+                    Text(Constants.Placeholders.WorkoutCatalog.userLoggedInLabel)
                 } else {
                     UserProfileButtonView(onClick: coordinator.goToProfile)
                 }
-                
-//                Button(action: {
-//                    currentEditingState = .newCollection
-//                }) {
-//                    Image(systemName: "plus")
-//                        .padding(.vertical, Constants.Design.spacing/2)
-//                        .padding(.horizontal, Constants.Design.spacing/2)
-//                }
-//
-//                Menu {
-//                    Button("Edit Catalog") {
-//                        
-//                    }
-//                    
-//                    Button("One more action") {
-//                        
-//                    }
-//                } label: {
-//                    Image(systemName: "ellipsis.circle")
-//                        .padding(.vertical, Constants.Design.spacing/2)
-//                        .padding(.leading, Constants.Design.spacing/2)
-//                }
             }
             .padding(.top, Constants.Design.spacing/4)
             .padding(.horizontal, Constants.Design.spacing/2)
@@ -85,15 +63,15 @@ struct WorkoutCatalogMainView: View {
                                             Spacer()
                                             
                                             Menu {
-                                               Button("Rename Collection") {
+                                                Button(Constants.Placeholders.WorkoutCatalog.renameCollectionButtonLabel) {
                            
                                                }
                                                 
-                                                Button("Move Collection") {
+                                                Button(Constants.Placeholders.WorkoutCatalog.moveCollectionButtonLabel) {
                                                     coordinator.goToMoveCollection(movingCollection: collection)
                                                 }
                            
-                                               Button("Merge Collection") {
+                                               Button(Constants.Placeholders.WorkoutCatalog.mergeCollectionButtonLabel) {
                                                    coordinator.goToMergeCollection(sourceCollection: collection)
                                                }
                                            } label: {
@@ -128,15 +106,15 @@ struct WorkoutCatalogMainView: View {
                                                         Spacer()
                                                         
                                                         Menu {
-                                                           Button("Rename Collection") {
+                                                            Button(Constants.Placeholders.WorkoutCatalog.renameCollectionButtonLabel) {
                                        
-                                                           }
+                                                            }
                                        
-                                                            Button("Move Collection") {
+                                                            Button(Constants.Placeholders.WorkoutCatalog.moveCollectionButtonLabel) {
                                                                 coordinator.goToMoveCollection(movingCollection: subCollection)
                                                             }
                                        
-                                                           Button("Merge Collection") {
+                                                           Button(Constants.Placeholders.WorkoutCatalog.mergeCollectionButtonLabel) {
                                                                coordinator.goToMergeCollection(sourceCollection: subCollection)
                                                            }
                                                        } label: {
@@ -170,11 +148,15 @@ struct WorkoutCatalogMainView: View {
                     }
                     VStack{
                         if currentEditingState == .newCollection {
-                            TextFieldPopoverView(popoverTitle: "Add Collection", textFieldLabel: "Enter collection name", buttonLabel: "Add", onDone: { newName in
-                                viewModel.addCollection(with: newName)
-                                currentEditingState = .none
-                            }, onDiscard: {
-                                currentEditingState = .none
+                            TextFieldPopoverView(
+                                popoverTitle: Constants.Placeholders.WorkoutCatalog.addCollectionPopupTitle,
+                                textFieldLabel: Constants.Placeholders.WorkoutCatalog.addCollectionPopupText,
+                                buttonLabel: Constants.Placeholders.WorkoutCatalog.addCollectionPopupButtonLabel,
+                                onDone: { newName in
+                                    viewModel.addCollection(with: newName)
+                                    currentEditingState = .none
+                                }, onDiscard: {
+                                    currentEditingState = .none
                             })
                         }
                         Spacer()

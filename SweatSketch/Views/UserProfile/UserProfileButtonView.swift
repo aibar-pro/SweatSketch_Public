@@ -14,12 +14,12 @@ struct UserProfileButtonView: View {
         Button (action: onClick) {
             HStack {
                 Image(systemName: "person")
-                Text("Login")
+                Text(Constants.Placeholders.UserProfile.loginButtonLabel)
             }
             .padding(10)
             .background(
                 RoundedRectangle(cornerRadius: Constants.Design.cornerRadius)
-                    .stroke( Constants.Design.Colors.textColorMediumEmphasis, lineWidth: 2)
+                    .stroke(Constants.Design.Colors.textColorMediumEmphasis, lineWidth: 2)
             )
         }
     }

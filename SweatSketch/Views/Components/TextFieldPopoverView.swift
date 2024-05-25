@@ -46,7 +46,7 @@ struct TextFieldPopoverView: View {
                     newName.removeAll()
                     onDiscard()
                 }) {
-                    Text("Cancel")
+                    Text(Constants.Placeholders.cancelButtonLabel)
                         .secondaryButtonLabelStyleModifier()
                 }
                 Button(action: {

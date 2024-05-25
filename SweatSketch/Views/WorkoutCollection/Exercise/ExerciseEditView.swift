@@ -43,7 +43,7 @@ struct ExerciseEditView: View {
                                 currentEditingState = .none
                             }
                         }) {
-                            Text("Cancel")
+                            Text(Constants.Placeholders.cancelButtonLabel)
                                 .padding(.vertical, Constants.Design.spacing/2)
                                 .padding(.trailing, Constants.Design.spacing/2)
                         }
@@ -63,10 +63,13 @@ struct ExerciseEditView: View {
                                 currentEditingState = .none
                             }
                         }) {
-                            Text(currentEditingState == .list ? "Done" : "Save")
-                                .bold()
-                                .padding(.vertical, Constants.Design.spacing/2)
-                                .padding(.leading, Constants.Design.spacing/2)
+                            Text(
+                                currentEditingState == .list ?
+                                 Constants.Placeholders.doneButtonLabel : Constants.Placeholders.saveButtonLabel
+                            )
+                            .bold()
+                            .padding(.vertical, Constants.Design.spacing/2)
+                            .padding(.leading, Constants.Design.spacing/2)
                             
                         }
                         .disabled(isSaveButtonDisabled())
@@ -115,7 +118,7 @@ struct ExerciseEditView: View {
                                 
                                 if ExerciseType.from(rawValue: viewModel.editingExercise.type) == .mixed {
                                     HStack {
-                                        Text("Superset repetitions:")
+                                        Text(Constants.Placeholders.WorkoutCollection.supersetCountLabel)
                                             .opacity(currentEditingState != .none ? 0.3 : 1)
                                         
                                         Picker("Superset reps", selection: Binding(
@@ -142,11 +145,15 @@ struct ExerciseEditView: View {
                         }
                         VStack {
                             if currentEditingState == .name {
-                                TextFieldPopoverView(popoverTitle: "Rename Exercise", textFieldLabel: "Enter new name", buttonLabel: "Rename", onDone: { newName in
-                                    viewModel.renameExercise(newName: newName)
-                                    currentEditingState = .none
-                                }, onDiscard: {
-                                    currentEditingState = .none
+                                TextFieldPopoverView(
+                                    popoverTitle: Constants.Placeholders.WorkoutCollection.renameExercisePopupTitle,
+                                    textFieldLabel: Constants.Placeholders.renamePopupText,
+                                    buttonLabel: Constants.Placeholders.renamePopupButtonLabel,
+                                    onDone: { newName in
+                                        viewModel.renameExercise(newName: newName)
+                                        currentEditingState = .none
+                                    }, onDiscard: {
+                                        currentEditingState = .none
                                 })
                             }
                             Spacer()
