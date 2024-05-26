@@ -10,6 +10,8 @@ import SwiftUI
 struct ActiveWorkoutSummaryView: View {
     @EnvironmentObject var coordinator: ActiveWorkoutCoordinator
     let workoutDuration: Int
+    
+    var onProceed: () -> Void = {}
     var onDismiss: () -> Void = {}
     
     var body: some View {
@@ -24,9 +26,7 @@ struct ActiveWorkoutSummaryView: View {
                     DurationView(durationInSeconds: workoutDuration)
                         .font(.title2)
                 }
-                Button(action: {
-                    coordinator.goToCollection()
-                }) {
+                Button(action: onProceed) {
                     Text(Constants.Placeholders.ActiveWorkout.summaryConfirmationButtonLable)
                         .accentButtonLabelStyleModifier()
                 }

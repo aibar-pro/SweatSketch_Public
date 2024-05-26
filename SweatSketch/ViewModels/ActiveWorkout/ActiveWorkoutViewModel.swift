@@ -30,6 +30,8 @@ class ActiveWorkoutViewModel: ObservableObject, ActiveWorkoutManagementProtocol 
     //"Stored properties cannot be marked potentially unavailable with '@available'"
     private var currentActivity: Any?
     
+    private var cancellables = Set<AnyCancellable>()
+    
     init(activeWorkoutUUID: UUID, in context: NSManagedObjectContext) throws {
         self.mainContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         self.mainContext.parent = context
@@ -49,41 +51,39 @@ class ActiveWorkoutViewModel: ObservableObject, ActiveWorkoutManagementProtocol 
     }
     
     func nextActiveWorkoutItem() {
-        activeWorkout.next()
-        currentItem = activeWorkout.currentItem
-        currentAction = activeWorkout.currentAction
-        currentProgress = activeWorkout.currentItemProgress()
-        Task {
-            await updateActivityContent(
-                ActiveWorkoutActionAttributes.ActiveWorkoutActionStatus(
-                    title: currentAction?.title ?? currentItem?.title ?? Constants.Placeholders.noActionName,
-                    duration: Int(currentAction?.duration ?? 0),
-                    totalActions: currentProgress.total,
-                    currentAction: currentProgress.current))
-        }
+        Just(())
+            .receive(on: DispatchQueue.global(qos: .userInitiated))
+            .map { [weak self] _ in
+                self?.activeWorkout.next()
+                return self
+            }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.updateCurrentItem()
+            }
+            .store(in: &cancellables)
     }
     
     func previousActiveWorkoutItem() {
-        activeWorkout.previous()
-        currentItem = activeWorkout.currentItem
-        currentAction = activeWorkout.currentAction
-        currentProgress = activeWorkout.currentItemProgress()
-        Task {
-            await updateActivityContent(
-                ActiveWorkoutActionAttributes.ActiveWorkoutActionStatus(
-                    title: currentAction?.title ?? currentItem?.title ?? Constants.Placeholders.noActionName,
-                    duration: Int(currentAction?.duration ?? 0),
-                    totalActions: currentProgress.total,
-                    currentAction: currentProgress.current)
-                )
-        }
+        Just(())
+            .receive(on: DispatchQueue.global(qos: .userInitiated))
+            .map { [weak self] _ in
+                self?.activeWorkout.previous()
+                return self
+            }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.updateCurrentItem()
+            }
+            .store(in: &cancellables)
     }
     
     func startActivity() {
+        guard let currentAction = self.currentAction else {return}
+        
         if #available(iOS 16.1, *) {
             let initialContent = ActiveWorkoutActionAttributes.ActiveWorkoutActionStatus(
-                title: currentAction?.title ?? currentItem?.title ?? Constants.Placeholders.noActionName,
-                duration: Int(currentAction?.duration ?? 0),
+                action: currentAction,
                 totalActions: currentProgress.total,
                 currentAction: currentProgress.current
             )
@@ -95,6 +95,25 @@ class ActiveWorkoutViewModel: ObservableObject, ActiveWorkoutManagementProtocol 
             }
         } else {
             print("Live Activities are not supported in this iOS version.")
+        }
+    }
+    
+    private func updateCurrentItem() {
+        self.currentItem = self.activeWorkout.currentItem
+        self.currentAction = self.activeWorkout.currentAction
+        self.currentProgress = self.activeWorkout.currentItemProgress()
+        self.isLastAction = self.activeWorkout.isLastAction()
+        
+        guard let currentAction = self.currentAction else {return}
+        
+        Task {
+            await self.updateActivityContent(
+                ActiveWorkoutActionAttributes.ActiveWorkoutActionStatus(
+                    action: currentAction,
+                    totalActions: self.currentProgress.total,
+                    currentAction: self.currentProgress.current
+                )
+            )
         }
     }
     
