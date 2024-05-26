@@ -79,10 +79,11 @@ class ActiveWorkoutViewModel: ObservableObject, ActiveWorkoutManagementProtocol 
     }
     
     func startActivity() {
+        guard let currentAction = self.currentAction else {return}
+        
         if #available(iOS 16.1, *) {
             let initialContent = ActiveWorkoutActionAttributes.ActiveWorkoutActionStatus(
-                title: currentAction?.title ?? currentItem?.title ?? Constants.Placeholders.noActionName,
-                duration: Int(currentAction?.duration ?? 0),
+                action: currentAction,
                 totalActions: currentProgress.total,
                 currentAction: currentProgress.current
             )
@@ -102,11 +103,13 @@ class ActiveWorkoutViewModel: ObservableObject, ActiveWorkoutManagementProtocol 
         self.currentAction = self.activeWorkout.currentAction
         self.currentProgress = self.activeWorkout.currentItemProgress()
         self.isLastAction = self.activeWorkout.isLastAction()
+        
+        guard let currentAction = self.currentAction else {return}
+        
         Task {
             await self.updateActivityContent(
                 ActiveWorkoutActionAttributes.ActiveWorkoutActionStatus(
-                    title: self.currentAction?.title ?? self.currentItem?.title ?? Constants.Placeholders.noActionName,
-                    duration: Int(self.currentAction?.duration ?? 0),
+                    action: currentAction,
                     totalActions: self.currentProgress.total,
                     currentAction: self.currentProgress.current
                 )
