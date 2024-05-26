@@ -6,9 +6,20 @@
 //
 
 import Foundation
+import SweatSketchSharedModule
 
 struct AuthTokenModel: Codable {
     let accessToken: String
     let refreshToken: String
     let expiresIn: UInt64
+}
+
+extension SweatSketchSharedModule.AuthTokenModel {
+    func toLocal() -> AuthTokenModel {
+        return AuthTokenModel(
+            accessToken: self.accessToken,
+            refreshToken: self.refreshToken,
+            expiresIn: self.expiresIn
+        )
+    }
 }
