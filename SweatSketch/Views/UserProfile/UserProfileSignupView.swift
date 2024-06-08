@@ -1,41 +1,41 @@
 //
-//  UserProfileLoginView.swift
+//  UserProfileSignupView.swift
 //  SweatSketch
 //
-//  Created by aibaranchikov on 09.05.2024.
+//  Created by aibaranchikov on 08.06.2024.
 //
 
 import SwiftUI
 
-struct UserProfileLoginView: View {
+struct UserProfileSignupView: View {
     @State var user = UserCredentialModel()
     
-    var onLogin: (_ user: UserCredentialModel) -> Void = { user in }
+    var onSignup: (_ user: UserCredentialModel) -> Void = { user in }
     var onDismiss: () -> Void = {}
-    var onSignup: () -> Void = {}
+    var onLogin: () -> Void = {}
     
     var body: some View {
         ZStack {
             WorkoutPlanningModalBackgroundView()
             
             VStack(alignment: .center, spacing: Constants.Design.spacing) {
-                Image(systemName: "person.badge.key")
+                Image(systemName: "person.badge.plus")
                     .font(.largeTitle)
                     .imageScale(.large)
                     .padding(.top, Constants.Design.spacing)
                 
-                Text(Constants.Placeholders.UserProfile.loginScreenTitle)
+                Text(Constants.Placeholders.UserProfile.signupScreenTitle)
                     .font(.title)
                 
-                Text(Constants.Placeholders.UserProfile.loginScreenText)
+                Text(Constants.Placeholders.UserProfile.signupScreenText)
                     .font(.subheadline)
                 
                 LoginPasswordView(user: $user)
                 
                 Button(action: {
-                    onLogin(user)
+                    onSignup(user)
                 }) {
-                    Text(Constants.Placeholders.UserProfile.loginButtonLabel)
+                    Text(Constants.Placeholders.UserProfile.signupButtonLabel)
                         .accentButtonLabelStyleModifier()
                 }
                 
@@ -47,8 +47,8 @@ struct UserProfileLoginView: View {
                     Text(Constants.Placeholders.UserProfile.signupLinkText)
                         .customForegroundColorModifier(Constants.Design.Colors.textColorMediumEmphasis)
                     
-                    Button(action: onSignup) {
-                        Text(Constants.Placeholders.UserProfile.signupButtonLabel)
+                    Button(action: onLogin) {
+                        Text(Constants.Placeholders.UserProfile.loginButtonLabel)
                             .fontWeight(.bold)
                             .customForegroundColorModifier(Constants.Design.Colors.linkColor)
                     }
@@ -62,5 +62,5 @@ struct UserProfileLoginView: View {
 }
 
 #Preview {
-    UserProfileLoginView(user: UserCredentialModel())
+    UserProfileSignupView()
 }

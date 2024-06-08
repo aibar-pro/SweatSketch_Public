@@ -83,13 +83,16 @@ enum Constants {
         
         enum UserProfile {
             static let loginButtonLabel = "Login"
-            
             static let loginScreenTitle = "Welcome Back!"
             static let loginScreenText = "Login to your account"
             
             static let signupLinkText = "Don't have an account?"
             
             static let signupButtonLabel = "Sign Up"
+            static let signupScreenTitle = "Sign Up"
+            static let signupScreenText = "Create an account"
+
+            static let loginLinkText = "Already have an account?"
         }
         
         static let saveButtonLabel = "Save"
