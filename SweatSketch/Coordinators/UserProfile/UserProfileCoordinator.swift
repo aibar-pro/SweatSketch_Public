@@ -9,25 +9,21 @@ import SwiftUI
 import Combine
 
 class UserProfileCoordinator: ObservableObject, Coordinator {
-//    var viewModel: WorkoutCollectionMoveViewModel
-    
     var rootViewController = UIViewController()
     var childCoordinators = [Coordinator]()
     
     let applicationEvent: PassthroughSubject<ApplicationEventType, Never>
     
-//    init(viewModel: WorkoutCollectionMoveViewModel) {
     init (applicationEvent: PassthroughSubject<ApplicationEventType, Never>) {
         rootViewController = UIViewController()
         self.applicationEvent = applicationEvent
-//        self.viewModel = viewModel
     }
     
     func start() {
         let view = UserProfileLoginView(onLogin: { user in
                 print("LOGIN COORDINATOR: LOGIN")
 
-                NetworkService.login(user: user){ [weak self] result in
+            NetworkService.shared.login(user: user){ [weak self] result in
                     DispatchQueue.main.async {
                         guard self != nil else { return }
                         
@@ -38,7 +34,7 @@ class UserProfileCoordinator: ObservableObject, Coordinator {
                             self?.applicationEvent.send(.catalogRequested)
                             UserDefaults.standard.set(true, forKey: UserDefaultsKeys.isUserLoggedIn)
                         case .failure(let error):
-                            print("LOGIN ERROR \(error.localizedDescription)")
+                            print("LOGIN ERROR: \(error.localizedDescription)")
                         }
                     }
                 }
@@ -51,24 +47,4 @@ class UserProfileCoordinator: ObservableObject, Coordinator {
         rootViewController = UIHostingController(rootView: view)
         rootViewController.view.backgroundColor = .clear
     }
-    
-//    func saveMove(to collection: WorkoutCollectionViewRepresentation? = nil){
-//        if #available(iOS 15, *) {
-//            print("Workout Move Coordinator: Save \(Date.now)")
-//        } else {
-//            print("Workout Move Coordinator: Save")
-//        }
-//        viewModel.moveCollection(to: collection)
-//        rootViewController.dismiss(animated: true)
-//    }
-//    
-//    func discardMove(){
-//        if #available(iOS 15, *) {
-//            print("Workout Move Coordinator: Discard \(Date.now)")
-//        } else {
-//            print("Workout Move Coordinator: Discard")
-//        }
-//        viewModel.discardMove()
-//        rootViewController.dismiss(animated: true)
-//    }
 }

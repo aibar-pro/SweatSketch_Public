@@ -6,8 +6,18 @@
 //
 
 import Foundation
+import SweatSketchSharedModule
 
 struct UserCredentialModel: Codable {
     var login: String = ""
     var password: String = ""
+}
+
+extension UserCredentialModel {
+    func toShared() -> SweatSketchSharedModule.UserCredentialModel {
+        return SweatSketchSharedModule.UserCredentialModel(
+            login: self.login,
+            password: self.password
+        )
+    }
 }
