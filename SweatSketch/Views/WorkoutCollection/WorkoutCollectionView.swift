@@ -44,11 +44,11 @@ struct WorkoutCollectionView: View {
                     
                     
                     Menu {
-                        Button(Constants.Placeholders.WorkoutCollection.editWorkoutButonLabel) {
+                        Button(Constants.Placeholders.WorkoutCollection.editWorkoutButtonLabel) {
                             coordinator.goToEditWorkout(workoutIndex: presentedWorkoutIndex)
                         }
                         
-                        Button(Constants.Placeholders.WorkoutCollection.listWorkoutButonLabel) {
+                        Button(Constants.Placeholders.WorkoutCollection.listWorkoutButtonLabel) {
                             coordinator.goToWorkoutLst()
                         }
                     } label: {

@@ -27,7 +27,7 @@ struct ActiveWorkoutSummaryView: View {
                         .font(.title2)
                 }
                 Button(action: onProceed) {
-                    Text(Constants.Placeholders.ActiveWorkout.summaryConfirmationButtonLable)
+                    Text(Constants.Placeholders.ActiveWorkout.summaryConfirmationButtonLabel)
                         .accentButtonLabelStyleModifier()
                 }
             }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		25F7AD6C89774B4C6A826478 /* Pods_SweatSketch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DCE3D2AEB2DB1299BF697B9 /* Pods_SweatSketch.framework */; };
 		3F0955632BB7DD5A00AEAF51 /* RestTimeEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0955622BB7DD5A00AEAF51 /* RestTimeEditView.swift */; };
 		3F0955652BB7DDCF00AEAF51 /* RestTimeEditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0955642BB7DDCF00AEAF51 /* RestTimeEditViewModel.swift */; };
 		3F0955672BB7E0F900AEAF51 /* RestTimeEditCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0955662BB7E0F900AEAF51 /* RestTimeEditCoordinator.swift */; };
@@ -79,6 +80,10 @@
 		3F64E4C02BC116DB000567D8 /* WorkoutCatalogWorkoutViewRepresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F64E4BF2BC116DB000567D8 /* WorkoutCatalogWorkoutViewRepresentation.swift */; };
 		3F6BDEDF26455E160079EC84 /* WorkoutDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6BDEDE26455E160079EC84 /* WorkoutDetailView.swift */; };
 		3F6BDEFB264572B40079EC84 /* ActionEditSwitchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6BDEFA264572B40079EC84 /* ActionEditSwitchView.swift */; };
+		3F741D1E2C147EB200D9E45A /* ResponseMessageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F741D1D2C147EB200D9E45A /* ResponseMessageModel.swift */; };
+		3F741D202C147FC600D9E45A /* UserProfileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F741D1F2C147FC600D9E45A /* UserProfileModel.swift */; };
+		3F741D222C14842300D9E45A /* KotlinTypeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F741D212C14842300D9E45A /* KotlinTypeExtensions.swift */; };
+		3F741D242C1485D000D9E45A /* UserProfileSignupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F741D232C1485D000D9E45A /* UserProfileSignupView.swift */; };
 		3F7559F12BCE7D59009E71B8 /* ActiveWorkoutSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F7559F02BCE7D59009E71B8 /* ActiveWorkoutSummaryView.swift */; };
 		3F7559F32BCE7DBA009E71B8 /* ActiveWorkoutSummaryBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F7559F22BCE7DBA009E71B8 /* ActiveWorkoutSummaryBackgroundView.swift */; };
 		3F7559FE2BCEC563009E71B8 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F7559FD2BCEC563009E71B8 /* WidgetKit.framework */; };
@@ -97,6 +102,7 @@
 		3F8D788F2B92DC9B006BFD18 /* SecondaryButtonLabelStyleModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8D788E2B92DC9B006BFD18 /* SecondaryButtonLabelStyleModifier.swift */; };
 		3F8D78912B92DE19006BFD18 /* PrimaryButtonLabelModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8D78902B92DE19006BFD18 /* PrimaryButtonLabelModifier.swift */; };
 		3F8F7F4B2653EC460003BBDA /* WorkoutCollectionListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8F7F4A2653EC460003BBDA /* WorkoutCollectionListView.swift */; };
+		3F9228EA2C15AF8300E5952D /* StringLocalizedExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F9228E92C15AF8300E5952D /* StringLocalizedExtension.swift */; };
 		3F9955E12BC53184004CD0A9 /* WorkoutCatalogWorkoutMoveViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F9955E02BC53184004CD0A9 /* WorkoutCatalogWorkoutMoveViewModel.swift */; };
 		3F9955E32BC5579C004CD0A9 /* WorkoutCatalogWorkoutMoveCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F9955E22BC5579C004CD0A9 /* WorkoutCatalogWorkoutMoveCoordinator.swift */; };
 		3F9955E52BC558E0004CD0A9 /* WorkoutCatalogWorkoutMoveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F9955E42BC558E0004CD0A9 /* WorkoutCatalogWorkoutMoveView.swift */; };
@@ -166,6 +172,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3DCE3D2AEB2DB1299BF697B9 /* Pods_SweatSketch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SweatSketch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F0955622BB7DD5A00AEAF51 /* RestTimeEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestTimeEditView.swift; sourceTree = "<group>"; };
 		3F0955642BB7DDCF00AEAF51 /* RestTimeEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestTimeEditViewModel.swift; sourceTree = "<group>"; };
 		3F0955662BB7E0F900AEAF51 /* RestTimeEditCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestTimeEditCoordinator.swift; sourceTree = "<group>"; };
@@ -232,6 +239,10 @@
 		3F64E4BF2BC116DB000567D8 /* WorkoutCatalogWorkoutViewRepresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutCatalogWorkoutViewRepresentation.swift; sourceTree = "<group>"; };
 		3F6BDEDE26455E160079EC84 /* WorkoutDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutDetailView.swift; sourceTree = "<group>"; };
 		3F6BDEFA264572B40079EC84 /* ActionEditSwitchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionEditSwitchView.swift; sourceTree = "<group>"; };
+		3F741D1D2C147EB200D9E45A /* ResponseMessageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseMessageModel.swift; sourceTree = "<group>"; };
+		3F741D1F2C147FC600D9E45A /* UserProfileModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileModel.swift; sourceTree = "<group>"; };
+		3F741D212C14842300D9E45A /* KotlinTypeExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KotlinTypeExtensions.swift; sourceTree = "<group>"; };
+		3F741D232C1485D000D9E45A /* UserProfileSignupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileSignupView.swift; sourceTree = "<group>"; };
 		3F7559F02BCE7D59009E71B8 /* ActiveWorkoutSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveWorkoutSummaryView.swift; sourceTree = "<group>"; };
 		3F7559F22BCE7DBA009E71B8 /* ActiveWorkoutSummaryBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveWorkoutSummaryBackgroundView.swift; sourceTree = "<group>"; };
 		3F7559F62BCEC17D009E71B8 /* ActivityKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ActivityKit.framework; path = System/Library/Frameworks/ActivityKit.framework; sourceTree = SDKROOT; };
@@ -254,6 +265,7 @@
 		3F8D788E2B92DC9B006BFD18 /* SecondaryButtonLabelStyleModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondaryButtonLabelStyleModifier.swift; sourceTree = "<group>"; };
 		3F8D78902B92DE19006BFD18 /* PrimaryButtonLabelModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButtonLabelModifier.swift; sourceTree = "<group>"; };
 		3F8F7F4A2653EC460003BBDA /* WorkoutCollectionListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutCollectionListView.swift; sourceTree = "<group>"; };
+		3F9228E92C15AF8300E5952D /* StringLocalizedExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringLocalizedExtension.swift; sourceTree = "<group>"; };
 		3F9955E02BC53184004CD0A9 /* WorkoutCatalogWorkoutMoveViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutCatalogWorkoutMoveViewModel.swift; sourceTree = "<group>"; };
 		3F9955E22BC5579C004CD0A9 /* WorkoutCatalogWorkoutMoveCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutCatalogWorkoutMoveCoordinator.swift; sourceTree = "<group>"; };
 		3F9955E42BC558E0004CD0A9 /* WorkoutCatalogWorkoutMoveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutCatalogWorkoutMoveView.swift; sourceTree = "<group>"; };
@@ -296,6 +308,8 @@
 		3FFFC1FB2BCBBED800287AF1 /* ActiveWorkoutActionRepresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveWorkoutActionRepresentation.swift; sourceTree = "<group>"; };
 		3FFFC2002BCD115300287AF1 /* ProgressBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBarView.swift; sourceTree = "<group>"; };
 		3FFFC2022BCD2EA500287AF1 /* CountdownTimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownTimerView.swift; sourceTree = "<group>"; };
+		494392FAC65950070B0B3FC2 /* Pods-SweatSketch.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SweatSketch.debug.xcconfig"; path = "Target Support Files/Pods-SweatSketch/Pods-SweatSketch.debug.xcconfig"; sourceTree = "<group>"; };
+		F0B2F70D4AB083BAF4ABE14C /* Pods-SweatSketch.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SweatSketch.release.xcconfig"; path = "Target Support Files/Pods-SweatSketch/Pods-SweatSketch.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -312,12 +326,22 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				25F7AD6C89774B4C6A826478 /* Pods_SweatSketch.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3337C8F76976DF094893736D /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				494392FAC65950070B0B3FC2 /* Pods-SweatSketch.debug.xcconfig */,
+				F0B2F70D4AB083BAF4ABE14C /* Pods-SweatSketch.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		3F09555D2BB7DA6600AEAF51 /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
@@ -335,6 +359,7 @@
 				3F86669A264542D600124E44 /* Assets.xcassets */,
 				3F64E4A62BBC042F000567D8 /* UserDefaultsKeys.swift */,
 				3F15E21E2C01AC90008E18C2 /* Localizable.xcstrings */,
+				3F9228E92C15AF8300E5952D /* StringLocalizedExtension.swift */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -497,6 +522,7 @@
 			children = (
 				3F5B229A2BECCBB50026C957 /* AuthTokenModel.swift */,
 				3F5B229D2BECCCE00026C957 /* UserCredentialModel.swift */,
+				3F741D1F2C147FC600D9E45A /* UserProfileModel.swift */,
 			);
 			path = UserProfile;
 			sourceTree = "<group>";
@@ -577,6 +603,7 @@
 				3F7559F62BCEC17D009E71B8 /* ActivityKit.framework */,
 				3F7559FD2BCEC563009E71B8 /* WidgetKit.framework */,
 				3F7559FF2BCEC563009E71B8 /* SwiftUI.framework */,
+				3DCE3D2AEB2DB1299BF697B9 /* Pods_SweatSketch.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -611,6 +638,7 @@
 				3F755A012BCEC563009E71B8 /* SweatSketchWidget */,
 				3F866694264542D400124E44 /* Products */,
 				3F7559F52BCEC17D009E71B8 /* Frameworks */,
+				3337C8F76976DF094893736D /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -680,6 +708,8 @@
 				3FFFC1FE2BCD00E900287AF1 /* ActiveWorkout */,
 				3F5B229C2BECCBBA0026C957 /* UserProfile */,
 				3FA2B4802BC3F9ED00268250 /* Enums */,
+				3F741D1D2C147EB200D9E45A /* ResponseMessageModel.swift */,
+				3F741D212C14842300D9E45A /* KotlinTypeExtensions.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -701,6 +731,7 @@
 			children = (
 				3FD3DBEE2BE9FF4600863AC1 /* UserProfileButtonView.swift */,
 				3F5B228F2BEC94F70026C957 /* UserProfileLoginView.swift */,
+				3F741D232C1485D000D9E45A /* UserProfileSignupView.swift */,
 			);
 			path = UserProfile;
 			sourceTree = "<group>";
@@ -806,10 +837,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3F8666A7264542D600124E44 /* Build configuration list for PBXNativeTarget "SweatSketch" */;
 			buildPhases = (
+				D88ECB7A1AF31842FF817C2D /* [CP] Check Pods Manifest.lock */,
 				3F86668F264542D400124E44 /* Sources */,
 				3F866690264542D400124E44 /* Frameworks */,
 				3F866691264542D400124E44 /* Resources */,
 				3F755A132BCEC564009E71B8 /* Embed Foundation Extensions */,
+				D1E454EA87B823D6FC940DE4 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -829,7 +862,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1530;
-				LastUpgradeCheck = 1530;
+				LastUpgradeCheck = 1540;
 				TargetAttributes = {
 					3F7559FB2BCEC563009E71B8 = {
 						CreatedOnToolsVersion = 15.3;
@@ -890,6 +923,48 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		D1E454EA87B823D6FC940DE4 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SweatSketch/Pods-SweatSketch-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SweatSketch/Pods-SweatSketch-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SweatSketch/Pods-SweatSketch-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D88ECB7A1AF31842FF817C2D /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SweatSketch-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		3F7559F82BCEC563009E71B8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -934,7 +1009,9 @@
 				3F9955E92BC58788004CD0A9 /* ExerciseViewRepresentation.swift in Sources */,
 				3FFFC1FA2BCBBEB500287AF1 /* ActiveWorkoutItemRepresentation.swift in Sources */,
 				3FCE2C242BA1FC3B004B4E62 /* WorkoutCollectionListViewModel.swift in Sources */,
+				3F9228EA2C15AF8300E5952D /* StringLocalizedExtension.swift in Sources */,
 				3F5B229B2BECCBB50026C957 /* AuthTokenModel.swift in Sources */,
+				3F741D1E2C147EB200D9E45A /* ResponseMessageModel.swift in Sources */,
 				3F0955692BB7E4E000AEAF51 /* WorkoutPlanningModalBackgroundView.swift in Sources */,
 				3FFFC2012BCD115300287AF1 /* ProgressBarView.swift in Sources */,
 				3F4AB5472BA9F9B9005836E7 /* ExerciseActionType.swift in Sources */,
@@ -991,7 +1068,9 @@
 				3F9955E52BC558E0004CD0A9 /* WorkoutCatalogWorkoutMoveView.swift in Sources */,
 				3F0955672BB7E0F900AEAF51 /* RestTimeEditCoordinator.swift in Sources */,
 				3F8D788F2B92DC9B006BFD18 /* SecondaryButtonLabelStyleModifier.swift in Sources */,
+				3F741D242C1485D000D9E45A /* UserProfileSignupView.swift in Sources */,
 				3FF16BA02B10C15800D5F610 /* ExerciseView.swift in Sources */,
+				3F741D202C147FC600D9E45A /* UserProfileModel.swift in Sources */,
 				3F64E49F2BBBF251000567D8 /* ActiveWorkoutViewModel.swift in Sources */,
 				3F64E4A52BBBF39F000567D8 /* ActiveWorkoutView.swift in Sources */,
 				3F64E4B62BBFE278000567D8 /* WorkoutCatalogViewModel.swift in Sources */,
@@ -1002,6 +1081,7 @@
 				3F598CBA2B8F7F6B00117D59 /* MaterialCardBackgroundModifier.swift in Sources */,
 				3F64E4BE2BC11268000567D8 /* WorkoutCatalogCollectionViewRepresentation.swift in Sources */,
 				3FC92D7E2BA9AF5700AFBCC8 /* ExerciseType.swift in Sources */,
+				3F741D222C14842300D9E45A /* KotlinTypeExtensions.swift in Sources */,
 				3FADAE3E2BCA7C0300D207AB /* WorkoutCatalogCollectionMoveCoordinator.swift in Sources */,
 				3F8F7F4B2653EC460003BBDA /* WorkoutCollectionListView.swift in Sources */,
 				3F598CBC2B8F9BBC00117D59 /* AccentButtonLabelStyleModifier.swift in Sources */,
@@ -1097,6 +1177,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1146,6 +1227,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LOCALIZED_STRING_SWIFTUI_SUPPORT = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1160,6 +1242,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1203,6 +1286,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LOCALIZED_STRING_SWIFTUI_SUPPORT = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -1214,6 +1298,7 @@
 		};
 		3F8666A8264542D600124E44 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 494392FAC65950070B0B3FC2 /* Pods-SweatSketch.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1236,6 +1321,7 @@
 		};
 		3F8666A9264542D600124E44 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F0B2F70D4AB083BAF4ABE14C /* Pods-SweatSketch.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
