@@ -10,117 +10,118 @@ import SwiftUI
 
 enum Constants {
     enum Placeholders {
-        static let noCollectionName = "Untitled Collection"
-        static let noWorkoutName = "Untitled Workout"
-        static let noExerciseName = "Untitled Exercise"
-        static let noActionName = "Untitled Action"
-        static let noRestTimeName = "Untitled Rest Period"
+        static let noCollectionName = String.localized("Untitled Collection")
+        static let noWorkoutName = String.localized("Untitled Workout")
+        static let noExerciseName = String.localized("Untitled Exercise")
+        static let noActionName = String.localized("Untitled Action")
+        static let noRestTimeName = String.localized("Untitled Rest Period")
         
-        static let noExerciseDetails = "No Exercise details"
-        static let noActionDetails = "No Action details"
+        static let noExerciseDetails = String.localized("No Exercise details")
+        static let noActionDetails = String.localized("No Action details")
         
-        static let noDuration = "-:-:-"
+        static let noDuration = String.localized("-:-:-")
         
-        static let restPeriodLabel = "Rest Time"
+        static let restPeriodLabel = String.localized("Rest Time")
         
-        static let activeWorkoutItemError = "Error fetching workout item"
+        static let activeWorkoutItemError = String.localized("Error fetching workout item")
         
-        static let workoutSummaryTitle = "Workout Complete!"
+        static let workoutSummaryTitle = String.localized("Workout Complete!")
         
         enum WorkoutCatalog {
-            static let title = "Workout Catalog"
-            static let userLoggedInLabel = "User"
-            static let renameCollectionButtonLabel = "Rename Collection"
-            static let moveCollectionButtonLabel = "Move Collection"
-            static let mergeCollectionButtonLabel = "Merge Collection"
+            static let title = String.localized("Workout Catalog")
+            static let userLoggedInLabel = String.localized("User")
+            static let renameCollectionButtonLabel = String.localized("Rename Collection")
+            static let moveCollectionButtonLabel = String.localized("Move Collection")
+            static let mergeCollectionButtonLabel = String.localized("Merge Collection")
             
-            static let moveWorkoutButtonLabel = "Move Workout"
-            static let shareWorkoutButtonLabel = "Share Workout"
+            static let moveWorkoutButtonLabel = String.localized("Move Workout")
+            static let shareWorkoutButtonLabel = String.localized("Share Workout")
             
-            static let addCollectionPopupTitle = "Add Collection"
-            static let addCollectionPopupText = "Enter collection name"
-            static let addCollectionPopupButtonLabel = "Add"
+            static let addCollectionPopupTitle = String.localized("Add Collection")
+            static let addCollectionPopupText = String.localized("Enter collection name")
+            static let addCollectionPopupButtonLabel = String.localized("Add")
             
-            static let moveDestinationText = "Select a destination"
-            static let moveTopDestinationText = "To the top"
+            static let moveDestinationText = String.localized("Select a destination")
+            static let moveTopDestinationText = String.localized("To the top")
             
-            static let mergeDestinationText = "Move all workouts to"
+            static let mergeDestinationText = String.localized("Move all workouts to")
         }
         
         enum WorkoutCollection {
-            static let toCatalogButtonLabel = "Catalog"
+            static let toCatalogButtonLabel = String.localized("Catalog")
             
-            static let editWorkoutButonLabel = "Edit Workout"
-            static let listWorkoutButonLabel = "Reorder or delete workouts"
+            static let editWorkoutButtonLabel = String.localized("Edit Workout")
+            static let listWorkoutButtonLabel = String.localized("Reorder or delete workouts")
             
-            static let startWorkoutButtonLabel = "Go"
+            static let startWorkoutButtonLabel = String.localized("Go")
             
-            static let emptyCollectionText = "Empty Collection"
-            static let emptyCollectionButtonLabel = "Add Workout"
+            static let emptyCollectionText = String.localized("Empty Collection")
+            static let emptyCollectionButtonLabel = String.localized("Add Workout")
             
-            static let workoutListTitle = "Workouts"
+            static let workoutListTitle = String.localized("Workouts")
             
-            static let emptyWorkoutText = "No Exercises yet"
+            static let emptyWorkoutText = String.localized("No Exercises yet")
             
-            static let renameWorkoutPopupTitle = "Rename Workout"
-            static let renameExercisePopupTitle = "Rename Exercise"
+            static let renameWorkoutPopupTitle = String.localized("Rename Workout")
+            static let renameExercisePopupTitle = String.localized("Rename Exercise")
             
-            static let supersetCountLabel = "Superset repetitions"
-            static let actionTypeLabel = "Action type"
+            static let supersetCountLabel = String.localized("Superset repetitions")
+            static let actionTypeLabel = String.localized("Action type")
             
-            static let defaultRestTimeTitle = "Default Rest Time"
-            static let defaultRestTimeLabel = "Default Rest Time:"
-            static let customRestTimeText = "Advanced edit"
-            static let customRestTimeAddButtonLabel = "Customize"
+            static let defaultRestTimeTitle = String.localized("Default Rest Time")
+            static let defaultRestTimeLabel = String.localized("Default Rest Time:")
+            static let customRestTimeText = String.localized("Advanced edit")
+            static let customRestTimeAddButtonLabel = String.localized("Customize")
             
-            static let exerciseRestTimeLabel = "Rest Time between actions"
+            static let exerciseRestTimeLabel = String.localized("Rest Time between actions")
         }
         
         enum ActiveWorkout {
-            static let toActiveItemLabel = "Active item"
-            static let summaryConfirmationButtonLable = "Proceed"
+            static let toActiveItemLabel = String.localized("Active item")
+            static let summaryConfirmationButtonLabel = String.localized("Proceed")
         }
         
         enum UserProfile {
-            static let loginButtonLabel = "Login"
-            static let loginScreenTitle = "Welcome Back!"
-            static let loginScreenText = "Login to your account"
+            static let loginButtonLabel = String.localized("Login")
+            static let loginScreenTitle = String.localized("Welcome Back!")
+            static let loginScreenText = String.localized("Login to your account")
             
-            static let signupLinkText = "Don't have an account?"
+            static let signupLinkText = String.localized("Don't have an account?")
             
-            static let signupButtonLabel = "Sign Up"
-            static let signupScreenTitle = "Sign Up"
-            static let signupScreenText = "Create an account"
+            static let signupButtonLabel = String.localized("Sign Up")
+            static let signupScreenTitle = String.localized("Sign Up")
+            static let signupScreenText = String.localized("Create an account")
 
-            static let loginLinkText = "Already have an account?"
+            static let loginLinkText = String.localized("Already have an account?")
         }
         
-        static let saveButtonLabel = "Save"
-        static let doneButtonLabel = "Done"
-        static let cancelButtonLabel = "Cancel"
+        static let saveButtonLabel = String.localized("Save")
+        static let doneButtonLabel = String.localized("Done")
+        static let cancelButtonLabel = String.localized("Cancel")
         
-        static let renamePopupText = "Enter new name"
-        static let renamePopupButtonLabel = "Rename"
+        static let renamePopupText = String.localized("Enter new name")
+        static let renamePopupButtonLabel = String.localized("Rename")
         
-        static let maximumRepetitionsLabel = "MAX"
+        static let maximumRepetitionsLabel = String.localized("MAX")
         
-        static let secondsLabel = "seconds"
+        static let secondsLabel = String.localized("seconds")
         
-        static let emailLabel = "Email"
-        static let passwordLabel = "Password"
+        static let emailLabel = String.localized("Email")
+        static let passwordLabel = String.localized("Password")
         
         enum ExerciseTypes {
-            static let setsNreps = "Sets-n-reps"
-            static let timed = "Timed"
-            static let mixed = "Mixed"
-            static let unknown = "Unknown"
+            static let setsNreps = String.localized("Sets-n-reps")
+            static let timed = String.localized("Timed")
+            static let mixed = String.localized("Mixed")
+            static let unknown = String.localized("Unknown")
         }
         
         enum ExerciseActionTypes {
-            static let setsNreps = "Sets and reps"
-            static let timed = "Timed"
-            static let unknown = "Unknown"
+            static let setsNreps = String.localized("Sets and reps")
+            static let timed = String.localized("Timed")
+            static let unknown = String.localized("Unknown")
         }
+        
     }
     
     enum Design {
@@ -137,7 +138,7 @@ enum Constants {
             static let textColorHighEmphasis = Color.primary.opacity(0.87)
             static let textColorMediumEmphasis = Color.primary.opacity(0.6)
             static let textColorlowEmphasis = Color.primary.opacity(0.1)
-            static let linkColor = Color(.link).opacity(0.87)
+            static let linkColor = Color(.textLink).opacity(0.87)
         }
     }
     

@@ -52,7 +52,6 @@ struct ActiveWorkoutItemView: View {
             }
             
             ProgressBarView(totalSections: itemProgress.total, currentSection: itemProgress.current)
-//            ProgressBarView(totalSections: itemProgressTotal, currentSection: itemProgressCurrent)
                 .frame(height: 28)
             
             HStack (alignment: .center, spacing: Constants.Design.spacing/2) {
@@ -77,9 +76,6 @@ struct ActiveWorkoutItemView_Previews: PreviewProvider {
     
     static var previews: some View {
         let persistenceController = PersistenceController.preview
-        
-        let appCoordinator = ApplicationCoordinator(dataContext: persistenceController.container.viewContext)
-        let applicationEvent = appCoordinator.applicationEvent
         
         let collectionDataManager = CollectionDataManager()
         let firstCollection = collectionDataManager.fetchFirstUserCollection(in: persistenceController.container.viewContext)

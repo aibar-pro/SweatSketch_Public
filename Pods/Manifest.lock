@@ -2,15 +2,15 @@ PODS:
   - shared (1.0)
 
 DEPENDENCIES:
-  - shared (from `../../Developer/SweatSketchShared/shared/shared.podspec`)
+  - shared (from `../SweatSketchShared/shared/shared.podspec`)
 
 EXTERNAL SOURCES:
   shared:
-    :path: "../../Developer/SweatSketchShared/shared/shared.podspec"
+    :path: "../SweatSketchShared/shared/shared.podspec"
 
 SPEC CHECKSUMS:
   shared: af00633f816d107239340168ab010d96eedc347f
 
-PODFILE CHECKSUM: e7b3176034b16f9298797bf179fb2a6946722c25
+PODFILE CHECKSUM: 74e60fda346a866ec88fed0e51aa94130b469b77
 
 COCOAPODS: 1.15.2
