@@ -6,5 +6,5 @@ target 'SweatSketch' do
   use_frameworks!
 
   # Pods for SweatSketch
-   pod 'shared', :path => '../../Developer/SweatSketchShared/shared/shared.podspec'
+   pod 'shared', :path => '../SweatSketchShared/shared/shared.podspec'
 end
