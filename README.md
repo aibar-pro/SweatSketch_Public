@@ -2,7 +2,7 @@
 The “SweatSketch: Sketch, Sweat, and Succeed” is a lightweight app for taking gym notes regarding the workout program and weight-lifting results.
 
 ## Demo GIF
-![UI_demo](https://github.com/aibar-pro/SweatSketch_Public/blob/b7a0a88470c2ad98e361dcafae8e0081bdbf6878/SweatSketch/Resources/AppDemos/SweatSketch_Demo_ActiveWorkout.gif)
+<img src="./SweatSketch/Resources/AppDemos/SweatSketch_Demo_ActiveWorkout.gif" alt="App Demo" width="350" height="auto"><br> App demo
 
 ## Concept
 I haven’t conducted any marketing research since this is a playground project. It covers only my needs as a sole user. I started this project in 2021 with an iOS14 target. When I resurrected it in early 2024, I decided not to update the target, as in a corporate environment, you have to support the largest number of devices possible or deal with legacy code. It allows me to follow the SwiftUI evolution and search for workarounds without using new modifiers or classes.
@@ -28,14 +28,19 @@ After finishing the workout, users will be able to check the fitness dashboard. 
 - CoreData and UserDefaults
 - Combine
 - ActivityKit
+- CocoaPods
 
 ## App Navigation and Architecture
 The application follows the MVVM-C approach except for omitting dedicated Model files duplicating CoreData entities.
-A coordinator pattern is implemented for navigation between SwiftUI views. SwiftUI’s @app calls a UIViewControllerRepresentable of UIKit’s application root UINavigationController. ‘Application Coordinator’ appends child coordinators for every app screen. Using UIHostingController, I put SwiftUI views into stacks of UIViewControllers on UINavigationController. To switch modes, I use Combine.
-Data is managed and passed through ViewModels, including temporary ViewModels for editing states. Nested ViewModels have nested NSManagedContexts, allowing scratchpad functionality and supporting undo-redo operations. UserDefaults stores information about an active workout to support state restoration.
+A coordinator pattern is implemented for navigation among SwiftUI views. SwiftUI’s @app calls a UIViewControllerRepresentable of application root UINavigationController. ‘Application Coordinator’ appends child coordinators for every app module. I stack SwiftUI views on UINavigationController using UIHostingController and UIViewController. 
+Data is managed and passed through ViewModels, including temporary ViewModels for editing states. Nested ViewModels have nested NSManagedContexts, allowing scratchpad functionality and supporting undo-redo operations. 
+The app uses Combine to switch modes and update receive updates from LiveActivity and Dynamic Island.
+UserDefaults stores information about an active workout to support state restoration.
+Network calls and related logic are encapsulated into the Shared Kotlin Multiplatform Library injected as Pod (see SweatSketchShared repo).
 
 ## Miscellaneous Features
 The app supports light and dark color schemes inherited from system preferences.
+The app supports English, Russian, and German languages. Available for iOS16+
 
 ## Screenshot Gallery
 | | |
@@ -44,3 +49,6 @@ The app supports light and dark color schemes inherited from system preferences.
 | <img src="./SweatSketch/Resources/AppDemos/SweatSketchDemo_3.png" alt="Exercise Edit" width="250" height="auto"><br> Exercise Edit | <img src="./SweatSketch/Resources/AppDemos/SweatSketchDemo_4.png" alt="Active Workout" width="250" height="auto"><br> Active Workout |
 | <img src="./SweatSketch/Resources/AppDemos/SweatSketchDemo_5.1.png" alt="Interactive Activity" width="250" height="auto"><br> Activity | <img src="./SweatSketch/Resources/AppDemos/SweatSketchDemo_5.2.png" alt="Dynamic Island" width="250" height="auto"><br> Dynamic Island |
 | <img src="./SweatSketch/Resources/AppDemos/SweatSketchDemo_6.png" alt="Dynamic Island" width="250" height="auto"><br> Workout Catalog | <img src="./SweatSketch/Resources/AppDemos/SweatSketchDemo_7.png" alt="Catalog" width="250" height="auto"><br> Login, Signup |
+
+## Notes
+Update Podfile with path to shared framework location
