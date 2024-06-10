@@ -18,7 +18,13 @@
         }
       }
     },
+    ":" : {
+
+    },
     "%@" : {
+
+    },
+    "%@," : {
 
     },
     "Action type" : {
@@ -396,6 +402,7 @@
       }
     },
     "Go to next action in active workout" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ru" : {
           "stringUnit" : {
@@ -406,11 +413,32 @@
       }
     },
     "Go to previous action in active workout" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Вернуться к предыдущему действию"
+          }
+        }
+      }
+    },
+    "Hello, %@!" : {
+
+    },
+    "Loading..." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wird geladen..."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Загрузка..."
           }
         }
       }
@@ -445,6 +473,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Войдите в свою учетную запись"
+          }
+        }
+      }
+    },
+    "Logout" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ausloggen"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выйти"
           }
         }
       }
@@ -552,6 +596,7 @@
       }
     },
     "Next action" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ru" : {
           "stringUnit" : {
@@ -630,6 +675,7 @@
       }
     },
     "Previous action" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ru" : {
           "stringUnit" : {
@@ -652,6 +698,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Продолжить"
+          }
+        }
+      }
+    },
+    "Profile" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profil"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Профиль"
           }
         }
       }
@@ -1132,10 +1195,13 @@
         }
       }
     },
-    "x%d" : {
+    "x" : {
 
     },
-    "xMAX" : {
+    "x%@" : {
+
+    },
+    "x%@)" : {
 
     }
   },

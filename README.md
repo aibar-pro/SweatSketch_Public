@@ -1,5 +1,5 @@
 #  SweatSketch: Sketch, Sweat, and Succeed
-The “SweatSketch: Sketch, Sweat, and Succeed” is a lightweight app for taking gym notes regarding the workout program and weight-lifting results.
+The “SweatSketch: Sketch, Sweat, and Succeed” is a lightweight app for taking gym notes about the workout programs and weight-lifting results.
 
 ## Demo GIF
 <img src="./SweatSketch/Resources/AppDemos/SweatSketch_Demo_ActiveWorkout.gif" alt="App Demo" width="350" height="auto"><br> App demo
@@ -18,7 +18,7 @@ The app supports workout plans like the following one.
 
 The user can add rest times between actions and exercises. It can be either default for the whole workout and automatically applied between each exercise and action or customized for each exercise.
 
-Once the user has planned the workout, they press the big ‘Go’ button, and the app switches to workout executing mode. That mode allows ticking exercise actions as done, observing the rest or timed action timer, and, in future updates, logging lifted weights by their type. 
+Once the user has planned the workout, they press the big ‘Go’ button, and the app switches to workout executing mode. That mode allows ticking exercise actions as done, observing the rest or timed action timer, and, in future updates, logging lifted weights by their type.  
 Active workout action is displayed on Dynamic Island and as a LiveActivity. Ultimately, I’ll add an Apple Watch part to manage the active workout. 
 
 After finishing the workout, users will be able to check the fitness dashboard. It’s up in the air, but each entity has its UUID, allowing us to gather the required data.
@@ -31,16 +31,17 @@ After finishing the workout, users will be able to check the fitness dashboard. 
 - CocoaPods
 
 ## App Navigation and Architecture
-The application follows the MVVM-C approach except for omitting dedicated Model files duplicating CoreData entities.
-A coordinator pattern is implemented for navigation among SwiftUI views. SwiftUI’s @app calls a UIViewControllerRepresentable of application root UINavigationController. ‘Application Coordinator’ appends child coordinators for every app module. I stack SwiftUI views on UINavigationController using UIHostingController and UIViewController. 
-Data is managed and passed through ViewModels, including temporary ViewModels for editing states. Nested ViewModels have nested NSManagedContexts, allowing scratchpad functionality and supporting undo-redo operations. 
-The app uses Combine to switch modes and update receive updates from LiveActivity and Dynamic Island.
-UserDefaults stores information about an active workout to support state restoration.
-Network calls and related logic are encapsulated into the Shared Kotlin Multiplatform Library injected as Pod (see SweatSketchShared repo).
+The application follows the MVVM-C approach except for omitting dedicated Model files duplicating CoreData entities.  
+A coordinator pattern is implemented for navigation among SwiftUI views. SwiftUI’s @app calls a UIViewControllerRepresentable of the application root UINavigationController. ‘Application Coordinator’ appends child coordinators for every app module. Coordinators stack SwiftUI views wrapped in a UIHostingController and manage presented screens. That's the most comfortable way to use UIKit navigation while being supported with SwiftUI declarative syntax and previews. Not to mention, this approach will allow you to inject ViewControllers shared from the Multiplatform repository.  
+Data is managed and passed through ViewModels, including temporary ViewModels for editing states. Nested ViewModels have nested NSManagedContexts, allowing scratchpad functionality and supporting undo-redo operations.  
+The app uses Combine to switch modes and update receive updates from LiveActivity and Dynamic Island.  
+UserDefaults stores information about an active workout to support state restoration.  
+Network calls and related logic are encapsulated in the Shared Kotlin Multiplatform Library injected as Pod (see SweatSketchShared repository). Prior to that, I used URLSession.  
+I implemented the delegate pattern for UserProfile to get some experience with it, so navigation among views in that part is slightly different from the rest of the app.  
 
 ## Miscellaneous Features
-The app supports light and dark color schemes inherited from system preferences.
-The app supports English, Russian, and German languages. Available for iOS16+
+The app supports light and dark color schemes inherited from system preferences.  
+The app supports English, Russian, and German languages. Available for iOS16+  
 
 ## Screenshot Gallery
 | | |

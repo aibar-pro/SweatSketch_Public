@@ -14,7 +14,6 @@ class ExerciseEditCoordinator: ObservableObject, Coordinator {
     var rootViewController = UIViewController()
     
     init(viewModel: ExerciseEditViewModel) {
-        rootViewController = UIViewController()
         self.viewModel = viewModel
     }
     

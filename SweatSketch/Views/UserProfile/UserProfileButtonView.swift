@@ -8,15 +8,21 @@
 import SwiftUI
 
 struct UserProfileButtonView: View {
+    @Binding var isLoggedIn: Bool
+    
     var onClick: () -> ()
     
     var body: some View {
         Button (action: onClick) {
-            HStack {
-                Image(systemName: "person")
-                Text(Constants.Placeholders.UserProfile.loginButtonLabel)
+            HStack (alignment: .firstTextBaseline, spacing: Constants.Design.spacing/4) {
+                Image(
+                    systemName: isLoggedIn ?  "person" : "person.badge.key"
+                )
+                Text(
+                    isLoggedIn ? Constants.Placeholders.UserProfile.profileButtonLabel : Constants.Placeholders.UserProfile.loginButtonLabel
+                )
             }
-            .padding(10)
+            .padding(Constants.Design.spacing/2)
             .background(
                 RoundedRectangle(cornerRadius: Constants.Design.cornerRadius)
                     .stroke(Constants.Design.Colors.textColorMediumEmphasis, lineWidth: 2)
@@ -26,5 +32,8 @@ struct UserProfileButtonView: View {
 }
 
 #Preview {
-    UserProfileButtonView(onClick: {})
+    VStack(spacing: 50) {
+        UserProfileButtonView(isLoggedIn: .constant(true), onClick: {})
+        UserProfileButtonView(isLoggedIn: .constant(false), onClick: {})
+    }
 }
