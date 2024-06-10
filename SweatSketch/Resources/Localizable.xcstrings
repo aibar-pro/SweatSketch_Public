@@ -18,7 +18,13 @@
         }
       }
     },
+    ":" : {
+
+    },
     "%@" : {
+
+    },
+    "%@," : {
 
     },
     "Action type" : {
@@ -396,6 +402,7 @@
       }
     },
     "Go to next action in active workout" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ru" : {
           "stringUnit" : {
@@ -406,6 +413,7 @@
       }
     },
     "Go to previous action in active workout" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ru" : {
           "stringUnit" : {
@@ -552,6 +560,7 @@
       }
     },
     "Next action" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ru" : {
           "stringUnit" : {
@@ -630,6 +639,7 @@
       }
     },
     "Previous action" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ru" : {
           "stringUnit" : {
@@ -1132,10 +1142,13 @@
         }
       }
     },
-    "x%d" : {
+    "x" : {
 
     },
-    "xMAX" : {
+    "x%@" : {
+
+    },
+    "x%@)" : {
 
     }
   },
