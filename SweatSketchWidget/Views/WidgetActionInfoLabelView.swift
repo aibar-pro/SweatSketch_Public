@@ -23,7 +23,7 @@ struct WidgetActionInfoLabelView: View {
             if let duration = duration {
                 CountdownTimerLabelView(timeRemaining: duration)
             } else if let maximumRepetitions = repsMax, maximumRepetitions {
-                Text("xMAX")
+                Text("x\(LocalizedStringResource("MAX"))")
             } else if let reps = repsCount {
                 Text("x\(reps)")
             }
