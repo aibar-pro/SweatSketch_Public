@@ -21,8 +21,6 @@ struct WorkoutCatalogMainView: View {
     
     @State private var searchText: String = ""
     
-    @State private var isLoggedIn: Bool = false
-    
     var body: some View {
         VStack (alignment: .leading, spacing: Constants.Design.spacing){
             HStack (alignment: .center){
@@ -32,11 +30,10 @@ struct WorkoutCatalogMainView: View {
                     
                 Spacer()
                 
-                if isLoggedIn {
-                    Text(Constants.Placeholders.WorkoutCatalog.userLoggedInLabel)
-                } else {
-                    UserProfileButtonView(onClick: coordinator.goToProfile)
-                }
+                UserProfileButtonView(isLoggedIn: $viewModel.isLoggedIn, onClick: coordinator.goToProfile)
+                    .onAppear(perform: {
+                        print("Button appear: \(viewModel.isLoggedIn)")
+                    })
             }
             .padding(.top, Constants.Design.spacing/4)
             .padding(.horizontal, Constants.Design.spacing/2)

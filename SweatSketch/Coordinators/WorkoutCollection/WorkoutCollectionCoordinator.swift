@@ -19,7 +19,6 @@ class WorkoutCollectionCoordinator: ObservableObject, Coordinator {
     let applicationEvent: PassthroughSubject<ApplicationEventType, Never>
     
     init(dataContext: NSManagedObjectContext, applicationEvent: PassthroughSubject<ApplicationEventType, Never>, collectionUUID: UUID?) {
-        rootViewController = UIViewController()
         viewModel = WorkoutCollectionViewModel(context: dataContext, collectionUUID: collectionUUID)
         self.applicationEvent = applicationEvent
     }

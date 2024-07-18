@@ -18,7 +18,6 @@ class WorkoutCatalogCoordinator: ObservableObject, Coordinator {
     let applicationEvent: PassthroughSubject<ApplicationEventType, Never>
     
     init(dataContext: NSManagedObjectContext, applicationEvent: PassthroughSubject<ApplicationEventType, Never>) {
-        rootViewController = UIViewController()
         viewModel = WorkoutCatalogViewModel(context: dataContext)
         self.applicationEvent = applicationEvent
     }
