@@ -20,8 +20,6 @@ class ActiveWorkoutCoordinator: ObservableObject, Coordinator {
     let applicationEvent: PassthroughSubject<ApplicationEventType, Never>
     
     init(dataContext: NSManagedObjectContext, activeWorkoutUUID: UUID, applicationEvent: PassthroughSubject<ApplicationEventType, Never>) throws {
-        rootViewController = UIViewController()
-        
         self.activeWorkoutService = ActiveWorkoutService.shared
         self.viewModel = try ActiveWorkoutViewModel(activeWorkoutUUID: activeWorkoutUUID, in: dataContext)
         self.activeWorkoutService.workoutManager = self.viewModel

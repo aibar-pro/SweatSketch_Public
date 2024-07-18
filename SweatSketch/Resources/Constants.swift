@@ -10,6 +10,8 @@ import SwiftUI
 
 enum Constants {
     enum Placeholders {
+        static let loaderText = String.localized("Loading...")
+        
         static let noCollectionName = String.localized("Untitled Collection")
         static let noWorkoutName = String.localized("Untitled Workout")
         static let noExerciseName = String.localized("Untitled Exercise")
@@ -82,6 +84,7 @@ enum Constants {
         }
         
         enum UserProfile {
+            static let profileButtonLabel = String.localized("Profile")
             static let loginButtonLabel = String.localized("Login")
             static let loginScreenTitle = String.localized("Welcome Back!")
             static let loginScreenText = String.localized("Login to your account")
@@ -93,6 +96,8 @@ enum Constants {
             static let signupScreenText = String.localized("Create an account")
 
             static let loginLinkText = String.localized("Already have an account?")
+            
+            static let logoutButtonLabel = String.localized("Logout")
         }
         
         static let saveButtonLabel = String.localized("Save")
@@ -137,7 +142,7 @@ enum Constants {
             static let buttonSecondaryBackgroundColor = Color.secondary.opacity(0.05)
             static let textColorHighEmphasis = Color.primary.opacity(0.87)
             static let textColorMediumEmphasis = Color.primary.opacity(0.6)
-            static let textColorlowEmphasis = Color.primary.opacity(0.1)
+            static let textColorLowEmphasis = Color.primary.opacity(0.1)
             static let linkColor = Color(.textLink).opacity(0.87)
         }
     }

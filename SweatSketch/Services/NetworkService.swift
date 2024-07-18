@@ -19,38 +19,88 @@ class NetworkService {
         self.authRepository = DIHelper().authRepository
         self.userRepository = DIHelper().userRepository
     }
-    
-    func login(user: UserCredentialModel, completion: @escaping (Result<AuthTokenModel, Error>) -> Void) {
-        authRepository.login(userCredential: user.toShared()) { response, error in
-            DispatchQueue.main.async {
+
+    @MainActor
+    func isLoggedIn() async -> Bool {
+        await withCheckedContinuation { continuation in
+            authRepository.isLoggedIn { response, error in
                 if let response = response {
-                    completion(.success(response.toLocal()))
+                    print("NetworkService isLoggedIn response: \(response.boolValue)")
+                    continuation.resume(returning: response.boolValue)
+                } else {
+                    continuation.resume(returning: false)
+                }
+            }
+        }
+    }
+
+    @MainActor
+    func login(user: UserCredentialModel) async throws -> Bool {
+        try await withCheckedThrowingContinuation { continuation in
+            authRepository.login(userCredential: user.toShared()) { response, error in
+                if response != nil {
+                    UserSession.shared.checkLoginStatus()
+                    continuation.resume(returning: true)
                 } else if let error = error {
-                    completion(.failure(error))
+                    print("NETWORK SERVICE: Login failed with error: \(error.localizedDescription)")
+                    continuation.resume(throwing: error)
                 }
             }
         }
     }
     
-    func createUser(user: UserCredentialModel, completion: @escaping (Result<ResponseMessageModel, Error>) -> Void) {
-        userRepository.createUser(userCredential: user.toShared()) { response, error in
-            DispatchQueue.main.async {
-                if let response = response {
-                    completion(.success(response.toLocal()))
+    @MainActor
+    func logout() async throws -> Bool {
+        try await withCheckedThrowingContinuation { continuation in
+            authRepository.logout { response, error in
+                if response != nil {
+                    UserSession.shared.checkLoginStatus()
+                    continuation.resume(returning: true)
                 } else if let error = error {
-                    completion(.failure(error))
+                    print("NETWORK SERVICE: Logout failed with error: \(error.localizedDescription)")
+                    continuation.resume(throwing: error)
                 }
             }
         }
     }
     
-    func createUserProfile(userProfile: UserProfileModel, completion: @escaping (Result<ResponseMessageModel, Error>) -> Void) {
-        userRepository.createUserProfile(userProfile: userProfile.toShared()) { response, error in
-            DispatchQueue.main.async {
-                if let response = response {
-                    completion(.success(response.toLocal()))
+    @MainActor
+    func createUser(user: UserCredentialModel) async throws -> Bool {
+        try await withCheckedThrowingContinuation { continuation in
+            userRepository.createUser(userCredential: user.toShared()) { response, error in
+               if let response = response {
+                    continuation.resume(returning: true)
                 } else if let error = error {
-                    completion(.failure(error))
+                    print("NETWORK SERVICE: User CREATE failed with error: \(error.localizedDescription)")
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+    
+    @MainActor
+    func getUserProfile() async throws -> UserProfileModel {
+        try await withCheckedThrowingContinuation { continuation in
+            userRepository.getUserProfile() { response, error in
+                if let response = response {
+                    continuation.resume(returning: response.toLocal())
+                } else if let error = error {
+                    print("NETWORK SERVICE: User FETCH failed with error: \(error.localizedDescription)")
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+    
+    @MainActor
+    func updateUser(userProfile: UserProfileModel) async throws -> Bool {
+        try await withCheckedThrowingContinuation { continuation in
+            userRepository.updateUserProfile(userProfile: userProfile.toShared()) { response, error in
+               if let response = response {
+                    continuation.resume(returning: true)
+                } else if let error = error {
+                    print("NETWORK SERVICE: User UPDATE failed with error: \(error.localizedDescription)")
+                    continuation.resume(throwing: error)
                 }
             }
         }

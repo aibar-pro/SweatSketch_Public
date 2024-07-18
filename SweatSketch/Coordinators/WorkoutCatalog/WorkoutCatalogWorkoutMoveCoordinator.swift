@@ -15,7 +15,6 @@ class WorkoutCatalogWorkoutMoveCoordinator: ObservableObject, Coordinator {
     var childCoordinators = [Coordinator]()
     
     init(viewModel: WorkoutCatalogWorkoutMoveViewModel) {
-        rootViewController = UIViewController()
         self.viewModel = viewModel
     }
     

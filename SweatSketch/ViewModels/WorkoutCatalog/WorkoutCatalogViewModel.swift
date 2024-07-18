@@ -6,12 +6,16 @@
 //
 
 import CoreData
+import Combine
 
 class WorkoutCatalogViewModel: ObservableObject {
     
     let mainContext: NSManagedObjectContext
     
     @Published var collections = [WorkoutCatalogCollectionViewRepresentation]()
+    @Published var isLoggedIn: Bool = false
+    
+    private var cancellables = Set<AnyCancellable>()
     
     private let collectionDataManager = CollectionDataManager()
     
@@ -22,6 +26,11 @@ class WorkoutCatalogViewModel: ObservableObject {
         refreshData()
         
         setupWorkoutCatalog()
+        
+        UserSession.shared.$isLoggedIn
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.isLoggedIn, on: self)
+            .store(in: &cancellables)
     }
     
     func addCollection(with name: String) {

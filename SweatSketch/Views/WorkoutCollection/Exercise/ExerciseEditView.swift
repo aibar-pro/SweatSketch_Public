@@ -222,7 +222,7 @@ struct ExerciseEditView: View {
                     .padding(.horizontal, Constants.Design.spacing)
                     
                 }
-                .accentColor(Constants.Design.Colors.textColorHighEmphasis)
+                .customAccentColorModifier(Constants.Design.Colors.textColorHighEmphasis)
             }
         }
     }

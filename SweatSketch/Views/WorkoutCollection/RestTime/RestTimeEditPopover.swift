@@ -45,7 +45,7 @@ struct RestTimeEditPopover: View {
                 Spacer()
             }
         }
-        .accentColor(Constants.Design.Colors.textColorHighEmphasis)
+        .customAccentColorModifier(Constants.Design.Colors.textColorHighEmphasis)
     }
 }
 

@@ -9,7 +9,6 @@ import Foundation
 
 enum ApplicationEventType {
     case workoutStarted(UUID)
-//    case workoutFinished
     case catalogRequested
     case collectionRequested(UUID?)
     case profileRequested
