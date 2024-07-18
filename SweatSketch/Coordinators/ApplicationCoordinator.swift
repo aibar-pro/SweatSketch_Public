@@ -11,7 +11,7 @@ import CoreData
 
 class ApplicationCoordinator: ObservableObject, Coordinator {
 
-    var rootViewController: UINavigationController
+    var rootViewController = UINavigationController()
     var childCoordinators = [Coordinator]()
     
     let dataContext: NSManagedObjectContext
@@ -20,7 +20,6 @@ class ApplicationCoordinator: ObservableObject, Coordinator {
     var cancellables = Set<AnyCancellable>()
     
     init(dataContext: NSManagedObjectContext) {
-        self.rootViewController = UINavigationController()
         self.rootViewController.isNavigationBarHidden = true
         self.dataContext = dataContext
     }
@@ -40,7 +39,7 @@ class ApplicationCoordinator: ObservableObject, Coordinator {
                 case .workoutStarted(let workoutUUID):
                     showActiveWorkout(with: workoutUUID)
                 case .catalogRequested:
-                    showWorkoutCollection()
+                    showWorkoutCatalog()
                 case .collectionRequested(let collectionUUID):
                     showWorkoutCollection(with: collectionUUID)
                 case .profileRequested:
@@ -84,7 +83,7 @@ class ApplicationCoordinator: ObservableObject, Coordinator {
         self.rootViewController.viewControllers = [workoutCollectionCoordinator.rootViewController]
     }
     
-    private func showWorkoutCollection() {
+    private func showWorkoutCatalog() {
         let workoutCollectionCoordinator = WorkoutCatalogCoordinator(dataContext: dataContext, applicationEvent: self.applicationEvent)
         workoutCollectionCoordinator.start()
             
@@ -94,16 +93,12 @@ class ApplicationCoordinator: ObservableObject, Coordinator {
     }
     
     private func showProfile() {
-        let loginCoordinator = UserProfileCoordinator(applicationEvent: self.applicationEvent)
-        loginCoordinator.start()
+        let profileCoordinator = UserProfileCoordinator(applicationEvent: self.applicationEvent)
+        profileCoordinator.start()
         
-        let loginViewController = loginCoordinator.rootViewController
-        loginViewController.modalPresentationStyle = .formSheet
-        rootViewController.present(loginViewController, animated: true)
-        
-//        self.childCoordinators.append(loginCoordinator)
-//        self.rootViewController.popToRootViewController(animated: true)
-//        self.rootViewController.viewControllers = [loginCoordinator.rootViewController]
+        self.childCoordinators.append(profileCoordinator)
+        self.rootViewController.popToRootViewController(animated: true)
+        self.rootViewController.viewControllers = [profileCoordinator.rootViewController]
     }
     
     func checkActiveWorkoutValue() {

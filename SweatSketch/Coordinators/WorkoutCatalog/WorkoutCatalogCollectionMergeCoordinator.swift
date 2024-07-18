@@ -15,7 +15,6 @@ class WorkoutCatalogCollectionMergeCoordinator: ObservableObject, Coordinator {
     var childCoordinators = [Coordinator]()
     
     init(viewModel: WorkoutCatalogCollectionMergeViewModel) {
-        rootViewController = UIViewController()
         self.viewModel = viewModel
     }
     

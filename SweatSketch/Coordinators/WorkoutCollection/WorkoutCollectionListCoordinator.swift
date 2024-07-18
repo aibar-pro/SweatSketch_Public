@@ -14,7 +14,6 @@ class WorkoutCollectionListCoordinator: ObservableObject, Coordinator {
     var rootViewController = UIViewController()
     
     init(viewModel: WorkoutCollectionListViewModel) {
-        rootViewController = UIViewController()
         self.viewModel = viewModel
     }
     

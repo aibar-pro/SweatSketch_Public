@@ -14,7 +14,6 @@ class RestTimeEditCoordinator: ObservableObject, Coordinator {
     var rootViewController = UIViewController()
     
     init(viewModel: RestTimeEditViewModel) {
-        rootViewController = UIViewController()
         self.viewModel = viewModel
     }
     

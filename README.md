@@ -37,6 +37,7 @@ Data is managed and passed through ViewModels, including temporary ViewModels fo
 The app uses Combine to switch modes and update receive updates from LiveActivity and Dynamic Island.  
 UserDefaults stores information about an active workout to support state restoration.  
 Network calls and related logic are encapsulated in the Shared Kotlin Multiplatform Library injected as Pod (see SweatSketchShared repository). Prior to that, I used URLSession.  
+I implemented the delegate pattern for UserProfile to get some experience with it, so navigation among views in that part is slightly different from the rest of the app.  
 
 ## Miscellaneous Features
 The app supports light and dark color schemes inherited from system preferences.  

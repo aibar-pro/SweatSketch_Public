@@ -19,6 +19,18 @@ struct UserProfileLoginView: View {
             WorkoutPlanningModalBackgroundView()
             
             VStack(alignment: .center, spacing: Constants.Design.spacing) {
+                HStack {
+                    Button(action: onDismiss) {
+                        Image(systemName: "chevron.backward")
+                        
+                    }
+                    .padding(.vertical, Constants.Design.spacing/2)
+                    .padding(.trailing, Constants.Design.spacing/2)
+                    
+                    Spacer()
+                }
+                .padding(.horizontal, Constants.Design.spacing)
+                
                 Image(systemName: "person.badge.key")
                     .font(.largeTitle)
                     .imageScale(.large)

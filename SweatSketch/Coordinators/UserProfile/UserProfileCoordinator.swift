@@ -15,36 +15,83 @@ class UserProfileCoordinator: ObservableObject, Coordinator {
     let applicationEvent: PassthroughSubject<ApplicationEventType, Never>
     
     init (applicationEvent: PassthroughSubject<ApplicationEventType, Never>) {
-        rootViewController = UIViewController()
         self.applicationEvent = applicationEvent
     }
     
     func start() {
-        let view = UserProfileLoginView(onLogin: { user in
-                print("LOGIN COORDINATOR: LOGIN")
+        if UserSession.shared.isLoggedIn {
+            showUserProfile()
+        } else {
+            showLogin()
+        }
+    }
+    
+    private func showUserProfile() {
+        let userProfileViewCoordinator = UserProfileViewCoordinator()
+        userProfileViewCoordinator.delegate = self
+        userProfileViewCoordinator.start()
+        childCoordinators.append(userProfileViewCoordinator)
+        
+        rootViewController = userProfileViewCoordinator.rootViewController
+     }
 
-            NetworkService.shared.login(user: user){ [weak self] result in
-                    DispatchQueue.main.async {
-                        guard self != nil else { return }
-                        
-                        switch result {
-                        case .success(let response):
-                            print("LOGGED IN: \(response.accessToken)")
-                            self?.rootViewController.dismiss(animated: true)
-                            self?.applicationEvent.send(.catalogRequested)
-                            UserDefaults.standard.set(true, forKey: UserDefaultsKeys.isUserLoggedIn)
-                        case .failure(let error):
-                            print("LOGIN ERROR: \(error.localizedDescription)")
-                        }
-                    }
+     private func showLogin() {
+         let loginCoordinator = UserProfileLoginCoordinator()
+         loginCoordinator.delegate = self
+         loginCoordinator.start()
+         childCoordinators.append(loginCoordinator)
+
+         rootViewController = loginCoordinator.rootViewController
+     }
+
+     private func showSignup() {
+         let signupCoordinator = UserProfileSignupCoordinator()
+         signupCoordinator.delegate = self
+         signupCoordinator.start()
+         childCoordinators.append(signupCoordinator)
+         
+         rootViewController.present(signupCoordinator.rootViewController, animated: true)
+     }
+}
+
+extension UserProfileCoordinator: UserProfileCoordinatorDelegate {
+    func didRequestLogout() {
+        Task {
+            do {
+                let result = try await NetworkService.shared.logout()
+                if result {
+                    print("COORDINATOR: logout successful")
+                    didRequestProfile()
                 }
-            }, onDismiss: {
-                print("LOGIN COORDINATOR: DISMISS")
-                self.rootViewController.dismiss(animated: true)
-                self.applicationEvent.send(.catalogRequested)
+            } catch {
+                print("COORDINATOR: logout error. \(error)")
             }
-        ).environmentObject(self)
-        rootViewController = UIHostingController(rootView: view)
-        rootViewController.view.backgroundColor = .clear
+        }
+    }
+    
+    func didRequestReturn() {
+        applicationEvent.send(.catalogRequested)
+    }
+    
+    func didRequestLogin() {
+        didRequestProfile()
+    }
+
+    func didRequestProfile() {
+        Task { @MainActor in
+            applicationEvent.send(.profileRequested)
+        }
+    }
+
+    func didRequestSignup() {
+        showSignup()
+    }
+
+    func didLoginSuccessfully() {
+        didRequestProfile()
+    }
+
+    func didSignupSuccessfully() {
+        didRequestProfile()
     }
 }
