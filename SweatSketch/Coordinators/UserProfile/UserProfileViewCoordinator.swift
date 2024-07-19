@@ -21,11 +21,14 @@ class UserProfileViewCoordinator: Coordinator {
 
     func start() {
         let userProfileView = UserProfileView(
-            onLogout: { [weak self] in
-                self?.delegate?.didRequestLogout()
-            }, 
+            onSubmit: { [weak self] userProfile in
+                self?.delegate?.didRequestProfileUpdate(userProfile: userProfile)
+            },
             onDismiss: { [weak self] in
                 self?.delegate?.didRequestReturn()
+            },
+            onLogout: { [weak self] in
+                self?.delegate?.didRequestLogout()
             },
             viewModel: viewModel
         )

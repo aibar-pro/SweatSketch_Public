@@ -103,7 +103,7 @@ struct ActiveWorkoutView: View {
                     .opacity(0.5)
                 }
             }
-            .accentColor(Constants.Design.Colors.textColorHighEmphasis)
+            .customAccentColorModifier(Constants.Design.Colors.textColorHighEmphasis)
         }
     }
 }

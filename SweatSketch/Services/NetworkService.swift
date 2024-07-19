@@ -68,13 +68,11 @@ class NetworkService {
     func createUser(user: UserCredentialModel) async throws -> Bool {
         try await withCheckedThrowingContinuation { continuation in
             userRepository.createUser(userCredential: user.toShared()) { response, error in
-                DispatchQueue.main.async {
-                    if let response = response {
-                        continuation.resume(returning: true)
-                    } else if let error = error {
-                        print("NETWORK SERVICE: User CREATE failed with error: \(error.localizedDescription)")
-                        continuation.resume(throwing: error)
-                    }
+               if let response = response {
+                    continuation.resume(returning: true)
+                } else if let error = error {
+                    print("NETWORK SERVICE: User CREATE failed with error: \(error.localizedDescription)")
+                    continuation.resume(throwing: error)
                 }
             }
         }
@@ -84,13 +82,25 @@ class NetworkService {
     func getUserProfile() async throws -> UserProfileModel {
         try await withCheckedThrowingContinuation { continuation in
             userRepository.getUserProfile() { response, error in
-                DispatchQueue.main.async {
-                    if let response = response {
-                        continuation.resume(returning: response.toLocal())
-                    } else if let error = error {
-                        print("NETWORK SERVICE: User FETCH failed with error: \(error.localizedDescription)")
-                        continuation.resume(throwing: error)
-                    }
+                if let response = response {
+                    continuation.resume(returning: response.toLocal())
+                } else if let error = error {
+                    print("NETWORK SERVICE: User FETCH failed with error: \(error.localizedDescription)")
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+    
+    @MainActor
+    func updateUser(userProfile: UserProfileModel) async throws -> Bool {
+        try await withCheckedThrowingContinuation { continuation in
+            userRepository.updateUserProfile(userProfile: userProfile.toShared()) { response, error in
+               if let response = response {
+                    continuation.resume(returning: true)
+                } else if let error = error {
+                    print("NETWORK SERVICE: User UPDATE failed with error: \(error.localizedDescription)")
+                    continuation.resume(throwing: error)
                 }
             }
         }

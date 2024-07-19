@@ -82,6 +82,20 @@ extension UserProfileCoordinator: UserProfileCoordinatorDelegate {
             applicationEvent.send(.profileRequested)
         }
     }
+    
+    func didRequestProfileUpdate(userProfile: UserProfileModel) {
+        Task {
+            do {
+                let result = try await NetworkService.shared.updateUser(userProfile: userProfile)
+                if result {
+                    print("COORDINATOR: Profile update successful")
+                    didRequestProfile()
+                }
+            } catch {
+                print("COORDINATOR: Profile update error. \(error)")
+            }
+        }
+    }
 
     func didRequestSignup() {
         showSignup()

@@ -142,7 +142,7 @@ enum Constants {
             static let buttonSecondaryBackgroundColor = Color.secondary.opacity(0.05)
             static let textColorHighEmphasis = Color.primary.opacity(0.87)
             static let textColorMediumEmphasis = Color.primary.opacity(0.6)
-            static let textColorlowEmphasis = Color.primary.opacity(0.1)
+            static let textColorLowEmphasis = Color.primary.opacity(0.1)
             static let linkColor = Color(.textLink).opacity(0.87)
         }
     }
