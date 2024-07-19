@@ -17,7 +17,7 @@ struct ProgressBarView: View {
         GeometryReader { barGeometry in
             ZStack(alignment: .center) {
                 RoundedRectangle(cornerRadius: Constants.Design.cornerRadius)
-                    .customForegroundColorModifier(Constants.Design.Colors.textColorlowEmphasis)
+                    .customForegroundColorModifier(Constants.Design.Colors.textColorLowEmphasis)
                     .frame(width: barGeometry.size.width, height: barGeometry.size.height)
 
                 HStack (alignment: .center, spacing: Constants.Design.spacing/2) {

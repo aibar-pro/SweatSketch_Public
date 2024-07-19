@@ -170,7 +170,7 @@ struct WorkoutCatalogMainView: View {
             }
             
         }
-        .accentColor(Constants.Design.Colors.textColorHighEmphasis)
+        .customAccentColorModifier(Constants.Design.Colors.textColorHighEmphasis)
         
     }
     

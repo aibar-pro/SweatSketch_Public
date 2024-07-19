@@ -98,6 +98,17 @@ enum Constants {
             static let loginLinkText = String.localized("Already have an account?")
             
             static let logoutButtonLabel = String.localized("Logout")
+            
+            static let noUsername = String.localized("Champion")
+            
+            static let usernameLabel = String.localized("Username")
+            static let ageLabel = String.localized("Age")
+            static let heightLabel = String.localized("Height")
+            static let heightUnitLabel = String.localized("cm")
+            static let weightLabel = String.localized("Weight")
+            static let weightUnitLabel = String.localized("kg")
+            
+            static let greetingLabel = String.localized("Hello")
         }
         
         static let saveButtonLabel = String.localized("Save")
@@ -142,7 +153,7 @@ enum Constants {
             static let buttonSecondaryBackgroundColor = Color.secondary.opacity(0.05)
             static let textColorHighEmphasis = Color.primary.opacity(0.87)
             static let textColorMediumEmphasis = Color.primary.opacity(0.6)
-            static let textColorlowEmphasis = Color.primary.opacity(0.1)
+            static let textColorLowEmphasis = Color.primary.opacity(0.1)
             static let linkColor = Color(.textLink).opacity(0.87)
         }
     }
@@ -156,5 +167,12 @@ enum Constants {
         static let actionDuration = 30
         static let supersetCount = 1
         static let restTimeDuration = 60
+        
+        enum UserProfile {
+            static let username = Constants.Placeholders.UserProfile.noUsername
+            static let age = 18
+            static let height = 100.0
+            static let weight = 50.0
+        }
     }
 }

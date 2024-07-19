@@ -8,27 +8,59 @@
 import Foundation
 
 class UserProfileViewModel: ObservableObject {
-    @Published var profileName: String = "Default profile name"
     @Published var isLoading: Bool = true
     
+    @Published var userProfile: UserProfileModel?
+    
     init() {
-        Task {
-            await fetchUserProfile()
-        }
+        fetchUserProfile()
     }
     
-    private func fetchUserProfile() async {
-        do {
-            let userProfile = try await NetworkService.shared.getUserProfile()
-            DispatchQueue.main.async {
-                self.profileName = userProfile.login
+    private func fetchUserProfile() {
+        Task { @MainActor in
+            do {
+                self.userProfile = try await NetworkService.shared.getUserProfile()
                 self.isLoading = false
-            }
-        } catch {
-            DispatchQueue.main.async {
+            } catch {
                 print("User profile fetch failed: \(error.localizedDescription)")
                 self.isLoading = false
             }
         }
+    }
+    
+    func getGreeting() -> String {
+        userProfile?.username ?? userProfile?.login ?? Constants.DefaultValues.UserProfile.username
+    }
+    
+    func getUsername() -> String {
+        userProfile?.username ?? Constants.DefaultValues.UserProfile.username
+    }
+    
+    func getAge() -> Int {
+        Int(userProfile?.age ?? Int32(Constants.DefaultValues.UserProfile.age))
+    }
+    
+    func getHeight() -> Int {
+        Int(userProfile?.height ?? Constants.DefaultValues.UserProfile.height)
+    }
+    
+    func getWeight() -> Int {
+        Int(userProfile?.weight ?? Constants.DefaultValues.UserProfile.weight)
+    }
+    
+    func updateUsername(with username: String) {
+        userProfile?.username = username
+    }
+    
+    func updateAge(with age: Int) {
+        userProfile?.age = Int32(age)
+    }
+    
+    func updateHeight(with height: Int) {
+        userProfile?.height = Double(height)
+    }
+    
+    func updateWeight(with weight: Int) {
+        userProfile?.weight = Double(weight)
     }
 }
