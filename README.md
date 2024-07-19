@@ -39,6 +39,7 @@ UserDefaults stores information about an active workout to support state restora
 Network calls and related logic are encapsulated in the Shared Kotlin Multiplatform Library injected as Pod (see SweatSketchShared repository). Prior to that, I used URLSession.  
 I implemented the delegate pattern for UserProfile to get some experience with it, so navigation among views in that part is slightly different from the rest of the app.  
 
+
 ## Miscellaneous Features
 The app supports light and dark color schemes inherited from system preferences.  
 The app supports English, Russian, and German languages. Available for iOS16+  

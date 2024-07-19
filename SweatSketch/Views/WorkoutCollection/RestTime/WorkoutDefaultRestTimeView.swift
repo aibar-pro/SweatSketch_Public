@@ -67,7 +67,7 @@ struct WorkoutDefaultRestTimeView: View {
                 }
             }
         }
-        .accentColor(Constants.Design.Colors.textColorHighEmphasis)
+        .customAccentColorModifier(Constants.Design.Colors.textColorHighEmphasis)
            
     }
 }

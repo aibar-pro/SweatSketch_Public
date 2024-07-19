@@ -24,6 +24,12 @@
     "%@" : {
 
     },
+    "%@ cm" : {
+
+    },
+    "%@ kg" : {
+
+    },
     "%@," : {
 
     },
@@ -128,6 +134,9 @@
           }
         }
       }
+    },
+    "Age" : {
+
     },
     "Already have an account?" : {
       "extractionState" : "manual",
@@ -423,6 +432,9 @@
         }
       }
     },
+    "Height" : {
+
+    },
     "Hello, %@!" : {
 
     },
@@ -478,6 +490,7 @@
       }
     },
     "Logout" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1126,6 +1139,12 @@
           }
         }
       }
+    },
+    "Username" : {
+
+    },
+    "Weight" : {
+
     },
     "Welcome Back!" : {
       "extractionState" : "manual",

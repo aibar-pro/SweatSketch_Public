@@ -10,6 +10,7 @@ import Foundation
 protocol UserProfileCoordinatorDelegate: AnyObject {
     func didRequestLogin()
     func didRequestProfile()
+    func didRequestProfileUpdate(userProfile: UserProfileModel)
     func didRequestSignup()
     func didRequestLogout()
     func didRequestReturn()
