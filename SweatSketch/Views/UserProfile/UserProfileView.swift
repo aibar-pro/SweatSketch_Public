@@ -13,7 +13,7 @@ struct UserProfileView: View {
     var onLogout: () -> ()
     
     @ObservedObject var viewModel: UserProfileViewModel
-    //TODO: Add localization and get values from ViewModel
+  
     var body: some View {
         VStack {
             HStack {
@@ -51,52 +51,52 @@ struct UserProfileView: View {
                 VStack (alignment: .leading, spacing: Constants.Design.spacing) {
                     HStack {
                         Spacer()
-                        Text("Hello, \(viewModel.userProfile?.username ?? viewModel.userProfile?.login ?? "noname")!")
+                        Text("\(Constants.Placeholders.UserProfile.greetingLabel), \(viewModel.getGreeting())!")
                             .font(.title)
                         Spacer()
                     }
                     
                     VStack (alignment: .leading, spacing: Constants.Design.spacing) {
-                        Text("Username")
+                        Text(Constants.Placeholders.UserProfile.usernameLabel)
                             .font(.footnote)
                             .customForegroundColorModifier(Constants.Design.Colors.textColorMediumEmphasis)
-                        TextField("Username", text:
+                        TextField(Constants.Placeholders.UserProfile.usernameLabel, text:
                                     Binding(
-                                        get: { viewModel.userProfile?.username ?? "noname" },
+                                        get: { viewModel.getUsername() },
                                         set: { viewModel.updateUsername(with: $0) }
                                     )
                         )
                         .padding(.leading, Constants.Design.spacing/2)
                         .padding(.bottom, Constants.Design.spacing)
                         
-                        Text("Age")
+                        Text(Constants.Placeholders.UserProfile.ageLabel)
                             .font(.footnote)
                             .customForegroundColorModifier(Constants.Design.Colors.textColorMediumEmphasis)
-                        Picker("Age", selection:
+                        Picker(Constants.Placeholders.UserProfile.ageLabel, selection:
                                 Binding(
-                                    get: { Int(viewModel.userProfile?.age ?? 18) },
+                                    get: { viewModel.getAge() },
                                     set: { viewModel.updateAge(with: $0) }
                                 )
                         ) {
-                            ForEach(0..<200, id: \.self) { year in
-                                Text("\(year)").tag(year)
+                            ForEach(0..<200, id: \.self) { unit in
+                                Text("\(unit)").tag(unit)
                             }
                         }
                         .pickerStyle(MenuPickerStyle())
                         .padding(.leading, Constants.Design.spacing/2)
                         .padding(.bottom, Constants.Design.spacing)
                         
-                        Text("Height")
+                        Text(Constants.Placeholders.UserProfile.heightLabel)
                             .font(.footnote)
                             .customForegroundColorModifier(Constants.Design.Colors.textColorMediumEmphasis)
-                        Picker("Height", selection:
+                        Picker(Constants.Placeholders.UserProfile.heightLabel, selection:
                                 Binding(
-                                    get: { Int(viewModel.userProfile?.height ?? 100) },
+                                    get: { viewModel.getHeight() },
                                     set: { viewModel.updateHeight(with: $0) }
                                 )
                         ) {
-                            ForEach(0..<300, id: \.self) { year in
-                                Text("\(year) cm").tag(year)
+                            ForEach(0..<300, id: \.self) { unit in
+                                Text("\(unit) \(Constants.Placeholders.UserProfile.heightUnitLabel)").tag(unit)
                             }
                         }
                         .pickerStyle(MenuPickerStyle())
@@ -108,12 +108,12 @@ struct UserProfileView: View {
                             .customForegroundColorModifier(Constants.Design.Colors.textColorMediumEmphasis)
                         Picker("Weight", selection:
                                 Binding(
-                                    get: { Int(viewModel.userProfile?.weight ?? 50) },
+                                    get: { viewModel.getWeight() },
                                     set: { viewModel.updateWeight(with: $0) }
                                 )
                         ) {
-                            ForEach(0..<300, id: \.self) { year in
-                                Text("\(year) kg").tag(year)
+                            ForEach(0..<400, id: \.self) { unit in
+                                Text("\(unit) \(Constants.Placeholders.UserProfile.weightUnitLabel)").tag(unit)
                             }
                         }
                         .pickerStyle(MenuPickerStyle())

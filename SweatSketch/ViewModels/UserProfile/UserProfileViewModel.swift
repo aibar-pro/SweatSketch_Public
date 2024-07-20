@@ -28,6 +28,26 @@ class UserProfileViewModel: ObservableObject {
         }
     }
     
+    func getGreeting() -> String {
+        userProfile?.username ?? userProfile?.login ?? Constants.DefaultValues.UserProfile.username
+    }
+    
+    func getUsername() -> String {
+        userProfile?.username ?? Constants.DefaultValues.UserProfile.username
+    }
+    
+    func getAge() -> Int {
+        Int(userProfile?.age ?? Int32(Constants.DefaultValues.UserProfile.age))
+    }
+    
+    func getHeight() -> Int {
+        Int(userProfile?.height ?? Constants.DefaultValues.UserProfile.height)
+    }
+    
+    func getWeight() -> Int {
+        Int(userProfile?.weight ?? Constants.DefaultValues.UserProfile.weight)
+    }
+    
     func updateUsername(with username: String) {
         userProfile?.username = username
     }
