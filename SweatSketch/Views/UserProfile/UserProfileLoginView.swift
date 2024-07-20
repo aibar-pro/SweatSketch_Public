@@ -16,8 +16,6 @@ struct UserProfileLoginView: View {
     
     var body: some View {
         ZStack {
-            WorkoutPlanningModalBackgroundView()
-            
             VStack(alignment: .center, spacing: Constants.Design.spacing) {
                 HStack {
                     Button(action: onDismiss) {
