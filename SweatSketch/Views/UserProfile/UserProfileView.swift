@@ -13,7 +13,7 @@ struct UserProfileView: View {
     var onLogout: () -> ()
     
     @ObservedObject var viewModel: UserProfileViewModel
-
+  
     var body: some View {
         VStack {
             HStack {
