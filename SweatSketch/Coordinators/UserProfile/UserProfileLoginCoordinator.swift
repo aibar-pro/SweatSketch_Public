@@ -27,6 +27,7 @@ class UserProfileLoginCoordinator: Coordinator, ObservableObject {
             }
         )
         rootViewController = UIHostingController(rootView: loginView)
+        rootViewController.view.backgroundColor = .clear
     }
 
     private func handleLogin(user: UserCredentialModel) {

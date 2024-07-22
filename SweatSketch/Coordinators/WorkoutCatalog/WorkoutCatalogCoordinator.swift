@@ -36,6 +36,18 @@ class WorkoutCatalogCoordinator: ObservableObject, Coordinator {
         applicationEvent.send(.profileRequested)
     }
     
+    func goToShareWorkout(movingWorkout: WorkoutCatalogWorkoutViewRepresentation) {
+//        let workoutMoveViewModel = WorkoutCatalogWorkoutMoveViewModel(parentViewModel: viewModel, movingWorkout: movingWorkout)
+//        let workoutMoveCoordinator = WorkoutCatalogWorkoutMoveCoordinator(viewModel: workoutMoveViewModel)
+//        
+//        workoutMoveCoordinator.start()
+//        childCoordinators.append(workoutMoveCoordinator)
+        
+//        let moveWorkoutViewController = workoutMoveCoordinator.rootViewController
+        let shareWorkoutViewController = UIHostingController(rootView: Text("Share Workout"))
+        shareWorkoutViewController.modalPresentationStyle = .formSheet
+        rootViewController.present(shareWorkoutViewController, animated: true)
+    }
     
     func goToMoveWorkout(movingWorkout: WorkoutCatalogWorkoutViewRepresentation) {
         let workoutMoveViewModel = WorkoutCatalogWorkoutMoveViewModel(parentViewModel: viewModel, movingWorkout: movingWorkout)

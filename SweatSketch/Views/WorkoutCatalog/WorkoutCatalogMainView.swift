@@ -80,10 +80,18 @@ struct WorkoutCatalogMainView: View {
                                     ) {
                                         LazyVStack (alignment: .leading, spacing: Constants.Design.spacing/2) {
                                             ForEach(collection.workouts, id: \.id) { workout in
-                                                WorkoutCatalogWorkoutRowView(workoutRepresentation: workout, onMoveRequested: { workout in
-                                                    print(workout.name)
-                                                    coordinator.goToMoveWorkout(movingWorkout: workout)
-                                                })
+                                                WorkoutCatalogWorkoutRowView(
+                                                    workoutRepresentation: workout,
+                                                    isLoggedIn: $viewModel.isLoggedIn,
+                                                    onMoveRequested: {
+                                                        print("Move workout \($0.name)")
+                                                        coordinator.goToMoveWorkout(movingWorkout: $0)
+                                                    },
+                                                    onShareRequested: {
+                                                        print("Share workout \($0.name)")
+                                                        coordinator.goToShareWorkout(movingWorkout: $0)
+                                                    }
+                                                )
                                                 .padding(Constants.Design.spacing/2)
                                                 .materialCardBackgroundModifier()
                                             }
@@ -122,10 +130,18 @@ struct WorkoutCatalogMainView: View {
                                                     }
                                                 ) {
                                                     ForEach(subCollection.workouts, id: \.id) { workout in
-                                                        WorkoutCatalogWorkoutRowView(workoutRepresentation: workout, onMoveRequested: { workout in
-                                                            print(workout.name)
-                                                            coordinator.goToMoveWorkout(movingWorkout: workout)
-                                                        })
+                                                        WorkoutCatalogWorkoutRowView(
+                                                            workoutRepresentation: workout,
+                                                            isLoggedIn: $viewModel.isLoggedIn,
+                                                            onMoveRequested: {
+                                                                print("Move workout \($0.name)")
+                                                                coordinator.goToMoveWorkout(movingWorkout: $0)
+                                                            },
+                                                            onShareRequested: {
+                                                                print("Share workout \($0.name)")
+                                                                coordinator.goToShareWorkout(movingWorkout: $0)
+                                                            }
+                                                        )
                                                         .padding(Constants.Design.spacing/2)
                                                         .materialCardBackgroundModifier()
                                                     }
