@@ -18,31 +18,34 @@ struct UserProfileSignupView: View {
         ZStack {
             WorkoutPlanningModalBackgroundView()
             
-            VStack(alignment: .center, spacing: Constants.Design.spacing) {
-                Image(systemName: "person.badge.plus")
-                    .font(.largeTitle)
-                    .imageScale(.large)
-                    .padding(.top, Constants.Design.spacing)
-                
-                Text(Constants.Placeholders.UserProfile.signupScreenTitle)
-                    .font(.title)
-                
-                Text(Constants.Placeholders.UserProfile.signupScreenText)
-                    .font(.subheadline)
-                
-                LoginPasswordView(user: $user)
-                
-                Button(action: {
-                    onSignup(user)
-                }) {
-                    Text(Constants.Placeholders.UserProfile.signupButtonLabel)
-                        .accentButtonLabelStyleModifier()
+            VStack{
+                ScrollView {
+                    VStack(alignment: .center, spacing: Constants.Design.spacing/2) {
+                        Image(systemName: "person.badge.plus")
+                            .font(.largeTitle)
+                            .imageScale(.large)
+                            .padding(.top, Constants.Design.spacing)
+                        
+                        Text(Constants.Placeholders.UserProfile.signupScreenTitle)
+                            .font(.title)
+                        
+                        Text(Constants.Placeholders.UserProfile.signupScreenText)
+                            .font(.subheadline)
+                        
+                        LoginPasswordView(user: $user)
+                            .padding(Constants.Design.spacing)
+                        
+                        Button(action: {
+                            onSignup(user)
+                        }) {
+                            Text(Constants.Placeholders.UserProfile.signupButtonLabel)
+                                .accentButtonLabelStyleModifier()
+                        }
+                    }
+                    .customForegroundColorModifier(Constants.Design.Colors.textColorHighEmphasis)
                 }
-                
                 Divider()
-                    .padding(.top, Constants.Design.spacing)
-                
-                
+                    .padding(.vertical, Constants.Design.spacing/2)
                 HStack(alignment: .center) {
                     Text(Constants.Placeholders.UserProfile.signupLinkText)
                         .customForegroundColorModifier(Constants.Design.Colors.textColorMediumEmphasis)
@@ -53,9 +56,7 @@ struct UserProfileSignupView: View {
                             .customForegroundColorModifier(Constants.Design.Colors.linkColor)
                     }
                 }
-                
             }
-            .customForegroundColorModifier(Constants.Design.Colors.textColorHighEmphasis)
         }
         .onDisappear(perform: onDismiss)
     }

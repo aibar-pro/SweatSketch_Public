@@ -11,34 +11,31 @@ struct LoginPasswordView: View {
     @Binding var user: UserCredentialModel
     
     var body: some View {
-        if #available(iOS 16.0, *) {
-            Form {
-                TextField(Constants.Placeholders.emailLabel, text: $user.login)
-                    .disableAutocorrection(true)
-                    .textInputAutocapitalization(.never)
-                SecureField(Constants.Placeholders.passwordLabel, text: $user.password)
-                    .disableAutocorrection(true)
-                    .textInputAutocapitalization(.never)
-            }
-            .scrollContentBackground(.hidden)
-        } else {
-            VStack {
-                VStack (spacing: Constants.Design.spacing/2) {
-                    TextField(Constants.Placeholders.emailLabel, text: $user.login)
-                        .disableAutocorrection(true)
-                    Divider()
-                    SecureField(Constants.Placeholders.passwordLabel, text: $user.password)
-                }
-                .padding(Constants.Design.spacing)
-                .materialCardBackgroundModifier()
-                Spacer()
-            }
-            .padding(.top, Constants.Design.spacing)
-            .padding(.horizontal, Constants.Design.spacing)
+        VStack (alignment: .leading, spacing: Constants.Design.spacing) {
+            Text(Constants.Placeholders.emailLabel)
+                .font(.footnote)
+                .customForegroundColorModifier(Constants.Design.Colors.textColorMediumEmphasis)
+            TextField(Constants.Placeholders.emailLabel, text:
+                        $user.login
+            )
+            .disableAutocorrection(true)
+            .padding(.leading, Constants.Design.spacing/2)
+            .padding(.bottom, Constants.Design.spacing)
+            
+            Text(Constants.Placeholders.passwordLabel)
+                .font(.footnote)
+                .customForegroundColorModifier(Constants.Design.Colors.textColorMediumEmphasis)
+            SecureField(Constants.Placeholders.passwordLabel, text:
+                        $user.password
+            )
+            .disableAutocorrection(true)
+            .padding(.leading, Constants.Design.spacing/2)
         }
+        .padding(Constants.Design.spacing)
+        .materialCardBackgroundModifier()
     }
 }
 
 #Preview {
-    LoginPasswordView(user: .constant(UserCredentialModel(login: "@ss", password: "123")))
+    LoginPasswordView(user: .constant(UserCredentialModel(login: "@ss", password: "123456")))
 }

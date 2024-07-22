@@ -9,8 +9,10 @@ import SwiftUI
 
 struct WorkoutCatalogWorkoutRowView: View {
     @ObservedObject var workoutRepresentation: WorkoutCatalogWorkoutViewRepresentation
+    @Binding var isLoggedIn: Bool
     
     var onMoveRequested: (_ workout: WorkoutCatalogWorkoutViewRepresentation) -> ()
+    var onShareRequested: (_ workout: WorkoutCatalogWorkoutViewRepresentation) -> ()
     
     var body: some View {
         Menu {
@@ -19,8 +21,9 @@ struct WorkoutCatalogWorkoutRowView: View {
             }
 
             Button(Constants.Placeholders.WorkoutCatalog.shareWorkoutButtonLabel) {
-
+                onShareRequested(workoutRepresentation)
             }
+            .disabled(!isLoggedIn)
        } label: {
            HStack{
                Text(workoutRepresentation.name)
@@ -42,6 +45,6 @@ struct WorkoutCatalogWorkoutRowView_Previews: PreviewProvider {
         
         let workoutForPreview = (firstCollection?.toWorkoutCollectionRepresentation()?.workouts.first)!
         
-        WorkoutCatalogWorkoutRowView(workoutRepresentation: workoutForPreview, onMoveRequested: {workout in })
+        WorkoutCatalogWorkoutRowView(workoutRepresentation: workoutForPreview, isLoggedIn: .constant(true), onMoveRequested: {workout in }, onShareRequested: { _ in })
     }
 }

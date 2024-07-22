@@ -27,6 +27,7 @@ class UserProfileLoginCoordinator: Coordinator, ObservableObject {
             }
         )
         rootViewController = UIHostingController(rootView: loginView)
+        rootViewController.view.backgroundColor = .clear
     }
 
     private func handleLogin(user: UserCredentialModel) {
@@ -38,6 +39,7 @@ class UserProfileLoginCoordinator: Coordinator, ObservableObject {
                     print("COORDINATOR: LOGIN SUCCESSFUL")
                 }
             } catch {
+                ErrorManager.shared.displayError(message: "Login failed: \(error.localizedDescription)")
                 print("Login failed with error: \(error.localizedDescription)")
             }
         }
