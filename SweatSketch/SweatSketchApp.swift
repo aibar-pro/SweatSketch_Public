@@ -11,11 +11,16 @@ import SwiftUI
 struct SweatSketchApp: App {
     
     @StateObject var applicationCoordinator = ApplicationCoordinator(dataContext: PersistenceController.shared.container.viewContext)
+    @StateObject var errorManager = ErrorManager.shared
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environmentObject(applicationCoordinator)
+            ZStack {
+                ContentView()
+                    .environmentObject(applicationCoordinator)
+                GlobalErrorView()
+                    .environmentObject(errorManager)
+            }
         }
     }
 }
