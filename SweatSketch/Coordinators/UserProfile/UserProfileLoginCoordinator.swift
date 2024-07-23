@@ -39,6 +39,7 @@ class UserProfileLoginCoordinator: Coordinator, ObservableObject {
                     print("COORDINATOR: LOGIN SUCCESSFUL")
                 }
             } catch {
+                ErrorManager.shared.displayError(message: "Login failed: \(error.localizedDescription)")
                 print("Login failed with error: \(error.localizedDescription)")
             }
         }

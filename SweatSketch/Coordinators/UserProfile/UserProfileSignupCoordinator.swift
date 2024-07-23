@@ -18,9 +18,7 @@ class UserProfileSignupCoordinator: Coordinator {
             onSignup: { [weak self] user in
                 self?.handleSignup(user: user)
             },
-            onDismiss: { [weak self] in
-                
-            },
+            onDismiss: {},
             onLogin: { [weak self] in
                 self?.rootViewController.dismiss(animated: true)
             }
@@ -33,15 +31,21 @@ class UserProfileSignupCoordinator: Coordinator {
             do {
                 let success = try await NetworkService.shared.createUser(user: user)
                 
-                do {
-                    let loginSuccess = try await NetworkService.shared.login(user: user)
-                    
-                    self.delegate?.didLoginSuccessfully()
-                    print("COORDINATOR: Login after signup SUCCESS")
-                } catch {
-                    print("Login failed after signup: \(error.localizedDescription)")
+                if success {
+                    do {
+                        let loginSuccess = try await NetworkService.shared.login(user: user)
+                        
+                        if loginSuccess {
+                            self.delegate?.didLoginSuccessfully()
+                            print("COORDINATOR: Login after signup SUCCESS")
+                        }
+                    } catch {
+                        ErrorManager.shared.displayError(message: "Login failed after signup: \(error.localizedDescription)")
+                        print("Login failed after signup: \(error.localizedDescription)")
+                    }
                 }
             } catch {
+                ErrorManager.shared.displayError(message: "Signup failed: \(error.localizedDescription)")
                 print("Signup failed with error: \(error.localizedDescription)")
             }
         }

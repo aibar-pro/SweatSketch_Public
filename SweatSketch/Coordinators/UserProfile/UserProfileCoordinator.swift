@@ -14,6 +14,8 @@ class UserProfileCoordinator: ObservableObject, Coordinator {
     
     let applicationEvent: PassthroughSubject<ApplicationEventType, Never>
     
+    var cancellables = Set<AnyCancellable>()
+    
     init (applicationEvent: PassthroughSubject<ApplicationEventType, Never>) {
         self.applicationEvent = applicationEvent
     }
@@ -64,6 +66,7 @@ extension UserProfileCoordinator: UserProfileCoordinatorDelegate {
                     didRequestProfile()
                 }
             } catch {
+                ErrorManager.shared.displayError(message: "Logout failed: \(error.localizedDescription)")
                 print("COORDINATOR: logout error. \(error)")
             }
         }
@@ -78,9 +81,13 @@ extension UserProfileCoordinator: UserProfileCoordinatorDelegate {
     }
 
     func didRequestProfile() {
-        Task { @MainActor in
-            applicationEvent.send(.profileRequested)
-        }
+        // Task { @MainActor in -- is also a viable option 
+        Just(())
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.applicationEvent.send(.profileRequested)
+            }
+            .store(in: &cancellables)
     }
     
     func didRequestProfileUpdate(userProfile: UserProfileModel) {
@@ -92,6 +99,7 @@ extension UserProfileCoordinator: UserProfileCoordinatorDelegate {
                     didRequestProfile()
                 }
             } catch {
+                ErrorManager.shared.displayError(message: "Profile update failed: \(error.localizedDescription)")
                 print("COORDINATOR: Profile update error. \(error)")
             }
         }

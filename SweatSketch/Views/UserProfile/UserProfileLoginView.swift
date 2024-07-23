@@ -16,41 +16,45 @@ struct UserProfileLoginView: View {
     
     var body: some View {
         ZStack {
-            VStack(alignment: .center, spacing: Constants.Design.spacing) {
-                HStack {
-                    Button(action: onDismiss) {
-                        Image(systemName: "chevron.backward")
+            VStack{
+                ScrollView {
+                    VStack(alignment: .center, spacing: Constants.Design.spacing/2) {
+                        HStack {
+                            Button(action: onDismiss) {
+                                Image(systemName: "chevron.backward")
+                                
+                            }
+                            .padding(.vertical, Constants.Design.spacing/2)
+                            .padding(.trailing, Constants.Design.spacing/2)
+                            
+                            Spacer()
+                        }
+                        .padding(.horizontal, Constants.Design.spacing)
                         
+                        Image(systemName: "person.badge.key")
+                            .font(.largeTitle)
+                            .imageScale(.large)
+                            .padding(.top, Constants.Design.spacing)
+                        
+                        Text(Constants.Placeholders.UserProfile.loginScreenTitle)
+                            .font(.title)
+                        
+                        Text(Constants.Placeholders.UserProfile.loginScreenText)
+                            .font(.subheadline)
+                        
+                        LoginPasswordView(user: $user)
+                            .padding(Constants.Design.spacing)
+                        
+                        Button(action: {
+                            onLogin(user)
+                        }) {
+                            Text(Constants.Placeholders.UserProfile.loginButtonLabel)
+                                .accentButtonLabelStyleModifier()
+                        }
                     }
-                    .padding(.vertical, Constants.Design.spacing/2)
-                    .padding(.trailing, Constants.Design.spacing/2)
-                    
-                    Spacer()
                 }
-                .padding(.horizontal, Constants.Design.spacing)
-                
-                Image(systemName: "person.badge.key")
-                    .font(.largeTitle)
-                    .imageScale(.large)
-                    .padding(.top, Constants.Design.spacing)
-                
-                Text(Constants.Placeholders.UserProfile.loginScreenTitle)
-                    .font(.title)
-                
-                Text(Constants.Placeholders.UserProfile.loginScreenText)
-                    .font(.subheadline)
-                
-                LoginPasswordView(user: $user)
-                
-                Button(action: {
-                    onLogin(user)
-                }) {
-                    Text(Constants.Placeholders.UserProfile.loginButtonLabel)
-                        .accentButtonLabelStyleModifier()
-                }
-                
                 Divider()
-                    .padding(.top, Constants.Design.spacing)
+                    .padding(.vertical, Constants.Design.spacing/2)
                 
                 
                 HStack(alignment: .center) {
