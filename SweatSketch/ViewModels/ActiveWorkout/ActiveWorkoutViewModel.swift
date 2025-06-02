@@ -9,6 +9,7 @@ import CoreData
 import Combine
 import ActivityKit
 
+//TODO: Add workout finished live activity state
 class ActiveWorkoutViewModel: ObservableObject, ActiveWorkoutManagementProtocol {
     
     let mainContext: NSManagedObjectContext

@@ -7,17 +7,7 @@
 
 import SwiftUI
 
-class WorkoutEditCoordinator: ObservableObject, Coordinator {
-    
-    var viewModel: WorkoutEditViewModel
-    
-    var rootViewController = UIViewController()
-    var childCoordinators = [Coordinator]()
-    
-    init(viewModel: WorkoutEditViewModel) {
-        self.viewModel = viewModel
-    }
-    
+class WorkoutEditCoordinator: BaseCoordinator<WorkoutEditViewModel>, Coordinator {
     func start() {
         let view = WorkoutEditView(viewModel: self.viewModel).environmentObject(self)
         rootViewController = UIHostingController(rootView: view)
@@ -61,23 +51,17 @@ class WorkoutEditCoordinator: ObservableObject, Coordinator {
     }
     
     func saveWorkoutEdit(){
-        if #available(iOS 15, *) {
-            print("Workout Coordinator: Save \(Date.now)")
-        } else {
-            print("Workout Coordinator: Save")
-        }
+        print("\(type(of: self)): Save workout, \(Date())")
         viewModel.saveWorkout()
-        rootViewController.navigationController?.popViewController(animated: true)
+        addViewPushTransition(pushDirection: .fromTop)
+        rootViewController.navigationController?.popViewController(animated: false)
     }
     
     func discardWorkoutEdit(){
-        if #available(iOS 15, *) {
-            print("Workout Coordinator: Discard \(Date.now)")
-        } else {
-            print("Workout Coordinator: Discard")
-        }
+        print("\(type(of: self)): Discard workout, \(Date())")
         viewModel.discardWorkout()
-        rootViewController.navigationController?.popViewController(animated: true)
+        addViewPushTransition(pushDirection: .fromTop)
+        rootViewController.navigationController?.popViewController(animated: false)
     }
 }
 

@@ -9,18 +9,16 @@ import SwiftUI
 import CoreData
 import Combine
 
-class WorkoutCollectionCoordinator: ObservableObject, Coordinator {
-    
-    var viewModel: WorkoutCollectionViewModel
-    
-    var childCoordinators = [Coordinator]()
-    var rootViewController = UIViewController()
-    
+class WorkoutCollectionCoordinator: BaseCoordinator<WorkoutCollectionViewModel>, Coordinator {
     let applicationEvent: PassthroughSubject<ApplicationEventType, Never>
     
-    init(dataContext: NSManagedObjectContext, applicationEvent: PassthroughSubject<ApplicationEventType, Never>, collectionUUID: UUID?) {
-        viewModel = WorkoutCollectionViewModel(context: dataContext, collectionUUID: collectionUUID)
+    init(dataContext: NSManagedObjectContext,
+         applicationEvent: PassthroughSubject<ApplicationEventType, Never>,
+         collectionUUID: UUID?) {
         self.applicationEvent = applicationEvent
+        
+        let viewModel = WorkoutCollectionViewModel(context: dataContext, collectionUUID: collectionUUID)
+        super.init(viewModel: viewModel)
     }
     
     func startWorkout(workoutIndex: Int) {
@@ -28,7 +26,7 @@ class WorkoutCollectionCoordinator: ObservableObject, Coordinator {
         applicationEvent.send(.workoutStarted(launchedWorkoutUUID))
     }
     
-    func enterCollections() {
+    func goToCatalog() {
         applicationEvent.send(.catalogRequested)
     }
     
@@ -40,9 +38,8 @@ class WorkoutCollectionCoordinator: ObservableObject, Coordinator {
         childCoordinators.append(workoutAddCoordinator)
         
         let addWorkoutViewController = workoutAddCoordinator.rootViewController
-        rootViewController.navigationController?.pushViewController(addWorkoutViewController, animated: true)
-        
-        viewModel.objectWillChange.send()
+        addViewPushTransition(pushDirection: .fromBottom)
+        rootViewController.navigationController?.pushViewController(addWorkoutViewController, animated: false)
     }
     
     func goToEditWorkout(workoutIndex: Int) {
@@ -54,7 +51,8 @@ class WorkoutCollectionCoordinator: ObservableObject, Coordinator {
         childCoordinators.append(workoutEditCoordinator)
         
         let editWorkoutViewController = workoutEditCoordinator.rootViewController
-        rootViewController.navigationController?.pushViewController(editWorkoutViewController, animated: true)
+        addViewPushTransition(pushDirection: .fromBottom)
+        rootViewController.navigationController?.pushViewController(editWorkoutViewController, animated: false)
     }
     
     func goToWorkoutLst() {

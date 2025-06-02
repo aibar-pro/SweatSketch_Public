@@ -9,22 +9,22 @@ import SwiftUI
 import CoreData
 import Combine
 
-class ActiveWorkoutCoordinator: ObservableObject, Coordinator {
-    
-    var viewModel: ActiveWorkoutViewModel
+class ActiveWorkoutCoordinator: BaseCoordinator<ActiveWorkoutViewModel>, Coordinator {
     var activeWorkoutService: ActiveWorkoutService
-    
-    var rootViewController = UIViewController()
-    var childCoordinators = [Coordinator]()
     
     let applicationEvent: PassthroughSubject<ApplicationEventType, Never>
     
+    let activeWorkoutUUID: UUID
+    
     init(dataContext: NSManagedObjectContext, activeWorkoutUUID: UUID, applicationEvent: PassthroughSubject<ApplicationEventType, Never>) throws {
         self.activeWorkoutService = ActiveWorkoutService.shared
-        self.viewModel = try ActiveWorkoutViewModel(activeWorkoutUUID: activeWorkoutUUID, in: dataContext)
-        self.activeWorkoutService.workoutManager = self.viewModel
-        
+        self.activeWorkoutUUID = activeWorkoutUUID
         self.applicationEvent = applicationEvent
+        
+        let viewModel = try ActiveWorkoutViewModel(activeWorkoutUUID: activeWorkoutUUID, in: dataContext)
+        super.init(viewModel: viewModel)
+        
+        self.activeWorkoutService.workoutManager = self.viewModel
     }
     
     func start() {
@@ -46,8 +46,10 @@ class ActiveWorkoutCoordinator: ObservableObject, Coordinator {
             onProceed: {
                 Task {
                     await self.viewModel.endActivity()
+                    await MainActor.run {
+                        self.finishWorkout()
+                    }
                 }
-                self.goToCollection()
             },
             onDismiss: viewModel.startTimer)
             .environmentObject(self)
@@ -57,15 +59,12 @@ class ActiveWorkoutCoordinator: ObservableObject, Coordinator {
         rootViewController.present(workoutCompletedController, animated: true)
     }
     
-    func goToCollection(){
-        if let lastOpenedCollectionUUID = UserDefaults.standard.string(forKey: UserDefaultsKeys.lastOpenedCollectionUUID),
-           let collectionUUID = UUID(uuidString: lastOpenedCollectionUUID) {
-            rootViewController.dismiss(animated: true)
-            applicationEvent.send(.collectionRequested(collectionUUID))
-        } else {
-            rootViewController.dismiss(animated: true)
-            applicationEvent.send(.collectionRequested(nil))
-        }
-        print("Active Workout Coordinator: Finish")
+    private func finishWorkout(){
+        print("\(type(of: self)): Active workout UUID \(activeWorkoutUUID) finished")
+        rootViewController.dismiss(animated: false)
+        //TODO: Fix transition
+//        addViewFadeTransition()
+//        rootViewController.navigationController?.popViewController(animated: false)
+        applicationEvent.send(.workoutFinished(activeWorkoutUUID))
     }
 }

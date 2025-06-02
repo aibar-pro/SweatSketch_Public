@@ -21,7 +21,7 @@ struct WorkoutCollectionView: View {
         VStack (spacing: Constants.Design.spacing/2) {
             HStack (alignment: .center) {
                 Button (action: {
-                    coordinator.enterCollections()
+                    coordinator.goToCatalog()
                 }) {
                     HStack {
                         Image(systemName: "chevron.backward")
