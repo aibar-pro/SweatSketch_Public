@@ -28,10 +28,14 @@ struct ActionTimedEditView: View {
                 )
             }
             
-            DurationPickerEditView(durationInSeconds: Binding(
-                get: { Int(self.actionEntity.duration) },
-                set: { self.actionEntity.duration = Int32($0) }
-            ))
+            DurationPickerEditView(durationInSeconds:
+                                    Binding {
+                9999999
+//                Int(self.actionEntity.duration)
+            } set: { _ in
+//                self.actionEntity.duration = Int32($0)
+            }
+            )
         }
     }
 }
@@ -41,11 +45,16 @@ struct ActionTimedEditView_Preview : PreviewProvider {
     static var previews: some View {
         let persistenceController = PersistenceController.preview
         let workoutCarouselViewModel = WorkoutCollectionViewModel(context: persistenceController.container.viewContext)
-        let workoutEditViewModel = WorkoutEditViewModel(parentViewModel: workoutCarouselViewModel, editingWorkoutUUID: workoutCarouselViewModel.workouts[0].id)
-        let exerciseEditViewModel = ExerciseEditViewModel(parentViewModel: workoutEditViewModel, editingExercise: workoutEditViewModel.exercises[2])
+        let workoutEditViewModel = WorkoutEditViewModel(parentViewModel: workoutCarouselViewModel, editingWorkoutUUID: workoutCarouselViewModel.workouts.randomElement()!.id)!
+        let exerciseEditViewModel = ExerciseEditViewModel(parentViewModel: workoutEditViewModel, editingExercise: workoutEditViewModel.exercises.randomElement()!)!
         
-        let action = exerciseEditViewModel.editingExerciseActions[0]
+        let appCoordinator = ApplicationCoordinator(dataContext: persistenceController.container.viewContext)
+        let applicationEvent = appCoordinator.applicationEvent
+        let carouselCoordinator = WorkoutCollectionCoordinator(dataContext: persistenceController.container.viewContext, applicationEvent: applicationEvent, collectionUUID: nil)
+        
+        let action = exerciseEditViewModel.editingExerciseActions.randomElement()!
         
         ActionTimedEditView(actionEntity: action, editTitle: true)
+            .environmentObject(carouselCoordinator)
     }
 }

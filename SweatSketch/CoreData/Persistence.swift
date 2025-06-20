@@ -11,172 +11,84 @@ struct PersistenceController {
     static let shared = PersistenceController()
 
     static var preview: PersistenceController = {
+        let maxWorkoutCount = 10
+        let maxExerciseCount = 15
+        let maxActionCount = 10
+        
         let result = PersistenceController(inMemory: true)
         let viewContext = result.container.viewContext
         
-        let collection = WorkoutCollectionEntity(context: viewContext)
-        collection.uuid = UUID()
-        collection.name = "Test Workout Collection"
-        collection.type = WorkoutCollectionType.user.rawValue
-        collection.position = Int16(0)
+        let root = createCollection(in: viewContext, name: "Root Workout Collection", position: 0)
+        let parent = createCollection(in: viewContext, name: "Collection with sub", position: 1)
+        let sub1 = createCollection(in: viewContext, name: "Sub collection 1", position: 0, parent: parent)
+        let sub2 = createCollection(in: viewContext, name: "Sub collection 2 Sub collection 2 Sub collection 2 Sub collection 2 Sub collection 2", position: 1, parent: parent)
         
-        let collectionWithSub = WorkoutCollectionEntity(context: viewContext)
-        collectionWithSub.uuid = UUID()
-        collectionWithSub.name = "Collection with sub"
-        collectionWithSub.position = Int16(1)
+        let defaultCollection = createDefaultCollection(in: viewContext)
         
-        let subCollection = WorkoutCollectionEntity(context: viewContext)
-        subCollection.uuid = UUID()
-        subCollection.name = "Sub collection"
-        subCollection.position = Int16(0)
-        subCollection.parentCollection = collectionWithSub
-        
-        let subCollection2 = WorkoutCollectionEntity(context: viewContext)
-        subCollection2.uuid = UUID()
-        subCollection2.name = "Sub collection 2"
-        subCollection2.position = Int16(1)
-        subCollection2.parentCollection = collectionWithSub
-        
-        let planCount = Int.random(in: 1...3)
-        
-        let workout = WorkoutEntity(context: viewContext)
-        workout.uuid = UUID()
-        workout.name = "Test Workout Auto \(0) Test Workout Auto Test Workout Auto"
-        workout.position = Int16(0)
-        workout.collection = subCollection
-        let defaultRestTime = RestTimeEntity(context: viewContext)
-        defaultRestTime.uuid = UUID()
-        defaultRestTime.isDefault = true
-        defaultRestTime.duration = 180
-        defaultRestTime.workout = workout
-        
-        let workout2 = WorkoutEntity(context: viewContext)
-        workout2.uuid = UUID()
-        workout2.name = "Test Workout Auto \(1) Test Workout Auto Test Workout Auto"
-        workout2.position = Int16(1)
-        workout2.collection = subCollection
-        
-        let newTimedExercise = ExerciseEntity(context: viewContext)
-        newTimedExercise.uuid = UUID()
-        newTimedExercise.name = String("Test Timed Exercise")
-        newTimedExercise.position = Int16(0)
-        newTimedExercise.type = ExerciseType.timed.rawValue
-        let newExerciseTimedAction = ExerciseActionEntity(context: viewContext)
-        newExerciseTimedAction.uuid = UUID()
-        newExerciseTimedAction.position = Int16(1)
-        newExerciseTimedAction.duration = Int32.random(in: 600...10000)
-        newExerciseTimedAction.type = ExerciseActionType.timed.rawValue
-        newTimedExercise.addToExerciseActions(newExerciseTimedAction)
-        let newExerciseTimedAction1 = ExerciseActionEntity(context: viewContext)
-        newExerciseTimedAction1.uuid = UUID()
-        newExerciseTimedAction1.position = Int16(2)
-        newExerciseTimedAction1.duration = Int32.random(in: 50000...100000)
-        newExerciseTimedAction1.type = ExerciseActionType.timed.rawValue
-        newTimedExercise.addToExerciseActions(newExerciseTimedAction1)
-        workout.addToExercises(newTimedExercise)
-        
-        let newSNRExercise = ExerciseEntity(context: viewContext)
-        newSNRExercise.uuid = UUID()
-        newSNRExercise.name = String("Test Sets-n-Reps Exercise")
-        newSNRExercise.position = Int16(1)
-        newSNRExercise.type = ExerciseType.setsNreps.rawValue
-        let newExerciseSNRAction = ExerciseActionEntity(context: viewContext)
-        newExerciseSNRAction.uuid = UUID()
-        newExerciseSNRAction.position = Int16(1)
-        newExerciseSNRAction.type = ExerciseActionType.setsNreps.rawValue
-        newExerciseSNRAction.sets = Int16(3)
-        newExerciseSNRAction.reps = Int16(12)
-        let newExerciseSNRMAXAction = ExerciseActionEntity(context: viewContext)
-        newExerciseSNRMAXAction.uuid = UUID()
-        newExerciseSNRMAXAction.position = Int16(2)
-        newExerciseSNRMAXAction.type = ExerciseActionType.setsNreps.rawValue
-        newExerciseSNRMAXAction.sets = Int16(5)
-        newExerciseSNRMAXAction.repsMax = true
-        newSNRExercise.addToExerciseActions(newExerciseSNRAction)
-        newSNRExercise.addToExerciseActions(newExerciseSNRMAXAction)
-        workout.addToExercises(newSNRExercise)
-        
-        let newSupersetExercise = ExerciseEntity(context: viewContext)
-        newSupersetExercise.uuid = UUID()
-        newSupersetExercise.name = String("Test Superset Exercise")
-        newSupersetExercise.position = Int16(4)
-        newSupersetExercise.superSets = Int16(3)
-        newSupersetExercise.type = ExerciseType.mixed.rawValue
-        let newExerciseAction1 = ExerciseActionEntity(context: viewContext)
-        newExerciseAction1.uuid = UUID()
-        newExerciseAction1.name = "Treadmill run"
-        newExerciseAction1.duration = Int32(180)
-        newExerciseAction1.position = Int16(0)
-        newExerciseAction1.type = ExerciseActionType.timed.rawValue
-        newSupersetExercise.addToExerciseActions(newExerciseAction1)
-        let newExerciseAction2 = ExerciseActionEntity(context: viewContext)
-        newExerciseAction2.uuid = UUID()
-        newExerciseAction2.name = "Deadlift"
-        newExerciseAction2.reps = Int16(12)
-        newExerciseAction2.sets = Int16(1)
-        newExerciseAction2.position = Int16(1)
-        newExerciseAction2.type = ExerciseActionType.setsNreps.rawValue
-        newExerciseAction2.weightType = WeightType.barbell.rawValue
-        newSupersetExercise.addToExerciseActions(newExerciseAction2)
-        let newExerciseAction3 = ExerciseActionEntity(context: viewContext)
-        newExerciseAction3.uuid = UUID()
-        newExerciseAction3.name = "Lat Pulldowns"
-        newExerciseAction3.repsMax = true
-        newExerciseAction3.sets = Int16(1)
-        newExerciseAction3.position = Int16(2)
-        newExerciseAction3.type = ExerciseActionType.setsNreps.rawValue
-        newExerciseAction3.weightType = WeightType.machine.rawValue
-        newSupersetExercise.addToExerciseActions(newExerciseAction3)
-        let newExerciseAction4 = ExerciseActionEntity(context: viewContext)
-        newExerciseAction4.uuid = UUID()
-        newExerciseAction4.name = "Burpees"
-        newExerciseAction4.reps = Int16(5)
-        newExerciseAction4.sets = Int16(1)
-        newExerciseAction4.position = Int16(3)
-        newExerciseAction4.type = ExerciseActionType.setsNreps.rawValue
-        newExerciseAction4.weightType = WeightType.body.rawValue
-        newSupersetExercise.addToExerciseActions(newExerciseAction4)
-        let newExerciseAction5 = ExerciseActionEntity(context: viewContext)
-        newExerciseAction5.uuid = UUID()
-        newExerciseAction5.position = Int16(4)
-        newExerciseAction5.type = ExerciseActionType.timed.rawValue
-        newSupersetExercise.addToExerciseActions(newExerciseAction5)
-        workout.addToExercises(newSupersetExercise)
-        
-        for w in 1...planCount {
-            let workout = WorkoutEntity(context: viewContext)
-            workout.uuid = UUID()
-            workout.name = "Test Workout Auto \(w) Test Workout Auto Test Workout Auto"
-            workout.position = Int16(w)
+        let planCount = Int.random(in: 1...maxWorkoutCount)
+        for idx in 1...planCount {
+            let c = [root, parent, sub1, sub2, defaultCollection].randomElement() ?? nil
             
-            let exerciseCount = Int.random(in: 0...20)
+            let w = createWorkout(
+                in: viewContext,
+                name: "Test Workout Auto \(idx)",
+                position: Int16(idx),
+                collection: c
+            )
+            _ = createDefaultRestTime(
+                in: viewContext,
+                duration: Int32.random(in: 60...180),
+                workout: w
+            )
             
-            for e in 0...exerciseCount {
-                let newExercise = ExerciseEntity(context: viewContext)
-                newExercise.uuid = UUID()
-                newExercise.position = Int16(e+3)
-                newExercise.type = ExerciseType.setsNreps.rawValue
-                
-                let actionCount = Int.random(in: 0...5)
-                
-                for a in 0...actionCount {
-                    let newExerciseAction = ExerciseActionEntity(context: viewContext)
-                    newExerciseAction.uuid = UUID()
-                    newExerciseAction.reps = Int16.random(in: 6...10)
-                    newExerciseAction.sets = Int16.random(in: 1...4)
-                    newExerciseAction.position = Int16(a)
-                    newExerciseAction.type = ExerciseActionType.setsNreps.rawValue
-                    newExercise.addToExerciseActions(newExerciseAction)
+            print("MOCK: Created workout \(w)")
+            let exerciseCount = Int.random(in: 0...maxExerciseCount)
+            for eIdx in 0..<exerciseCount {
+                let exType = Int.random(in: 0...2)
+                switch exType {
+                case 0:
+                    _ = createTimedExercise(
+                        in: viewContext,
+                        workout: w,
+                        position: Int16(eIdx + 1),
+                        maxActionCount: maxActionCount
+                    )
+                case 1:
+                    _ = createDistanceExercise(
+                        in: viewContext,
+                        workout: w,
+                        position: Int16(eIdx + 1),
+                        maxActionCount: maxActionCount
+                    )
+                case 2:
+                    _ = createMixedExercise(
+                        in: viewContext,
+                        workout: w,
+                        position: Int16(eIdx + 1),
+                        maxActionCount: maxActionCount
+                    )
+                default:
+                    _ = createRepsExercise(
+                        in: viewContext,
+                        workout: w,
+                        position: Int16(eIdx + 1),
+                        maxActionCount: maxActionCount
+                    )
                 }
-                
-                workout.addToExercises(newExercise)
+            }
+            if Bool.random(),
+                let ex = w.exercises?.array.randomElement() as? ExerciseEntity {
+                _ = createRestTime(
+                    in: viewContext,
+                    duration: Int32.random(in: 60...180),
+                    followingExercise: ex,
+                    workout: w
+                )
             }
         }
-        
-        let untitledWorkout = WorkoutEntity(context: viewContext)
-        untitledWorkout.uuid = UUID()
-        untitledWorkout.position = Int16(planCount+1)
 
+//        printPreviewSummary(in: viewContext)
+        
         do {
             try viewContext.save()
         } catch {
@@ -211,5 +123,254 @@ struct PersistenceController {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
         })
+    }
+}
+
+extension PersistenceController {
+    private static func createDefaultCollection(
+        in context: NSManagedObjectContext
+    ) -> WorkoutCollectionEntity {
+        let col = WorkoutCollectionEntity(context: context)
+        col.uuid = UUID()
+        col.type = WorkoutCollectionType.defaultCollection.rawValue
+        return col
+    }
+    
+    private static func createCollection(
+        in context: NSManagedObjectContext,
+        name: String,
+        position: Int16,
+        parent: WorkoutCollectionEntity? = nil
+    ) -> WorkoutCollectionEntity {
+        let col = WorkoutCollectionEntity(context: context)
+        col.uuid = UUID()
+        col.name = name
+        col.type = WorkoutCollectionType.user.rawValue
+        col.position = position
+        col.parentCollection = parent
+        return col
+    }
+    
+    private static func createWorkout(
+        in context: NSManagedObjectContext,
+        name: String?,
+        position: Int16,
+        collection: WorkoutCollectionEntity? = nil
+    ) -> WorkoutEntity {
+        let workout = WorkoutEntity(context: context)
+        workout.uuid = UUID()
+        workout.name = name ?? ""
+        workout.position = position
+        if let collection {
+            workout.collection = collection
+        }
+        return workout
+    }
+    
+    private static func createDefaultRestTime(
+        in context: NSManagedObjectContext,
+        duration: Int32,
+        workout: WorkoutEntity
+    ) -> RestTimeEntity {
+        let restTime = RestTimeEntity(context: context)
+        restTime.uuid = UUID()
+        restTime.isDefault = true
+        restTime.duration = duration
+        workout.addToRestTimes(restTime)
+        return restTime
+    }
+    
+    private static func createRestTime(
+        in context: NSManagedObjectContext,
+        duration: Int32,
+        followingExercise: ExerciseEntity,
+        workout: WorkoutEntity
+    ) -> RestTimeEntity {
+        let restTime = RestTimeEntity(context: context)
+        restTime.uuid = UUID()
+        restTime.followingExercise = followingExercise
+        restTime.duration = duration
+        workout.addToRestTimes(restTime)
+        return restTime
+    }
+    
+    private static func createExercise(
+        in context: NSManagedObjectContext,
+        name: String,
+        position: Int16
+    ) -> ExerciseEntity {
+        let exercise = ExerciseEntity(context: context)
+        exercise.uuid = UUID()
+        exercise.name = name
+        exercise.position = position
+        exercise.superSets = Int16.random(in: 1...11)
+        return exercise
+    }
+
+    private static func createTimedAction(
+        in context: NSManagedObjectContext,
+        exercise: ExerciseEntity,
+        position: Int16
+    ) {
+        let action = TimedActionEntity(context: context)
+        action.uuid = UUID()
+        action.position = position
+        action.sets = Int16.random(in: 1...5)
+        action.secondsMin = Int32.random(in: 30...120)
+        if Bool.random() {
+            action.secondsMax = NSNumber(value: Int.random(in: 150...5000))
+        }
+        action.isMax = Bool.random()
+        exercise.addToExerciseActions(action)
+    }
+
+    private static func createRepsAction(
+        in context: NSManagedObjectContext,
+        exercise: ExerciseEntity,
+        position: Int16
+    ) {
+        let action = RepsActionEntity(context: context)
+        action.uuid = UUID()
+        action.position = position
+        action.sets = Int16.random(in: 1...5)
+        action.repsMin = Int16.random(in: 6...12)
+        if Bool.random() {
+            action.repsMax = NSNumber(value: Int.random(in: 13...24))
+        }
+        action.isMax = Bool.random()
+        exercise.addToExerciseActions(action)
+    }
+
+    private static func createDistanceAction(
+        in context: NSManagedObjectContext,
+        exercise: ExerciseEntity,
+        position: Int16,
+    ) {
+        let action = DistanceActionEntity(context: context)
+        action.uuid = UUID()
+        action.position = position
+        action.sets = Int16.random(in: 1...5)
+        action.distanceMin = Double.random(in: 1...2500)
+        if Bool.random() {
+            action.distanceMax = NSNumber(value: Double.random(in: 2501...10000))
+        }
+        action.unit = "test"
+        action.isMax = Bool.random()
+        exercise.addToExerciseActions(action)
+    }
+    
+    private static func createRestAction(
+        in context: NSManagedObjectContext,
+        exercise: ExerciseEntity,
+        duration: Int
+    ) {
+        let action = RestActionEntity(context: context)
+        action.uuid = UUID()
+        action.duration = duration.int32
+        exercise.addToExerciseActions(action)
+    }
+    
+    private static func createRepsExercise(
+        in context: NSManagedObjectContext,
+        workout: WorkoutEntity,
+        position: Int16,
+        maxActionCount: Int
+    ) -> ExerciseEntity {
+        let ex = createExercise(in: context, name: "Reps \(position)", position: position)
+        let aCount = Int.random(in: 1...maxActionCount)
+        for idx in 1...aCount {
+            createRepsAction(
+                in: context,
+                exercise: ex,
+                position: Int16(idx)
+            )
+        }
+        if Bool.random() {
+            createRestAction(in: context, exercise: ex, duration: Int.random(in: 5...100))
+        }
+        workout.addToExercises(ex)
+        return ex
+    }
+    
+    private static func createDistanceExercise(
+        in context: NSManagedObjectContext,
+        workout: WorkoutEntity,
+        position: Int16,
+        maxActionCount: Int
+    ) -> ExerciseEntity {
+        let ex = createExercise(in: context, name: "Distance \(position)", position: position)
+        let aCount = Int.random(in: 1...maxActionCount)
+        for idx in 1...aCount {
+            createDistanceAction(
+                in: context,
+                exercise: ex,
+                position: Int16(idx)
+            )
+        }
+        if Bool.random() {
+            createRestAction(in: context, exercise: ex, duration: Int.random(in: 5...100))
+        }
+        workout.addToExercises(ex)
+        return ex
+    }
+    
+    private static func createTimedExercise(
+        in context: NSManagedObjectContext,
+        workout: WorkoutEntity,
+        position: Int16,
+        maxActionCount: Int
+    ) -> ExerciseEntity {
+        let ex = createExercise(in: context, name: "Timed \(position)", position: position)
+        let aCount = Int.random(in: 1...maxActionCount)
+        for idx in 1...aCount {
+            createTimedAction(
+                in: context,
+                exercise: ex,
+                position: Int16(idx)
+            )
+        }
+        if Bool.random() {
+            createRestAction(in: context, exercise: ex, duration: Int.random(in: 5...100))
+        }
+        workout.addToExercises(ex)
+        return ex
+    }
+    
+    private static func createMixedExercise(
+        in context: NSManagedObjectContext,
+        workout: WorkoutEntity,
+        position: Int16,
+        maxActionCount: Int
+    ) -> ExerciseEntity {
+        let ex = createExercise(in: context, name: "Mixed \(position)", position: position)
+        let aCount = Int.random(in: 1...maxActionCount)
+        for idx in 1...aCount {
+            let actionType = Int.random(in: 1...3)
+            switch actionType {
+            case 1:
+                createTimedAction(
+                    in: context,
+                    exercise: ex,
+                    position: Int16(idx)
+                )
+            case 2:
+                createDistanceAction(
+                    in: context,
+                    exercise: ex,
+                    position: Int16(idx)
+                )
+            default:
+                createRepsAction(
+                    in: context,
+                    exercise: ex,
+                    position: Int16(idx)
+                )
+            }
+        }
+        if Bool.random() {
+            createRestAction(in: context, exercise: ex, duration: Int.random(in: 5...100))
+        }
+        workout.addToExercises(ex)
+        return ex
     }
 }

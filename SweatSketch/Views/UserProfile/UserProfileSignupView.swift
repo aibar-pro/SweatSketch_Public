@@ -18,47 +18,54 @@ struct UserProfileSignupView: View {
         ZStack {
             WorkoutPlanningModalBackgroundView()
             
-            VStack{
+            VStack(alignment: .center, spacing: Constants.Design.spacing) {
                 ScrollView {
-                    VStack(alignment: .center, spacing: Constants.Design.spacing/2) {
+                    VStack(alignment: .center, spacing: Constants.Design.spacing) {
                         Image(systemName: "person.badge.plus")
                             .font(.largeTitle)
                             .imageScale(.large)
-                            .padding(.top, Constants.Design.spacing)
                         
-                        Text(Constants.Placeholders.UserProfile.signupScreenTitle)
-                            .font(.title)
+                        Text("user.profile.signup.title")
+                            .fullWidthText(.title, alignment: .center)
                         
-                        Text(Constants.Placeholders.UserProfile.signupScreenText)
-                            .font(.subheadline)
+                        Text("user.profile.signup.subtitle")
+                            .fullWidthText(.subheadline, alignment: .center)
                         
                         LoginPasswordView(user: $user)
-                            .padding(Constants.Design.spacing)
-                        
-                        Button(action: {
-                            onSignup(user)
-                        }) {
-                            Text(Constants.Placeholders.UserProfile.signupButtonLabel)
-                                .accentButtonLabelStyleModifier()
-                        }
+                    
+                        RectangleButton(
+                            "user.profile.signup.button.label",
+                            style: .primary,
+                            isFullWidth: true,
+                            action: {
+                                onSignup(user)
+                            }
+                        )
                     }
+                    .padding(Constants.Design.spacing)
                     .customForegroundColorModifier(Constants.Design.Colors.textColorHighEmphasis)
                 }
+                
                 Divider()
-                    .padding(.vertical, Constants.Design.spacing/2)
-                HStack(alignment: .center) {
-                    Text(Constants.Placeholders.UserProfile.signupLinkText)
-                        .customForegroundColorModifier(Constants.Design.Colors.textColorMediumEmphasis)
-                    
-                    Button(action: onLogin) {
-                        Text(Constants.Placeholders.UserProfile.loginButtonLabel)
-                            .fontWeight(.bold)
-                            .customForegroundColorModifier(Constants.Design.Colors.linkColor)
-                    }
-                }
+                
+                footer
             }
         }
         .onDisappear(perform: onDismiss)
+    }
+    
+    private var footer: some View {
+        HStack(alignment: .center, spacing: Constants.Design.spacing) {
+            Text("user.profile.login.signup.link.desctiption")
+                .customForegroundColorModifier(Constants.Design.Colors.textColorMediumEmphasis)
+            
+            RectangleButton(
+                "user.profile.login.button.label",
+                style: .inlineLink,
+                action: onLogin
+            )
+        }
+        .frame(maxWidth: .infinity, alignment: .center)
     }
 }
 

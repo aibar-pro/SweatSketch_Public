@@ -7,17 +7,7 @@
 
 import SwiftUI
 
-class WorkoutCatalogWorkoutMoveCoordinator: ObservableObject, Coordinator {
-    
-    var viewModel: WorkoutCatalogWorkoutMoveViewModel
-    
-    var rootViewController = UIViewController()
-    var childCoordinators = [Coordinator]()
-    
-    init(viewModel: WorkoutCatalogWorkoutMoveViewModel) {
-        self.viewModel = viewModel
-    }
-    
+class WorkoutCatalogWorkoutMoveCoordinator: BaseCoordinator<WorkoutCatalogWorkoutMoveViewModel>, Coordinator {
     func start() {
         let view = WorkoutCatalogWorkoutMoveView(viewModel: self.viewModel).environmentObject(self)
         rootViewController = UIHostingController(rootView: view)
@@ -25,21 +15,13 @@ class WorkoutCatalogWorkoutMoveCoordinator: ObservableObject, Coordinator {
     }
     
     func saveMove(to collection: WorkoutCatalogCollectionViewRepresentation){
-        if #available(iOS 15, *) {
-            print("Workout Move Coordinator: Save \(Date.now)")
-        } else {
-            print("Workout Move Coordinator: Save")
-        }
+        print("\(type(of: self)): Workouts moved, saving... \(Date())")
         viewModel.moveWorkout(to: collection)
         rootViewController.dismiss(animated: true)
     }
     
     func discardMove(){
-        if #available(iOS 15, *) {
-            print("Workout Move Coordinator: Discard \(Date.now)")
-        } else {
-            print("Workout Move Coordinator: Discard")
-        }
+        print("\(type(of: self)): Workouts moved, saving... \(Date())")
         viewModel.discardMove()
         rootViewController.dismiss(animated: true)
     }

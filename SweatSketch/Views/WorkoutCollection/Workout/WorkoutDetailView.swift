@@ -8,26 +8,23 @@
 import SwiftUI
 
 struct WorkoutDetailView: View {
-    
-    @ObservedObject var workoutRepresentation: WorkoutViewRepresentation
+    @ObservedObject var workout: WorkoutViewRepresentation
     
     var body: some View {
-        GeometryReader { geoReader in
-            ScrollView { 
-                VStack (alignment: .leading, spacing: 25) {
-                    if !workoutRepresentation.exercises.isEmpty {
-                        VStack(alignment: .leading, spacing: 10) {
-                            ForEach (workoutRepresentation.exercises, id: \.id) { exercise in
-                                ExerciseView(exerciseRepresentation: exercise)
-                                    .padding(.bottom, Constants.Design.spacing)
-                                    .frame(width: geoReader.size.width, alignment: .leading)
-                            }
+        ScrollView(showsIndicators: false) {
+            Group {
+                if !workout.exercises.isEmpty {
+                    VStack(alignment: .leading, spacing: Constants.Design.spacing * 1.5) {
+                        ForEach(workout.exercises, id: \.id) { exercise in
+                            ExerciseDetailView(exercise: exercise)
                         }
-                    } else {
-                        Text(Constants.Placeholders.WorkoutCollection.emptyWorkoutText)
                     }
+                } else {
+                    Text("workout.detail.no.exercises")
+                        .fullWidthText()
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 }
@@ -43,7 +40,7 @@ struct WorkoutPlanView_Previews: PreviewProvider {
         let workoutForPreview = collectionDataManager.fetchWorkouts(for: firstCollection!, in: persistenceController.container.viewContext).first
         
         if let workoutRepresentation = workoutForPreview?.toWorkoutViewRepresentation() {
-            WorkoutDetailView(workoutRepresentation: workoutRepresentation)
+            WorkoutDetailView(workout: workoutRepresentation)
         }
     }
 }

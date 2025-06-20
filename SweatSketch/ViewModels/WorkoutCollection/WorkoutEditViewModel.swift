@@ -26,8 +26,7 @@ class WorkoutEditViewModel: ObservableObject {
     private let workoutDataManager = WorkoutDataManager()
     private let exerciseDataManager = ExerciseDataManager()
     
-    //TODO: change to init?
-    init(parentViewModel: WorkoutCollectionViewModel, editingWorkoutUUID: UUID? = nil) {
+    init?(parentViewModel: WorkoutCollectionViewModel, editingWorkoutUUID: UUID? = nil) {
         self.mainContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         self.mainContext.parent = parentViewModel.mainContext
         self.parentViewModel = parentViewModel
@@ -41,11 +40,19 @@ class WorkoutEditViewModel: ObservableObject {
         self.editingWorkout = WorkoutEntity()
         self.defaultRestTime = RestTimeEntity()
         
-        if let workoutUUID = editingWorkoutUUID, let workoutToEdit = workoutDataManager.fetchWorkout(by: workoutUUID, in: self.mainContext) {
- 
-            self.editingWorkout = workoutToEdit
-            self.exercises = workoutDataManager.fetchExercises(for: workoutToEdit, in: self.mainContext)
+        if let workoutUUID = editingWorkoutUUID,
+            let workoutToEdit = workoutDataManager.fetchWorkout(by: workoutUUID, in: self.mainContext) {
             
+            self.editingWorkout = workoutToEdit
+            
+            let result = workoutDataManager.fetchExercises(for: workoutToEdit, in: self.mainContext)
+            switch result {
+                case .success(let fetchedExercises):
+                self.exercises = fetchedExercises
+            case .failure(let error):
+                print("\(type(of: self)): Failed to fetch exercises for workout: \(error)")
+                return nil
+            }
         } else {
             self.editingWorkout = collectionDataManager.createWorkout(for: self.parentViewModel.workoutCollection, in: self.mainContext)
         }
@@ -54,7 +61,8 @@ class WorkoutEditViewModel: ObservableObject {
         if let defaultRestTime = workoutDataManager.fetchDefaultRestTime(for: self.editingWorkout, in: self.mainContext) {
             self.defaultRestTime = defaultRestTime
         } else {
-            self.defaultRestTime = workoutDataManager.createDefaultRestTime(for: self.editingWorkout, in: self.mainContext)
+            guard let createdRestTime = createDefaultRestTime(withDuration: Constants.DefaultValues.restTimeDuration) else { return nil }
+            self.defaultRestTime = createdRestTime
         }
         
         //Ignore Workout and default RestTime creation for undo/redo
@@ -74,18 +82,23 @@ class WorkoutEditViewModel: ObservableObject {
         }
     }
     
-    func createDefaultRestTime(withDuration duration: Int) -> RestTimeEntity {
-        let newDefaultRestTime = RestTimeEntity(context: mainContext)
-        newDefaultRestTime.uuid = UUID()
-        newDefaultRestTime.isDefault = true
-        newDefaultRestTime.duration = Int32(duration)
-        editingWorkout.addToRestTimes(newDefaultRestTime)
+    func createDefaultRestTime(withDuration duration: Int) -> RestTimeEntity? {
+        let result = workoutDataManager
+            .createDefaultRestTime(
+                for: self.editingWorkout,
+                with: duration,
+                in: self.mainContext
+            )
         
-        return newDefaultRestTime
+        if case .success(let success) = result {
+            return success
+        } else {
+            return nil
+        }
     }
     
     func updateDefaultRestTime(duration: Int) {
-        self.defaultRestTime.duration = Int32(duration)
+        self.defaultRestTime.duration = duration.int32
     }
     
     func deleteExercise(exerciseEntity: ExerciseEntity) {
@@ -121,7 +134,11 @@ class WorkoutEditViewModel: ObservableObject {
     }
     
     @objc func redoExerciseDelete(_ exercise: ExerciseEntity) {
-        mainContext.undoManager?.registerUndo(withTarget: self, selector: #selector(undoExerciseDelete(_ :)), object: exercise)
+        mainContext.undoManager?.registerUndo(
+            withTarget: self,
+            selector: #selector(undoExerciseDelete(_ :)),
+            object: exercise
+        )
         if let index = exercises.firstIndex(of: exercise) {
             exercises.remove(at: index)
         }
@@ -134,7 +151,7 @@ class WorkoutEditViewModel: ObservableObject {
         exercises.enumerated().forEach{ index, exercise in
             editingWorkout.removeFromExercises(exercise)
             editingWorkout.insertIntoExercises(exercise, at: index)
-            exercise.position=Int16(index)
+            exercise.position = Int16(index)
         }
     }
     
@@ -144,7 +161,7 @@ class WorkoutEditViewModel: ObservableObject {
             parentViewModel.saveContext()
             parentViewModel.refreshData()
         } catch {
-            print("Error saving workout context: \(error)")
+            print("\(type(of: self)): \(#function): Error saving workout context: \(error)")
         }
     }
     
@@ -153,8 +170,12 @@ class WorkoutEditViewModel: ObservableObject {
     }
     
     func refreshData() {
-        self.exercises = workoutDataManager.fetchExercises(for: self.editingWorkout, in: self.mainContext)
-        self.objectWillChange.send()
+        do {
+            self.exercises = try workoutDataManager.fetchExercises(for: self.editingWorkout, in: self.mainContext).get()
+            self.objectWillChange.send()
+        } catch {
+            print("\(type(of: self)): \(#function): Error fetching exercises: \(error)")
+        }
     }
     
     func undo() {

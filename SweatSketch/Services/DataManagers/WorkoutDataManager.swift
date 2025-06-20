@@ -7,42 +7,62 @@
 
 import CoreData
 
-class WorkoutDataManager: WorkoutDataManagerProtocol {
-    func createDefaultRestTime(for workout: WorkoutEntity, in context: NSManagedObjectContext) -> RestTimeEntity {
+class WorkoutDataManager {
+    func createDefaultRestTime(
+        for workout: WorkoutEntity,
+        with duration: Int,
+        in context: NSManagedObjectContext
+    ) -> Result<RestTimeEntity, DataManagerError> {
+        guard let workoutToUpdate = prepareWorkoutInContext(workout, in: context) else {
+            return .failure(.fetchError(entityName: "Workout", payload: .init(context: context)))
+        }
+        
         let newDefaultRestTime = RestTimeEntity(context: context)
         newDefaultRestTime.uuid = UUID()
         newDefaultRestTime.isDefault = true
-        newDefaultRestTime.duration = Int32(Constants.DefaultValues.restTimeDuration)
-        newDefaultRestTime.workout = fetchWorkout(workout: workout, in: context)
+        newDefaultRestTime.duration = duration.int32
+        newDefaultRestTime.workout = workoutToUpdate
         
-        return newDefaultRestTime
+        return .success(newDefaultRestTime)
     }
     
-    func createExercise(for workout: WorkoutEntity, in context: NSManagedObjectContext) -> ExerciseEntity {
+    func createExercise(
+        for workout: WorkoutEntity,
+        in context: NSManagedObjectContext
+    ) -> Result<ExerciseEntity, DataManagerError> {
+        guard let workoutToUpdate = prepareWorkoutInContext(workout, in: context) else {
+            return .failure(.fetchError(entityName: "Workout", payload: .init(context: context)))
+        }
+        
         let newExercise = ExerciseEntity(context: context)
         newExercise.uuid = UUID()
-        newExercise.name = Constants.Placeholders.noExerciseName
         newExercise.position = calculateNewExercisePosition(for: workout, in: context)
-        newExercise.type = ExerciseType.setsNreps.rawValue
-        //Undo-redo for workout edit is not working correctly
-//        newExercise.workout = fetchWorkout(workout: workout, in: context)
+        newExercise.workout = fetchWorkout(workout: workout, in: context)
         
-        return newExercise
+        return .success(newExercise)
     }
     
-    func createRestTime(for followingExercise: ExerciseEntity, with duration: Int, in context: NSManagedObjectContext) -> RestTimeEntity? {
-        guard let workout = followingExercise.workout else { return nil }
+    func createRestTime(
+        workout: WorkoutEntity,
+        for followingExercise: ExerciseEntity,
+        with duration: Int,
+        in context: NSManagedObjectContext
+    ) -> Result<RestTimeEntity, DataManagerError> {
+        guard let workoutToUpdate = prepareWorkoutInContext(workout, in: context) else {
+            return .failure(.fetchError(entityName: "Workout", payload: .init(context: context)))
+        }
+        guard let exerciseToUpdate = prepareExerciseInContext(followingExercise, in: context) else {
+            return .failure(.fetchError(entityName: "Exercise", payload: .init(context: context)))
+        }
         
-        let newDefaultRestTime = RestTimeEntity(context: context)
-        newDefaultRestTime.uuid = UUID()
-        newDefaultRestTime.isDefault = false
-        newDefaultRestTime.duration = Int32(duration)
+        let restTimeEntity = RestTimeEntity(context: context)
+        restTimeEntity.uuid = UUID()
+        restTimeEntity.isDefault = false
+        restTimeEntity.duration = duration.int32
+        restTimeEntity.workout = workoutToUpdate
+        restTimeEntity.followingExercise = exerciseToUpdate
         
-        newDefaultRestTime.workout = fetchWorkout(workout: workout, in: context)
-        let exerciseDataManager = ExerciseDataManager()
-        newDefaultRestTime.followingExercise = exerciseDataManager.fetchExercise(exercise: followingExercise, in: context)
-        
-        return newDefaultRestTime
+        return .success(restTimeEntity)
     }
     
     func fetchRestTime(for followingExercise: ExerciseEntity, in context: NSManagedObjectContext) -> RestTimeEntity? {
@@ -78,7 +98,7 @@ class WorkoutDataManager: WorkoutDataManagerProtocol {
         }
     }
     
-    func fetchExercises(for workout: WorkoutEntity, in context: NSManagedObjectContext) -> [ExerciseEntity] {
+    func fetchExercises(for workout: WorkoutEntity, in context: NSManagedObjectContext) -> Result<[ExerciseEntity], DataManagerError> {
         let fetchRequest: NSFetchRequest<ExerciseEntity> = ExerciseEntity.fetchRequest()
         
         let sortDescriptor = NSSortDescriptor(key: "position", ascending: true)
@@ -88,10 +108,29 @@ class WorkoutDataManager: WorkoutDataManagerProtocol {
 
         do {
             let exercisesToReturn = try context.fetch(fetchRequest)
-            return exercisesToReturn
+            return .success(exercisesToReturn)
         } catch {
             print("Error fetching exercises for workout \(String(describing: workout.uuid)): \(error)")
-            return []
+            return
+                .failure(
+                    .fetchError(
+                        entityName: "ExerciseEntity-multiple",
+                        payload: .init(context: context, error: error)
+                    )
+                )
+        }
+    }
+    
+    func fetchExercise(exercise: ExerciseEntity, in context: NSManagedObjectContext) -> ExerciseEntity? {
+        let exerciseFetchRequest: NSFetchRequest<ExerciseEntity> = ExerciseEntity.fetchRequest()
+        exerciseFetchRequest.predicate = NSPredicate(format: "SELF == %@", exercise.objectID)
+        exerciseFetchRequest.fetchLimit = 1
+        
+        do {
+            return try context.fetch(exerciseFetchRequest).first
+        } catch {
+            print("\(type(of: self)): Error fetching exercise: \(error)")
+            return nil
         }
     }
     
@@ -122,14 +161,38 @@ class WorkoutDataManager: WorkoutDataManagerProtocol {
     }
     
     func calculateNewExercisePosition(for workout: WorkoutEntity, in context: NSManagedObjectContext) -> Int16 {
-        let newExercisePosition = (fetchExercises(for: workout, in: context).last?.position ?? -1) + 1
-        return Int16(newExercisePosition)
+        guard case .success(let exercises) = fetchExercises(for: workout, in: context),
+                let positionOfLastExercise = exercises.last?.position
+        else { return 0 }
+        
+        return positionOfLastExercise + 1
     }
     
     func setupExercisePositions(for workout: WorkoutEntity, in context: NSManagedObjectContext) {
-        let exercises = fetchExercises(for: workout, in: context)
+        guard case .success(let exercises) = fetchExercises(for: workout, in: context),
+                !exercises.isEmpty
+        else { return }
+        
         for (index, exercise) in exercises.enumerated() {
-            exercise.position = Int16(index)
+            exercise.position = index.int16
+        }
+    }
+}
+
+extension WorkoutDataManager {
+    private func prepareWorkoutInContext(_ workout: WorkoutEntity, in context: NSManagedObjectContext) -> WorkoutEntity? {
+        if workout.managedObjectContext == context {
+            return workout
+        } else {
+            return fetchWorkout(workout: workout, in: context)
+        }
+    }
+    
+    private func prepareExerciseInContext(_ exercise: ExerciseEntity, in context: NSManagedObjectContext) -> ExerciseEntity? {
+        if exercise.managedObjectContext == context {
+            return exercise
+        } else {
+            return fetchExercise(exercise: exercise, in: context)
         }
     }
 }

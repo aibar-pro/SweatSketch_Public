@@ -9,16 +9,17 @@ import SwiftUI
 
 struct ActionTimedView: View {
     
-    var action: ExerciseActionViewRepresentation
+    var action: ActionViewRepresentation
     
     var showTitle: Bool = false
     
     var body: some View {
         HStack (alignment: .top) {
             if showTitle {
-                Text("\(action.name),")
+                Text("\(action.title),")
             }
-            DurationView(durationInSeconds: Int(action.duration))
+            //TODO: Fix
+            DurationView(durationInSeconds: 99999)
         }
     }
 }
@@ -34,9 +35,9 @@ struct ActionTimedView_Preview : PreviewProvider {
         
         let workoutDataManager = WorkoutDataManager()
         
-        let exerciseForPreview = workoutDataManager.fetchExercises(for: workoutForPreview, in: persistenceController.container.viewContext)[0]
+        let exerciseForPreview = try! workoutDataManager.fetchExercises(for: workoutForPreview, in: persistenceController.container.viewContext).get().randomElement()!
         
-        let actionForPreview = (exerciseForPreview.toExerciseViewRepresentation()?.actions[0])!
+        let actionForPreview = exerciseForPreview.toExerciseViewRepresentation()!.actions.randomElement()!
             
         ActionTimedView(action: actionForPreview, showTitle: true)
     }

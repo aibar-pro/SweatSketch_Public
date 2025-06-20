@@ -54,13 +54,16 @@ class UserProfileViewModel: ObservableObject {
     
     func updateAge(with age: Int) {
         userProfile?.age = Int32(age)
+        objectWillChange.send()
     }
     
     func updateHeight(with height: Int) {
         userProfile?.height = Double(height)
+        objectWillChange.send()
     }
     
     func updateWeight(with weight: Int) {
         userProfile?.weight = Double(weight)
+        objectWillChange.send()
     }
 }

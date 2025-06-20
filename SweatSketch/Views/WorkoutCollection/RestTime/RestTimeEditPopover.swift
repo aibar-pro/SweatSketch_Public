@@ -32,13 +32,13 @@ struct RestTimeEditPopover: View {
                 Button(action: {
                     onDiscard()
                 }) {
-                    Text(Constants.Placeholders.cancelButtonLabel)
+                    Text("app.button.cancel.label")
                         .secondaryButtonLabelStyleModifier()
                 }
                 Button(action: {
                     onDurationChange(duration)
                 }) {
-                    Text(Constants.Placeholders.saveButtonLabel)
+                    Text("app.button.save.label")
                         .bold()
                         .primaryButtonLabelStyleModifier()
                 }
@@ -54,10 +54,18 @@ struct RestTimeEditPopover_Preview : PreviewProvider {
     static var previews: some View {
         let persistenceController = PersistenceController.preview
         let workoutCarouselViewModel = WorkoutCollectionViewModel(context: persistenceController.container.viewContext)
-        let workoutEditViewModel = WorkoutEditViewModel(parentViewModel: workoutCarouselViewModel, editingWorkoutUUID: workoutCarouselViewModel.workouts[0].id)
+        let workoutEditViewModel = WorkoutEditViewModel(parentViewModel: workoutCarouselViewModel, editingWorkoutUUID: workoutCarouselViewModel.workouts.randomElement()!.id)!
         
         let restTime = workoutEditViewModel.defaultRestTime
         
-        RestTimeEditPopover(duration: Int(restTime.duration), onDurationChange: { duration in print("Save \(duration)") }, onDiscard: { print("Discard") })
+        RestTimeEditPopover(
+            duration: restTime.duration.int,
+            onDurationChange: { duration in
+                print("Save \(duration)")
+            },
+            onDiscard: {
+                print("Discard")
+            }
+        )
     }
 }

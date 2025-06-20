@@ -15,34 +15,49 @@ class ExerciseEditViewModel: ObservableObject {
     @Published var editingExercise: ExerciseEntity
     @Published var editingExerciseActions = [ExerciseActionEntity]()
     @Published var editingAction: ExerciseActionEntity?
-    @Published var restTimeBetweenActions: ExerciseActionEntity
+    @Published var restTimeBetweenActions: RestActionEntity
     
     private let workoutDataManager = WorkoutDataManager()
     private let exerciseDataManager = ExerciseDataManager()
     
-    init(parentViewModel: WorkoutEditViewModel, editingExercise: ExerciseEntity? = nil) {
+    init?(parentViewModel: WorkoutEditViewModel, editingExercise: ExerciseEntity? = nil) {
         self.parentViewModel = parentViewModel
         self.mainContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         self.mainContext.parent = parentViewModel.mainContext
         
         self.editingExercise = ExerciseEntity()
-        self.restTimeBetweenActions = ExerciseActionEntity()
+        self.restTimeBetweenActions = RestActionEntity()
         
-        if let exercise = editingExercise, let exerciseToEdit = exerciseDataManager.fetchExercise(exercise: exercise, in: self.mainContext) {
+        if let exercise = editingExercise,
+            let exerciseToEdit = exerciseDataManager.fetchExercise(exercise: exercise, in: self.mainContext) {
             self.editingExercise = exerciseToEdit
             self.editingExerciseActions = exerciseDataManager.fetchActions(for: exerciseToEdit, in: self.mainContext)
             
             setupEditingActions()
         } else {
-            self.editingExercise = workoutDataManager.createExercise(for: self.parentViewModel.editingWorkout, in: self.mainContext)
+            guard case .success(let createdExercise) = workoutDataManager
+                .createExercise(
+                    for: self.parentViewModel.editingWorkout,
+                    in: self.mainContext
+                )
+            else {
+                return nil
+            }
             
-            addExerciseAction()
+            self.editingExercise = createdExercise
+            
+//            addExerciseAction()
         }
         
         if let restTimeBetweenActions = exerciseDataManager.fetchRestTimeBetweenActions(for: self.editingExercise, in: self.mainContext) {
             self.restTimeBetweenActions = restTimeBetweenActions
         } else {
-            self.restTimeBetweenActions = exerciseDataManager.createRestTimeBetweenActions(for: self.editingExercise, with: Int(self.parentViewModel.defaultRestTime.duration), in: self.mainContext)
+            self.restTimeBetweenActions = exerciseDataManager
+                .createRestTimeBetweenActions(
+                    for: self.editingExercise,
+                    with: self.parentViewModel.defaultRestTime.duration.int,
+                    in: self.mainContext
+                )
         }
     }
     
@@ -53,28 +68,29 @@ class ExerciseEditViewModel: ObservableObject {
     }
     
     private func setupEditingActions() {
-        editingExerciseActions.forEach{
-            switch ExerciseType.from(rawValue: self.editingExercise.type) {
-            case .timed:
-                $0.name = ""
-                if $0.type == nil { $0.type = ExerciseActionType.timed.rawValue }
-                if $0.duration < 0 { $0.duration = Int32(Constants.DefaultValues.actionDuration) }
-            case .setsNreps:
-                $0.name = ""
-                fallthrough
-            case .mixed:
-                if $0.name == nil { $0.name = Constants.Placeholders.noActionName }
-                fallthrough
-            default:
-                if $0.type == nil { $0.type = ExerciseActionType.setsNreps.rawValue }
-                if $0.sets < 1 { $0.sets = Int16(Constants.DefaultValues.setsCount) }
-                if $0.reps < 1 { $0.reps = Int16(Constants.DefaultValues.repsCount) }
-            }
-        }
+        //TODO: Fix
+//        editingExerciseActions.forEach{
+//            switch ExerciseType.from(rawValue: self.editingExercise.type) {
+//            case .timed:
+//                $0.name = ""
+//                if $0.type == nil { $0.type = ExerciseActionType.timed.rawValue }
+//                if $0.duration < 0 { $0.duration = Int32(Constants.DefaultValues.actionDuration) }
+//            case .setsNreps:
+//                $0.name = ""
+//                fallthrough
+//            case .mixed:
+//                if $0.name == nil { $0.name = Constants.Placeholders.noActionName }
+//                fallthrough
+//            default:
+//                if $0.type == nil { $0.type = ExerciseActionType.setsNreps.rawValue }
+//                if $0.sets < 1 { $0.sets = Int16(Constants.DefaultValues.setsCount) }
+//                if $0.reps < 1 { $0.reps = Int16(Constants.DefaultValues.repsCount) }
+//            }
+//        }
     }
     
     func updateDefaultRestTime(withDuration duration: Int) {
-        self.restTimeBetweenActions.duration = Int32(duration)
+        self.restTimeBetweenActions.duration = duration.int32
     }
     
     func renameExercise(newName: String) {
@@ -83,78 +99,78 @@ class ExerciseEditViewModel: ObservableObject {
     }
     
     func setSupersets(count: Int) {
-        self.editingExercise.superSets = Int16(count)
+        self.editingExercise.superSets = count.int16
         self.objectWillChange.send()
     }
     
     func setRestTimeBetweenActions(newDuration: Int) {
-        self.restTimeBetweenActions.duration = Int32(newDuration)
+        self.restTimeBetweenActions.duration = newDuration.int32
         self.objectWillChange.send()
     }
     
     func setEditingExerciseType(to type: ExerciseType) {
         setupEditingActions()
-        editingExercise.type = type.rawValue
-        if type == .mixed {
-            if editingExercise.superSets < 1 {
-                setSupersets(count: Constants.DefaultValues.supersetCount)
-            }
-            setRestTimeBetweenActions(newDuration: 0)
-            editingExerciseActions.forEach({
-                $0.name = Constants.Placeholders.noActionName
-            })
-        } else {
-            editingExerciseActions.forEach({
-                $0.name = nil
-            })
-        }
+//        editingExercise.type = type.rawValue
+//        if type == .mixed {
+//            if editingExercise.superSets < 1 {
+//                setSupersets(count: Constants.DefaultValues.supersetCount)
+//            }
+//            setRestTimeBetweenActions(newDuration: 0)
+//            editingExerciseActions.forEach({
+//                $0.name = Constants.Placeholders.noActionName
+//            })
+//        } else {
+//            editingExerciseActions.forEach({
+//                $0.name = nil
+//            })
+//        }
         self.objectWillChange.send()
     }
-    
+    //TODO: Fix
     func setEditingActionType(to type: ExerciseActionType) {
-        self.editingAction?.type = type.rawValue
-        
-        switch ExerciseActionType.from(rawValue: self.editingAction?.type) {
-        case .timed:
-            if self.editingAction?.duration == nil {
-                self.editingAction?.duration = Int32(Constants.DefaultValues.actionDuration)
-            }
-        default:
-            if let sets = self.editingAction?.sets, sets < 1 {
-                self.editingAction?.sets = Int16(Constants.DefaultValues.setsCount)
-            }
-            if let reps = self.editingAction?.reps, reps < 1 {
-                self.editingAction?.reps = Int16(Constants.DefaultValues.repsCount)
-            }
-        }
-        self.objectWillChange.send()
+//        self.editingAction?.type = type.rawValue
+//        
+//        switch ExerciseActionType.from(rawValue: self.editingAction?.type) {
+//        case .timed:
+//            if self.editingAction?.duration == nil {
+//                self.editingAction?.duration = Int32(Constants.DefaultValues.actionDuration)
+//            }
+//        default:
+//            if let sets = self.editingAction?.sets, sets < 1 {
+//                self.editingAction?.sets = Int16(Constants.DefaultValues.setsCount)
+//            }
+//            if let reps = self.editingAction?.reps, reps < 1 {
+//                self.editingAction?.reps = Int16(Constants.DefaultValues.repsCount)
+//            }
+//        }
+//        self.objectWillChange.send()
     }
-    
+    //TODO: Fix
     func saveFilteredExerciseActions() {
-        let filteredActions = editingExerciseActions.filter { action in
-            switch ExerciseType.from(rawValue: editingExercise.type) {
-                case .setsNreps:
-                    return ExerciseActionType.from(rawValue: action.type) == .setsNreps
-                case .timed:
-                    return ExerciseActionType.from(rawValue: action.type) == .timed
-                case .mixed:
-                    return [.setsNreps, .timed].contains(ExerciseActionType.from(rawValue: action.type))
-                case .unknown:
-                    return ExerciseActionType.from(rawValue: action.type) == .unknown
-            }
-        }
-        
-        let originalSet = Set(editingExerciseActions)
-        let filteredSet = Set(filteredActions)
-        let itemsToDelete = originalSet.subtracting(filteredSet)
-        
-        editingExerciseActions.removeAll { item in
-            itemsToDelete.contains(item)
-        }
-        
-        itemsToDelete.forEach{ item in
-            self.mainContext.delete(item)
-        }
+//        let filteredActions = editingExerciseActions.filter { action in
+//            switch ExerciseType.from(rawValue: editingExercise.type) {
+//                case .setsNreps:
+//                    return ExerciseActionType.from(rawValue: action.type) == .setsNreps
+//                case .timed:
+//                    return ExerciseActionType.from(rawValue: action.type) == .timed
+//                case .mixed:
+//                    return [.setsNreps, .timed].contains(ExerciseActionType.from(rawValue: action.type))
+//                case .unknown:
+//                    return ExerciseActionType.from(rawValue: action.type) == .unknown
+//            }
+//        }
+//        
+//        let originalSet = Set(editingExerciseActions)
+//        let filteredSet = Set(filteredActions)
+//        let itemsToDelete = originalSet.subtracting(filteredSet)
+//        
+//        editingExerciseActions.removeAll { item in
+//            itemsToDelete.contains(item)
+//        }
+//        
+//        itemsToDelete.forEach{ item in
+//            self.mainContext.delete(item)
+//        }
     }
     
     func deleteExerciseActions(at offsets: IndexSet) {
@@ -171,7 +187,7 @@ class ExerciseEditViewModel: ObservableObject {
         editingExerciseActions.enumerated().forEach{ index, exerciseAction in
             editingExercise.removeFromExerciseActions(exerciseAction)
             editingExercise.insertIntoExerciseActions(exerciseAction, at: index)
-            exerciseAction.position=Int16(index)
+            exerciseAction.position = index.int16
         }
     }
     

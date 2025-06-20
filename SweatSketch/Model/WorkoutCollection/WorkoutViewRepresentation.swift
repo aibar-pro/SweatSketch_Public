@@ -7,14 +7,7 @@
 
 import CoreData
 
-class WorkoutViewRepresentation: Identifiable, Equatable, ObservableObject {
-    static func == (lhs: WorkoutViewRepresentation, rhs: WorkoutViewRepresentation) -> Bool {
-        return 
-            lhs.id == rhs.id &&
-            lhs.name == rhs.name &&
-            lhs.exercises == rhs.exercises
-    }
-    
+class WorkoutViewRepresentation: Identifiable, ObservableObject {
     let id: UUID
     var name: String
     var exercises = [ExerciseViewRepresentation]()
@@ -26,7 +19,22 @@ class WorkoutViewRepresentation: Identifiable, Equatable, ObservableObject {
         
         let workoutDataManager = WorkoutDataManager()
         let fetchedExercises = workoutDataManager.fetchExercises(for: workout, in: context)
-        self.exercises = fetchedExercises.compactMap({ $0.toExerciseViewRepresentation() })
+        
+        switch fetchedExercises {
+        case .success(let result):
+            self.exercises = result.compactMap { $0.toExerciseViewRepresentation() }
+        case .failure:
+            return nil
+        }
+    }
+}
+
+extension WorkoutViewRepresentation: Equatable {
+    static func == (lhs: WorkoutViewRepresentation, rhs: WorkoutViewRepresentation) -> Bool {
+        return
+            lhs.id == rhs.id &&
+            lhs.name == rhs.name &&
+            lhs.exercises == rhs.exercises
     }
 }
 

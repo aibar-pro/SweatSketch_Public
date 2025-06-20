@@ -18,60 +18,58 @@ struct UserProfileLoginView: View {
         ZStack {
             VStack{
                 ScrollView {
-                    VStack(alignment: .center, spacing: Constants.Design.spacing/2) {
-                        HStack {
-                            Button(action: onDismiss) {
-                                Image(systemName: "chevron.backward")
-                                
-                            }
-                            .padding(.vertical, Constants.Design.spacing/2)
-                            .padding(.trailing, Constants.Design.spacing/2)
-                            
-                            Spacer()
-                        }
-                        .padding(.horizontal, Constants.Design.spacing)
+                    VStack(alignment: .center, spacing: Constants.Design.spacing) {
+                        ToolbarIconButton
+                            .backButton(action: onDismiss)
+                            .buttonView()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
                         
                         Image(systemName: "person.badge.key")
                             .font(.largeTitle)
                             .imageScale(.large)
                             .padding(.top, Constants.Design.spacing)
                         
-                        Text(Constants.Placeholders.UserProfile.loginScreenTitle)
-                            .font(.title)
+                        Text("user.profile.login.title")
+                            .fullWidthText(.title, alignment: .center)
                         
-                        Text(Constants.Placeholders.UserProfile.loginScreenText)
-                            .font(.subheadline)
+                        Text("user.profile.login.subtitle")
+                            .fullWidthText(.subheadline, alignment: .center)
                         
                         LoginPasswordView(user: $user)
-                            .padding(Constants.Design.spacing)
                         
-                        Button(action: {
-                            onLogin(user)
-                        }) {
-                            Text(Constants.Placeholders.UserProfile.loginButtonLabel)
-                                .accentButtonLabelStyleModifier()
-                        }
+                        RectangleButton(
+                            "user.profile.login.button.label",
+                            style: .primary,
+                            isFullWidth: true,
+                            action: {
+                                onLogin(user)
+                            }
+                        )
                     }
+                    .padding(Constants.Design.spacing)
                 }
                 Divider()
-                    .padding(.vertical, Constants.Design.spacing/2)
                 
-                
-                HStack(alignment: .center) {
-                    Text(Constants.Placeholders.UserProfile.signupLinkText)
-                        .customForegroundColorModifier(Constants.Design.Colors.textColorMediumEmphasis)
-                    
-                    Button(action: onSignup) {
-                        Text(Constants.Placeholders.UserProfile.signupButtonLabel)
-                            .fontWeight(.bold)
-                            .customForegroundColorModifier(Constants.Design.Colors.linkColor)
-                    }
-                }
-                
+                footer
             }
             .customForegroundColorModifier(Constants.Design.Colors.textColorHighEmphasis)
         }
         .onDisappear(perform: onDismiss)
+    }
+    
+    private var footer: some View {
+        HStack(alignment: .center, spacing: Constants.Design.spacing) {
+            Text("user.profile.signup.login.link.desctiption")
+                .customForegroundColorModifier(Constants.Design.Colors.textColorMediumEmphasis)
+            
+            RectangleButton(
+                "user.profile.signup.button.label",
+                style: .inlineLink,
+                action: onSignup
+            )
+        }
+        .frame(maxWidth: .infinity, alignment: .center)
     }
 }
 

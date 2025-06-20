@@ -12,108 +12,121 @@ struct WorkoutCollectionView: View {
     @EnvironmentObject var coordinator: WorkoutCollectionCoordinator
     @Environment(\.colorScheme) var colorScheme
     
-    //Changes in EnvironmentObject doesn't invalidate the View
+    //Changes in EnvironmentObject don't invalidate the View
     @ObservedObject var viewModel: WorkoutCollectionViewModel
     
     @State var presentedWorkoutIndex: Int = 0
     
     var body: some View {
-        VStack (spacing: Constants.Design.spacing/2) {
-            HStack (alignment: .center) {
-                Button (action: {
-                    coordinator.enterCollections()
-                }) {
-                    HStack {
-                        Image(systemName: "chevron.backward")
-                        Text(Constants.Placeholders.WorkoutCollection.toCatalogButtonLabel)
-                    }
-                    .padding(.vertical, Constants.Design.spacing/2)
-                    .padding(.trailing, Constants.Design.spacing/2)
-                }
-                
-                Spacer()
-                
-                HStack {
-                    Button(action: {
-                        coordinator.goToAddWorkout()
-                    }) {
-                        Image(systemName: "plus")
-                            .padding(.vertical, Constants.Design.spacing/2)
-                            .padding(.horizontal, Constants.Design.spacing/2)
-                    }
-                    
-                    
-                    Menu {
-                        Button(Constants.Placeholders.WorkoutCollection.editWorkoutButtonLabel) {
-                            coordinator.goToEditWorkout(workoutIndex: presentedWorkoutIndex)
-                        }
-                        
-                        Button(Constants.Placeholders.WorkoutCollection.listWorkoutButtonLabel) {
-                            coordinator.goToWorkoutLst()
-                        }
-                    } label: {
-                        Image(systemName: "ellipsis.circle")
-                            .padding(.vertical, Constants.Design.spacing/2)
-                            .padding(.leading, Constants.Design.spacing/2)
-                    }
-                    .disabled(isCarouselDisabled())
-                }
+        content
+            .onAppear {
+                viewModel.refreshData()
             }
-            .font(.title3)
-            .padding(.horizontal, Constants.Design.spacing)
+    }
+    
+    private var content: some View {
+        VStack(alignment: .center, spacing: Constants.Design.spacing) {
+            toolbar
+                .padding(.horizontal, Constants.Design.spacing)
             
-            GeometryReader { geoReader in
-                if !isCarouselDisabled() {
-                    ZStack {
-                        VStack (alignment: .leading, spacing: Constants.Design.spacing/2) {
-                            
-                            Text(viewModel.workouts[presentedWorkoutIndex].name)
-                                .font(.title2.bold())
-                                .lineLimit(2)
-                                .padding(.horizontal, Constants.Design.spacing)
-                                .frame(height: min(geoReader.size.height*0.1, 55)) //no preserve space in iOS14
-                            
-                            WorkoutCollectionCarouselView(viewModel: viewModel, presentedWorkoutIndex: $presentedWorkoutIndex)
-                        }
-                        
-                        Button (action: {
-                            coordinator.startWorkout(workoutIndex: presentedWorkoutIndex)
-                        }) {
-                            Text(Constants.Placeholders.WorkoutCollection.startWorkoutButtonLabel)
-                                .accentButtonLabelStyleModifier()
-                        }
-                        .padding(.top, -50)
-                        .frame(width: geoReader.size.width, height: geoReader.size.height, alignment: .bottom)
-                    }
-                } else {
-                    VStack {
-                        Text(Constants.Placeholders.WorkoutCollection.emptyCollectionText)
-                            .font(.title.bold())
-                        Button(action: {
-                            coordinator.goToAddWorkout()
-                            
-                        }, label: {
-                            Text(Constants.Placeholders.WorkoutCollection.emptyCollectionButtonLabel)
-                                .accentButtonLabelStyleModifier()
-                        })
-                    }
-                    .frame(width: geoReader.size.width, height: geoReader.size.height, alignment: .center)
-                }
+            if !isCarouselHidden {
+                workoutCarousel
+            } else {
+                emptyView
             }
         }
-        .customAccentColorModifier(Constants.Design.Colors.textColorHighEmphasis)
     }
     
-    func isCarouselDisabled() -> Bool {
-        return viewModel.workouts.isEmpty
-    }
-    
-    func setSheetBackgroundColor() {
-        if let window = UIApplication.shared.windows.first {
-            // For some reason, it picks only light scheme color >.<
-            window.backgroundColor = UIColor(colorScheme == .light ?
-                                             Constants.Design.Colors.backgroundStartColor : .primary)
+    private var toolbar: some View {
+        HStack(alignment: .center, spacing: Constants.Design.spacing) {
+            catalogButton
+            Spacer(minLength: 0)
+            editWorkoutButton
+            collectionMenuButton
         }
+    }
+    
+    private var editWorkoutButton: some View {
+        IconButton(
+            systemImage: "pencil",
+            style: .secondary,
+            action: {
+                coordinator.goToEditWorkout(workoutIndex: presentedWorkoutIndex)
+            }
+        )
+    }
+    
+    private var collectionMenuButton: some View {
+        MenuButton(
+            style: .secondary,
+            isDisabled: Binding { isCarouselHidden } set: { _ in }
+        ) {
+            Button(action: {
+                coordinator.goToAddWorkout()
+            }) {
+                Text("collection.add.workout.button.label")
+            }
+            Button(action: {
+                coordinator.goToWorkoutLst()
+            }) {
+                Text("collection.edit.list.button.label")
+            }
+        }
+    }
+    
+    private var catalogButton: some View {
+        IconButton(
+            systemImage: "menucard",
+            style: .secondary,
+            action: {
+                coordinator.goToCatalog()
+            }
+        )
+    }
+    
+    private var workoutCarousel: some View {
+        ZStack(alignment: .bottom) {
+            VStack (alignment: .leading, spacing: Constants.Design.spacing) {
+                Text(viewModel.workouts[presentedWorkoutIndex].name)
+                    .fullWidthText(.title2, isBold: true)
+                    .lineLimit(3)
+                    .padding(.horizontal, Constants.Design.spacing)
+
+                WorkoutCollectionCarouselView(
+                    viewModel: viewModel,
+                    presentedWorkoutIndex: $presentedWorkoutIndex
+                )
+            }
+
+            RectangleButton(
+                "collection.start.workout.button.label",
+                style: .accent,
+                action: {
+                    coordinator.startWorkout(workoutIndex: presentedWorkoutIndex)
+                }
+            )
+            .offset(y: -Constants.Design.spacing)
+        }
+    }
+    
+    private var emptyView: some View {
+        VStack(alignment: .center, spacing: Constants.Design.spacing) {
+            Text("collection.empty.label")
+                .fullWidthText(.title3, isBold: true, alignment: .center)
+            
+            RectangleButton(
+                "collection.add.workout.button.label",
+                style: .accent,
+                action: {
+                    coordinator.goToAddWorkout()
+                }
+            )
+        }
+        .frame(maxHeight: .infinity, alignment: .center)
+    }
+    
+    var isCarouselHidden: Bool {
+        viewModel.workouts.isEmpty
     }
 }
 

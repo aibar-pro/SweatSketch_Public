@@ -46,7 +46,7 @@ struct TextFieldPopoverView: View {
                     newName.removeAll()
                     onDiscard()
                 }) {
-                    Text(Constants.Placeholders.cancelButtonLabel)
+                    Text("app.button.cancel.label")
                         .secondaryButtonLabelStyleModifier()
                 }
                 Button(action: {
@@ -62,7 +62,6 @@ struct TextFieldPopoverView: View {
         }
         .padding(Constants.Design.spacing)
         .materialCardBackgroundModifier()
-        .padding(.horizontal, Constants.Design.spacing)
     }
 }
 

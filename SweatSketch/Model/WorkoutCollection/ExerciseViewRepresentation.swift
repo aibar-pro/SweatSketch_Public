@@ -1,5 +1,5 @@
 //
-//  ExerciseViewModel.swift
+//  ExerciseViewRepresentation.swift
 //  SweatSketch
 //
 //  Created by aibaranchikov on 09.04.2024.
@@ -7,36 +7,38 @@
 
 import CoreData
 
-class ExerciseViewRepresentation: Identifiable, Equatable, ObservableObject {
-    static func == (lhs: ExerciseViewRepresentation, rhs: ExerciseViewRepresentation) -> Bool {
-        return 
-            lhs.id == rhs.id &&
-            lhs.name == rhs.name &&
-            lhs.type == rhs.type &&
-            lhs.actions == rhs.actions &&
-            lhs.restTimeBetweenActions == rhs.restTimeBetweenActions &&
-            lhs.superSets == rhs.superSets
-    }
-    
+class ExerciseViewRepresentation: Identifiable, ObservableObject {
     let id: UUID
     var name: String
-    var type: ExerciseType
-    var actions = [ExerciseActionViewRepresentation]()
-    var restTimeBetweenActions: ExerciseActionEntity?
-    var superSets: Int16
+    var actions = [ActionViewRepresentation]()
+    var restTimeBetweenActions: RestActionEntity?
+    var superSets: Int
     
     init?(exercise: ExerciseEntity, in context: NSManagedObjectContext) {
         guard let id = exercise.uuid else { return nil }
         self.id = id
-        self.name = exercise.name ?? Constants.Placeholders.noExerciseName
-        self.type = ExerciseType.from(rawValue: exercise.type)
+        let name = exercise.name ?? Constants.Placeholders.noExerciseName
+        self.name = name
         
         let exerciseDataManager = ExerciseDataManager()
-        let fetchedActions = exerciseDataManager.fetchActions(for: exercise, in: context)
-        self.actions = fetchedActions.compactMap({ $0.toExerciseActionViewRepresentation() })
         
-        self.restTimeBetweenActions = exerciseDataManager.fetchRestTimeBetweenActions(for: exercise, in: context) ?? ExerciseActionEntity()
-        self.superSets = exercise.superSets
+        let fetchedActions = exerciseDataManager.fetchActions(for: exercise, in: context)
+        self.actions = fetchedActions.compactMap { $0.toActionViewRepresentation(exerciseName: name) }
+        
+        self.restTimeBetweenActions = exerciseDataManager.fetchRestTimeBetweenActions(for: exercise, in: context)
+
+        self.superSets = exercise.superSets.int
+    }
+}
+
+extension ExerciseViewRepresentation: Equatable {
+    static func == (lhs: ExerciseViewRepresentation, rhs: ExerciseViewRepresentation) -> Bool {
+        return
+            lhs.id == rhs.id &&
+            lhs.name == rhs.name &&
+            lhs.actions == rhs.actions &&
+            lhs.restTimeBetweenActions == rhs.restTimeBetweenActions &&
+            lhs.superSets == rhs.superSets
     }
 }
 

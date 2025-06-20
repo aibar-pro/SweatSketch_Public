@@ -85,36 +85,14 @@ enum Constants {
         
         enum UserProfile {
             static let profileButtonLabel = String.localized("Profile")
-            static let loginButtonLabel = String.localized("Login")
-            static let loginScreenTitle = String.localized("Welcome Back!")
-            static let loginScreenText = String.localized("Login to your account")
-            
-            static let signupLinkText = String.localized("Don't have an account?")
-            
-            static let signupButtonLabel = String.localized("Sign Up")
-            static let signupScreenTitle = String.localized("Sign Up")
-            static let signupScreenText = String.localized("Create an account")
-
-            static let loginLinkText = String.localized("Already have an account?")
             
             static let logoutButtonLabel = String.localized("Logout")
             
             static let noUsername = String.localized("Champion")
             
-            static let usernameLabel = String.localized("Username")
-            static let ageLabel = String.localized("Age")
-            static let heightLabel = String.localized("Height")
-            static let heightUnitLabel = String.localized("cm")
-            static let weightLabel = String.localized("Weight")
-            static let weightUnitLabel = String.localized("kg")
-            
             static let greetingLabel = String.localized("Hello")
         }
-        
-        static let saveButtonLabel = String.localized("Save")
-        static let doneButtonLabel = String.localized("Done")
-        static let cancelButtonLabel = String.localized("Cancel")
-        
+
         static let renamePopupText = String.localized("Enter new name")
         static let renamePopupButtonLabel = String.localized("Rename")
         
@@ -143,6 +121,7 @@ enum Constants {
     enum Design {
         static let cornerRadius = CGFloat(16)
         static let spacing = CGFloat(20)
+        static let buttonLabelPaddding: CGFloat = 12
         
         enum Colors {
             static let backgroundStartColor = Color(.backgroundGradientStart).opacity(0.87)

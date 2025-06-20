@@ -9,7 +9,7 @@ import SwiftUI
 
 struct WorkoutRestTimeView: View {
     
-    var onSave: (_ : Int) -> Void
+    var onSave: (Int) -> Void
     var onDiscard: () -> Void
     
     @State var duration: Int = Constants.DefaultValues.restTimeDuration
@@ -43,13 +43,13 @@ struct WorkoutRestTimeView: View {
                 Button(action: {
                     onDiscard()
                 }) {
-                    Text(Constants.Placeholders.cancelButtonLabel)
+                    Text("app.button.cancel.label")
                         .secondaryButtonLabelStyleModifier()
                 }
                 Button(action: {
                     onSave(duration)
                 }) {
-                    Text(Constants.Placeholders.saveButtonLabel)
+                    Text("app.button.save.label")
                         .bold()
                         .primaryButtonLabelStyleModifier()
                 }

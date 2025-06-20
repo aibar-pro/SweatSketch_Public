@@ -26,22 +26,24 @@ class ApplicationCoordinator: ObservableObject, Coordinator {
     
     func start() {
         setupEventSubscription()
-        checkActiveWorkoutValue()
+        checkActiveWorkoutState()
     }
     
     private func setupEventSubscription() {
         applicationEvent
-            .print("App Coordinator: Workout Event")
+            .print("\(type(of: self)): Workout Event Received")
             .sink { [weak self] event in
-                guard let self = self else { return }
+                guard let self else { return }
                 
                 switch event {
                 case .workoutStarted(let workoutUUID):
                     showActiveWorkout(with: workoutUUID)
+                case .workoutFinished:
+                    finishActiveWorkout()
                 case .catalogRequested:
                     showWorkoutCatalog()
                 case .collectionRequested(let collectionUUID):
-                    showWorkoutCollection(with: collectionUUID)
+                    showWorkoutCollection(with: collectionUUID, shouldFadeIn: false)
                 case .profileRequested:
                     showProfile()
                 }
@@ -50,46 +52,74 @@ class ApplicationCoordinator: ObservableObject, Coordinator {
     }
     
     private func showActiveWorkout(with workoutUUID: UUID) {
-        UserDefaults.standard.set(workoutUUID.uuidString, forKey: UserDefaultsKeys.activeWorkoutUUID)
-        
         do {
             let activeWorkoutCoordinator = try ActiveWorkoutCoordinator(dataContext: dataContext, activeWorkoutUUID: workoutUUID, applicationEvent: self.applicationEvent)
             activeWorkoutCoordinator.start()
             
-            self.childCoordinators.append(activeWorkoutCoordinator)
-            self.rootViewController.popToRootViewController(animated: true)
-            self.rootViewController.viewControllers = [activeWorkoutCoordinator.rootViewController]
+            setActiveWorkoutUUID(workoutUUID)
+            
+            childCoordinators.append(activeWorkoutCoordinator)
+            addViewPushTransition(pushDirection: .fromTop)
+            rootViewController.viewControllers = [activeWorkoutCoordinator.rootViewController]
         } catch ActiveWorkoutError.invalidWorkoutUUID {
             UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.activeWorkoutUUID)
-            checkActiveWorkoutValue()
-            print("Error launching workout with UUID: \(workoutUUID.uuidString). Returning to collection")
+            checkActiveWorkoutState()
+            print("\(type(of: self)): Error launching workout with UUID: \(workoutUUID.uuidString). Returning to collection")
         } catch {
-            print("Error launching workout with UUID: \(workoutUUID.uuidString)")
+            print("\(type(of: self)): Error launching workout with UUID: \(workoutUUID.uuidString)")
         }
     }
     
-    private func showWorkoutCollection(with collectionUUID: UUID?) {
+    private func setActiveWorkoutUUID(_ workoutUUID: UUID) {
+        UserDefaults.standard.set(workoutUUID.uuidString, forKey: UserDefaultsKeys.activeWorkoutUUID)
+    }
+    
+    private func finishActiveWorkout() {
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.activeWorkoutUUID)
-        
-        let workoutCollectionCoordinator = WorkoutCollectionCoordinator(dataContext: dataContext, applicationEvent: self.applicationEvent, collectionUUID: collectionUUID)
+        showLastOpenedCollection()
+    }
+    
+    private func showLastOpenedCollection() {
+        if let lastOpenedCollectionUUID = UserDefaults.standard.string(forKey: UserDefaultsKeys.lastOpenedCollectionUUID),
+           let collectionUUID = UUID(uuidString: lastOpenedCollectionUUID) {
+            showWorkoutCollection(with: collectionUUID)
+        } else {
+            showWorkoutCollection()
+        }
+    }
+
+    private func showWorkoutCollection(with collectionUUID: UUID? = nil, shouldFadeIn: Bool = true) {
+        let workoutCollectionCoordinator = WorkoutCollectionCoordinator(
+            dataContext: dataContext,
+            applicationEvent: self.applicationEvent,
+            collectionUUID: collectionUUID
+        )
         workoutCollectionCoordinator.start()
         
-        if let openedCollectionUUID = workoutCollectionCoordinator.viewModel.workoutCollection.uuid {
-            UserDefaults.standard.set(openedCollectionUUID.uuidString, forKey: UserDefaultsKeys.lastOpenedCollectionUUID)
-        }
-        
         self.childCoordinators.append(workoutCollectionCoordinator)
-        self.rootViewController.popToRootViewController(animated: true)
+        if shouldFadeIn {
+            addViewRevealTransition()
+        } else {
+            addViewPushTransition(pushDirection: .fromRight)
+        }
         self.rootViewController.viewControllers = [workoutCollectionCoordinator.rootViewController]
+        
+        if let collectionUUID {
+            self.setLastOpenedCollectionUUID(collectionUUID)
+        }
+    }
+    
+    private func setLastOpenedCollectionUUID(_ collectionUUID: UUID) {
+        UserDefaults.standard.set(collectionUUID.uuidString, forKey: UserDefaultsKeys.lastOpenedCollectionUUID)
     }
     
     private func showWorkoutCatalog() {
-        let workoutCollectionCoordinator = WorkoutCatalogCoordinator(dataContext: dataContext, applicationEvent: self.applicationEvent)
-        workoutCollectionCoordinator.start()
-            
-        self.childCoordinators.append(workoutCollectionCoordinator)
-        self.rootViewController.popToRootViewController(animated: true)
-        self.rootViewController.viewControllers = [workoutCollectionCoordinator.rootViewController]
+        let workoutCatalogCoordinator = WorkoutCatalogCoordinator(dataContext: dataContext, applicationEvent: self.applicationEvent)
+        workoutCatalogCoordinator.start()
+        
+        self.childCoordinators.append(workoutCatalogCoordinator)
+        addViewPushTransition(pushDirection: .fromLeft)
+        self.rootViewController.viewControllers = [workoutCatalogCoordinator.rootViewController]
     }
     
     private func showProfile() {
@@ -97,22 +127,24 @@ class ApplicationCoordinator: ObservableObject, Coordinator {
         profileCoordinator.start()
         
         self.childCoordinators.append(profileCoordinator)
-        self.rootViewController.popToRootViewController(animated: true)
+        addViewPushTransition(pushDirection: .fromTop)
         self.rootViewController.viewControllers = [profileCoordinator.rootViewController]
     }
     
-    func checkActiveWorkoutValue() {
+    func checkActiveWorkoutState() {
         if let activeWorkoutUUIDString = UserDefaults.standard.string(forKey: UserDefaultsKeys.activeWorkoutUUID),
            let workoutUUID = UUID(uuidString: activeWorkoutUUIDString) {
-            applicationEvent.send(.workoutStarted(workoutUUID))
-        } else if let lastOpenedCollectionUUID = UserDefaults.standard.string(forKey: UserDefaultsKeys.lastOpenedCollectionUUID),
-        let collectionUUID = UUID(uuidString: lastOpenedCollectionUUID) {
-            applicationEvent.send(.collectionRequested(collectionUUID))
-            print("No active workout in UserDefaults. Opening last collection")
+            showActiveWorkout(with: workoutUUID)
         } else {
-            applicationEvent.send(.collectionRequested(nil))
-            print("Opening default collection")
+            showLastOpenedCollection()
         }
     }
     
+    private func addViewPushTransition(pushDirection: CATransitionSubtype) {
+        rootViewController.view.layer.add(CATransition.push(pushDirection), forKey: kCATransition)
+    }
+    
+    private func addViewRevealTransition() {
+        rootViewController.view.layer.add(CATransition.reveal(), forKey: kCATransition)
+    }
 }
