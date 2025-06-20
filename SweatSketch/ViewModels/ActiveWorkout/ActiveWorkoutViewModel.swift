@@ -9,6 +9,23 @@ import CoreData
 import Combine
 import ActivityKit
 
+struct ActionTime: Equatable {
+    var current: Int = 0
+    var total: Double = 0
+
+    var progress: Double {
+        total > 0 ? Double(current) / total : 0
+    }
+    
+    mutating func resetCurrent() {
+        current = 0
+    }
+    
+    var formattedCurrent: String {
+        return current.durationString()
+    }
+}
+
 //TODO: Add workout finished live activity state
 class ActiveWorkoutViewModel: ObservableObject, ActiveWorkoutManagementProtocol {
     
@@ -16,9 +33,9 @@ class ActiveWorkoutViewModel: ObservableObject, ActiveWorkoutManagementProtocol 
     
     let activeWorkout: ActiveWorkoutRepresentation
     
-    var items = [ActiveWorkoutItemRepresentation]()
-    @Published var currentItem: ActiveWorkoutItemRepresentation?
-    @Published var currentAction: ActiveWorkoutActionRepresentation?
+    var items = [ActiveWorkoutItem]()
+    @Published var currentItem: ActiveWorkoutItem?
+    @Published var currentAction: ActionViewRepresentation?
     @Published var currentProgress: (current: Int, total: Int) = (0, 0)
     @Published var isLastAction: Bool = false
 
@@ -27,6 +44,9 @@ class ActiveWorkoutViewModel: ObservableObject, ActiveWorkoutManagementProtocol 
     var totalWorkoutDuration: Int = 0
     private var workoutTimer: AnyCancellable?
     private var timerIsActive = false
+    
+    private var actionTimer: AnyCancellable?
+    var currentActionTime = ActionTime()
     
     //"Stored properties cannot be marked potentially unavailable with '@available'"
     private var currentActivity: Any?
@@ -47,7 +67,7 @@ class ActiveWorkoutViewModel: ObservableObject, ActiveWorkoutManagementProtocol 
         self.isLastAction = activeWorkout.isLastAction()
     }
     
-    func isCurrentItem(item: ActiveWorkoutItemRepresentation) -> Bool {
+    func isCurrentItem(item: ActiveWorkoutItem) -> Bool {
         return currentItem == item && currentItem != nil
     }
     
@@ -83,13 +103,18 @@ class ActiveWorkoutViewModel: ObservableObject, ActiveWorkoutManagementProtocol 
         guard let currentAction = self.currentAction else {return}
         
         if #available(iOS 16.1, *) {
-            let initialContent = ActiveWorkoutActionAttributes.ActiveWorkoutActionStatus(
+            let initialContent = ActiveWorkoutActivityState(
                 action: currentAction,
                 totalActions: currentProgress.total,
                 currentAction: currentProgress.current
             )
             do {
-                let activity = try Activity<ActiveWorkoutActionAttributes>.request(attributes: ActiveWorkoutActionAttributes(), contentState: initialContent, pushType: nil)
+                let activity = try Activity<ActiveWorkoutActionAttributes>
+                    .request(
+                        attributes: ActiveWorkoutActionAttributes(),
+                        contentState: initialContent,
+                        pushType: nil
+                    )
                 self.currentActivity = activity
             } catch {
                 print("Error starting activity: \(error)")
@@ -109,7 +134,7 @@ class ActiveWorkoutViewModel: ObservableObject, ActiveWorkoutManagementProtocol 
         
         Task {
             await self.updateActivityContent(
-                ActiveWorkoutActionAttributes.ActiveWorkoutActionStatus(
+                ActiveWorkoutActivityState(
                     action: currentAction,
                     totalActions: self.currentProgress.total,
                     currentAction: self.currentProgress.current

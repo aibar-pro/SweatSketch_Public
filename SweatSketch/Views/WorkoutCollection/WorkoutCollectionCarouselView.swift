@@ -22,14 +22,22 @@ struct WorkoutCollectionCarouselView: View {
             
             HStack(alignment: .center, spacing: cardSpacing) {
                 ForEach(viewModel.workouts, id: \.id) { workout in
-                    WorkoutDetailView(workoutRepresentation: workout)
+                    WorkoutDetailView(workout: workout)
                         .padding(.all, Constants.Design.spacing/2)
                         .materialCardBackgroundModifier()
                         .frame(width: cardWidth, height: cardHeight, alignment: .top)
                 }
             }
-            .animation(Animation.bouncy(duration: 0.5))
-            .modifier(SnapCarouselModifier(items: viewModel.workouts.count, itemWidth: cardWidth, itemSpacing: cardSpacing, screenWidth: geoReader.size.width, currentIndex: $presentedWorkoutIndex))
+            .animation(Animation.bouncy(duration: 0.25))
+            .modifier(
+                SnapCarouselModifier(
+                    items: viewModel.workouts.count,
+                    itemWidth: cardWidth,
+                    itemSpacing: cardSpacing,
+                    screenWidth: geoReader.size.width,
+                    currentIndex: $presentedWorkoutIndex
+                )
+            )
         }
     }
 }

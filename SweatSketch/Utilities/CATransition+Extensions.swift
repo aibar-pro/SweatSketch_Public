@@ -1,5 +1,5 @@
 //
-//  CATransition+Extension.swift
+//  CATransition+Extensions.swift
 //  SweatSketch
 //
 //  Created by aibaranchikov on 02.06.2025.

@@ -9,13 +9,15 @@ import CoreData
 
 class ExerciseDataManager: ExerciseDataManagerProtocol {
     
-    func createRestTimeBetweenActions(for exercise: ExerciseEntity, with duration: Int, in context: NSManagedObjectContext) -> ExerciseActionEntity {
-        let newRestTime = ExerciseActionEntity(context: context)
+    func createRestTimeBetweenActions(
+        for exercise: ExerciseEntity,
+        with duration: Int,
+        in context: NSManagedObjectContext
+    ) -> RestActionEntity {
+        let newRestTime = RestActionEntity(context: context)
         
         newRestTime.uuid = UUID()
-        newRestTime.isRestTime = true
-        newRestTime.position = 0
-        newRestTime.duration = Int32(duration)
+        newRestTime.duration = duration.int32
         
         newRestTime.exercise = fetchExercise(exercise: exercise, in: context)
         
@@ -24,65 +26,50 @@ class ExerciseDataManager: ExerciseDataManagerProtocol {
     
     func createAction(for exercise: ExerciseEntity, in context: NSManagedObjectContext) -> ExerciseActionEntity {
         let newAction = ExerciseActionEntity(context: context)
-        
-        newAction.uuid = UUID()
-        newAction.isRestTime = false
-        newAction.position = calculateNewActionPosition(for: exercise, in: context)
-        
-        switch ExerciseType.from(rawValue: exercise.type) {
-        case .timed:
-            newAction.type = ExerciseActionType.timed.rawValue
-            newAction.duration = Int32(Constants.DefaultValues.actionDuration)
-        case .mixed:
-            newAction.name = Constants.Placeholders.noActionName
-            fallthrough
-        default:
-            newAction.type = ExerciseActionType.setsNreps.rawValue
-            newAction.sets = Int16(Constants.DefaultValues.setsCount)
-            newAction.reps = Int16(Constants.DefaultValues.repsCount)
-        }
-        
-        newAction.exercise = fetchExercise(exercise: exercise, in: context)
-        
+//        
+//        newAction.uuid = UUID()
+//        newAction.isRestTime = false
+//        newAction.position = calculateNewActionPosition(for: exercise, in: context)
+//        
+//        switch ExerciseType.from(rawValue: exercise.type) {
+//        case .timed:
+//            newAction.type = ExerciseActionType.timed.rawValue
+//            newAction.duration = Int32(Constants.DefaultValues.actionDuration)
+//        case .mixed:
+//            newAction.name = Constants.Placeholders.noActionName
+//            fallthrough
+//        default:
+//            newAction.type = ExerciseActionType.setsNreps.rawValue
+//            newAction.sets = Int16(Constants.DefaultValues.setsCount)
+//            newAction.reps = Int16(Constants.DefaultValues.repsCount)
+//        }
+//        
+//        newAction.exercise = fetchExercise(exercise: exercise, in: context)
+//        
         return newAction
     }
     
     func fetchActions(for exercise: ExerciseEntity, in context: NSManagedObjectContext) -> [ExerciseActionEntity] {
         let fetchRequest: NSFetchRequest<ExerciseActionEntity> = ExerciseActionEntity.fetchRequest()
-        
-        let isRestTimeFalsePredicate = NSPredicate(format: "isRestTime == %@", NSNumber(value: false))
-        let isRestTimeNilPredicate = NSPredicate(format: "isRestTime == nil")
-        
-        let isRestTimePredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [isRestTimeNilPredicate, isRestTimeFalsePredicate])
-        
-        let exercisePredicate = NSPredicate(format: "exercise == %@", exercise)
-
-        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [isRestTimePredicate, exercisePredicate])
-        
-        let sortDescriptor = NSSortDescriptor(key: "position", ascending: true)
-        fetchRequest.sortDescriptors = [sortDescriptor]
+        fetchRequest.predicate = NSPredicate(format: "exercise == %@", exercise)
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "position", ascending: true)]
         
         do {
-            let actionsToReturn = try context.fetch(fetchRequest)
-            return actionsToReturn
+            let all = try context.fetch(fetchRequest)
+            return all.filter { !($0 is RestActionEntity) }
         } catch {
             print("Error fetching actions: \(error)")
             return []
         }
     }
     
-    func fetchRestTimeBetweenActions(for exercise: ExerciseEntity, in context: NSManagedObjectContext) -> ExerciseActionEntity? {
-        let fetchRequest: NSFetchRequest<ExerciseActionEntity> = ExerciseActionEntity.fetchRequest()
+    func fetchRestTimeBetweenActions(for exercise: ExerciseEntity, in context: NSManagedObjectContext) -> RestActionEntity? {
+        let fetchRequest: NSFetchRequest<RestActionEntity> = RestActionEntity.fetchRequest()
         fetchRequest.fetchLimit = 1
-        
-        let isRestTimePredicate = NSPredicate(format: "isRestTime == %@", NSNumber(value: true))
-        let exercisePredicate = NSPredicate(format: "exercise == %@", exercise)
-
-        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [isRestTimePredicate, exercisePredicate])
+        fetchRequest.predicate = NSPredicate(format: "exercise == %@", exercise)
         
         do {
-            let restTimeToReturn = try context.fetch(fetchRequest).first
-            return restTimeToReturn
+            return try context.fetch(fetchRequest).first
         } catch {
             print("Error fetching actions: \(error)")
             return nil
@@ -123,7 +110,7 @@ class ExerciseDataManager: ExerciseDataManagerProtocol {
     func setupActionPositions(for exercise: ExerciseEntity, in context: NSManagedObjectContext) {
         let actions = fetchActions(for: exercise, in: context)
         for (index, action) in actions.enumerated() {
-            action.position = Int16(index)
+            action.position = index.int16
         }
     }
 }

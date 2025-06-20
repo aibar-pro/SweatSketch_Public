@@ -1,5 +1,5 @@
 //
-//  WorkoutViewRepresentation.swift
+//  WorkoutModel.swift
 //  SweatSketch
 //
 //  Created by aibaranchikov on 10.04.2024.
@@ -7,14 +7,7 @@
 
 import CoreData
 
-class WorkoutViewRepresentation: Identifiable, Equatable, ObservableObject {
-    static func == (lhs: WorkoutViewRepresentation, rhs: WorkoutViewRepresentation) -> Bool {
-        return 
-            lhs.id == rhs.id &&
-            lhs.name == rhs.name &&
-            lhs.exercises == rhs.exercises
-    }
-    
+class WorkoutModel: Identifiable, ObservableObject {
     let id: UUID
     var name: String
     var exercises = [ExerciseViewRepresentation]()
@@ -30,11 +23,20 @@ class WorkoutViewRepresentation: Identifiable, Equatable, ObservableObject {
     }
 }
 
+extension WorkoutModel: Equatable {
+    static func == (lhs: WorkoutModel, rhs: WorkoutModel) -> Bool {
+        return
+            lhs.id == rhs.id &&
+            lhs.name == rhs.name &&
+            lhs.exercises == rhs.exercises
+    }
+}
+
 extension WorkoutEntity {
-    func toWorkoutViewRepresentation() -> WorkoutViewRepresentation? {
+    func toWorkoutViewRepresentation() -> WorkoutModel? {
         guard let context = self.managedObjectContext else {
             return nil
         }
-        return WorkoutViewRepresentation(workout: self, in: context)
+        return WorkoutModel(workout: self, in: context)
     }
 }

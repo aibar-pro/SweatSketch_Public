@@ -12,7 +12,7 @@ class WorkoutCollectionViewModel: ObservableObject {
     let mainContext: NSManagedObjectContext
     var workoutCollection: WorkoutCollectionEntity
     
-    @Published var workouts = [WorkoutViewRepresentation]()
+    @Published private(set) var workouts = [WorkoutViewRepresentation]()
     
     private let collectionDataManager = CollectionDataManager()
     
@@ -21,61 +21,39 @@ class WorkoutCollectionViewModel: ObservableObject {
         self.mainContext.parent = context
         
         self.workoutCollection = WorkoutCollectionEntity()
-        self.workoutCollection = setupCollection(collectionUUID: collectionUUID)
-        
+        self.workoutCollection = fetchCollection(with: collectionUUID)
         
         refreshData()
+    }
+    
+    private func fetchCollection(with collectionUuid: UUID? = nil) -> WorkoutCollectionEntity {
+        if let collectionUuid,
+            let collection = collectionDataManager.fetchCollection(by: collectionUuid, in: self.mainContext) {
+            print("\(type(of: self)): Fetched collection with UUID: \(collectionUuid)")
+            return collection
+        }
         
-
-//        if WorkoutCollectionType.from(rawValue: self.workoutCollection.type) == .defaultCollection {
-//            print("Default Collection Presented")
-//            let backgroundContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-//            backgroundContext.parent = mainContext
-//            backgroundContext.perform {
-//                self.collectionDataManager.setupDefaultCollection(in: backgroundContext)
-//                do {
-//                    if backgroundContext.hasChanges {
-//                        try backgroundContext.save()
-//                        
-//                        DispatchQueue.main.async { [weak self] in
-//                            self?.saveContext()
-//                            self?.refreshData()
-//                        }
-//                    }
-//                } catch {
-//                    print("Error saving in background context: \(error)")
-//                }
-//            }
-//        }
-    }
-    
-    private func setupCollection(collectionUUID: UUID? = nil) -> WorkoutCollectionEntity {
-        if let uuid = collectionUUID, let collection = collectionDataManager.fetchCollection(by: uuid, in: self.mainContext) {
+        if let collection = collectionDataManager.fetchFirstUserCollection(in: self.mainContext) {
+            print("\(type(of: self)): Fetched first user collection")
             return collection
-        } else if let collection = collectionDataManager.fetchFirstUserCollection(in: self.mainContext) {
-            return collection
-        } 
-        else if let fetchedDefaultCollection = collectionDataManager.fetchSystemCollection(ofType: .defaultCollection, in: self.mainContext){
+        }
+        
+        if let fetchedDefaultCollection = collectionDataManager.fetchSystemCollection(ofType: .defaultCollection, in: self.mainContext) {
+            print("\(type(of: self)): Fetched default collection")
             return fetchedDefaultCollection
-        } else {
-            let newDefaultCollection = collectionDataManager.createDefaultCollection(in: self.mainContext)
-            print("CREATED DEFAULT COLLECTION")
-            self.saveContext()
-            return newDefaultCollection
         }
-    }
-    
-    func assignWorkoutsToDefaultCollection(workouts: [WorkoutEntity], defaultCollection: WorkoutCollectionEntity) {
-        for workout in workouts {
-            workout.collection = defaultCollection
-        }
+        
+        let newDefaultCollection = collectionDataManager.createDefaultCollection(in: self.mainContext)
+        self.saveContext()
+        print("\(type(of: self)): Default collection created")
+        return newDefaultCollection
     }
 
     func refreshData() {
+        let fetchedWorkouts = collectionDataManager.fetchWorkouts(for: workoutCollection, in: mainContext)
+        print("\(type(of: self)): Fetched \(fetchedWorkouts.count) workouts")
         DispatchQueue.main.async { [weak self] in
-            if let context = self?.mainContext, let collection = self?.workoutCollection, let fetchedWorkouts = self?.collectionDataManager.fetchWorkouts(for: collection, in: context) {
-                self?.workouts = fetchedWorkouts.compactMap({ $0.toWorkoutViewRepresentation() })
-            }
+            self?.workouts = fetchedWorkouts.compactMap { $0.toWorkoutViewRepresentation() }
         }
     }
     
@@ -90,7 +68,4 @@ class WorkoutCollectionViewModel: ObservableObject {
             fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
         }
     }
-    
- 
 }
-

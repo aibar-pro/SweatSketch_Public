@@ -19,17 +19,19 @@ class ActiveWorkoutRepresentation: Identifiable, Equatable, ObservableObject {
     let id: UUID
     var title: String
     
-    var items = [ActiveWorkoutItemRepresentation]()
+    var items = [ActiveWorkoutItem]()
     var currentItemIndex: Int = 0
     var currentActionIndex: Int = 0
     
-    var currentItem: ActiveWorkoutItemRepresentation? {
+    var currentItem: ActiveWorkoutItem? {
        return items.isEmpty ? nil : items[currentItemIndex]
     }
     
-    var currentAction: ActiveWorkoutActionRepresentation? {
-       guard !items.isEmpty else { return nil }
-       return items[currentItemIndex].actions[currentActionIndex]
+    var currentAction: ActionViewRepresentation? {
+        guard !items.isEmpty,
+                !items[currentItemIndex].actions.isEmpty
+        else { return nil }
+        return items[currentItemIndex].actions[currentActionIndex]
     }
     
     private let workoutDataManager = WorkoutDataManager()
@@ -45,9 +47,12 @@ class ActiveWorkoutRepresentation: Identifiable, Equatable, ObservableObject {
         self.items = fetchItems(for: workout, in: context)
     }
     
-    private func fetchItems(for workout: WorkoutEntity, in context: NSManagedObjectContext) -> [ActiveWorkoutItemRepresentation] {
-        let fetchedExercises = workoutDataManager.fetchExercises(for: workout, in: context)
-        let fetchedDefaultRestTime = workoutDataManager.fetchDefaultRestTime(for: workout, in: context)
+    private func fetchItems(for workout: WorkoutEntity, in context: NSManagedObjectContext) -> [ActiveWorkoutItem] {
+        guard case .success(let fetchedExercises) = workoutDataManager.fetchExercises(for: workout, in: context),
+                !fetchedExercises.isEmpty
+        else { return [] }
+        
+        let defaultWorkoutRestTimeDuration = fetchDefaultRestTimeDuration(for: workout, in: context)
         
         // if exercise is not first, if exercise exist: fetch rest time
         // transform fetched rest time or default one
@@ -55,20 +60,17 @@ class ActiveWorkoutRepresentation: Identifiable, Equatable, ObservableObject {
         // transform fetched exercise
         // add transformed exercise to an array
         
-        var items = [ActiveWorkoutItemRepresentation]()
+        var items = [ActiveWorkoutItem]()
         
         for (index, exercise) in fetchedExercises.enumerated() {
-            if let exerciseRepresentation = exercise.toActiveWorkoutItemRepresentation(defaultWorkoutRestTimeUUID: fetchedDefaultRestTime?.uuid, defaultWorkoutRestTimeDuration: fetchedDefaultRestTime?.duration) {
+            if let exerciseRepresentation = exercise.toActiveWorkoutItem(defaultWorkoutRestTimeDuration: defaultWorkoutRestTimeDuration) {
                 //Add rest period between exercises: custom or default
                 if index > 0 {
                     if let fetchedRestTime = workoutDataManager.fetchRestTime(for: exercise, in: context), 
-                        let restTimeRepresentation = fetchedRestTime.toActiveWorkoutItemRepresentation()
-                    {
+                        let restTimeRepresentation = fetchedRestTime.toActiveWorkoutItem() {
                         items.append(restTimeRepresentation)
-                    } else if let defaultRestTimeDuration = fetchedDefaultRestTime?.duration,
-                        let defaultRestTimeRepresentation = ActiveWorkoutItemRepresentation(entityUUID: UUID(), type: .rest, restTimeDuration: defaultRestTimeDuration,in: context)
-                    {
-                        items.append(defaultRestTimeRepresentation)
+                    } else {
+                        appendDefaultRestTime(items: &items, duration: defaultWorkoutRestTimeDuration, in: context)
                     }
                 }
                 items.append(exerciseRepresentation)
@@ -76,6 +78,28 @@ class ActiveWorkoutRepresentation: Identifiable, Equatable, ObservableObject {
         }
         
         return items
+    }
+    
+    private func fetchDefaultRestTimeDuration(for workout: WorkoutEntity, in context: NSManagedObjectContext) -> Int {
+        guard let fetchedDefaultRestTime = workoutDataManager.fetchDefaultRestTime(for: workout, in: context) else { return 0 }
+        return fetchedDefaultRestTime.duration.int
+    }
+    
+    private func appendDefaultRestTime(
+        items: inout [ActiveWorkoutItem],
+        duration: Int,
+        in context: NSManagedObjectContext
+    ) {
+        guard let restTimeItem = ActiveWorkoutItem(
+            entityUUID: UUID(),
+            title: Constants.Placeholders.restPeriodLabel,
+            type: .rest(duration: duration),
+            in: context
+        ) else { return }
+        
+        items.append(
+            restTimeItem
+        )
     }
     
     func next() {

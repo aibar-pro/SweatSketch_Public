@@ -15,32 +15,27 @@ class WorkoutEditCoordinator: BaseCoordinator<WorkoutEditViewModel>, Coordinator
     }
     
     func goToAddExercise() {
-        let temporaryExerciseAddViewModel = ExerciseEditViewModel(parentViewModel: viewModel, editingExercise: nil)
-        let exerciseAddCoordinator = ExerciseEditCoordinator(viewModel: temporaryExerciseAddViewModel)
+        guard let exerciseEditViewModel = ExerciseEditViewModel(parentViewModel: viewModel, editingExercise: nil)
+        else {
+            print("\(type(of: self)): \(#function): Failed to initialize ExerciseEditViewModel")
+            return
+        }
         
-        exerciseAddCoordinator.start()
-        childCoordinators.append(exerciseAddCoordinator)
-        
-        let addExerciseViewController = exerciseAddCoordinator.rootViewController
-        addExerciseViewController.modalPresentationStyle = .formSheet
-        rootViewController.present(addExerciseViewController, animated: true)
+        presentExerciseEditViewController(using: exerciseEditViewModel)
     }
     
-    func goToAdvancedEditRestPeriod() {
-        let temporaryRestTimeViewModel = RestTimeEditViewModel(parentViewModel: viewModel)
-        let restTimeCoordinator = RestTimeEditCoordinator(viewModel: temporaryRestTimeViewModel)
+    func goToEditExercise(exerciseToEdit: ExerciseEntity) {
+        guard let exerciseEditViewModel = ExerciseEditViewModel(parentViewModel: viewModel, editingExercise: exerciseToEdit)
+        else {
+            print("\(type(of: self)): \(#function): Failed to initialize ExerciseEditViewModel")
+            return
+        }
         
-        restTimeCoordinator.start()
-        childCoordinators.append(restTimeCoordinator)
-        
-        let restTimeViewController = restTimeCoordinator.rootViewController
-        restTimeViewController.modalPresentationStyle = .formSheet
-        rootViewController.present(restTimeViewController, animated: true)
+        presentExerciseEditViewController(using: exerciseEditViewModel)
     }
     
-    func goToEditWorkout(exerciseToEdit: ExerciseEntity) {
-        let temporaryExerciseEditViewModel = ExerciseEditViewModel(parentViewModel: viewModel, editingExercise: exerciseToEdit)
-        let exerciseEditCoordinator = ExerciseEditCoordinator(viewModel: temporaryExerciseEditViewModel)
+    private func presentExerciseEditViewController(using viewModel: ExerciseEditViewModel) {
+        let exerciseEditCoordinator = ExerciseEditCoordinator(viewModel: viewModel)
         
         exerciseEditCoordinator.start()
         childCoordinators.append(exerciseEditCoordinator)
@@ -48,6 +43,21 @@ class WorkoutEditCoordinator: BaseCoordinator<WorkoutEditViewModel>, Coordinator
         let editExerciseViewController = exerciseEditCoordinator.rootViewController
         editExerciseViewController.modalPresentationStyle = .formSheet
         rootViewController.present(editExerciseViewController, animated: true)
+    }
+    
+    func goToAdvancedEditRestPeriod() {
+        guard let restTimeEditViewModel = RestTimeEditViewModel(parentViewModel: viewModel) else {
+            print("\(type(of: self)): \(#function): Failed to initialize RestTimeEditViewModel")
+            return
+        }
+        let restTimeCoordinator = RestTimeEditCoordinator(viewModel: restTimeEditViewModel)
+        
+        restTimeCoordinator.start()
+        childCoordinators.append(restTimeCoordinator)
+        
+        let restTimeViewController = restTimeCoordinator.rootViewController
+        restTimeViewController.modalPresentationStyle = .formSheet
+        rootViewController.present(restTimeViewController, animated: true)
     }
     
     func saveWorkoutEdit(){

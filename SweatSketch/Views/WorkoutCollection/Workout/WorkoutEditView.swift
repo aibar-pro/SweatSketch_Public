@@ -8,245 +8,271 @@
 import SwiftUI
 
 struct WorkoutEditView: View {
-    
     @EnvironmentObject var coordinator: WorkoutEditCoordinator
     @ObservedObject var viewModel: WorkoutEditViewModel
     
     @GestureState var titlePress = false
+    
+    @State private var currentEditingState: EditingState = .none
+    
+    var body: some View {
+        VStack (alignment: .leading, spacing: Constants.Design.spacing) {
+            headerView
+            
+            workoutNameView
+            
+            ZStack {
+                exercisesView
+                
+                VStack {
+                    if currentEditingState == .name {
+                        workoutNameEditView
+                    }
+                    
+                    Spacer()
+                    
+                    if currentEditingState == .restTime {
+                        restTimeEditView
+                    }
+                }
+            }
+            
+            footerView
+        }
+        .padding(.vertical, Constants.Design.spacing / 2)
+        .padding(.horizontal, Constants.Design.spacing)
+    }
+    
+    private var headerView: some View {
+        HStack(alignment: .center, spacing: Constants.Design.spacing) {
+            CapsuleButton(
+                "app.button.cancel.label",
+                style: .inline,
+                isDisabled: Binding { currentEditingState == .list } set: { _ in },
+                action: {
+                    if currentEditingState == .none {
+                        coordinator.discardWorkoutEdit()
+                    } else {
+                        currentEditingState = .none
+                    }
+                }
+            )
+            
+            Spacer(minLength: 0)
+            
+            CapsuleButton(
+                "app.button.save.label",
+                style: .primary,
+                isDisabled: Binding { isSaveButtonDisabled } set: { _ in },
+                action: {
+                    if currentEditingState == .none {
+                        coordinator.saveWorkoutEdit()
+                    } else {
+                        currentEditingState = .none
+                    }
+                }
+            )
+        }
+        .overlay(
+            HStack(alignment: .center, spacing: Constants.Design.spacing) {
+                IconButton(
+                    systemImage: "arrow.uturn.backward",
+                    style: .inline,
+                    isDisabled: Binding { !viewModel.canUndo || currentEditingState != .none } set: { _ in },
+                    action: {
+                        viewModel.undo()
+                    }
+                )
+                
+                IconButton(
+                    systemImage: "arrow.uturn.forward",
+                    style: .inline,
+                    isDisabled: Binding { !viewModel.canRedo || currentEditingState != .none } set : { _ in },
+                    action: {
+                        viewModel.redo()
+                    }
+                )
+            }
+        )
+    }
+    
+    private var workoutNameView: some View {
+        Text(viewModel.editingWorkout.name ?? Constants.Placeholders.noWorkoutName)
+            .fullWidthText(.title2, isBold: true)
+            .lineLimit(3)
+            .scaleEffect(titlePress ? 0.95 : 1)
+            .animation(.spring(response: 0.4, dampingFraction: 0.6))
+            .gesture(
+                  LongPressGesture(minimumDuration: 0.35)
+                      .updating($titlePress) { currentState, gestureState, transaction in
+                          gestureState = currentState
+                      }
+                      .onEnded { value in
+                          if currentEditingState == .none {
+                              currentEditingState = .name
+                          } else {
+                              currentEditingState = .none
+                          }
+                      }
+              )
+            .disabled(isRenameDisabled)
+    }
+    
+    private var exercisesView: some View {
+        List {
+            ForEach(viewModel.exercises.compactMap { $0.toExerciseViewRepresentation() }, id: \.id) { exercise in
+                HStack (alignment: .firstTextBaseline, spacing: Constants.Design.spacing) {
+                    ExerciseDetailView(exercise: exercise)
+                    
+                    Spacer(minLength: 0)
+                    
+                    if currentEditingState == .none {
+                        IconButton(
+                            systemImage: "ellipsis",
+                            style: .inline,
+                            action: {
+                                print("\(type(of: self)): Edit exercise: \(exercise.name)")
+                                guard let exerciseEntityToEdit = viewModel.exercises.first(where: { $0.uuid == exercise.id }) else {
+                                    print("\(type(of: self)): Could not find exercise to edit")
+                                    return
+                                }
+                                coordinator.goToEditExercise(exerciseToEdit: exerciseEntityToEdit)
+                            }
+                        )
+                    }
+                }
+                .padding(.vertical, Constants.Design.spacing / 2)
+                .listRowBackground(Color.clear)
+            }
+            .onDelete { index in viewModel.deleteWorkoutExercise(at: index) }
+            .onMove(perform: viewModel.reorderWorkoutExercise)
+        }
+        .opacity(isListEditDisabled ? 0.2 : 1)
+        .disabled(isListEditDisabled)
+        .listStyle(.plain)
+        .listRowInsets(EdgeInsets())
+        .materialCardBackgroundModifier()
+        .environment(\.editMode,
+                      .constant(currentEditingState == .list ? EditMode.active : EditMode.inactive))
+        .animation(.easeInOut(duration: 0.25))
+        .onChange(of: viewModel.exercises.count == 0) { _ in
+            if currentEditingState == .list {
+                currentEditingState = .none
+            }
+        }
+    }
+    
+    private var workoutNameEditView: some View {
+        TextFieldPopoverView(
+            popoverTitle: Constants.Placeholders.WorkoutCollection.renameWorkoutPopupTitle,
+            textFieldLabel: Constants.Placeholders.renamePopupText,
+            buttonLabel: Constants.Placeholders.renamePopupButtonLabel,
+            onDone: { newName in
+                viewModel.renameWorkout(newName: newName)
+                currentEditingState = .none
+            }, onDiscard: {
+                currentEditingState = .none
+            })
+    }
+    
+    private var restTimeEditView: some View {
+        WorkoutDefaultRestTimeView(
+            onSave: { newDuration in
+                viewModel.updateDefaultRestTime(duration: newDuration)
+                currentEditingState = .none
+            },
+            onDiscard: {
+                currentEditingState = .none
+            },
+            onAdvancedEdit: {
+                coordinator.goToAdvancedEditRestPeriod()
+                currentEditingState = .none
+            },
+            duration: viewModel.defaultRestTime.duration.int
+        )
+        .padding(Constants.Design.spacing)
+        .materialCardBackgroundModifier()
+    }
+    
+    private var footerView: some View {
+        HStack (alignment: .bottom, spacing: Constants.Design.spacing) {
+            IconButton(
+                systemImage: "arrow.up.arrow.down",
+                style: .secondary,
+                isDisabled: Binding { isListEditDisabled } set: { _ in },
+                action: {
+                    if currentEditingState == .none {
+                        currentEditingState = .list
+                    } else {
+                        currentEditingState = .none
+                    }
+                }
+            )
+          
+            Spacer(minLength: 0)
+            
+            CapsuleButton(
+                content: {
+                    HStack (alignment: .center, spacing: Constants.Design.spacing / 2) {
+                        Image(systemName: "timer")
+                        
+                        if currentEditingState != .restTime {
+                            Text(viewModel.defaultRestTime.duration.int.durationString())
+                        } else {
+                            Text(Constants.Placeholders.noDuration)
+                        }
+                    }
+                },
+                style: .secondary,
+                isDisabled: Binding { isRestTimeEditDisabled } set: { _ in },
+                action: {
+                    switch currentEditingState {
+                    case .none:
+                        currentEditingState = .restTime
+                    case .restTime:
+                        currentEditingState = .none
+                    default:
+                        break
+                    }
+                }
+            )
+            
+            Spacer(minLength: 0)
+            
+            IconButton(
+                systemImage: "plus",
+                style: .secondary,
+                isDisabled: Binding { currentEditingState != .none } set: { _ in },
+                action: {
+                    coordinator.goToAddExercise()
+                }
+            )
+        }
+    }
+    
+    var isSaveButtonDisabled: Bool {
+        currentEditingState == .name || currentEditingState == .restTime
+    }
+    
+    var isRenameDisabled: Bool {
+        currentEditingState == .list || currentEditingState == .restTime
+    }
+    
+    var isRestTimeEditDisabled: Bool {
+        currentEditingState == .name || currentEditingState == .list
+    }
+    
+    var isListEditDisabled: Bool {
+        viewModel.exercises.isEmpty
+        || currentEditingState == .name
+        || currentEditingState == .restTime
+    }
     
     enum EditingState {
         case none
         case name
         case list
         case restTime
-    }
-    @State private var currentEditingState: EditingState = .none
-    
-    var body: some View {
-        ZStack {
-            GeometryReader { gReader in
-                VStack (alignment: .leading, spacing: Constants.Design.spacing/2) {
-                    HStack {
-                        Button(action: {
-                            switch self.currentEditingState {
-                            case .none:
-                                coordinator.discardWorkoutEdit()
-                            default:
-                                currentEditingState = .none
-                            }
-                        }) {
-                            Text(Constants.Placeholders.cancelButtonLabel)
-                                .padding(.vertical, Constants.Design.spacing/2)
-                                .padding(.trailing, Constants.Design.spacing/2)
-                        }
-                        .disabled(currentEditingState == .list)
-                        
-                        Spacer()
-                        
-                        Button(action: {
-                           viewModel.undo()
-                        }) {
-                            Image(systemName: "arrow.uturn.backward")
-                        }
-                        .padding(.vertical, Constants.Design.spacing/2)
-                        .padding(.horizontal, Constants.Design.spacing/2)
-                        .disabled(!viewModel.canUndo || currentEditingState != .none)
-                        
-                        Button(action: {
-                            viewModel.redo()
-                        }) {
-                            Image(systemName: "arrow.uturn.forward")
-                        }
-                        .padding(.vertical, Constants.Design.spacing/2)
-                        .padding(.horizontal, Constants.Design.spacing/2)
-                        .disabled(!viewModel.canRedo || currentEditingState != .none)
-                        
-                        Spacer()
-                        
-                        Button(action: {
-                            if currentEditingState == .none {
-                                coordinator.saveWorkoutEdit()
-                            } else {
-                                currentEditingState = .none
-                            }
-                        }) {
-                            Text(
-                                currentEditingState == .list ?
-                                Constants.Placeholders.doneButtonLabel :
-                                    Constants.Placeholders.saveButtonLabel
-                            )
-                            .bold()
-                            .padding(.vertical, Constants.Design.spacing/2)
-                            .padding(.leading, Constants.Design.spacing/2)
-                        }
-                        .disabled(isSaveButtonDisable())
-                    }
-                    .padding(.horizontal, Constants.Design.spacing)
-                    
-                    Text(viewModel.editingWorkout.name ?? Constants.Placeholders.noWorkoutName)
-                        .font(.title2.bold())
-                        .lineLimit(2)
-                        .padding(.horizontal, Constants.Design.spacing)
-                        .scaleEffect(titlePress ? 0.95 : 1)
-                        .animation(.spring(response: 0.4, dampingFraction: 0.6))
-                        .gesture(
-                              LongPressGesture(minimumDuration: 0.35)
-                                  .updating($titlePress) { currentState, gestureState, transaction in
-                                      gestureState = currentState
-                                  }
-                                  .onEnded { value in
-                                      if currentEditingState == .none {
-                                          currentEditingState = .name
-                                      } else {
-                                          currentEditingState = .none
-                                      }
-                                        
-                                  }
-                          )
-                        .disabled(isRenameDisabled())
-                    
-                    ZStack {
-                        List {
-                            ForEach (viewModel.exercises, id: \.self) { exercise in
-                                HStack (alignment: .top){
-                                    if let exerciseRepresentation = exercise.toExerciseViewRepresentation(){
-                                        ExerciseView(exerciseRepresentation: exerciseRepresentation)
-                                    }
-                                    Spacer()
-                                    Button(action: {
-                                        print("Edit exercise: \(exercise.name ?? "")")
-                                        coordinator.goToEditWorkout(exerciseToEdit: exercise)
-                                    }) {
-                                        Image(systemName: "ellipsis")
-                                            .font(.title3)
-                                            .padding(.trailing, Constants.Design.spacing/4)
-                                            .padding(.vertical, Constants.Design.spacing/4)
-                                    }
-                                }
-                                .padding(.vertical, Constants.Design.spacing/4)
-                                .listRowBackground(
-                                    RoundedRectangle(cornerRadius: Constants.Design.cornerRadius, style: .continuous)
-                                        .fill(
-                                            Color.clear
-                                        )
-                                        .materialCardBackgroundModifier()
-                                        .padding(.all, Constants.Design.spacing/4)
-                                )
-                            }
-                            .onDelete { index in viewModel.deleteWorkoutExercise(at: index) }
-                            .onMove(perform: viewModel.reorderWorkoutExercise)
-                        }
-                        .padding(.horizontal, Constants.Design.spacing/2)
-                        .opacity(isListEditDisabled() ? 0.2 : 1)
-                        .disabled(isListEditDisabled())
-                        .listStyle(.plain)
-                        .environment(\.editMode,
-                                      .constant(currentEditingState == .list ? EditMode.active : EditMode.inactive))
-                        .animation(.easeInOut(duration: 0.25))
-                        .onChange(of: viewModel.exercises.count==0, perform: { _ in
-                            if currentEditingState == .list {
-                                currentEditingState = .none
-                            }
-                        })
-                        
-                        VStack {
-                            if currentEditingState == .name {
-                                TextFieldPopoverView(
-                                    popoverTitle: Constants.Placeholders.WorkoutCollection.renameWorkoutPopupTitle,
-                                    textFieldLabel: Constants.Placeholders.renamePopupText,
-                                    buttonLabel: Constants.Placeholders.renamePopupButtonLabel,
-                                    onDone: { newName in
-                                        viewModel.renameWorkout(newName: newName)
-                                        currentEditingState = .none
-                                    }, onDiscard: {
-                                        currentEditingState = .none
-                                    })
-                            }
-                            
-                            Spacer()
-                            
-                            if currentEditingState == .restTime {
-                                WorkoutDefaultRestTimeView(onSave: { newDuration in
-                                    viewModel.updateDefaultRestTime(duration: newDuration)
-                                    currentEditingState = .none
-                                }, onDiscard: {
-                                    currentEditingState = .none
-                                }, onAdvancedEdit: {
-                                    coordinator.goToAdvancedEditRestPeriod()
-                                    currentEditingState = .none
-                                }, duration: Int(viewModel.defaultRestTime.duration))
-                                    .padding(Constants.Design.spacing)
-                                    .materialCardBackgroundModifier()
-                            }
-                        }
-                    }
-                    HStack (alignment: .bottom, spacing: Constants.Design.spacing) {
-                        Button(action: {
-                            if currentEditingState == .none {
-                                currentEditingState = .list
-                            } else {
-                                currentEditingState = .none
-                            }
-                        }) {
-                            Image(systemName: "arrow.up.arrow.down")
-                                .padding(Constants.Design.spacing/2)
-                        }
-                        .disabled(isListEditDisabled())
-                      
-                        Button(action: {
-                            switch currentEditingState {
-                            case .none:
-                                currentEditingState = .restTime
-                            case .restTime:
-                                currentEditingState = .none
-                            default:
-                                break
-                            }
-                        }) {
-                            HStack (alignment: .center, spacing: Constants.Design.spacing/4) {
-                                Image(systemName: "timer")
-                                   
-                                if currentEditingState != .restTime {
-                                    DurationView(durationInSeconds: Int(viewModel.defaultRestTime.duration))
-                                } else {
-                                    Text(Constants.Placeholders.noDuration)
-                                }
-                            }
-                            .padding(Constants.Design.spacing/2)
-                        }
-                        .disabled(isRestTimeEditDisabled())
-                    
-                        Spacer()
-                        Button(action: {
-                            coordinator.goToAddExercise()
-                        }) {
-                            Image(systemName: "plus")
-                                .font(.title2.bold())
-                                .primaryButtonLabelStyleModifier()
-                        }
-                        .disabled(currentEditingState != .none)
-                    }
-                    .padding(.horizontal, Constants.Design.spacing)
-                }
-                .customAccentColorModifier(Constants.Design.Colors.textColorHighEmphasis)
-            }
-        }
-    }
-    
-    func isSaveButtonDisable() -> Bool {
-        return currentEditingState == .name || currentEditingState == .restTime
-    }
-    
-    func isRenameDisabled() -> Bool {
-        return currentEditingState == .list || currentEditingState == .restTime
-    }
-    
-    func isRestTimeEditDisabled() -> Bool {
-        return currentEditingState == .name || currentEditingState == .list
-    }
-    
-    func isListEditDisabled() -> Bool {
-        return viewModel.exercises.isEmpty || currentEditingState == .name || currentEditingState == .restTime
     }
 }
 
@@ -260,9 +286,9 @@ struct WorkoutEditView_Previews: PreviewProvider {
         
         let workoutViewModel = WorkoutCollectionViewModel(context: persistenceController.container.viewContext, collectionUUID: firstCollection?.uuid)
         
-        let workoutForPreview = collectionDataManager.fetchWorkouts(for: firstCollection!, in: workoutViewModel.mainContext).first
+        let workoutForPreview = collectionDataManager.fetchWorkouts(for: firstCollection!, in: workoutViewModel.mainContext).randomElement()!
         
-        let workoutEditModel = WorkoutEditViewModel(parentViewModel: workoutViewModel, editingWorkoutUUID: workoutForPreview?.uuid)
+        let workoutEditModel = WorkoutEditViewModel(parentViewModel: workoutViewModel, editingWorkoutUUID: workoutForPreview.uuid)!
         
         let workoutEditCoordinator = WorkoutEditCoordinator(viewModel: workoutEditModel)
         

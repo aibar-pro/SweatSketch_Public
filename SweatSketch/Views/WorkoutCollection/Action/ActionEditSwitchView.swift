@@ -23,7 +23,7 @@ struct ActionEditSwitchView: View {
             if isEditing {
                 ActionSetsNRepsEditView(actionEntity: actionEntity)
             } else {
-                if let actionRepresentation = actionEntity.toExerciseActionViewRepresentation() {
+                if let actionRepresentation = actionEntity.toActionViewRepresentation() {
                     ActionSetsNRepsView(action: actionRepresentation)
                 }
             }
@@ -31,7 +31,7 @@ struct ActionEditSwitchView: View {
             if isEditing {
                 ActionTimedEditView(actionEntity: actionEntity)
             } else {
-                if let actionRepresentation = actionEntity.toExerciseActionViewRepresentation() {
+                if let actionRepresentation = actionEntity.toActionViewRepresentation() {
                     ActionTimedView(action: actionRepresentation)
                 }
             }
@@ -40,41 +40,41 @@ struct ActionEditSwitchView: View {
                 VStack (alignment: .leading){
                     HStack{
                         Text(Constants.Placeholders.WorkoutCollection.actionTypeLabel)
-                        Picker("Type", selection:
-                                Binding(
-                                    get: { ExerciseActionType.from(rawValue: actionEntity.type ) },
-                                    set: { onActionTypeChange($0) }
-                                )) {
-                            ForEach(ExerciseActionType.exerciseActionTypes, id: \.self) { type in
-                                Text(type.screenTitle)
-                            }
-                        }
-                        .labelsHidden()
-                        .pickerStyle(.menu)
+//                        Picker("", selection:
+//                                Binding(
+//                                    get: { ExerciseActionType.from(rawValue: actionEntity.type ) },
+//                                    set: { onActionTypeChange($0) }
+//                                )) {
+//                            ForEach(ExerciseActionType.exerciseActionTypes, id: \.self) { type in
+//                                Text(type.screenTitle)
+//                            }
+//                        }
+//                        .labelsHidden()
+//                        .pickerStyle(.menu)
                     }
                     .padding(.bottom, Constants.Design.spacing/2)
-                    switch ExerciseActionType.from(rawValue: actionEntity.type) {
-                    case .setsNreps:
-                        ActionSetsNRepsEditView(actionEntity: actionEntity, editTitle: true, editSets: false)
-                    case .timed:
-                        ActionTimedEditView(actionEntity: actionEntity, editTitle: true)
-                    case .unknown:
-                        Text(Constants.Placeholders.noActionDetails)
-                    }
+//                    switch ExerciseActionType.from(rawValue: actionEntity.type) {
+//                    case .setsNreps:
+//                        ActionSetsNRepsEditView(actionEntity: actionEntity, editTitle: true, editSets: false)
+//                    case .timed:
+//                        ActionTimedEditView(actionEntity: actionEntity, editTitle: true)
+//                    case .unknown:
+//                        Text(Constants.Placeholders.noActionDetails)
+//                    }
                 }
             } else {
-                switch ExerciseActionType.from(rawValue: actionEntity.type) {
-                case .setsNreps:
-                    if let actionRepresentation = actionEntity.toExerciseActionViewRepresentation() {
-                        ActionSetsNRepsView(action: actionRepresentation, showTitle: true, showSets: false)
-                    }
-                case .timed:
-                    if let actionRepresentation = actionEntity.toExerciseActionViewRepresentation() {
-                        ActionTimedView(action: actionRepresentation, showTitle: true)
-                    }
-                case .unknown:
+//                switch ExerciseActionType.from(rawValue: actionEntity.type) {
+//                case .setsNreps:
+//                    if let actionRepresentation = actionEntity.toExerciseActionViewRepresentation() {
+//                        ActionSetsNRepsView(action: actionRepresentation, showTitle: true, showSets: false)
+//                    }
+//                case .timed:
+//                    if let actionRepresentation = actionEntity.toExerciseActionViewRepresentation() {
+//                        ActionTimedView(action: actionRepresentation, showTitle: true)
+//                    }
+//                case .unknown:
                     Text(Constants.Placeholders.noActionDetails)
-                }
+//                }
             }
         
         case .unknown:
@@ -95,17 +95,17 @@ struct ActionEditSwitchView_Previews: PreviewProvider {
         
         let workoutDataManager = WorkoutDataManager()
         
-        let exerciseForPreview = workoutDataManager.fetchExercises(for: workoutForPreview, in: persistenceController.container.viewContext)[2]
+        let exerciseForPreview = try! workoutDataManager.fetchExercises(for: workoutForPreview, in: persistenceController.container.viewContext).get().randomElement()!
         
         let exerciseDataManager = ExerciseDataManager()
         
-        let actionForPreview = exerciseDataManager.fetchActions(for: exerciseForPreview, in: persistenceController.container.viewContext)[1]
+        let actionForPreview = exerciseDataManager.fetchActions(for: exerciseForPreview, in: persistenceController.container.viewContext).randomElement()!
         
         
         VStack (spacing: 50 ) {
-            ActionEditSwitchView(actionEntity: actionForPreview, isEditing: .constant(false), exerciseType: ExerciseType.from(rawValue: exerciseForPreview.type))
+            ActionEditSwitchView(actionEntity: actionForPreview, isEditing: .constant(false), exerciseType: ExerciseType.setsNreps)
             
-            ActionEditSwitchView(actionEntity: actionForPreview, isEditing: .constant(true), exerciseType: ExerciseType.from(rawValue: exerciseForPreview.type))
+            ActionEditSwitchView(actionEntity: actionForPreview, isEditing: .constant(true), exerciseType: ExerciseType.timed)
                 
         }
 

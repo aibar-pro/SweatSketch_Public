@@ -8,26 +8,29 @@
 import SwiftUI
 
 struct ActionSetsNRepsView: View {
-    
-    var action: ExerciseActionViewRepresentation
+    var action: ActionViewRepresentation
     
     var showTitle: Bool = false
     var showSets: Bool = true
     
     var body: some View {
-        HStack (alignment: .top) {
-            if showTitle {
-                Text("\(action.name),")
-            }
-            
-            HStack (alignment: .center, spacing: 0) {
-                if showSets {
-                    Text("\(action.sets)")
+        if case .reps(let sets, let min, let max, let isMax) = action.type {
+            HStack(alignment: .top, spacing: Constants.Design.spacing) {
+                if showTitle {
+                    Text("\(action.title),")
                 }
-                if action.repsMax {
-                    Text("x\(Constants.Placeholders.maximumRepetitionsLabel))")
-                } else {
-                    Text("x\(action.reps)")
+                
+                HStack(alignment: .center, spacing: 0) {
+                    if showSets {
+                        Text("\(sets)")
+                    }
+                    if isMax {
+                        Text("x\(Constants.Placeholders.maximumRepetitionsLabel))")
+                    } else if let max {
+                        Text("x\(min)-\(max)")
+                    } else {
+                        Text("x\(min)")
+                    }
                 }
             }
         }
@@ -45,7 +48,7 @@ struct ActionSetsNRepsView_Previews: PreviewProvider {
         
         let workoutDataManager = WorkoutDataManager()
         
-        let exerciseForPreview = workoutDataManager.fetchExercises(for: workoutForPreview, in: persistenceController.container.viewContext)[1]
+        let exerciseForPreview = try! workoutDataManager.fetchExercises(for: workoutForPreview, in: persistenceController.container.viewContext).get().randomElement()!
         
         let actionForPreview = (exerciseForPreview.toExerciseViewRepresentation()?.actions[0])!
         

@@ -55,7 +55,7 @@ class ActiveWorkoutCoordinator: BaseCoordinator<ActiveWorkoutViewModel>, Coordin
             .environmentObject(self)
         
         let workoutCompletedController = UIHostingController(rootView: view)
-        workoutCompletedController.modalPresentationStyle = .formSheet
+        workoutCompletedController.modalPresentationStyle = .pageSheet
         rootViewController.present(workoutCompletedController, animated: true)
     }
     

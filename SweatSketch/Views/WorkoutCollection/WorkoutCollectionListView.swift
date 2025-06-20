@@ -16,85 +16,83 @@ struct WorkoutCollectionListView: View {
     var onDiscard: () -> Void
     
     var body: some View {
-        GeometryReader { geoReader in
-            ZStack{
-                WorkoutPlanningMainBackgroundView()
+        content
+            .onDisappear(perform: onDiscard)
+    }
+    
+    private var content: some View {
+        ZStack {
+            WorkoutPlanningMainBackgroundView()
+            
+            VStack (alignment: .leading, spacing: Constants.Design.spacing) {
+                toolbarView
                 
-                VStack (alignment: .leading) {
-                    HStack {
-                        Text(Constants.Placeholders.WorkoutCollection.workoutListTitle)
-                            .font(.title2.bold())
-                            .padding(.top, Constants.Design.spacing)
-                        .padding(.horizontal, Constants.Design.spacing)
-                        Spacer()
-                        Button(action: {
-                           viewModel.undo()
-                        }) {
-                            Image(systemName: "arrow.uturn.backward")
-                        }
-                        .padding(.vertical, Constants.Design.spacing/2)
-                        .padding(.horizontal, Constants.Design.spacing/2)
-                        .disabled(!viewModel.canUndo)
-                        Button(action: {
-                            viewModel.redo()
-                        }) {
-                            Image(systemName: "arrow.uturn.forward")
-                        }
-                        .padding(.vertical, Constants.Design.spacing/2)
-                        .padding(.horizontal, Constants.Design.spacing/2)
-                        .disabled(!viewModel.canRedo)
-                        
-                    }
-                    
-                    List {
-                        ForEach(viewModel.workouts, id: \.self) { plan in
-                            
-                            Text(plan.name ?? Constants.Placeholders.noWorkoutName)
-                                .font(.title3)
-                                .lineLimit(3)
-                                .padding(.horizontal, Constants.Design.spacing/2)
-                                .padding(.vertical, Constants.Design.spacing/2)
-                                .listRowBackground(
-                                    RoundedRectangle(cornerRadius: Constants.Design.cornerRadius, style: .continuous)
-                                        .fill(
-                                            Color.clear
-                                        )
-                                        .materialCardBackgroundModifier()
-                                        .padding(.all, Constants.Design.spacing/4)
-                                )
-                            
-                        }
-                        .onMove(perform: viewModel.moveWorkout)
-                        .onDelete(perform: viewModel.deleteWorkout)
-                    }
-                    .padding(.horizontal, Constants.Design.spacing)
-                    .listStyle(.plain)
-                    .environment(\.editMode, $editMode)
-                    
-                    HStack {
-                        Button(action: {
-                            onDiscard()
-                        }) {
-                            Text(Constants.Placeholders.cancelButtonLabel)
-                                .secondaryButtonLabelStyleModifier()
-                        }
-                        
-                        Button(action: {
-                            onSubmit()
-                        }) {
-                            Text(Constants.Placeholders.saveButtonLabel)
-                                .bold()
-                                .primaryButtonLabelStyleModifier()
-                        }
-                        
-                    }
-                    .padding(.horizontal, Constants.Design.spacing)
-                    .frame(width: geoReader.size.width, alignment: .trailing)
-                }
-                .onDisappear(perform: onDiscard)
+                workoutListView
                 
+                buttonStackView
             }
-            .customAccentColorModifier(Constants.Design.Colors.textColorHighEmphasis)
+            .padding(Constants.Design.spacing)
+        }
+    }
+    
+    private var buttonStackView: some View {
+        HStack(alignment: .center, spacing: Constants.Design.spacing) {
+            IconButton(
+                systemImage:  "arrow.uturn.backward",
+                style: .secondary,
+                isDisabled: Binding { !viewModel.canUndo } set: { _ in },
+                action: viewModel.undo
+            )
+            
+            IconButton(
+                systemImage:  "arrow.uturn.forward",
+                style: .secondary,
+                isDisabled: Binding { !viewModel.canRedo } set: { _ in },
+                action: viewModel.redo
+            )
+        }
+        .frame(maxWidth: .infinity, alignment: .center)
+    }
+    
+    private var workoutListView: some View {
+        List {
+            ForEach(viewModel.workouts, id: \.self) { plan in
+                Text(plan.name ?? Constants.Placeholders.noWorkoutName)
+                    .font(.title3)
+                    .lineLimit(3)
+                    .padding(.vertical, Constants.Design.spacing / 2)
+                    .listRowBackground(Color.clear)
+            }
+            .onMove(perform: viewModel.moveWorkout)
+            .onDelete(perform: viewModel.deleteWorkout)
+        }
+        .listStyle(.plain)
+        .environment(\.editMode, $editMode)
+        .materialCardBackgroundModifier()
+    }
+    
+    private var toolbarView: some View {
+        HStack(alignment: .center, spacing: Constants.Design.spacing) {
+            ToolbarIconButton
+                .closeButton {
+                    onDiscard()
+                }
+                .buttonView(style: .inline)
+
+            Spacer(minLength: 0)
+            
+            Text(viewModel.workoutCollection.name ?? Constants.DefaultValues.defaultWorkoutCollectionName)
+                .font(.body.bold())
+                .lineLimit(2)
+                .multilineTextAlignment(.center)
+            
+            Spacer(minLength: 0)
+            
+            ToolbarIconButton
+                .doneButton {
+                    onDiscard()
+                }
+                .buttonView(style: .primary)
         }
     }
 }

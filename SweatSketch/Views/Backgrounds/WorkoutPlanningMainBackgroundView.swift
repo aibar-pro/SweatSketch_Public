@@ -12,13 +12,23 @@ struct WorkoutPlanningMainBackgroundView : View {
     
     var body: some View {
         ZStack {
-            LinearGradient(gradient: Gradient(colors: [Constants.Design.Colors.backgroundStartColor, Constants.Design.Colors.backgroundEndColor]), startPoint: .topLeading, endPoint: .bottomTrailing)
+            LinearGradient(
+                gradient: Gradient(colors: [Constants.Design.Colors.backgroundStartColor, Constants.Design.Colors.backgroundEndColor]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
             
             RoundedRectangle(cornerRadius: Constants.Design.cornerRadius, style: .continuous)
-                .size(CGSize(width: 400, height: 400))
-                .rotation(.degrees(60))
-                .offset(x: -300, y: -300)
-                .fill(elementColor)
+                .size(CGSize(width: 500, height: 250))
+                .rotation(.degrees(-5))
+                .offset(x: 0, y: -25)
+                .fill(
+                    LinearGradient(
+                        gradient: Gradient(colors: [elementColor, .clear]),
+                        startPoint: .top,
+                        endPoint: .bottomTrailing
+                    )
+                )
             
             Image(systemName: "trophy.fill")
                 .font(.system(size: 100))
@@ -37,7 +47,13 @@ struct WorkoutPlanningMainBackgroundView : View {
             Ellipse()
                 .size(CGSize(width: 450, height: 350))
                 .offset(x: 200, y: 675)
-                .fill(elementColor)
+                .fill(
+                    LinearGradient(
+                        gradient: Gradient(colors: [elementColor, .clear]),
+                        startPoint: .bottomTrailing,
+                        endPoint: .topLeading
+                    )
+                )
         }
         .ignoresSafeArea(.all)
     }

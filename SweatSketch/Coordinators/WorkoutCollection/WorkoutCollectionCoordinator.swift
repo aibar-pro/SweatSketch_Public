@@ -12,9 +12,11 @@ import Combine
 class WorkoutCollectionCoordinator: BaseCoordinator<WorkoutCollectionViewModel>, Coordinator {
     let applicationEvent: PassthroughSubject<ApplicationEventType, Never>
     
-    init(dataContext: NSManagedObjectContext,
-         applicationEvent: PassthroughSubject<ApplicationEventType, Never>,
-         collectionUUID: UUID?) {
+    init(
+        dataContext: NSManagedObjectContext,
+        applicationEvent: PassthroughSubject<ApplicationEventType, Never>,
+        collectionUUID: UUID?
+    ) {
         self.applicationEvent = applicationEvent
         
         let viewModel = WorkoutCollectionViewModel(context: dataContext, collectionUUID: collectionUUID)
@@ -31,28 +33,35 @@ class WorkoutCollectionCoordinator: BaseCoordinator<WorkoutCollectionViewModel>,
     }
     
     func goToAddWorkout() {
-        let temporaryWorkoutAddViewModel = WorkoutEditViewModel(parentViewModel: viewModel, editingWorkoutUUID: nil)
-        let workoutAddCoordinator = WorkoutEditCoordinator(viewModel: temporaryWorkoutAddViewModel)
+        guard let workoutEditViewModel = WorkoutEditViewModel(parentViewModel: viewModel, editingWorkoutUUID: nil)
+        else {
+            print("\(type(of: self)): \(#function): Failed to initialize WorkoutEditViewModel")
+            return
+        }
         
-        workoutAddCoordinator.start()
-        childCoordinators.append(workoutAddCoordinator)
-        
-        let addWorkoutViewController = workoutAddCoordinator.rootViewController
-        addViewPushTransition(pushDirection: .fromBottom)
-        rootViewController.navigationController?.pushViewController(addWorkoutViewController, animated: false)
+        presentEditWorkoutViewController(using: workoutEditViewModel)
     }
     
     func goToEditWorkout(workoutIndex: Int) {
-        let editingWorkoutUUID = viewModel.workouts[workoutIndex].id
-        let temporaryWorkoutEditViewModel = WorkoutEditViewModel(parentViewModel: viewModel, editingWorkoutUUID: editingWorkoutUUID)
-        let workoutEditCoordinator = WorkoutEditCoordinator(viewModel: temporaryWorkoutEditViewModel)
+        guard let workoutId = viewModel.workouts[safe: workoutIndex]?.id,
+              let workoutEditViewModel = WorkoutEditViewModel(parentViewModel: viewModel, editingWorkoutUUID: workoutId)
+        else {
+            print("\(type(of: self)): \(#function): Failed to initialize WorkoutEditViewModel")
+            return
+        }
+        
+        presentEditWorkoutViewController(using: workoutEditViewModel)
+    }
+    
+    private func presentEditWorkoutViewController(using viewModel: WorkoutEditViewModel) {
+        let workoutEditCoordinator = WorkoutEditCoordinator(viewModel: viewModel)
         
         workoutEditCoordinator.start()
         childCoordinators.append(workoutEditCoordinator)
         
-        let editWorkoutViewController = workoutEditCoordinator.rootViewController
+        let workoutEditViewController = workoutEditCoordinator.rootViewController
         addViewPushTransition(pushDirection: .fromBottom)
-        rootViewController.navigationController?.pushViewController(editWorkoutViewController, animated: false)
+        rootViewController.navigationController?.pushViewController(workoutEditViewController, animated: false)
     }
     
     func goToWorkoutLst() {
