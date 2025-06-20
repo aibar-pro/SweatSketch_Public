@@ -40,10 +40,10 @@ struct ExerciseDetailView: View {
         
     private var actions: some View {
         VStack(alignment: .leading, spacing: Constants.Design.spacing / 2) {
-//            ForEach(exercise.actions, id: \.id) { action in
-//                Text(action.type.description, " - \(action.name)")
-//                    .fullWidthText()
-//            }
+            ForEach(exercise.actions, id: \.id) { action in
+                Text(action.type.description + " - \(action.title)")
+                    .fullWidthText()
+            }
         }
     }
 }

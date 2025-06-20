@@ -12,6 +12,51 @@ enum ExerciseActionType: Equatable {
     case timed(sets: Int, min: Int, max: Int?, isMax: Bool)
     case distance(sets: Int, min: Double, max: Double?, unit: String, isMax: Bool)
     case rest(duration: Int)
+    
+    var description: String {
+        switch self {
+        case .reps(let sets, let min, let max, let isMax):
+            if isMax {
+                return "MAX x \(sets)"
+            } else {
+                let repPart: String
+                if let max, max != min {
+                    repPart = "\(min)-\(max)"
+                } else {
+                    repPart = "\(min)"
+                }
+                return "\(repPart) x \(sets)"
+            }
+        case .timed(let sets, let min, let max, let isMax):
+            if isMax {
+                return "MAX x \(sets)"
+            } else {
+                let timePart: String
+                if let max, max != min {
+                    timePart = "\(min)-\(max)"
+                } else {
+                    timePart = "\(min)"
+                }
+                return "\(timePart)s x \(sets)"
+            }
+        case .distance(let sets, let min, let max, let unit, let isMax):
+            if isMax {
+                return "MAX x \(sets)"
+            } else {
+                let minStr = min.formatted(precision: 2)
+                let part: String
+                if let max, max != min {
+                    part = "\(minStr)-\(max.formatted(precision: 2))"
+                } else {
+                    part = minStr
+                }
+                return "\(part)\(unit) x \(sets)"
+            }
+            
+        case .rest(let duration):
+            return "Rest: \(duration)s"
+        }
+    }
 }
 
 class ActionViewRepresentation: Identifiable {
@@ -50,51 +95,58 @@ extension ActionViewRepresentation: Equatable {
 extension ExerciseActionEntity {
     func toActionViewRepresentation(exerciseName: String? = nil) -> ActionViewRepresentation? {
         guard let uuid = uuid else { return nil }
-        let title = exerciseName ?? self.exercise?.name ?? ""
+        
+        let title: String = {
+            guard let actionName = self.name,
+                    !actionName.isEmpty
+            else { return exerciseName }
+            
+            return actionName == exerciseName ? exerciseName : actionName
+        }() ?? ""
+        
         switch self {
         case let rest as RestActionEntity:
-            let duration = Int(rest.duration)
             return ActionViewRepresentation(
                 entityUUID: uuid,
                 title: Constants.Placeholders.restPeriodLabel,
-                type: .rest(duration: duration)
+                type: .rest(
+                    duration: rest.duration.int
+                )
             )
         case let t as TimedActionEntity:
-            let minSec = Int(t.secondsMin)
-            let maxSec = Int(t.secondsMax)
             return ActionViewRepresentation(
                 entityUUID: uuid,
                 title: title,
                 type: .timed(
-                    sets: Int(t.sets),
-                    min: minSec,
-                    max: maxSec,
+                    sets: t.sets.int,
+                    min: t.secondsMin.int,
+                    max: t.secondsMax?.intValue,
                     isMax: t.isMax
                 )
             )
         case let r as RepsActionEntity:
-            let minReps = Int(r.repsMin)
-//            let maxReps = r.repsMax.map(Int.init)
-            let maxReps = Int(r.repsMax)
             return ActionViewRepresentation(
                 entityUUID: uuid,
                 title: title,
                 type: .reps(
-                    sets: Int(r.sets),
-                    min: minReps,
-                    max: maxReps,
+                    sets: r.sets.int,
+                    min: r.repsMin.int,
+                    max: r.repsMax?.intValue,
                     isMax: r.isMax
                 )
             )
-//        case let d as DistanceActionEntity:
-//            let minDist = d.distanceMin
-//            let maxDist = d.distanceMax
-//            let unit = d.distanceUnit
-//            return ActiveWorkoutItem(
-//                entityUUID: uuid,
-//                title: title,
-//                type: .distance(min: minDist, max: maxDist, unit: unit, isMax: false)
-//            )
+        case let d as DistanceActionEntity:
+            return ActionViewRepresentation(
+                entityUUID: uuid,
+                title: title,
+                type: .distance(
+                    sets: d.sets.int,
+                    min: d.distanceMin,
+                    max: d.distanceMax?.doubleValue,
+                    unit: d.unit ?? "m",
+                    isMax: d.isMax
+                )
+            )
         default:
             return nil
         }

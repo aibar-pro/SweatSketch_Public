@@ -305,3 +305,35 @@
 //        return self as? Int
 //    }
 //}
+
+import SwiftUI
+import CoreData
+
+struct TestExerciseAddView: View {
+    let context: NSManagedObjectContext
+    
+    var body: some View {
+        Button(action: {
+            print("\n\n")
+            let workout = WorkoutEntity(context: context)
+            workout.uuid = UUID()
+            workout.name = ""
+            workout.position = 0
+
+            print(workout)
+            
+            let exercise = ExerciseEntity(context: context)
+            exercise.position = 0
+            print(exercise)
+            workout.addToExercises(exercise)
+            print("\n\n")
+            print(workout)
+        }) {
+            Text("AAA")
+        }
+    }
+}
+
+#Preview {
+    TestExerciseAddView(context: PersistenceController.preview.container.viewContext)
+}

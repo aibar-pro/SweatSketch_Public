@@ -11,6 +11,10 @@ struct PersistenceController {
     static let shared = PersistenceController()
 
     static var preview: PersistenceController = {
+        let maxWorkoutCount = 10
+        let maxExerciseCount = 15
+        let maxActionCount = 10
+        
         let result = PersistenceController(inMemory: true)
         let viewContext = result.container.viewContext
         
@@ -21,30 +25,65 @@ struct PersistenceController {
         
         let defaultCollection = createDefaultCollection(in: viewContext)
         
-        let planCount = Int.random(in: 1...20)
+        let planCount = Int.random(in: 1...maxWorkoutCount)
         for idx in 1...planCount {
             let c = [root, parent, sub1, sub2, defaultCollection].randomElement() ?? nil
             
-            let w = createWorkout(in: viewContext, name: "Test Workout Auto \(idx)", position: Int16(idx), collection: c)
-            _ = createDefaultRestTime(in: viewContext, duration: Int32.random(in: 60...180), workout: w)
+            let w = createWorkout(
+                in: viewContext,
+                name: "Test Workout Auto \(idx)",
+                position: Int16(idx),
+                collection: c
+            )
+            _ = createDefaultRestTime(
+                in: viewContext,
+                duration: Int32.random(in: 60...180),
+                workout: w
+            )
             
             print("MOCK: Created workout \(w)")
-            let exerciseCount = Int.random(in: 0...15)
+            let exerciseCount = Int.random(in: 0...maxExerciseCount)
             for eIdx in 0..<exerciseCount {
                 let exType = Int.random(in: 0...2)
                 switch exType {
                 case 0:
-                    _ = createTimedExercise(in: viewContext, workout: w, position: Int16(eIdx + 1))
+                    _ = createTimedExercise(
+                        in: viewContext,
+                        workout: w,
+                        position: Int16(eIdx + 1),
+                        maxActionCount: maxActionCount
+                    )
                 case 1:
-                    _ = createDistanceExercise(in: viewContext, workout: w, position: Int16(eIdx + 1))
+                    _ = createDistanceExercise(
+                        in: viewContext,
+                        workout: w,
+                        position: Int16(eIdx + 1),
+                        maxActionCount: maxActionCount
+                    )
                 case 2:
-                    _ = createMixedExercise(in: viewContext, workout: w, position: Int16(eIdx + 1))
+                    _ = createMixedExercise(
+                        in: viewContext,
+                        workout: w,
+                        position: Int16(eIdx + 1),
+                        maxActionCount: maxActionCount
+                    )
                 default:
-                    _ = createRepsExercise(in: viewContext, workout: w, position: Int16(eIdx + 1))
+                    _ = createRepsExercise(
+                        in: viewContext,
+                        workout: w,
+                        position: Int16(eIdx + 1),
+                        maxActionCount: maxActionCount
+                    )
                 }
             }
-            if Bool.random(), let ex = w.exercises?.array.randomElement() as? ExerciseEntity {
-                _ = createRestTime(in: viewContext, duration: Int32.random(in: 60...180), followingExercise: ex, workout: w)
+            if Bool.random(),
+                let ex = w.exercises?.array.randomElement() as? ExerciseEntity {
+                _ = createRestTime(
+                    in: viewContext,
+                    duration: Int32.random(in: 60...180),
+                    followingExercise: ex,
+                    workout: w
+                )
             }
         }
 
@@ -136,7 +175,8 @@ extension PersistenceController {
         let restTime = RestTimeEntity(context: context)
         restTime.uuid = UUID()
         restTime.isDefault = true
-        restTime.workout = workout
+        restTime.duration = duration
+        workout.addToRestTimes(restTime)
         return restTime
     }
     
@@ -149,25 +189,21 @@ extension PersistenceController {
         let restTime = RestTimeEntity(context: context)
         restTime.uuid = UUID()
         restTime.followingExercise = followingExercise
-        restTime.workout = workout
+        restTime.duration = duration
+        workout.addToRestTimes(restTime)
         return restTime
     }
     
     private static func createExercise(
         in context: NSManagedObjectContext,
         name: String,
-        position: Int16,
-        superSets: NSNumber? = nil
+        position: Int16
     ) -> ExerciseEntity {
         let exercise = ExerciseEntity(context: context)
         exercise.uuid = UUID()
         exercise.name = name
         exercise.position = position
-        if let superSets {
-            exercise.superSets = superSets.int16Value
-        } else {
-            exercise.superSets = Int16.random(in: 1...10)
-        }
+        exercise.superSets = Int16.random(in: 1...11)
         return exercise
     }
 
@@ -237,10 +273,11 @@ extension PersistenceController {
     private static func createRepsExercise(
         in context: NSManagedObjectContext,
         workout: WorkoutEntity,
-        position: Int16
+        position: Int16,
+        maxActionCount: Int
     ) -> ExerciseEntity {
         let ex = createExercise(in: context, name: "Reps \(position)", position: position)
-        let aCount = Int.random(in: 1...10)
+        let aCount = Int.random(in: 1...maxActionCount)
         for idx in 1...aCount {
             createRepsAction(
                 in: context,
@@ -258,10 +295,11 @@ extension PersistenceController {
     private static func createDistanceExercise(
         in context: NSManagedObjectContext,
         workout: WorkoutEntity,
-        position: Int16
+        position: Int16,
+        maxActionCount: Int
     ) -> ExerciseEntity {
         let ex = createExercise(in: context, name: "Distance \(position)", position: position)
-        let aCount = Int.random(in: 1...10)
+        let aCount = Int.random(in: 1...maxActionCount)
         for idx in 1...aCount {
             createDistanceAction(
                 in: context,
@@ -279,10 +317,11 @@ extension PersistenceController {
     private static func createTimedExercise(
         in context: NSManagedObjectContext,
         workout: WorkoutEntity,
-        position: Int16
+        position: Int16,
+        maxActionCount: Int
     ) -> ExerciseEntity {
         let ex = createExercise(in: context, name: "Timed \(position)", position: position)
-        let aCount = Int.random(in: 1...10)
+        let aCount = Int.random(in: 1...maxActionCount)
         for idx in 1...aCount {
             createTimedAction(
                 in: context,
@@ -298,17 +337,13 @@ extension PersistenceController {
     }
     
     private static func createMixedExercise(
-    in context: NSManagedObjectContext,
-    workout: WorkoutEntity,
-    position: Int16
+        in context: NSManagedObjectContext,
+        workout: WorkoutEntity,
+        position: Int16,
+        maxActionCount: Int
     ) -> ExerciseEntity {
-        let ex = createExercise(
-            in: context,
-            name: "Mixed \(position)",
-            position: position,
-            superSets: Bool.random() ? NSNumber(value: Int.random(in: 1...3)) : nil
-        )
-        let aCount = Int.random(in: 1...10)
+        let ex = createExercise(in: context, name: "Mixed \(position)", position: position)
+        let aCount = Int.random(in: 1...maxActionCount)
         for idx in 1...aCount {
             let actionType = Int.random(in: 1...3)
             switch actionType {

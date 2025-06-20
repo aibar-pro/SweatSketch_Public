@@ -134,7 +134,11 @@ class WorkoutEditViewModel: ObservableObject {
     }
     
     @objc func redoExerciseDelete(_ exercise: ExerciseEntity) {
-        mainContext.undoManager?.registerUndo(withTarget: self, selector: #selector(undoExerciseDelete(_ :)), object: exercise)
+        mainContext.undoManager?.registerUndo(
+            withTarget: self,
+            selector: #selector(undoExerciseDelete(_ :)),
+            object: exercise
+        )
         if let index = exercises.firstIndex(of: exercise) {
             exercises.remove(at: index)
         }

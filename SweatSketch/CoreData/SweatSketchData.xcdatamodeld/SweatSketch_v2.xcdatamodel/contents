@@ -32,7 +32,7 @@
     </entity>
     <entity name="RestTimeEntity" representedClassName="RestTimeEntity" syncable="YES" codeGenerationType="class">
         <attribute name="duration" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="isDefault" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isDefault" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="uuid" attributeType="UUID" usesScalarValueType="NO"/>
         <relationship name="followingExercise" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ExerciseEntity" inverseName="restTime" inverseEntity="ExerciseEntity"/>
         <relationship name="workout" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WorkoutEntity" inverseName="restTimes" inverseEntity="WorkoutEntity"/>

@@ -1,5 +1,5 @@
 //
-//  WorkoutModel.swift
+//  WorkoutViewRepresentation.swift
 //  SweatSketch
 //
 //  Created by aibaranchikov on 10.04.2024.
@@ -7,7 +7,7 @@
 
 import CoreData
 
-class WorkoutModel: Identifiable, ObservableObject {
+class WorkoutViewRepresentation: Identifiable, ObservableObject {
     let id: UUID
     var name: String
     var exercises = [ExerciseViewRepresentation]()
@@ -19,12 +19,18 @@ class WorkoutModel: Identifiable, ObservableObject {
         
         let workoutDataManager = WorkoutDataManager()
         let fetchedExercises = workoutDataManager.fetchExercises(for: workout, in: context)
-        self.exercises = fetchedExercises.compactMap({ $0.toExerciseViewRepresentation() })
+        
+        switch fetchedExercises {
+        case .success(let result):
+            self.exercises = result.compactMap { $0.toExerciseViewRepresentation() }
+        case .failure:
+            return nil
+        }
     }
 }
 
-extension WorkoutModel: Equatable {
-    static func == (lhs: WorkoutModel, rhs: WorkoutModel) -> Bool {
+extension WorkoutViewRepresentation: Equatable {
+    static func == (lhs: WorkoutViewRepresentation, rhs: WorkoutViewRepresentation) -> Bool {
         return
             lhs.id == rhs.id &&
             lhs.name == rhs.name &&
@@ -33,10 +39,10 @@ extension WorkoutModel: Equatable {
 }
 
 extension WorkoutEntity {
-    func toWorkoutViewRepresentation() -> WorkoutModel? {
+    func toWorkoutViewRepresentation() -> WorkoutViewRepresentation? {
         guard let context = self.managedObjectContext else {
             return nil
         }
-        return WorkoutModel(workout: self, in: context)
+        return WorkoutViewRepresentation(workout: self, in: context)
     }
 }
