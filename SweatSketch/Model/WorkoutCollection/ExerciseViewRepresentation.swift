@@ -1,5 +1,5 @@
 //
-//  ExerciseViewModel.swift
+//  ExerciseViewRepresentation.swift
 //  SweatSketch
 //
 //  Created by aibaranchikov on 09.04.2024.
@@ -7,12 +7,12 @@
 
 import CoreData
 
-class ExerciseModel: Identifiable, Equatable, ObservableObject {
+class ExerciseViewRepresentation: Identifiable, ObservableObject {
     let id: UUID
     var name: String
-    var actions = [ExerciseActionModel]()
+    var actions = [ActionViewRepresentation]()
     var restTimeBetweenActions: RestActionEntity?
-    var superSets: Int16
+    var superSets: Int
     
     init?(exercise: ExerciseEntity, in context: NSManagedObjectContext) {
         guard let id = exercise.uuid else { return nil }
@@ -21,16 +21,18 @@ class ExerciseModel: Identifiable, Equatable, ObservableObject {
         self.name = name
         
         let exerciseDataManager = ExerciseDataManager()
+        
         let fetchedActions = exerciseDataManager.fetchActions(for: exercise, in: context)
-//        self.actions = fetchedActions.compactMap { $0.toExerciseActionModel(exerciseName: name) }
+        self.actions = fetchedActions.compactMap { $0.toActionViewRepresentation(exerciseName: name) }
         
         self.restTimeBetweenActions = exerciseDataManager.fetchRestTimeBetweenActions(for: exercise, in: context)
-        self.superSets = exercise.superSets
+
+        self.superSets = exercise.superSets.int
     }
 }
 
-extension ExerciseModel {
-    static func == (lhs: ExerciseModel, rhs: ExerciseModel) -> Bool {
+extension ExerciseViewRepresentation: Equatable {
+    static func == (lhs: ExerciseViewRepresentation, rhs: ExerciseViewRepresentation) -> Bool {
         return
             lhs.id == rhs.id &&
             lhs.name == rhs.name &&
@@ -41,10 +43,10 @@ extension ExerciseModel {
 }
 
 extension ExerciseEntity {
-    func toExerciseViewRepresentation() -> ExerciseModel? {
+    func toExerciseViewRepresentation() -> ExerciseViewRepresentation? {
         guard let context = self.managedObjectContext else {
             return nil
         }
-        return ExerciseModel(exercise: self, in: context)
+        return ExerciseViewRepresentation(exercise: self, in: context)
     }
 }
