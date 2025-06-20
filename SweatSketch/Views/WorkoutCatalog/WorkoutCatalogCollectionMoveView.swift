@@ -21,7 +21,7 @@ struct WorkoutCatalogCollectionMoveView: View {
                     Button(action: {
                         coordinator.discardMove()
                     }) {
-                        Text(Constants.Placeholders.cancelButtonLabel)
+                        Text("app.button.cancel.label")
                             .padding(.vertical, Constants.Design.spacing/2)
                             .padding(.trailing, Constants.Design.spacing/2)
                     }

@@ -27,6 +27,10 @@ class WorkoutCatalogViewModel: ObservableObject {
         
         setupWorkoutCatalog()
         
+        setupSubscriptions()
+    }
+    
+    private func setupSubscriptions() {
         UserSession.shared.$isLoggedIn
             .receive(on: DispatchQueue.main)
             .assign(to: \.isLoggedIn, on: self)
@@ -46,28 +50,23 @@ class WorkoutCatalogViewModel: ObservableObject {
             do {
                 if backgroundContext.hasChanges {
                     try backgroundContext.save()
-                    print("Setting up default collection")
-                    DispatchQueue.main.async { [weak self] in
-                        do {
-                            try self?.mainContext.save()
-                            try self?.mainContext.parent?.save()
-                        } catch {
-                            print("Error saving main context in background context: \(error)")
-                        }
-                        self?.refreshData()
-                    }
+                    print("\(type(of: self)): Setting up default collection")
+                    self.saveContext()
+                    self.refreshData()
                 }
             } catch {
-                print("Error saving in background context: \(error)")
+                print("\(type(of: self)): Error saving in background context: \(error)")
             }
         }
     }
     
     func refreshData() {
         DispatchQueue.main.async { [weak self] in
-            if let context = self?.mainContext, let fetchedRootCollections = self?.collectionDataManager.fetchRootCollections(in: context) {
-                self?.collections = fetchedRootCollections.compactMap { $0.toWorkoutCollectionRepresentation() }
-            }
+            guard let self else { return }
+            
+            collections = collectionDataManager
+                .fetchRootCollections(in: mainContext)
+                .compactMap { $0.toWorkoutCollectionRepresentation() }
         }
     }
     

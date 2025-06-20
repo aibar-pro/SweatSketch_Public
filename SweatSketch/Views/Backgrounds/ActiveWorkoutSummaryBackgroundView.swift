@@ -13,7 +13,12 @@ struct ActiveWorkoutSummaryBackgroundView: View {
     
     var body: some View {
         ZStack {
-            LinearGradient(gradient: Gradient(colors: [Constants.Design.Colors.backgroundStartColor, Constants.Design.Colors.backgroundEndColor]), startPoint: .topLeading, endPoint: .bottomTrailing)
+            LinearGradient(
+                gradient: Gradient(colors: [Constants.Design.Colors.backgroundStartColor, Constants.Design.Colors.backgroundEndColor]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+           
             
             Image(systemName: "fireworks")
                 .font(.system(size: 400))
@@ -21,7 +26,11 @@ struct ActiveWorkoutSummaryBackgroundView: View {
                 .customForegroundColorModifier(elementColor)
                 .scaleEffect(isAnimating ? 1.25 : 1.0)
                 .onAppear {
-                    withAnimation(Animation.easeInOut(duration: 3).repeatForever(autoreverses: true)) {
+                    withAnimation(
+                        Animation
+                            .easeInOut(duration: 3)
+                            .repeatForever(autoreverses: true)
+                    ) {
                         isAnimating = true
                     }
                 }

@@ -8,66 +8,86 @@
 import SwiftUI
 
 struct ActiveWorkoutItemView: View {
-    var workoutItem: ActiveWorkoutItemRepresentation
+    var workoutItem: ActiveWorkoutItem
     @Binding var itemProgress: (current: Int, total: Int)
     
     var nextRequested: () -> ()
     var previousRequested: () -> ()
     
     var body: some View {
-        VStack (alignment: .leading, spacing: Constants.Design.spacing/2) {
-            HStack(alignment: .top) {
-                let currentAction = workoutItem.actions[itemProgress.current]
-                
-                VStack (alignment: .leading, spacing: Constants.Design.spacing/2) {
-                    Text(currentAction.title)
-                        .font(.headline.bold())
-                        .lineLimit(3)
+        VStack(alignment: .leading, spacing: Constants.Design.spacing) {
+            if let currentAction = workoutItem.actions[safe: itemProgress.current] {
+                itemDescriptionView(currentAction: currentAction)
+            
+                ProgressBarView(totalSections: itemProgress.total, currentSection: itemProgress.current)
+                    .frame(height: 28)
+            }
+            
+            buttonStackView
+        }
+    }
+    
+    private func itemDescriptionView(currentAction: ActionViewRepresentation) -> some View {
+        HStack(alignment: .top, spacing: Constants.Design.spacing) {
+            VStack(alignment: .leading, spacing: Constants.Design.spacing) {
+                if workoutItem.title != currentAction.title {
+                    Text(workoutItem.title)
+                        .font(.title3.bold())
+                        .lineLimit(1)
                         .multilineTextAlignment(.leading)
-                    if workoutItem.title != currentAction.title {
-                        Text(workoutItem.title)
-                            .font(.subheadline)
-                            .lineLimit(1)
-                            .multilineTextAlignment(.leading)
-                    }
                 }
                 
-                Spacer()
-                
-                switch currentAction.type {
-                case .setsNreps:
-                    if let repsMax = currentAction.repsMax, repsMax {
+                Text(currentAction.title)
+                    .font(workoutItem.title != currentAction.title ? .headline : .title3.bold())
+                    .lineLimit(3)
+                    .multilineTextAlignment(.leading)
+            }
+            
+            Spacer(minLength: 0)
+            
+            switch currentAction.type {
+            case .reps(_, let min, let max, let isMax):
+                Group {
+                    if isMax {
                         Text("x\(Constants.Placeholders.maximumRepetitionsLabel)")
-                            .font(.headline.bold())
-                    } else if let reps = currentAction.reps {
-                        Text("x\(reps)")
-                            .font(.headline.bold())
-                    }
-                default:
-                    if let actionDuration = currentAction.duration {
-                        CountdownTimerView(timeRemaining: Int(actionDuration))
-                            .font(.headline.bold())
+                    } else if let max {
+                        Text("x\(min)-\(max)")
+                    } else {
+                        Text("x\(min)")
                     }
                 }
+                .font(.title3.bold())
+            case .rest(let duration):
+                CountdownTimerView(timeRemaining: duration)
+                    .font(.title3.bold())
+            default: EmptyView()
             }
-            
-            ProgressBarView(totalSections: itemProgress.total, currentSection: itemProgress.current)
-                .frame(height: 28)
-            
-            HStack (alignment: .center, spacing: Constants.Design.spacing/2) {
-                Button(action: previousRequested){
+        }
+    }
+    
+    private var buttonStackView: some View {
+        HStack(alignment: .center, spacing: Constants.Design.spacing) {
+            CapsuleButton(
+                content: {
                     Image(systemName: "chevron.backward")
-                        .secondaryButtonLabelStyleModifier()
+                },
+                style: .inline,
+                action: {
+                    previousRequested()
                 }
-                
-                Spacer()
-                
-                Button(action: nextRequested){
+            )
+            
+            Spacer(minLength: 0)
+            
+            CapsuleButton(
+                content: {
                     Image(systemName: "chevron.forward")
-                        .padding(.horizontal, Constants.Design.spacing)
-                        .primaryButtonLabelStyleModifier()
+                },
+                style: .primary,
+                action: {
+                    nextRequested()
                 }
-            }
+            )
         }
     }
 }

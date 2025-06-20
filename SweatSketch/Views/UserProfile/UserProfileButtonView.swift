@@ -15,11 +15,12 @@ struct UserProfileButtonView: View {
     var body: some View {
         Button (action: onClick) {
             HStack (alignment: .firstTextBaseline, spacing: Constants.Design.spacing/4) {
-                Image(
-                    systemName: isLoggedIn ?  "person" : "person.badge.key"
+                Image(systemName: isLoggedIn ? "person" : "person.badge.key"
                 )
                 Text(
-                    isLoggedIn ? Constants.Placeholders.UserProfile.profileButtonLabel : Constants.Placeholders.UserProfile.loginButtonLabel
+                    isLoggedIn
+                    ? Constants.Placeholders.UserProfile.profileButtonLabel
+                    : "user.profile.login.button.label"
                 )
             }
             .padding(Constants.Design.spacing/2)

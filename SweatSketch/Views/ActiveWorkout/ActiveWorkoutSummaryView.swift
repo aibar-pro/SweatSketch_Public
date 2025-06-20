@@ -15,25 +15,32 @@ struct ActiveWorkoutSummaryView: View {
     var onDismiss: () -> Void = {}
     
     var body: some View {
-        ZStack {
-            ActiveWorkoutSummaryBackgroundView()
+        VStack(alignment: .center, spacing: Constants.Design.spacing) {
+            Text(Constants.Placeholders.workoutSummaryTitle)
+                .fullWidthText(.title, isBold: true, alignment: .center)
             
-            VStack (alignment: .center, spacing: Constants.Design.spacing) {
-                Text(Constants.Placeholders.workoutSummaryTitle)
-                    .font(.title.bold())
-                HStack (alignment: .center, spacing: Constants.Design.spacing/2) {
-                    Image(systemName: "timer")
-                    DurationView(durationInSeconds: workoutDuration)
-                        .font(.title2)
-                }
-                Button(action: onProceed) {
-                    Text(Constants.Placeholders.ActiveWorkout.summaryConfirmationButtonLabel)
-                        .accentButtonLabelStyleModifier()
-                }
+            HStack(alignment: .center, spacing: Constants.Design.spacing / 2) {
+                Image(systemName: "timer")
+                Text(workoutDuration.durationString())
             }
-            .padding(Constants.Design.spacing)
-            .materialCardBackgroundModifier()
+            .frame(maxWidth: .infinity, alignment: .center)
+            
+            RectangleButton(
+                "active.workout.summary.proceed.button.label",
+                style: .accent,
+                isFullWidth: true,
+                action: {
+                    onProceed()
+                }
+            )
         }
+        .padding(Constants.Design.spacing)
+        .materialCardBackgroundModifier()
+        .padding(Constants.Design.spacing)
+        .frame(maxHeight: .infinity, alignment: .center)
+        .background(
+            ActiveWorkoutSummaryBackgroundView()
+        )
         .onDisappear(perform: onDismiss)
     }
 }

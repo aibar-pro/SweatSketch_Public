@@ -7,44 +7,44 @@
 
 import CoreData
 
-class ExerciseViewRepresentation: Identifiable, Equatable, ObservableObject {
-    static func == (lhs: ExerciseViewRepresentation, rhs: ExerciseViewRepresentation) -> Bool {
-        return 
-            lhs.id == rhs.id &&
-            lhs.name == rhs.name &&
-            lhs.type == rhs.type &&
-            lhs.actions == rhs.actions &&
-            lhs.restTimeBetweenActions == rhs.restTimeBetweenActions &&
-            lhs.superSets == rhs.superSets
-    }
-    
+class ExerciseModel: Identifiable, Equatable, ObservableObject {
     let id: UUID
     var name: String
-    var type: ExerciseType
-    var actions = [ExerciseActionViewRepresentation]()
-    var restTimeBetweenActions: ExerciseActionEntity?
+    var actions = [ExerciseActionModel]()
+    var restTimeBetweenActions: RestActionEntity?
     var superSets: Int16
     
     init?(exercise: ExerciseEntity, in context: NSManagedObjectContext) {
         guard let id = exercise.uuid else { return nil }
         self.id = id
-        self.name = exercise.name ?? Constants.Placeholders.noExerciseName
-        self.type = ExerciseType.from(rawValue: exercise.type)
+        let name = exercise.name ?? Constants.Placeholders.noExerciseName
+        self.name = name
         
         let exerciseDataManager = ExerciseDataManager()
         let fetchedActions = exerciseDataManager.fetchActions(for: exercise, in: context)
-        self.actions = fetchedActions.compactMap({ $0.toExerciseActionViewRepresentation() })
+//        self.actions = fetchedActions.compactMap { $0.toExerciseActionModel(exerciseName: name) }
         
-        self.restTimeBetweenActions = exerciseDataManager.fetchRestTimeBetweenActions(for: exercise, in: context) ?? ExerciseActionEntity()
+        self.restTimeBetweenActions = exerciseDataManager.fetchRestTimeBetweenActions(for: exercise, in: context)
         self.superSets = exercise.superSets
     }
 }
 
+extension ExerciseModel {
+    static func == (lhs: ExerciseModel, rhs: ExerciseModel) -> Bool {
+        return
+            lhs.id == rhs.id &&
+            lhs.name == rhs.name &&
+            lhs.actions == rhs.actions &&
+            lhs.restTimeBetweenActions == rhs.restTimeBetweenActions &&
+            lhs.superSets == rhs.superSets
+    }
+}
+
 extension ExerciseEntity {
-    func toExerciseViewRepresentation() -> ExerciseViewRepresentation? {
+    func toExerciseViewRepresentation() -> ExerciseModel? {
         guard let context = self.managedObjectContext else {
             return nil
         }
-        return ExerciseViewRepresentation(exercise: self, in: context)
+        return ExerciseModel(exercise: self, in: context)
     }
 }

@@ -10,12 +10,11 @@ import Foundation
 class UserSession: ObservableObject {
     static let shared = UserSession()
     
-    @Published var isLoggedIn: Bool = false
+    @Published private(set) var isLoggedIn: Bool = false
     
     private init() {
         checkLoginStatus()
     }
-    
     
     func checkLoginStatus() {
         Task {

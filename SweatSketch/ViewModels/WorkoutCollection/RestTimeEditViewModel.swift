@@ -19,22 +19,21 @@ class RestTimeEditViewModel: ObservableObject {
     
     let workoutDataManager = WorkoutDataManager()
     
-    init(parentViewModel: WorkoutEditViewModel) {
+    init?(parentViewModel: WorkoutEditViewModel) {
         self.parentViewModel = parentViewModel
         self.mainContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         self.mainContext.parent = parentViewModel.mainContext
-        
-        self.editingWorkout = WorkoutEntity()
-        self.exercises = []
-        
-        if let workoutToEdit = workoutDataManager.fetchWorkout(workout: parentViewModel.editingWorkout, in: self.mainContext) {
-            
-            self.editingWorkout = workoutToEdit
-            
-            self.exercises = workoutDataManager.fetchExercises(for: workoutToEdit, in: self.mainContext)
-            
-            self.defaultRestTime = workoutDataManager.fetchDefaultRestTime(for: workoutToEdit, in: self.mainContext)
+
+        guard let fetchedWorkout = workoutDataManager.fetchWorkout(workout: parentViewModel.editingWorkout, in: self.mainContext),
+              case .success(let fetchedExercises) = workoutDataManager.fetchExercises(for: fetchedWorkout, in: self.mainContext)
+        else {
+            return nil
         }
+        
+        self.editingWorkout = fetchedWorkout
+        self.exercises = fetchedExercises
+        
+        self.defaultRestTime = workoutDataManager.fetchDefaultRestTime(for: fetchedWorkout, in: self.mainContext)
     }
     
     func getRestTime(for exercise: ExerciseEntity) -> RestTimeEntity? {
@@ -42,8 +41,12 @@ class RestTimeEditViewModel: ObservableObject {
     }
     
     func addRestTime(for exercise: ExerciseEntity, with duration: Int) {
-        self.editingRestTime = workoutDataManager.createRestTime(for: exercise, with: duration, in: mainContext)
-        isNewRestTime = true
+        let result = workoutDataManager.createRestTime(workout: editingWorkout, for: exercise, with: duration, in: mainContext)
+        
+        if case .success(let restTime) = result {
+            self.editingRestTime = restTime
+            isNewRestTime = true
+        }
     }
     
     func deleteRestTime(for exercise: ExerciseEntity) {
@@ -56,10 +59,9 @@ class RestTimeEditViewModel: ObservableObject {
     
     func updateRestTime(for exercise: ExerciseEntity, duration: Int) {
         if let restTimeToUpdate = exercise.restTime {
-            restTimeToUpdate.duration = Int32(duration)
+            restTimeToUpdate.duration = duration.int32
         }
     }
-    
 
     func discardRestTime(for exercise: ExerciseEntity) {
         if isNewRestTime {
@@ -72,8 +74,8 @@ class RestTimeEditViewModel: ObservableObject {
         if let exerciseRestTime = getRestTime(for: exercise) {
             editingRestTime = exerciseRestTime
         } else {
-            let newRestTimeDuration = defaultRestTime?.duration ?? Int32(Constants.DefaultValues.restTimeDuration)
-            addRestTime(for: exercise, with: Int(newRestTimeDuration))
+            let newRestTimeDuration = defaultRestTime?.duration.int ?? Constants.DefaultValues.restTimeDuration
+            addRestTime(for: exercise, with: newRestTimeDuration)
         }
     }
 

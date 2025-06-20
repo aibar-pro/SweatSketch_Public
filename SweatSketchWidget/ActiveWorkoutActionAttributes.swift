@@ -8,6 +8,8 @@
 import ActivityKit
 import Foundation
 
+typealias ActiveWorkoutActivityState = ActiveWorkoutActionAttributes.ActiveWorkoutActionStatus
+
 struct ActiveWorkoutActionAttributes: ActivityAttributes {
     public typealias ActiveWorkoutActionStatus = ContentState
     

@@ -15,13 +15,22 @@ struct SweatSketchWidgetLiveActivity: Widget {
             ZStack {
                 WidgetBackgroundView()
                 
-                VStack (alignment: .leading, spacing: WidgetConstants.padding*1.5) {
-                    WidgetActionInfoLabelView(title: context.state.title, repsCount: context.state.repsCount, repsMax: context.state.repsMax, duration: context.state.duration)
+                VStack(alignment: .leading, spacing: WidgetConstants.padding * 2) {
+                    WidgetActionInfoLabelView(
+                        title: context.state.title,
+                        repsCount: context.state.repsCount,
+                        repsMax: context.state.repsMax,
+                        duration: context.state.duration
+                    )
                     .font(.headline.bold())
                     .foregroundStyle(WidgetConstants.Colors.highEmphasisColor)
                     
-                    WidgetProgressBarView(totalSections: context.state.totalActions, currentSection: context.state.currentAction)
-                        .frame(height: WidgetConstants.padding*3)
+                    WidgetProgressBarView(
+                        totalSections: context.state.totalActions,
+                        currentSection: context.state.currentAction,
+                        duration: context.state.duration
+                    )
+                    .frame(height: WidgetConstants.padding * 3)
                     
                     if #available(iOS 17.0, *) {
                         HStack(alignment: .top) {
@@ -57,8 +66,11 @@ struct SweatSketchWidgetLiveActivity: Widget {
                         .font(.headline.bold())
                         .foregroundStyle(WidgetConstants.Colors.highEmphasisColor)
                         
-                        WidgetProgressBarView(totalSections: context.state.totalActions, currentSection: context.state.currentAction)
-                            .frame(height: WidgetConstants.padding*2)
+                        WidgetProgressBarView(
+                            totalSections: context.state.totalActions,
+                            currentSection: context.state.currentAction
+                        )
+                            .frame(height: WidgetConstants.padding * 2)
                         
                         if #available(iOS 17.0, *) {
                             HStack(alignment: .top) {
@@ -99,40 +111,40 @@ struct SweatSketchWidgetLiveActivity: Widget {
     }
 }
 
-extension ActiveWorkoutActionAttributes.ActiveWorkoutActionStatus {
-    fileprivate static var action0: ActiveWorkoutActionAttributes.ActiveWorkoutActionStatus {
-        ActiveWorkoutActionAttributes.ActiveWorkoutActionStatus(title: "Treadmill Run", duration: 60, totalActions: 1, currentAction: 0)
-     }
-     
-     fileprivate static var action1: ActiveWorkoutActionAttributes.ActiveWorkoutActionStatus {
-         ActiveWorkoutActionAttributes.ActiveWorkoutActionStatus(title: "Bench Press", repsCount: 12, totalActions: 4, currentAction: 2)
-     }
-    
-    fileprivate static var action2: ActiveWorkoutActionAttributes.ActiveWorkoutActionStatus {
-        ActiveWorkoutActionAttributes.ActiveWorkoutActionStatus(title: "Bench Press", repsMax: true, totalActions: 4, currentAction: 3)
+extension ActiveWorkoutActivityState {
+    static func getAction(isTimed: Bool = false) -> ActiveWorkoutActivityState {
+        let names: [String] = ["Treadmill Run", "Bench Press", "Burpees", "Deadlift", "Calf Raises", "Rest"]
+        let durations: [Int] = [1, 15, 60, 361, 7621]
+        
+        let totalActions = [1, 11].randomElement() ?? 1
+        let currentAction = Int.random(in: 1...totalActions) - 1
+        
+        return .init(
+            title: names.randomElement() ?? "",
+            repsCount: Int16.random(in: 1...100),
+            repsMax: Bool.random(),
+            duration: isTimed ? durations.randomElement() ?? nil : nil,
+            totalActions: totalActions,
+            currentAction: currentAction
+        )
     }
-    
-    fileprivate static var action3: ActiveWorkoutActionAttributes.ActiveWorkoutActionStatus {
-        ActiveWorkoutActionAttributes.ActiveWorkoutActionStatus(title: "Deadlift", repsCount: 12, totalActions: 2, currentAction: 0)
-    }
-   
-   fileprivate static var action4: ActiveWorkoutActionAttributes.ActiveWorkoutActionStatus {
-       ActiveWorkoutActionAttributes.ActiveWorkoutActionStatus(title: "Burpees", repsMax: true, totalActions: 2, currentAction: 1)
-   }
 }
 
 extension ActiveWorkoutActionAttributes {
-    fileprivate static var preview: ActiveWorkoutActionAttributes {
+    static var preview: ActiveWorkoutActionAttributes {
         ActiveWorkoutActionAttributes()
     }
 }
 
-#Preview("Notification", as: .content, using: ActiveWorkoutActionAttributes.preview) {
+#Preview(
+    "Notification",
+    as: .content,
+    using: ActiveWorkoutActionAttributes.preview) {
    SweatSketchWidgetLiveActivity()
 } contentStates: {
-    ActiveWorkoutActionAttributes.ContentState.action0
-    ActiveWorkoutActionAttributes.ContentState.action1
-    ActiveWorkoutActionAttributes.ContentState.action2
-    ActiveWorkoutActionAttributes.ContentState.action3
-    ActiveWorkoutActionAttributes.ContentState.action4
+    ActiveWorkoutActivityState.getAction()
+    ActiveWorkoutActivityState.getAction(isTimed: true)
+    ActiveWorkoutActivityState.getAction(isTimed: true)
+    ActiveWorkoutActivityState.getAction()
+    ActiveWorkoutActivityState.getAction()
 }

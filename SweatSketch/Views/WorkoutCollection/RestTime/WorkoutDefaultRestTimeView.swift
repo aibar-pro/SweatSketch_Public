@@ -55,13 +55,13 @@ struct WorkoutDefaultRestTimeView: View {
                 Button(action: {
                     onDiscard()
                 }) {
-                    Text(Constants.Placeholders.cancelButtonLabel)
+                    Text("app.button.cancel.label")
                         .secondaryButtonLabelStyleModifier()
                 }
                 Button(action: {
                     onSave(duration)
                 }) {
-                    Text(Constants.Placeholders.saveButtonLabel)
+                    Text("app.button.save.label")
                         .bold()
                         .primaryButtonLabelStyleModifier()
                 }
