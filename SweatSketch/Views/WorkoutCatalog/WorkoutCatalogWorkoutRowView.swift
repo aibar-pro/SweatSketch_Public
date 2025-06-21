@@ -8,29 +8,26 @@
 import SwiftUI
 
 struct WorkoutCatalogWorkoutRowView: View {
-    @ObservedObject var workoutRepresentation: WorkoutCatalogWorkoutViewRepresentation
+    @ObservedObject var workout: WorkoutRepresentation
     @Binding var isLoggedIn: Bool
     
-    var onMoveRequested: (_ workout: WorkoutCatalogWorkoutViewRepresentation) -> ()
-    var onShareRequested: (_ workout: WorkoutCatalogWorkoutViewRepresentation) -> ()
+    var onMoveRequested: (WorkoutRepresentation) -> ()
+    var onShareRequested: (WorkoutRepresentation) -> ()
     
     var body: some View {
         Menu {
-            Button(Constants.Placeholders.WorkoutCatalog.moveWorkoutButtonLabel) {
-               onMoveRequested(workoutRepresentation)
+            Button("catalog.workout.move") {
+               onMoveRequested(workout)
             }
 
-            Button(Constants.Placeholders.WorkoutCatalog.shareWorkoutButtonLabel) {
-                onShareRequested(workoutRepresentation)
+            Button("catalog.workout.share") {
+                onShareRequested(workout)
             }
             .disabled(!isLoggedIn)
        } label: {
-           HStack{
-               Text(workoutRepresentation.name)
-                   .lineLimit(1)
-                   .multilineTextAlignment(.leading)
-               Spacer()
-           }
+           Text(workout.name)
+               .fullWidthText()
+               .lineLimit(1)
        }
     }
 }
@@ -45,6 +42,11 @@ struct WorkoutCatalogWorkoutRowView_Previews: PreviewProvider {
         
         let workoutForPreview = (firstCollection?.toWorkoutCollectionRepresentation()?.workouts.first)!
         
-        WorkoutCatalogWorkoutRowView(workoutRepresentation: workoutForPreview, isLoggedIn: .constant(true), onMoveRequested: {workout in }, onShareRequested: { _ in })
+        WorkoutCatalogWorkoutRowView(
+            workout: workoutForPreview,
+            isLoggedIn: .constant(true),
+            onMoveRequested: { workout in },
+            onShareRequested: { _ in }
+        )
     }
 }

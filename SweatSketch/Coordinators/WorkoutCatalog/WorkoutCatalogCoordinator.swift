@@ -31,7 +31,7 @@ class WorkoutCatalogCoordinator: BaseCoordinator<WorkoutCatalogViewModel>, Coord
         applicationEvent.send(.profileRequested)
     }
     
-    func goToShareWorkout(movingWorkout: WorkoutCatalogWorkoutViewRepresentation) {
+    func goToShareWorkout(movingWorkout: WorkoutRepresentation) {
 //        let workoutMoveViewModel = WorkoutCatalogWorkoutMoveViewModel(parentViewModel: viewModel, movingWorkout: movingWorkout)
 //        let workoutMoveCoordinator = WorkoutCatalogWorkoutMoveCoordinator(viewModel: workoutMoveViewModel)
 //        
@@ -44,7 +44,7 @@ class WorkoutCatalogCoordinator: BaseCoordinator<WorkoutCatalogViewModel>, Coord
         rootViewController.present(shareWorkoutViewController, animated: true)
     }
     
-    func goToMoveWorkout(movingWorkout: WorkoutCatalogWorkoutViewRepresentation) {
+    func goToMoveWorkout(movingWorkout: WorkoutRepresentation) {
         let workoutMoveViewModel = WorkoutCatalogWorkoutMoveViewModel(parentViewModel: viewModel, movingWorkout: movingWorkout)
         let workoutMoveCoordinator = WorkoutCatalogWorkoutMoveCoordinator(viewModel: workoutMoveViewModel)
         
@@ -56,7 +56,7 @@ class WorkoutCatalogCoordinator: BaseCoordinator<WorkoutCatalogViewModel>, Coord
         rootViewController.present(moveWorkoutViewController, animated: true)
     }
     
-    func goToMoveCollection(movingCollection: WorkoutCatalogCollectionViewRepresentation) {
+    func goToMoveCollection(movingCollection: CollectionRepresentation) {
         let collectionMoveViewModel = WorkoutCatalogCollectionMoveViewModel(parentViewModel: viewModel, movingCollection: movingCollection)
         let collectionMoveCoordinator = WorkoutCatalogCollectionMoveCoordinator(viewModel: collectionMoveViewModel)
         
@@ -68,7 +68,7 @@ class WorkoutCatalogCoordinator: BaseCoordinator<WorkoutCatalogViewModel>, Coord
         rootViewController.present(moveCollectionViewController, animated: true)
     }
     
-    func goToMergeCollection(sourceCollection: WorkoutCatalogCollectionViewRepresentation) {
+    func goToMergeCollection(sourceCollection: CollectionRepresentation) {
         let collectionMergeViewModel = WorkoutCatalogCollectionMergeViewModel(parentViewModel: viewModel, sourceCollection: sourceCollection)
         let collectionMergeCoordinator = WorkoutCatalogCollectionMergeCoordinator(viewModel: collectionMergeViewModel)
         

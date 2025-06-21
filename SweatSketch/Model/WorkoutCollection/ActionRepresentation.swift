@@ -1,5 +1,5 @@
 //
-//  ActionViewRepresentation.swift
+//  ActionRepresentation.swift
 //  SweatSketch
 //
 //  Created by aibaranchikov on 10.04.2024.
@@ -7,59 +7,7 @@
 
 import Foundation
 
-enum ExerciseActionType: Equatable {
-    case reps(sets: Int, min: Int, max: Int?, isMax: Bool)
-    case timed(sets: Int, min: Int, max: Int?, isMax: Bool)
-    case distance(sets: Int, min: Double, max: Double?, unit: String, isMax: Bool)
-    case rest(duration: Int)
-    
-    var description: String {
-        switch self {
-        case .reps(let sets, let min, let max, let isMax):
-            if isMax {
-                return "MAX x \(sets)"
-            } else {
-                let repPart: String
-                if let max, max != min {
-                    repPart = "\(min)-\(max)"
-                } else {
-                    repPart = "\(min)"
-                }
-                return "\(repPart) x \(sets)"
-            }
-        case .timed(let sets, let min, let max, let isMax):
-            if isMax {
-                return "MAX x \(sets)"
-            } else {
-                let timePart: String
-                if let max, max != min {
-                    timePart = "\(min)-\(max)"
-                } else {
-                    timePart = "\(min)"
-                }
-                return "\(timePart)s x \(sets)"
-            }
-        case .distance(let sets, let min, let max, let unit, let isMax):
-            if isMax {
-                return "MAX x \(sets)"
-            } else {
-                let minStr = min.formatted(precision: 2)
-                let part: String
-                if let max, max != min {
-                    part = "\(minStr)-\(max.formatted(precision: 2))"
-                } else {
-                    part = minStr
-                }
-                return "\(part)\(unit) x \(sets)"
-            }
-            
-        case .rest(let duration):
-            return "Rest: \(duration)s"
-        }
-    }
-}
-
-class ActionViewRepresentation: Identifiable {
+class ActionRepresentation: Identifiable {
     let id: UUID
     let entityUUID: UUID
     let title: String
@@ -83,8 +31,8 @@ class ActionViewRepresentation: Identifiable {
     }
 }
 
-extension ActionViewRepresentation: Equatable {
-    static func == (lhs: ActionViewRepresentation, rhs: ActionViewRepresentation) -> Bool {
+extension ActionRepresentation: Equatable {
+    static func == (lhs: ActionRepresentation, rhs: ActionRepresentation) -> Bool {
         return lhs.entityUUID == rhs.entityUUID
             && lhs.title == rhs.title
             && lhs.type == rhs.type
@@ -93,7 +41,7 @@ extension ActionViewRepresentation: Equatable {
 }
 
 extension ExerciseActionEntity {
-    func toActionViewRepresentation(exerciseName: String? = nil) -> ActionViewRepresentation? {
+    func toActionViewRepresentation(exerciseName: String? = nil) -> ActionRepresentation? {
         guard let uuid = uuid else { return nil }
         
         let title: String = {
@@ -106,7 +54,7 @@ extension ExerciseActionEntity {
         
         switch self {
         case let rest as RestActionEntity:
-            return ActionViewRepresentation(
+            return ActionRepresentation(
                 entityUUID: uuid,
                 title: Constants.Placeholders.restPeriodLabel,
                 type: .rest(
@@ -114,7 +62,7 @@ extension ExerciseActionEntity {
                 )
             )
         case let t as TimedActionEntity:
-            return ActionViewRepresentation(
+            return ActionRepresentation(
                 entityUUID: uuid,
                 title: title,
                 type: .timed(
@@ -125,7 +73,7 @@ extension ExerciseActionEntity {
                 )
             )
         case let r as RepsActionEntity:
-            return ActionViewRepresentation(
+            return ActionRepresentation(
                 entityUUID: uuid,
                 title: title,
                 type: .reps(
@@ -136,7 +84,7 @@ extension ExerciseActionEntity {
                 )
             )
         case let d as DistanceActionEntity:
-            return ActionViewRepresentation(
+            return ActionRepresentation(
                 entityUUID: uuid,
                 title: title,
                 type: .distance(
@@ -153,11 +101,19 @@ extension ExerciseActionEntity {
     }
 }
 
-extension ActiveWorkoutActionAttributes.ActiveWorkoutActionStatus {
-    init(action: ActionViewRepresentation, totalActions: Int, currentAction: Int) {
+extension ActiveWorkoutActivityState {
+    init(action: ActionRepresentation, progress: Double, stepIndex: Int, totalSteps: Int) {
         self.actionID = action.id
         self.title = action.title
-        self.totalActions = totalActions
-        self.currentAction = currentAction
+        self.quantity = action.type.description
+        self.progress = progress
+        self.isRest = {
+            if case .rest = action.type {
+                return true
+            }
+            return false
+        }()
+        self.stepIndex = stepIndex
+        self.totalSteps = totalSteps
     }
 }

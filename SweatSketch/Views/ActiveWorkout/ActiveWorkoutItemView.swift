@@ -27,7 +27,7 @@ struct ActiveWorkoutItemView: View {
         }
     }
     
-    private func itemDescriptionView(currentAction: ActionViewRepresentation) -> some View {
+    private func itemDescriptionView(currentAction: ActionRepresentation) -> some View {
         HStack(alignment: .top, spacing: Constants.Design.spacing) {
             VStack(alignment: .leading, spacing: Constants.Design.spacing) {
                 if workoutItem.title != currentAction.title {

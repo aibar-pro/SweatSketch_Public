@@ -120,7 +120,7 @@ struct WorkoutEditView: View {
     
     private var exercisesView: some View {
         List {
-            ForEach(viewModel.exercises.compactMap { $0.toExerciseViewRepresentation() }, id: \.id) { exercise in
+            ForEach(viewModel.exercises.compactMap { $0.toExerciseRepresentation() }, id: \.id) { exercise in
                 HStack (alignment: .firstTextBaseline, spacing: Constants.Design.spacing) {
                     ExerciseDetailView(exercise: exercise)
                     

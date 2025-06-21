@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ActionTimedView: View {
     
-    var action: ActionViewRepresentation
+    var action: ActionRepresentation
     
     var showTitle: Bool = false
     
@@ -37,7 +37,7 @@ struct ActionTimedView_Preview : PreviewProvider {
         
         let exerciseForPreview = try! workoutDataManager.fetchExercises(for: workoutForPreview, in: persistenceController.container.viewContext).get().randomElement()!
         
-        let actionForPreview = exerciseForPreview.toExerciseViewRepresentation()!.actions.randomElement()!
+        let actionForPreview = exerciseForPreview.toExerciseRepresentation()!.actions.randomElement()!
             
         ActionTimedView(action: actionForPreview, showTitle: true)
     }

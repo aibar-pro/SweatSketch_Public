@@ -18,17 +18,16 @@ struct SweatSketchWidgetLiveActivity: Widget {
                 VStack(alignment: .leading, spacing: WidgetConstants.padding * 2) {
                     WidgetActionInfoLabelView(
                         title: context.state.title,
-                        repsCount: context.state.repsCount,
-                        repsMax: context.state.repsMax,
-                        duration: context.state.duration
+                        quantity: context.state.quantity,
+                        progress: context.state.progress
                     )
                     .font(.headline.bold())
                     .foregroundStyle(WidgetConstants.Colors.highEmphasisColor)
                     
                     WidgetProgressBarView(
-                        totalSections: context.state.totalActions,
-                        currentSection: context.state.currentAction,
-                        duration: context.state.duration
+                        progress: context.state.progress,
+                        stepIndex: context.state.stepIndex,
+                        totalSteps: context.state.totalSteps
                     )
                     .frame(height: WidgetConstants.padding * 3)
                     
@@ -62,15 +61,20 @@ struct SweatSketchWidgetLiveActivity: Widget {
             DynamicIsland {
                 DynamicIslandExpandedRegion(.bottom) {
                     VStack (alignment: .leading, spacing: WidgetConstants.padding) {
-                        WidgetActionInfoLabelView(title: context.state.title, repsCount: context.state.repsCount, repsMax: context.state.repsMax, duration: context.state.duration)
+                        WidgetActionInfoLabelView(
+                            title: context.state.title,
+                            quantity: context.state.quantity,
+                            progress: context.state.progress
+                        )
                         .font(.headline.bold())
                         .foregroundStyle(WidgetConstants.Colors.highEmphasisColor)
                         
                         WidgetProgressBarView(
-                            totalSections: context.state.totalActions,
-                            currentSection: context.state.currentAction
+                            progress: context.state.progress,
+                            stepIndex: context.state.stepIndex,
+                            totalSteps: context.state.totalSteps
                         )
-                            .frame(height: WidgetConstants.padding * 2)
+                        .frame(height: WidgetConstants.padding * 2)
                         
                         if #available(iOS 17.0, *) {
                             HStack(alignment: .top) {
@@ -116,16 +120,18 @@ extension ActiveWorkoutActivityState {
         let names: [String] = ["Treadmill Run", "Bench Press", "Burpees", "Deadlift", "Calf Raises", "Rest"]
         let durations: [Int] = [1, 15, 60, 361, 7621]
         
-        let totalActions = [1, 11].randomElement() ?? 1
-        let currentAction = Int.random(in: 1...totalActions) - 1
+        let totalSteps = [1, 11].randomElement() ?? 1
+        let stepIndex = Int.random(in: 1...totalSteps) - 1
         
         return .init(
             title: names.randomElement() ?? "",
-            repsCount: Int16.random(in: 1...100),
-            repsMax: Bool.random(),
-            duration: isTimed ? durations.randomElement() ?? nil : nil,
-            totalActions: totalActions,
-            currentAction: currentAction
+            quantity: Bool.random()
+            ? String(durations.randomElement() ?? 0) + "-" + String(durations.randomElement() ?? 0)
+                : "max",
+            progress: 0.1,
+            isRest: false,
+            stepIndex: stepIndex,
+            totalSteps: totalSteps
         )
     }
 }

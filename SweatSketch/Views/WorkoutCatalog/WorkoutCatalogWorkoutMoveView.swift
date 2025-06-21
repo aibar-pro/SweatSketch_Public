@@ -89,9 +89,12 @@ struct WorkoutCatalogWorkoutMoveView_Previews: PreviewProvider {
         let collectionDataManager = CollectionDataManager()
         let firstCollection = collectionDataManager.fetchFirstUserCollection(in: persistenceController.container.viewContext)
         
-        let workoutForPreview = collectionDataManager.fetchWorkouts(for: firstCollection!, in: persistenceController.container.viewContext).first
+        let workoutForPreview = collectionDataManager.fetchWorkouts(for: firstCollection!, in: persistenceController.container.viewContext).first!
         
-        let workoutMoveModel = WorkoutCatalogWorkoutMoveViewModel(parentViewModel: collectionsViewModel, movingWorkout: (workoutForPreview?.toWorkoutCollectionWorkoutRepresentation())!)
+        let workoutMoveModel = WorkoutCatalogWorkoutMoveViewModel(
+            parentViewModel: collectionsViewModel,
+            movingWorkout: workoutForPreview.toWorkoutRepresentation(includeContent: false)!
+        )
         
         let workoutMoveCoordinator = WorkoutCatalogWorkoutMoveCoordinator(viewModel: workoutMoveModel)
         
