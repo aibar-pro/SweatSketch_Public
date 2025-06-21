@@ -16,21 +16,14 @@ struct ActiveWorkoutActionAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
         var actionID: UUID?
         var title: String
-        var repsCount: Int16?
-        var repsMax: Bool?
-        var duration: Int?
-        var totalActions: Int
-        var currentAction: Int
+        var quantity: String
+        var progress: Double
+        var isRest: Bool
+        var stepIndex: Int
+        var totalSteps: Int
         
         var iconName: String {
-            if duration != nil {
-                return "gauge.with.needle"
-            } else if repsMax != nil  || repsCount != nil {
-                return "123.rectangle"
-            }
-            else {
-                return "questionmark.circle"
-            }
+            isRest ? "leaf" : "flame"
         }
     }
 }

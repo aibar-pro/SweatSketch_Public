@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct WidgetProgressBarView: View {
-    var totalSections: Int
-    var currentSection: Int
-    var duration: Int? = nil
+    var progress: Double
+    var stepIndex: Int
+    var totalSteps: Int
     
     @State private var isAnimating = false
     
@@ -22,31 +22,22 @@ struct WidgetProgressBarView: View {
                     .frame(width: barGeometry.size.width, height: barGeometry.size.height)
                 
                 HStack(alignment: .center, spacing: WidgetConstants.padding / 2) {
-                    ForEach(0..<totalSections, id: \.self) { section in
+                    ForEach(0..<totalSteps, id: \.self) { step in
                         Group {
-                            if section < currentSection {
+                            if step == stepIndex {
+                                ProgressView(value: progress)
+                                    .labelsHidden()
+                                    .tint(WidgetConstants.Colors.accentColor)
+                                    .scaleEffect(x: 1, y: 3, anchor: .center)
+                                    .frame(height: barGeometry.size.height - WidgetConstants.padding * 2)
+                                    .clipShape(RoundedRectangle(cornerRadius: WidgetConstants.cornerRadius))
+                            } else {
                                 RoundedRectangle(cornerRadius: WidgetConstants.cornerRadius)
-                                    .foregroundStyle(WidgetConstants.Colors.accentColor.opacity(0.65))
-                            }
-                            if section == currentSection {
-                                if let duration {
-                                    ProgressView(
-                                        timerInterval: Date()...Date().addingTimeInterval(Double(duration)),
-                                        countsDown: false
+                                    .foregroundStyle(
+                                        step < stepIndex
+                                        ? WidgetConstants.Colors.accentColor.opacity(0.65)
+                                        : WidgetConstants.Colors.backgroundEndColor
                                     )
-                                        .labelsHidden()
-                                        .tint(WidgetConstants.Colors.accentColor)
-                                        .scaleEffect(x: 1, y: 3, anchor: .center)
-                                        .frame(height: barGeometry.size.height - WidgetConstants.padding * 2)
-                                        .clipShape(RoundedRectangle(cornerRadius: WidgetConstants.cornerRadius))
-                                } else {
-                                    RoundedRectangle(cornerRadius: WidgetConstants.cornerRadius)
-                                        .foregroundStyle(WidgetConstants.Colors.accentColor)
-                                }
-                            }
-                            if section > currentSection {
-                                RoundedRectangle(cornerRadius: WidgetConstants.cornerRadius)
-                                    .foregroundStyle(WidgetConstants.Colors.backgroundEndColor)
                             }
                         }
                     }

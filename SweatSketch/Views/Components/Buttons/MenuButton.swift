@@ -9,7 +9,16 @@ import SwiftUI
 
 struct MenuButton<Content: View>: View {
     let content: () -> Content
-    let config: CustomButtonConfig
+    let style: CustomButtonStyle
+    var config: CustomButtonConfig { style.config }
+    
+    var imageName: String {
+        if style.isInline {
+            return "ellipsis"
+        } else {
+            return "ellipsis.circle"
+        }
+    }
     
     @Binding var isDisabled: Bool
     
@@ -17,7 +26,7 @@ struct MenuButton<Content: View>: View {
          isDisabled: Binding<Bool> = .constant(false),
          @ViewBuilder content: @escaping () -> Content) {
         self.content = content
-        self.config = style.config
+        self.style = style
         self._isDisabled = isDisabled
     }
     
@@ -25,7 +34,7 @@ struct MenuButton<Content: View>: View {
         Menu {
             content()
         } label: {
-            Image(systemName: "ellipsis.circle")
+            Image(systemName: imageName)
                 .font(config.isBold ? config.font.bold() : config.font)
                 .customForegroundColorModifier(config.foregroundColor)
                 .padding(.horizontal, Constants.Design.buttonLabelPaddding)

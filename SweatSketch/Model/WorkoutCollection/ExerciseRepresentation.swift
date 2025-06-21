@@ -1,5 +1,5 @@
 //
-//  ExerciseViewRepresentation.swift
+//  ExerciseRepresentation.swift
 //  SweatSketch
 //
 //  Created by aibaranchikov on 09.04.2024.
@@ -7,10 +7,10 @@
 
 import CoreData
 
-class ExerciseViewRepresentation: Identifiable, ObservableObject {
+class ExerciseRepresentation: Identifiable, ObservableObject {
     let id: UUID
     var name: String
-    var actions = [ActionViewRepresentation]()
+    var actions = [ActionRepresentation]()
     var restTimeBetweenActions: RestActionEntity?
     var superSets: Int
     
@@ -31,8 +31,8 @@ class ExerciseViewRepresentation: Identifiable, ObservableObject {
     }
 }
 
-extension ExerciseViewRepresentation: Equatable {
-    static func == (lhs: ExerciseViewRepresentation, rhs: ExerciseViewRepresentation) -> Bool {
+extension ExerciseRepresentation: Equatable {
+    static func == (lhs: ExerciseRepresentation, rhs: ExerciseRepresentation) -> Bool {
         return
             lhs.id == rhs.id &&
             lhs.name == rhs.name &&
@@ -43,10 +43,10 @@ extension ExerciseViewRepresentation: Equatable {
 }
 
 extension ExerciseEntity {
-    func toExerciseViewRepresentation() -> ExerciseViewRepresentation? {
+    func toExerciseRepresentation() -> ExerciseRepresentation? {
         guard let context = self.managedObjectContext else {
             return nil
         }
-        return ExerciseViewRepresentation(exercise: self, in: context)
+        return ExerciseRepresentation(exercise: self, in: context)
     }
 }

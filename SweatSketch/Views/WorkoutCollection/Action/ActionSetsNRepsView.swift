@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ActionSetsNRepsView: View {
-    var action: ActionViewRepresentation
+    var action: ActionRepresentation
     
     var showTitle: Bool = false
     var showSets: Bool = true
@@ -50,7 +50,7 @@ struct ActionSetsNRepsView_Previews: PreviewProvider {
         
         let exerciseForPreview = try! workoutDataManager.fetchExercises(for: workoutForPreview, in: persistenceController.container.viewContext).get().randomElement()!
         
-        let actionForPreview = (exerciseForPreview.toExerciseViewRepresentation()?.actions[0])!
+        let actionForPreview = (exerciseForPreview.toExerciseRepresentation()?.actions[0])!
         
         VStack (spacing: 50) {
             ActionSetsNRepsView(action: actionForPreview, showTitle: true)

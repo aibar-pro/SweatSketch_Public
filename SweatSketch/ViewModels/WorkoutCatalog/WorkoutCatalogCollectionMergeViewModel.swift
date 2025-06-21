@@ -11,12 +11,12 @@ class WorkoutCatalogCollectionMergeViewModel: ObservableObject {
     
     private let mainContext: NSManagedObjectContext
     private let parentViewModel: WorkoutCatalogViewModel
-    var sourceCollection: WorkoutCatalogCollectionViewRepresentation
-    var collections = [WorkoutCatalogCollectionViewRepresentation]()
+    var sourceCollection: CollectionRepresentation
+    var collections = [CollectionRepresentation]()
     
     private let collectionDataManager = CollectionDataManager()
     
-    init(parentViewModel: WorkoutCatalogViewModel, sourceCollection: WorkoutCatalogCollectionViewRepresentation) {
+    init(parentViewModel: WorkoutCatalogViewModel, sourceCollection: CollectionRepresentation) {
         self.mainContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         self.mainContext.parent = parentViewModel.mainContext
         
@@ -28,7 +28,7 @@ class WorkoutCatalogCollectionMergeViewModel: ObservableObject {
         self.collections = fetchedRootCollections.compactMap({ $0.toWorkoutCollectionRepresentation(includeWorkouts: false) })
     }
     
-    func mergeCollections(to targetCollection: WorkoutCatalogCollectionViewRepresentation) {
+    func mergeCollections(to targetCollection: CollectionRepresentation) {
         if let fetchedTargetCollection = collectionDataManager.fetchCollection(by: targetCollection.id, in: mainContext),
            let fetchedSourceCollection = collectionDataManager.fetchCollection(by: sourceCollection.id, in: mainContext)
         {

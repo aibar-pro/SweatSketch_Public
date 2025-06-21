@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ExerciseDetailView: View {
-    @ObservedObject var exercise: ExerciseViewRepresentation
+    @ObservedObject var exercise: ExerciseRepresentation
     
     var body: some View {
         VStack(alignment: .leading, spacing: Constants.Design.spacing / 2) {
@@ -61,7 +61,7 @@ struct ExerciseView_Previews: PreviewProvider {
         
         let exercise = try! workoutDataManager.fetchExercises(for: workoutForPreview, in: persistenceController.container.viewContext).get().first!
         
-        let exerciseRepresentation = exercise.toExerciseViewRepresentation()!
+        let exerciseRepresentation = exercise.toExerciseRepresentation()!
         ExerciseDetailView(exercise: exerciseRepresentation)
     }
 }

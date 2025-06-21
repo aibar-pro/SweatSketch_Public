@@ -351,6 +351,86 @@
         }
       }
     },
+    "catalog.collection.menu.merge" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Merge collection"
+          }
+        }
+      }
+    },
+    "catalog.collection.menu.move" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move collection"
+          }
+        }
+      }
+    },
+    "catalog.collection.menu.rename" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rename collection"
+          }
+        }
+      }
+    },
+    "catalog.empty.collection" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empty collection"
+          }
+        }
+      }
+    },
+    "catalog.import.workout" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import"
+          }
+        }
+      }
+    },
+    "catalog.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workout catalog"
+          }
+        }
+      }
+    },
+    "catalog.workout.move" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move workout"
+          }
+        }
+      }
+    },
+    "catalog.workout.share" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share workout"
+          }
+        }
+      }
+    },
     "Champion" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1501,6 +1581,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Logout"
+          }
+        }
+      }
+    },
+    "user.profile.profile.button.label" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profile"
           }
         }
       }
