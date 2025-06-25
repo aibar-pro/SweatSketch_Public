@@ -7,10 +7,8 @@
 
 import SwiftUI
 
-struct ExerciseEditView: View {
-    
-    @EnvironmentObject var coordinator: ExerciseEditCoordinator
-    @ObservedObject var viewModel: ExerciseEditViewModel
+struct ExerciseEditorView: View {
+    @ObservedObject var viewModel: ExerciseEditorModel
 
     @GestureState var titlePress = false
     
@@ -28,7 +26,7 @@ struct ExerciseEditView: View {
             WorkoutPlanningModalBackgroundView()
             
             VStack(alignment: .leading, spacing: Constants.Design.spacing) {
-                headerView
+//                headerView
                 
                 exerciseNameView
                 
@@ -91,7 +89,7 @@ struct ExerciseEditView: View {
                                 onDiscard: {
                                     currentEditingState = .none
                                 },
-                                duration: viewModel.restTimeBetweenActions.duration.int
+                                duration: viewModel.restBetweenActions.duration.int
                             )
                             .padding(Constants.Design.spacing)
                             .materialCardBackgroundModifier()
@@ -106,56 +104,56 @@ struct ExerciseEditView: View {
             .customAccentColorModifier(Constants.Design.Colors.textColorHighEmphasis)
         }
     }
-    
-    private var headerView: some View {
-        HStack(alignment: .center, spacing: Constants.Design.spacing) {
-            Button(action: {
-                switch currentEditingState {
-                case .none:
-                    print("Exercise DISCARD")
-                    coordinator.discardExerciseEdit()
-                case .action:
-                    viewModel.clearEditingAction()
-                    currentEditingState = .none
-                default:
-                    currentEditingState = .none
-                }
-            }) {
-                Text("app.button.cancel.label")
-                    .padding(.vertical, Constants.Design.spacing / 2)
-                    .padding(.trailing, Constants.Design.spacing / 2)
-            }
-            .disabled(currentEditingState == .list)
-            
-            Spacer(minLength: 0)
-            
-            Button(action: {
-                switch currentEditingState {
-                case .none:
-                    print("Exercise SAVE")
-                    coordinator.saveExerciseEdit()
-                case .action:
-                    viewModel.clearEditingAction()
-                    currentEditingState = .none
-                default:
-                    currentEditingState = .none
-                }
-            }) {
-                Text(
-                    currentEditingState == .list
-                    ? "app.button.done.label"
-                    : "app.button.save.label"
-                )
-                .bold()
-                .padding(.vertical, Constants.Design.spacing / 2)
-                .padding(.leading, Constants.Design.spacing / 2)
-            }
-            .disabled(isSaveButtonDisabled())
-        }
-    }
+//    
+//    private var headerView: some View {
+//        HStack(alignment: .center, spacing: Constants.Design.spacing) {
+//            Button(action: {
+//                switch currentEditingState {
+//                case .none:
+//                    print("Exercise DISCARD")
+//                    coordinator.discardExerciseEdit()
+//                case .action:
+//                    viewModel.clearEditingAction()
+//                    currentEditingState = .none
+//                default:
+//                    currentEditingState = .none
+//                }
+//            }) {
+//                Text("app.button.cancel.label")
+//                    .padding(.vertical, Constants.Design.spacing / 2)
+//                    .padding(.trailing, Constants.Design.spacing / 2)
+//            }
+//            .disabled(currentEditingState == .list)
+//            
+//            Spacer(minLength: 0)
+//            
+//            Button(action: {
+//                switch currentEditingState {
+//                case .none:
+//                    print("Exercise SAVE")
+//                    coordinator.saveExerciseEdit()
+//                case .action:
+//                    viewModel.clearEditingAction()
+//                    currentEditingState = .none
+//                default:
+//                    currentEditingState = .none
+//                }
+//            }) {
+//                Text(
+//                    currentEditingState == .list
+//                    ? "app.button.done.label"
+//                    : "app.button.save.label"
+//                )
+//                .bold()
+//                .padding(.vertical, Constants.Design.spacing / 2)
+//                .padding(.leading, Constants.Design.spacing / 2)
+//            }
+//            .disabled(isSaveButtonDisabled())
+//        }
+//    }
     
     private var exerciseNameView: some View {
-        Text(viewModel.editingExercise.name ?? Constants.Placeholders.noExerciseName)
+        Text(viewModel.exercise.name ?? Constants.Placeholders.noExerciseName)
             .font(.title2.bold())
             .lineLimit(2)
             .scaleEffect(titlePress ? 0.95 : 1)
@@ -219,7 +217,7 @@ struct ExerciseEditView: View {
                     Image(systemName: "timer")
                     
                     if currentEditingState != .rest {
-                        DurationView(durationInSeconds: viewModel.restTimeBetweenActions.duration.int)
+                        DurationView(durationInSeconds: viewModel.restBetweenActions.duration.int)
                     } else {
                         Text(Constants.Placeholders.noDuration)
                     }
@@ -251,7 +249,7 @@ struct ExerciseEditView: View {
     }
     
     private func isListEditDisabled() -> Bool {
-        return viewModel.editingExerciseActions.isEmpty || [.name, .action, .rest].contains(currentEditingState)
+        return viewModel.actions.isEmpty || [.name, .action, .rest].contains(currentEditingState)
     }
     
 //    private func isListDisabled() -> Bool {
@@ -278,15 +276,13 @@ struct ExerciseEditView_Previews: PreviewProvider {
         let workoutCarouselViewModel = WorkoutCollectionViewModel(context: persistenceController.container.viewContext, collectionUUID: firstCollection.uuid)
         
         let workoutForPreview = collectionDataManager.fetchWorkouts(for: firstCollection, in: workoutCarouselViewModel.mainContext).first!
-        let workoutEditModel = WorkoutEditViewModel(parentViewModel: workoutCarouselViewModel, editingWorkoutUUID: workoutForPreview.uuid)!
+        let workoutEditModel = WorkoutEditorModel(parentViewModel: workoutCarouselViewModel, editingWorkoutUUID: workoutForPreview.uuid)!
         
         let workoutDataManager = WorkoutDataManager()
         let exerciseForPreview = try! workoutDataManager.fetchExercises(for: workoutForPreview, in: workoutEditModel.mainContext).get().randomElement()!
         
-        let exerciseEditViewModel = ExerciseEditViewModel(parentViewModel: workoutEditModel, editingExercise: exerciseForPreview)!
-        let exerciseCoordinator = ExerciseEditCoordinator(viewModel: exerciseEditViewModel)
+        let exerciseEditViewModel = ExerciseEditorModel(parentViewModel: workoutEditModel, editingExercise: exerciseForPreview)!
         
-        ExerciseEditView(viewModel: exerciseEditViewModel)
-            .environmentObject(exerciseCoordinator)
+        ExerciseEditorView(viewModel: exerciseEditViewModel)
     }
 }

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct WorkoutDetailView: View {
-    @ObservedObject var workout: WorkoutViewRepresentation
+    @ObservedObject var workout: WorkoutRepresentation
     
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -39,7 +39,7 @@ struct WorkoutPlanView_Previews: PreviewProvider {
         
         let workoutForPreview = collectionDataManager.fetchWorkouts(for: firstCollection!, in: persistenceController.container.viewContext).first
         
-        if let workoutRepresentation = workoutForPreview?.toWorkoutViewRepresentation() {
+        if let workoutRepresentation = workoutForPreview?.toWorkoutRepresentation() {
             WorkoutDetailView(workout: workoutRepresentation)
         }
     }

@@ -14,7 +14,7 @@ class WorkoutCatalogWorkoutMoveCoordinator: BaseCoordinator<WorkoutCatalogWorkou
         rootViewController.view.backgroundColor = .clear
     }
     
-    func saveMove(to collection: WorkoutCatalogCollectionViewRepresentation){
+    func saveMove(to collection: CollectionRepresentation){
         print("\(type(of: self)): Workouts moved, saving... \(Date())")
         viewModel.moveWorkout(to: collection)
         rootViewController.dismiss(animated: true)

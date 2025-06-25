@@ -30,15 +30,8 @@ enum Constants {
         static let workoutSummaryTitle = String.localized("Workout Complete!")
         
         enum WorkoutCatalog {
-            static let title = String.localized("Workout Catalog")
             static let userLoggedInLabel = String.localized("User")
-            static let renameCollectionButtonLabel = String.localized("Rename Collection")
-            static let moveCollectionButtonLabel = String.localized("Move Collection")
-            static let mergeCollectionButtonLabel = String.localized("Merge Collection")
-            
-            static let moveWorkoutButtonLabel = String.localized("Move Workout")
-            static let shareWorkoutButtonLabel = String.localized("Share Workout")
-            
+   
             static let addCollectionPopupTitle = String.localized("Add Collection")
             static let addCollectionPopupText = String.localized("Enter collection name")
             static let addCollectionPopupButtonLabel = String.localized("Add")
@@ -61,11 +54,6 @@ enum Constants {
             static let emptyCollectionButtonLabel = String.localized("Add Workout")
             
             static let workoutListTitle = String.localized("Workouts")
-            
-            static let emptyWorkoutText = String.localized("No Exercises yet")
-            
-            static let renameWorkoutPopupTitle = String.localized("Rename Workout")
-            static let renameExercisePopupTitle = String.localized("Rename Exercise")
             
             static let supersetCountLabel = String.localized("Superset repetitions")
             static let actionTypeLabel = String.localized("Action type")
@@ -118,6 +106,10 @@ enum Constants {
         
     }
     
+    enum Data {
+        static let undoLevelsLimit: Int = 15
+    }
+    
     enum Design {
         static let cornerRadius = CGFloat(16)
         static let spacing = CGFloat(20)
@@ -129,7 +121,7 @@ enum Constants {
             static let backgroundAccentColor = Color(.backgroundAccent).opacity(0.87)
             static let buttonAccentBackgroundColor = Color(.accent).opacity(0.87)
             static let buttonPrimaryBackgroundColor = Color(.backgroundGradientStart).opacity(0.87)
-            static let buttonSecondaryBackgroundColor = Color.secondary.opacity(0.05)
+            static let buttonSecondaryBackgroundColor = Color.foregroundSecondaryLabel.opacity(0.87)
             static let textColorHighEmphasis = Color.primary.opacity(0.87)
             static let textColorMediumEmphasis = Color.primary.opacity(0.6)
             static let textColorLowEmphasis = Color.primary.opacity(0.1)

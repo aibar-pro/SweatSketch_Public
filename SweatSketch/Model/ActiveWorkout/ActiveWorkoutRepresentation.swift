@@ -27,7 +27,7 @@ class ActiveWorkoutRepresentation: Identifiable, Equatable, ObservableObject {
        return items.isEmpty ? nil : items[currentItemIndex]
     }
     
-    var currentAction: ActionViewRepresentation? {
+    var currentAction: ActionRepresentation? {
         guard !items.isEmpty,
                 !items[currentItemIndex].actions.isEmpty
         else { return nil }
@@ -52,7 +52,7 @@ class ActiveWorkoutRepresentation: Identifiable, Equatable, ObservableObject {
                 !fetchedExercises.isEmpty
         else { return [] }
         
-        let defaultWorkoutRestTimeDuration = fetchDefaultRestTimeDuration(for: workout, in: context)
+        let defaultRestDuration = fetchDefaultRestTimeDuration(for: workout, in: context)
         
         // if exercise is not first, if exercise exist: fetch rest time
         // transform fetched rest time or default one
@@ -63,14 +63,14 @@ class ActiveWorkoutRepresentation: Identifiable, Equatable, ObservableObject {
         var items = [ActiveWorkoutItem]()
         
         for (index, exercise) in fetchedExercises.enumerated() {
-            if let exerciseRepresentation = exercise.toActiveWorkoutItem(defaultWorkoutRestTimeDuration: defaultWorkoutRestTimeDuration) {
+            if let exerciseRepresentation = exercise.toActiveWorkoutItem(defaultRestDuration: defaultRestDuration) {
                 //Add rest period between exercises: custom or default
                 if index > 0 {
                     if let fetchedRestTime = workoutDataManager.fetchRestTime(for: exercise, in: context), 
                         let restTimeRepresentation = fetchedRestTime.toActiveWorkoutItem() {
                         items.append(restTimeRepresentation)
                     } else {
-                        appendDefaultRestTime(items: &items, duration: defaultWorkoutRestTimeDuration, in: context)
+                        appendDefaultRestTime(items: &items, duration: defaultRestDuration, in: context)
                     }
                 }
                 items.append(exerciseRepresentation)
@@ -93,7 +93,7 @@ class ActiveWorkoutRepresentation: Identifiable, Equatable, ObservableObject {
         guard let restTimeItem = ActiveWorkoutItem(
             entityUUID: UUID(),
             title: Constants.Placeholders.restPeriodLabel,
-            type: .rest(duration: duration),
+            kind: .rest(duration: duration),
             in: context
         ) else { return }
         

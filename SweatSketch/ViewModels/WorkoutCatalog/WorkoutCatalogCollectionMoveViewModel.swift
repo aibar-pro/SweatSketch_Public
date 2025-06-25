@@ -11,12 +11,12 @@ class WorkoutCatalogCollectionMoveViewModel: ObservableObject {
     
     private let mainContext: NSManagedObjectContext
     private let parentViewModel: WorkoutCatalogViewModel
-    var movingCollection: WorkoutCatalogCollectionViewRepresentation
-    var collections = [WorkoutCatalogCollectionViewRepresentation]()
+    var movingCollection: CollectionRepresentation
+    var collections = [CollectionRepresentation]()
     
     private let collectionDataManager = CollectionDataManager()
     
-    init(parentViewModel: WorkoutCatalogViewModel, movingCollection: WorkoutCatalogCollectionViewRepresentation) {
+    init(parentViewModel: WorkoutCatalogViewModel, movingCollection: CollectionRepresentation) {
         self.mainContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         self.mainContext.parent = parentViewModel.mainContext
         
@@ -34,7 +34,7 @@ class WorkoutCatalogCollectionMoveViewModel: ObservableObject {
         })
     }
     
-    func moveCollection(to parentCollection: WorkoutCatalogCollectionViewRepresentation? = nil) {
+    func moveCollection(to parentCollection: CollectionRepresentation? = nil) {
         if let fetchedCollection = collectionDataManager.fetchCollection(by: movingCollection.id, in: mainContext) {
             if let parentCollectionToFetch = parentCollection,
                let fetchedParentCollection = collectionDataManager.fetchCollection(by: parentCollectionToFetch.id, in: mainContext) {

@@ -1,5 +1,5 @@
 //
-//  ExerciseViewModel.swift
+//  ExerciseEditorModel.swift
 //  MyWorkoutPlanner
 //
 //  Created by aibaranchikov on 29.11.2023.
@@ -7,63 +7,71 @@
 
 import CoreData
 
-class ExerciseEditViewModel: ObservableObject {
+class ExerciseEditorModel: ObservableObject {
 
-    private let parentViewModel: WorkoutEditViewModel
+    private let parent: WorkoutEditorModel
     private let mainContext: NSManagedObjectContext
     
-    @Published var editingExercise: ExerciseEntity
-    @Published var editingExerciseActions = [ExerciseActionEntity]()
+    @Published var exercise: ExerciseEntity
+    @Published var actions = [ExerciseActionEntity]()
     @Published var editingAction: ExerciseActionEntity?
-    @Published var restTimeBetweenActions: RestActionEntity
+    @Published var restBetweenActions: RestActionEntity
     
     private let workoutDataManager = WorkoutDataManager()
     private let exerciseDataManager = ExerciseDataManager()
     
-    init?(parentViewModel: WorkoutEditViewModel, editingExercise: ExerciseEntity? = nil) {
-        self.parentViewModel = parentViewModel
-        self.mainContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-        self.mainContext.parent = parentViewModel.mainContext
+    init?(parent: WorkoutEditorModel, exerciseId: UUID? = nil) {
+        self.parent = parent
+        self.mainContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        self.mainContext.parent = parent.mainContext
         
-        self.editingExercise = ExerciseEntity()
-        self.restTimeBetweenActions = RestActionEntity()
+        let undoMgr = UndoManager()
+        undoMgr.levelsOfUndo = Constants.Data.undoLevelsLimit
+        self.mainContext.undoManager = undoMgr
+        undoMgr.beginUndoGrouping()
         
-        if let exercise = editingExercise,
-            let exerciseToEdit = exerciseDataManager.fetchExercise(exercise: exercise, in: self.mainContext) {
-            self.editingExercise = exerciseToEdit
-            self.editingExerciseActions = exerciseDataManager.fetchActions(for: exerciseToEdit, in: self.mainContext)
+        self.exercise = ExerciseEntity()
+        self.restBetweenActions = RestActionEntity()
+        
+        if let exerciseId,
+            let exerciseToEdit = exerciseDataManager.fetchExercise(by: exerciseId, in: self.mainContext) {
+            self.exercise = exerciseToEdit
+            self.actions = exerciseDataManager.fetchActions(for: exerciseToEdit, in: self.mainContext)
             
             setupEditingActions()
         } else {
             guard case .success(let createdExercise) = workoutDataManager
                 .createExercise(
-                    for: self.parentViewModel.editingWorkout,
+                    for: self.parent.editingWorkout,
                     in: self.mainContext
                 )
             else {
                 return nil
             }
             
-            self.editingExercise = createdExercise
+            self.exercise = createdExercise
             
 //            addExerciseAction()
         }
         
-        if let restTimeBetweenActions = exerciseDataManager.fetchRestTimeBetweenActions(for: self.editingExercise, in: self.mainContext) {
-            self.restTimeBetweenActions = restTimeBetweenActions
+        if let restTimeBetweenActions = exerciseDataManager.fetchRestTimeBetweenActions(for: self.exercise, in: self.mainContext) {
+            self.restBetweenActions = restTimeBetweenActions
         } else {
-            self.restTimeBetweenActions = exerciseDataManager
+            self.restBetweenActions = exerciseDataManager
                 .createRestTimeBetweenActions(
-                    for: self.editingExercise,
-                    with: self.parentViewModel.defaultRestTime.duration.int,
+                    for: self.exercise,
+                    with: self.parent.defaultRestTime.duration.int,
                     in: self.mainContext
                 )
         }
+        
+        undoMgr.endUndoGrouping()
+        undoMgr.removeAllActions()
     }
     
     func addExerciseAction() {
-        let newAction = exerciseDataManager.createAction(for: editingExercise, in: mainContext)
-        editingExerciseActions.append(newAction)
+        let newAction = exerciseDataManager.createAction(for: exercise, in: mainContext)
+        actions.append(newAction)
         setEditingAction(newAction)
     }
     
@@ -90,21 +98,21 @@ class ExerciseEditViewModel: ObservableObject {
     }
     
     func updateDefaultRestTime(withDuration duration: Int) {
-        self.restTimeBetweenActions.duration = duration.int32
+        self.restBetweenActions.duration = duration.int32
     }
     
     func renameExercise(newName: String) {
-        self.editingExercise.name = newName
+        self.exercise.name = newName
         self.objectWillChange.send()
     }
     
     func setSupersets(count: Int) {
-        self.editingExercise.superSets = count.int16
+        self.exercise.superSets = count.int16
         self.objectWillChange.send()
     }
     
-    func setRestTimeBetweenActions(newDuration: Int) {
-        self.restTimeBetweenActions.duration = newDuration.int32
+    func setRestBetweenActions(duration: Int) {
+        self.restBetweenActions.duration = duration.int32
         self.objectWillChange.send()
     }
     
@@ -174,19 +182,19 @@ class ExerciseEditViewModel: ObservableObject {
     }
     
     func deleteExerciseActions(at offsets: IndexSet) {
-        let actionsToDelete = offsets.map { self.editingExerciseActions[$0] }
+        let actionsToDelete = offsets.map { self.actions[$0] }
         actionsToDelete.forEach { exerciseAction in
-            self.editingExerciseActions.remove(atOffsets: offsets)
+            self.actions.remove(atOffsets: offsets)
             self.mainContext.delete(exerciseAction)
         }
     }
     
     func moveExerciseActions(from source: IndexSet, to destination: Int) {
-        editingExerciseActions.move(fromOffsets: source, toOffset: destination)
+        actions.move(fromOffsets: source, toOffset: destination)
         
-        editingExerciseActions.enumerated().forEach{ index, exerciseAction in
-            editingExercise.removeFromExerciseActions(exerciseAction)
-            editingExercise.insertIntoExerciseActions(exerciseAction, at: index)
+        actions.enumerated().forEach{ index, exerciseAction in
+            exercise.removeFromExerciseActions(exerciseAction)
+            exercise.insertIntoExerciseActions(exerciseAction, at: index)
             exerciseAction.position = index.int16
         }
     }
@@ -203,21 +211,50 @@ class ExerciseEditViewModel: ObservableObject {
         editingAction == action
     }
     
-    func saveExercise() {
-        saveFilteredExerciseActions()
-        do {
-            try mainContext.save()
-            if editingExercise.workout == nil {
-                parentViewModel.addExerciseToWorkout(newExercise: editingExercise)
+//    func saveExercise() {
+//        saveFilteredExerciseActions()
+//        do {
+//            try mainContext.save()
+//            parent.endExerciseEditing(for: editingExercise, shouldSave: true)
+//        } catch {
+//            print("Error saving exercise temporary context: \(error)")
+//        }
+//    }
+//    
+//    func discardExercise() {
+//        mainContext.rollback()
+//    }
+//
+    func commit(saveChanges: Bool) {
+        if saveChanges {
+            do {
+                try mainContext.save()
+                parent.endExerciseEditing(for: exercise, shouldSave: true)
+            } catch {
+                assertionFailure("Exercise save error: \(error)")
             }
-            parentViewModel.refreshData()
-        } catch {
-            print("Error saving exercise temporary context: \(error)")
+        } else {
+            mainContext.rollback()
+            parent.endExerciseEditing(for: exercise, shouldSave: false)
         }
     }
-    
-    func discardExercise() {
-        mainContext.rollback()
+}
+
+extension ExerciseEditorModel: Undoable {
+    var canUndo: Bool {
+        mainContext.undoManager?.canUndo ?? false
+    }
+    var canRedo: Bool {
+        mainContext.undoManager?.canRedo ?? false
+    }
+
+    func undo() {
+        mainContext.undo()
+        objectWillChange.send()
     }
     
+    func redo() {
+        mainContext.redo()
+        objectWillChange.send()
+    }
 }

@@ -12,7 +12,7 @@ class WorkoutCatalogViewModel: ObservableObject {
     
     let mainContext: NSManagedObjectContext
     
-    @Published var collections = [WorkoutCatalogCollectionViewRepresentation]()
+    @Published var collections = [CollectionRepresentation]()
     @Published var isLoggedIn: Bool = false
     
     private var cancellables = Set<AnyCancellable>()
@@ -25,7 +25,7 @@ class WorkoutCatalogViewModel: ObservableObject {
         
         refreshData()
         
-        setupWorkoutCatalog()
+//        setupWorkoutCatalog()
         
         setupSubscriptions()
     }
@@ -40,6 +40,15 @@ class WorkoutCatalogViewModel: ObservableObject {
     func addCollection(with name: String) {
         let _ = collectionDataManager.createCollection(with: name, in: mainContext)
         setupWorkoutCatalog()
+    }
+    
+    //TODO: Implement method
+    func renameCollection(
+        with identifier: UUID,
+        to newName: String
+    ) {
+        
+//        saveContext()
     }
     
     private func setupWorkoutCatalog() {

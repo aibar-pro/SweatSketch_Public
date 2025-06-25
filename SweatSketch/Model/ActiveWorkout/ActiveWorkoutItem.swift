@@ -11,40 +11,39 @@ class ActiveWorkoutItem: Identifiable, ObservableObject {
     let id: UUID
     let entityUUID: UUID
     let title: String
-    let type: ActiveWorkoutItemType
-    enum ActiveWorkoutItemType {
-        case exercise(defaultWorkoutRestTimeDuration: Int), rest(duration: Int)
+    let kind: ItemKind
+    enum ItemKind {
+        case exercise(defaultRestDuration: Int), rest(duration: Int)
     }
     var status: ActiveItemStatus?
     enum ActiveItemStatus {
         case new, inProgress, finished
     }
-    var actions = [ActionViewRepresentation]()
+    var actions = [ActionRepresentation]()
     
     private let exerciseDataManager = ExerciseDataManager()
     
-    // I've decided yet how to pass default workout rest time, but I need it for unwrapping workout
     init?(
         entityUUID: UUID,
         title: String,
-        type: ActiveWorkoutItemType,
+        kind: ItemKind,
         in context: NSManagedObjectContext
     ) {
         self.id = UUID()
         self.entityUUID = entityUUID
-        self.type = type
+        self.kind =         kind
         self.title = title
         
-        switch type {
+        switch         kind {
         case .exercise(let restTime):
             guard let exercise = exerciseDataManager.fetchExercise(by: entityUUID, in: context) else { return nil }
             self.actions = fetchActions(
                 exercise: exercise,
-                defaultWorkoutRestTimeDuration: restTime,
+                defaultRestDuration: restTime,
                 in: context
             )
         case .rest(let duration):
-            let restTimeAction = ActionViewRepresentation(
+            let restTimeAction = ActionRepresentation(
                 entityUUID: entityUUID,
                 title: self.title,
                 type: .rest(duration: duration),
@@ -66,9 +65,9 @@ class ActiveWorkoutItem: Identifiable, ObservableObject {
     
     private func fetchActions(
         exercise: ExerciseEntity,
-        defaultWorkoutRestTimeDuration: Int,
+        defaultRestDuration: Int,
         in context: NSManagedObjectContext
-    ) -> [ActionViewRepresentation] {
+    ) -> [ActionRepresentation] {
         let fetchedActions = exerciseDataManager.fetchActions(for: exercise, in: context)
         
         let restTimeDuration: Int = { 1
@@ -77,7 +76,7 @@ class ActiveWorkoutItem: Identifiable, ObservableObject {
 //            }
         }()
         
-        var actions = [ActionViewRepresentation]()
+        var actions = [ActionRepresentation]()
         
         var supersetCount: Int
         var isSuperset = false
@@ -120,9 +119,9 @@ class ActiveWorkoutItem: Identifiable, ObservableObject {
         return actions
     }
     
-    private func appendRestTime(to actions: inout [ActionViewRepresentation], duration: Int) {
+    private func appendRestTime(to actions: inout [ActionRepresentation], duration: Int) {
         actions.append(
-            ActionViewRepresentation(
+            ActionRepresentation(
                 entityUUID: UUID(),
                 title: Constants.Placeholders.restPeriodLabel,
                 type: .rest(duration: duration)
@@ -149,20 +148,20 @@ extension RestTimeEntity {
         return ActiveWorkoutItem(
             entityUUID: uuid,
             title: Constants.Placeholders.restPeriodLabel,
-            type: .rest(duration: self.duration.int),
+            kind: .rest(duration: self.duration.int),
             in: context
         )
     }
 }
 
 extension ExerciseEntity {
-    func toActiveWorkoutItem(defaultWorkoutRestTimeDuration: Int) -> ActiveWorkoutItem? {
+    func toActiveWorkoutItem(defaultRestDuration: Int) -> ActiveWorkoutItem? {
         guard let uuid = self.uuid else { return nil }
         guard let context = self.managedObjectContext else { return nil }
         return ActiveWorkoutItem(
             entityUUID: uuid,
             title: self.name ?? Constants.Placeholders.noExerciseName,
-            type: .exercise(defaultWorkoutRestTimeDuration: defaultWorkoutRestTimeDuration),
+            kind: .exercise(defaultRestDuration: defaultRestDuration),
             in: context
         )
     }

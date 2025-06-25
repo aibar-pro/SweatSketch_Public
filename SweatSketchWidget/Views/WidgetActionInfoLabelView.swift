@@ -10,50 +10,16 @@ import WidgetKit
 
 struct WidgetActionInfoLabelView: View {
     var title: String
-    var repsCount: Int16?
-    var repsMax: Bool?
-    var duration: Int?
-    
-    @State private var isOver = false
+    var quantity: String
+    var progress: Double
     
     var body: some View {
-        HStack(alignment: .top) {
+        HStack(alignment: .top, spacing: WidgetConstants.padding) {
             Text(title)
             Spacer()
-
-            if let duration {
-                timerView(timeRemaining: duration)
-            } else if isRepsMax {
-                Text("x\(LocalizedStringResource("MAX"))")
-            } else if let reps = repsCount {
-                Text("x\(reps)")
-            }
+            Text(quantity)
+                .contentTransition(.numericText())
         }
-    }
-    
-    private func timerView(timeRemaining: Int) -> some View {
-        Group {
-            if isOver {
-                Text("0:00")
-            } else {
-                Text(
-                    Date(
-                        timeIntervalSinceNow: TimeInterval(timeRemaining)
-                    ),
-                    style: .timer
-                )
-            }
-        }
-        .multilineTextAlignment(.trailing)
-        .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(timeRemaining)) {
-                self.isOver = true
-            }
-        }
-    }
-    
-    private var isRepsMax: Bool {
-        repsMax ?? false
     }
 }
 

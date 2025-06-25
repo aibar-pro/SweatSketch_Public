@@ -9,8 +9,8 @@ import SwiftUI
 
 fileprivate struct TopCornerRoundedBackgroundModifier: ViewModifier {
     let color: Color
-    var cornerRadius: CGFloat = Constants.Design.cornerRadius
-    var contentPadding: CGFloat = Constants.Design.spacing
+    let cornerRadius: CGFloat
+    let contentPadding: CGFloat
     
     func body(content: Content) -> some View {
         content
@@ -24,7 +24,17 @@ fileprivate struct TopCornerRoundedBackgroundModifier: ViewModifier {
 }
 
 extension View {
-    func roundedCornerBackground(_ color: Color) -> some View {
-        self.modifier(TopCornerRoundedBackgroundModifier(color: color))
+    func roundedCornerBackground(
+        _ color: Color,
+        cornerRadius: CGFloat = Constants.Design.cornerRadius,
+        contentPadding: CGFloat = Constants.Design.spacing
+    ) -> some View {
+        self.modifier(
+            TopCornerRoundedBackgroundModifier(
+                color: color,
+                cornerRadius: cornerRadius,
+                contentPadding: contentPadding
+            )
+        )
     }
 }

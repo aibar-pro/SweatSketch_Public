@@ -35,7 +35,7 @@ class ActiveWorkoutViewModel: ObservableObject, ActiveWorkoutManagementProtocol 
     
     var items = [ActiveWorkoutItem]()
     @Published var currentItem: ActiveWorkoutItem?
-    @Published var currentAction: ActionViewRepresentation?
+    @Published var currentAction: ActionRepresentation?
     @Published var currentProgress: (current: Int, total: Int) = (0, 0)
     @Published var isLastAction: Bool = false
 
@@ -105,8 +105,9 @@ class ActiveWorkoutViewModel: ObservableObject, ActiveWorkoutManagementProtocol 
         if #available(iOS 16.1, *) {
             let initialContent = ActiveWorkoutActivityState(
                 action: currentAction,
-                totalActions: currentProgress.total,
-                currentAction: currentProgress.current
+                progress: 0,
+                stepIndex: currentProgress.current,
+                totalSteps: currentProgress.total
             )
             do {
                 let activity = try Activity<ActiveWorkoutActionAttributes>
@@ -136,8 +137,9 @@ class ActiveWorkoutViewModel: ObservableObject, ActiveWorkoutManagementProtocol 
             await self.updateActivityContent(
                 ActiveWorkoutActivityState(
                     action: currentAction,
-                    totalActions: self.currentProgress.total,
-                    currentAction: self.currentProgress.current
+                    progress: 0,
+                    stepIndex: self.currentProgress.current,
+                    totalSteps: self.currentProgress.total
                 )
             )
         }

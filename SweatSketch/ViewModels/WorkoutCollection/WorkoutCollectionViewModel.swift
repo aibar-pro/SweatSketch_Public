@@ -12,7 +12,7 @@ class WorkoutCollectionViewModel: ObservableObject {
     let mainContext: NSManagedObjectContext
     var workoutCollection: WorkoutCollectionEntity
     
-    @Published private(set) var workouts = [WorkoutViewRepresentation]()
+    @Published private(set) var workouts = [WorkoutRepresentation]()
     
     private let collectionDataManager = CollectionDataManager()
     
@@ -53,7 +53,7 @@ class WorkoutCollectionViewModel: ObservableObject {
         let fetchedWorkouts = collectionDataManager.fetchWorkouts(for: workoutCollection, in: mainContext)
         print("\(type(of: self)): Fetched \(fetchedWorkouts.count) workouts")
         DispatchQueue.main.async { [weak self] in
-            self?.workouts = fetchedWorkouts.compactMap { $0.toWorkoutViewRepresentation() }
+            self?.workouts = fetchedWorkouts.compactMap { $0.toWorkoutRepresentation() }
         }
     }
     

@@ -24,7 +24,7 @@ class WorkoutCatalogCollectionMergeCoordinator: ObservableObject, Coordinator {
         rootViewController.view.backgroundColor = .clear
     }
     
-    func saveMove(to collection: WorkoutCatalogCollectionViewRepresentation){
+    func saveMove(to collection: CollectionRepresentation){
         if #available(iOS 15, *) {
             print("Workout Move Coordinator: Save \(Date.now)")
         } else {
