@@ -33,7 +33,7 @@ class WorkoutCollectionCoordinator: BaseCoordinator<WorkoutCollectionViewModel>,
     }
     
     func goToAddWorkout() {
-        guard let workoutEditViewModel = WorkoutEditViewModel(parentViewModel: viewModel, editingWorkoutUUID: nil)
+        guard let workoutEditViewModel = WorkoutEditorModel(parentViewModel: viewModel, editingWorkoutUUID: nil)
         else {
             print("\(type(of: self)): \(#function): Failed to initialize WorkoutEditViewModel")
             return
@@ -44,7 +44,7 @@ class WorkoutCollectionCoordinator: BaseCoordinator<WorkoutCollectionViewModel>,
     
     func goToEditWorkout(workoutIndex: Int) {
         guard let workoutId = viewModel.workouts[safe: workoutIndex]?.id,
-              let workoutEditViewModel = WorkoutEditViewModel(parentViewModel: viewModel, editingWorkoutUUID: workoutId)
+              let workoutEditViewModel = WorkoutEditorModel(parentViewModel: viewModel, editingWorkoutUUID: workoutId)
         else {
             print("\(type(of: self)): \(#function): Failed to initialize WorkoutEditViewModel")
             return
@@ -53,8 +53,8 @@ class WorkoutCollectionCoordinator: BaseCoordinator<WorkoutCollectionViewModel>,
         presentEditWorkoutViewController(using: workoutEditViewModel)
     }
     
-    private func presentEditWorkoutViewController(using viewModel: WorkoutEditViewModel) {
-        let workoutEditCoordinator = WorkoutEditCoordinator(viewModel: viewModel)
+    private func presentEditWorkoutViewController(using viewModel: WorkoutEditorModel) {
+        let workoutEditCoordinator = WorkoutEditorCoordinator(viewModel: viewModel)
         
         workoutEditCoordinator.start()
         childCoordinators.append(workoutEditCoordinator)

@@ -54,7 +54,7 @@ struct RestTimeEditPopover_Preview : PreviewProvider {
     static var previews: some View {
         let persistenceController = PersistenceController.preview
         let workoutCarouselViewModel = WorkoutCollectionViewModel(context: persistenceController.container.viewContext)
-        let workoutEditViewModel = WorkoutEditViewModel(parentViewModel: workoutCarouselViewModel, editingWorkoutUUID: workoutCarouselViewModel.workouts.randomElement()!.id)!
+        let workoutEditViewModel = WorkoutEditorModel(parentViewModel: workoutCarouselViewModel, editingWorkoutUUID: workoutCarouselViewModel.workouts.randomElement()!.id)!
         
         let restTime = workoutEditViewModel.defaultRestTime
         

@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct ActionListEditView: View {
-    @ObservedObject var viewModel: ExerciseEditViewModel
+    @ObservedObject var viewModel: ExerciseEditorModel
     
-    @Binding var currentEditingState: ExerciseEditView.EditingState
+    @Binding var currentEditingState: ExerciseEditorView.EditingState
     
     var body: some View {
         GeometryReader { listGeo in
@@ -125,7 +125,7 @@ struct ActionListEditView: View {
     }
     
     private func isListDisabled() -> Bool {
-        return viewModel.editingExerciseActions.isEmpty || [.name, .rest].contains(currentEditingState)
+        return viewModel.actions.isEmpty || [.name, .rest].contains(currentEditingState)
     }
     
     private func getRowHeightMultiplier(exerciseType: ExerciseType, actionType: ExerciseActionType, actionIsEditing: Bool) -> CGFloat {
@@ -163,15 +163,13 @@ struct ActionListEditView_Previews: PreviewProvider {
         let workoutCarouselViewModel = WorkoutCollectionViewModel(context: persistenceController.container.viewContext, collectionUUID: firstCollection.uuid)
         
         let workoutForPreview = collectionDataManager.fetchWorkouts(for: firstCollection, in: workoutCarouselViewModel.mainContext).first!
-        let workoutEditModel = WorkoutEditViewModel(parentViewModel: workoutCarouselViewModel, editingWorkoutUUID: workoutForPreview.uuid)!
+        let workoutEditModel = WorkoutEditorModel(parentViewModel: workoutCarouselViewModel, editingWorkoutUUID: workoutForPreview.uuid)!
         
         let workoutDataManager = WorkoutDataManager()
         let exerciseForPreview = try! workoutDataManager.fetchExercises(for: workoutForPreview, in: workoutEditModel.mainContext).get().randomElement()!
         
-        let exerciseEditViewModel = ExerciseEditViewModel(parentViewModel: workoutEditModel, editingExercise: exerciseForPreview)!
-        let exerciseCoordinator = ExerciseEditCoordinator(viewModel: exerciseEditViewModel)
+        let exerciseEditViewModel = ExerciseEditorModel(parent: workoutEditModel, exerciseId: exerciseForPreview.uuid)!
         
         ActionListEditView(viewModel: exerciseEditViewModel, currentEditingState: .constant(.none))
-            .environmentObject(exerciseCoordinator)
     }
 }

@@ -45,14 +45,14 @@ struct ActionTimedEditView_Preview : PreviewProvider {
     static var previews: some View {
         let persistenceController = PersistenceController.preview
         let workoutCarouselViewModel = WorkoutCollectionViewModel(context: persistenceController.container.viewContext)
-        let workoutEditViewModel = WorkoutEditViewModel(parentViewModel: workoutCarouselViewModel, editingWorkoutUUID: workoutCarouselViewModel.workouts.randomElement()!.id)!
-        let exerciseEditViewModel = ExerciseEditViewModel(parentViewModel: workoutEditViewModel, editingExercise: workoutEditViewModel.exercises.randomElement()!)!
+        let workoutEditViewModel = WorkoutEditorModel(parentViewModel: workoutCarouselViewModel, editingWorkoutUUID: workoutCarouselViewModel.workouts.randomElement()!.id)!
+        let exerciseEditViewModel = ExerciseEditorModel(parent: workoutEditViewModel, exerciseId: workoutEditViewModel.exercises.randomElement()!.uuid!)!
         
         let appCoordinator = ApplicationCoordinator(dataContext: persistenceController.container.viewContext)
         let applicationEvent = appCoordinator.applicationEvent
         let carouselCoordinator = WorkoutCollectionCoordinator(dataContext: persistenceController.container.viewContext, applicationEvent: applicationEvent, collectionUUID: nil)
         
-        let action = exerciseEditViewModel.editingExerciseActions.randomElement()!
+        let action = exerciseEditViewModel.actions.randomElement()!
         
         ActionTimedEditView(actionEntity: action, editTitle: true)
             .environmentObject(carouselCoordinator)
