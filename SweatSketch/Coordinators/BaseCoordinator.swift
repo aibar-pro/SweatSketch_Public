@@ -25,19 +25,32 @@ class BaseCoordinator<VM>: ObservableObject {
         rootViewController.navigationController?.view.layer.add(CATransition.fade(), forKey: kCATransition)
     }
     
-    func presentBottomSheet(
-        type: BottomSheetType,
-        action: @escaping () -> Void,
-        cancel: @escaping () -> Void
-    ) {
+    func presentBottomSheet(type: BottomSheetType) {
         addViewFadeTransition()
-        let view = Button("Test"){ action() }.environmentObject(self)
+        
+        let view = BottomSheetView(
+            onDismiss: {
+                type.cancelAction?()
+                self.dismissBottomSheet()
+            },
+            content: {
+                type.view(
+                    onDismiss: {
+                        self.dismissBottomSheet()
+                    }
+                )
+            }
+        )
+        .environmentObject(self)
+        
         let bottomSheetVC = UIHostingController(rootView: view)
-        rootViewController.navigationController?.pushViewController(bottomSheetVC, animated: false)
+        bottomSheetVC.view.backgroundColor = .clear
+        bottomSheetVC.modalPresentationStyle = .overFullScreen
+        rootViewController.present(bottomSheetVC, animated: false)
     }
-}
-
-enum BottomSheetType {
-    case rename(action: () -> Void, cancel: () -> Void)
-    case delete(action: () -> Void, cancel: () -> Void)
+    
+    func dismissBottomSheet() {
+        addViewFadeTransition()
+        rootViewController.dismiss(animated: false)
+    }
 }

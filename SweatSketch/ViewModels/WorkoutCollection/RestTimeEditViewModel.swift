@@ -8,7 +8,7 @@
 import CoreData
 
 class RestTimeEditViewModel: ObservableObject {
-    private let parentViewModel: WorkoutEditViewModel
+    private let parentViewModel: WorkoutEditorModel
     private let mainContext: NSManagedObjectContext
 
     @Published var editingWorkout: WorkoutEntity
@@ -19,7 +19,7 @@ class RestTimeEditViewModel: ObservableObject {
     
     let workoutDataManager = WorkoutDataManager()
     
-    init?(parentViewModel: WorkoutEditViewModel) {
+    init?(parentViewModel: WorkoutEditorModel) {
         self.parentViewModel = parentViewModel
         self.mainContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         self.mainContext.parent = parentViewModel.mainContext

@@ -1,5 +1,5 @@
 //
-//  WorkoutEditViewModel.swift
+//  WorkoutEditorModel.swift
 //  MyWorkoutPlanner
 //
 //  Created by aibaranchikov on 29.11.2023.
@@ -7,7 +7,7 @@
 
 import CoreData
 
-class WorkoutEditViewModel: ObservableObject {
+class WorkoutEditorModel: ObservableObject {
     
     private let parentViewModel: WorkoutCollectionViewModel
     let mainContext: NSManagedObjectContext
@@ -34,7 +34,7 @@ class WorkoutEditViewModel: ObservableObject {
         if self.mainContext.undoManager == nil {
             self.mainContext.undoManager = UndoManager()
         }
-        self.mainContext.undoManager?.levelsOfUndo = 10
+        self.mainContext.undoManager?.levelsOfUndo = Constants.Data.undoLevelsLimit
         self.mainContext.undoManager?.beginUndoGrouping()
         
         self.editingWorkout = WorkoutEntity()
@@ -74,14 +74,6 @@ class WorkoutEditViewModel: ObservableObject {
         self.editingWorkout.name = newName
     }
     
-    //Used for correct implementation of add exercise undo
-    func addExerciseToWorkout(newExercise: ExerciseEntity) {
-        if let fetchedExercise = exerciseDataManager.fetchExercise(exercise: newExercise, in: self.mainContext) {
-            self.mainContext.undoManager?.registerUndo(withTarget: self, selector: #selector(redoExerciseDelete(_ :)), object: fetchedExercise)
-            self.editingWorkout.addToExercises(fetchedExercise)
-        }
-    }
-    
     func createDefaultRestTime(withDuration duration: Int) -> RestTimeEntity? {
         let result = workoutDataManager
             .createDefaultRestTime(
@@ -108,10 +100,14 @@ class WorkoutEditViewModel: ObservableObject {
         self.mainContext.delete(exerciseEntity)
     }
     
-    func deleteWorkoutExercise(at offsets: IndexSet) {
+    func removeExercises(at offsets: IndexSet) {
         let exercisesToDelete = offsets.map { self.exercises[$0] }
         exercisesToDelete.forEach { exercise in
-            self.mainContext.undoManager?.registerUndo(withTarget: self, selector: #selector(undoExerciseDelete(_ :)), object: exercise)
+            self.mainContext.undoManager?.registerUndo(
+                withTarget: self,
+                selector: #selector(undoExerciseDelete(_ :)),
+                object: exercise
+            )
             self.exercises.remove(atOffsets: offsets)
             self.mainContext.delete(exercise)
         }
@@ -155,6 +151,25 @@ class WorkoutEditViewModel: ObservableObject {
         }
     }
     
+    func beginExerciseEditing() {
+        self.mainContext.undoManager?.beginUndoGrouping()
+    }
+    
+    func endExerciseEditing(for exercise: ExerciseEntity, shouldSave: Bool) {
+        if shouldSave,
+            exercise.workout == nil,
+            let fetchedExercise = exerciseDataManager.fetchExercise(exercise: exercise, in: self.mainContext) {
+            mainContext.undoManager?.registerUndo(
+                withTarget: self,
+                selector: #selector(redoExerciseDelete(_ :)),
+                object: fetchedExercise
+            )
+            editingWorkout.addToExercises(fetchedExercise)
+        }
+        self.mainContext.undoManager?.endUndoGrouping()
+        reloadExercises()
+    }
+    
     func saveWorkout() {
         do {
             try mainContext.save()
@@ -169,10 +184,9 @@ class WorkoutEditViewModel: ObservableObject {
         mainContext.rollback()
     }
     
-    func refreshData() {
+    func reloadExercises() {
         do {
             self.exercises = try workoutDataManager.fetchExercises(for: self.editingWorkout, in: self.mainContext).get()
-            self.objectWillChange.send()
         } catch {
             print("\(type(of: self)): \(#function): Error fetching exercises: \(error)")
         }
@@ -188,3 +202,5 @@ class WorkoutEditViewModel: ObservableObject {
         self.objectWillChange.send()
     }
 }
+
+extension WorkoutEditorModel: Undoable {}

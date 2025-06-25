@@ -42,6 +42,15 @@ class WorkoutCatalogViewModel: ObservableObject {
         setupWorkoutCatalog()
     }
     
+    //TODO: Implement method
+    func renameCollection(
+        with identifier: UUID,
+        to newName: String
+    ) {
+        
+//        saveContext()
+    }
+    
     private func setupWorkoutCatalog() {
         let backgroundContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         backgroundContext.parent = self.mainContext

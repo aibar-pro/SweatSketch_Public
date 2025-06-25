@@ -22,6 +22,7 @@ enum CustomButtonStyle {
     case secondary
     case inline
     case inlineLink
+    case inlineTextField
     
     var config: CustomButtonConfig {
         switch self {
@@ -70,12 +71,21 @@ enum CustomButtonStyle {
                 hasShadow: false,
                 shadowRadius: 4
             )
+        case .inlineTextField:
+            return CustomButtonConfig(
+                font: .body,
+                isBold: false,
+                foregroundColor: Constants.Design.Colors.textColorLowEmphasis,
+                backgroundColor: .clear,
+                hasShadow: false,
+                shadowRadius: 4
+            )
         }
     }
     
     var isInline: Bool {
         switch self {
-        case .inline, .inlineLink:
+        case .inline, .inlineLink, .inlineTextField:
             return true
         default:
             return false

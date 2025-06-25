@@ -55,11 +55,6 @@ enum Constants {
             
             static let workoutListTitle = String.localized("Workouts")
             
-            static let emptyWorkoutText = String.localized("No Exercises yet")
-            
-            static let renameWorkoutPopupTitle = String.localized("Rename Workout")
-            static let renameExercisePopupTitle = String.localized("Rename Exercise")
-            
             static let supersetCountLabel = String.localized("Superset repetitions")
             static let actionTypeLabel = String.localized("Action type")
             
@@ -109,6 +104,10 @@ enum Constants {
             static let unknown = String.localized("Unknown")
         }
         
+    }
+    
+    enum Data {
+        static let undoLevelsLimit: Int = 15
     }
     
     enum Design {

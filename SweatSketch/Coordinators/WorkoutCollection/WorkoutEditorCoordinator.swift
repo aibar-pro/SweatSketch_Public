@@ -8,46 +8,47 @@
 import SwiftUI
 
 class WorkoutEditorCoordinator: BaseCoordinator<WorkoutEditorModel>, Coordinator {
+    @Published private(set) var activeUndoTarget: Undoable?
+    private(set) var exerciseEditorModel: ExerciseEditorModel?
+    
+    override init(viewModel: WorkoutEditorModel) {
+        super.init(viewModel: viewModel)
+        self.activeUndoTarget = viewModel
+    }
+    
     func start() {
         let view = WorkoutEditorView(viewModel: self.viewModel).environmentObject(self)
         rootViewController = UIHostingController(rootView: view)
         rootViewController.view.backgroundColor = .clear
     }
     
-    func goToAddExercise() {
-        guard let exerciseEditViewModel = ExerciseEditViewModel(parentViewModel: viewModel, editingExercise: nil)
+    func beginExerciseEditing(uuid: UUID? = nil) {
+        guard let eeModel = ExerciseEditorModel(parent: viewModel, exerciseId: uuid)
         else {
-            print("\(type(of: self)): \(#function): Failed to initialize ExerciseEditViewModel")
+            assertionFailure("Failed to create \(type(of: ExerciseEditorModel.self))")
             return
         }
         
-        presentExerciseEditViewController(using: exerciseEditViewModel)
+        exerciseEditorModel = eeModel
+        activeUndoTarget = eeModel
+        viewModel.beginExerciseEditing()
     }
     
-    func goToEditExercise(exerciseToEdit: ExerciseEntity) {
-        guard let exerciseEditViewModel = ExerciseEditViewModel(parentViewModel: viewModel, editingExercise: exerciseToEdit)
-        else {
-            print("\(type(of: self)): \(#function): Failed to initialize ExerciseEditViewModel")
+    func endExerciseEditing(shouldCommit: Bool) {
+        guard let editorModel = self.exerciseEditorModel else {
+            assertionFailure("No exercise editor model to commit")
             return
         }
         
-        presentExerciseEditViewController(using: exerciseEditViewModel)
-    }
-    
-    private func presentExerciseEditViewController(using viewModel: ExerciseEditViewModel) {
-        let exerciseEditCoordinator = ExerciseEditCoordinator(viewModel: viewModel)
+        editorModel.commit(saveChanges: shouldCommit)
         
-        exerciseEditCoordinator.start()
-        childCoordinators.append(exerciseEditCoordinator)
-        
-        let editExerciseViewController = exerciseEditCoordinator.rootViewController
-        editExerciseViewController.modalPresentationStyle = .formSheet
-        rootViewController.present(editExerciseViewController, animated: true)
+        exerciseEditorModel = nil
+        activeUndoTarget = viewModel
     }
     
     func goToAdvancedEditRestPeriod() {
         guard let restTimeEditViewModel = RestTimeEditViewModel(parentViewModel: viewModel) else {
-            print("\(type(of: self)): \(#function): Failed to initialize RestTimeEditViewModel")
+            assertionFailure("Failed to create \(type(of: RestTimeEditViewModel.self))")
             return
         }
         let restTimeCoordinator = RestTimeEditCoordinator(viewModel: restTimeEditViewModel)

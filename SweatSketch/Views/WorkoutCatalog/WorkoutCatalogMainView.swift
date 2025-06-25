@@ -34,14 +34,6 @@ struct WorkoutCatalogMainView: View {
                     .opacity(currentEditingState != .none ? 0.2 : 1)
                     .disabled(currentEditingState != .none)
                     
-                    //TODO: Move to bottom sheet
-                    VStack{
-                        if currentEditingState == .newCollection {
-                            addCollectionPopoverView
-                        }
-                        Spacer()
-                    }
-                    
                     footerView
                 }
             }
@@ -80,7 +72,10 @@ struct WorkoutCatalogMainView: View {
                         VStack(alignment: .leading, spacing: Constants.Design.spacing) {
                             if !collection.workouts.isEmpty {
                                 collectionWorkouts(collection)
-                                    .padding(.bottom, Constants.Design.spacing)
+                                    .padding(
+                                        .bottom,
+                                        !collection.subCollections.isEmpty ? Constants.Design.spacing : 0
+                                    )
                             }
                             
                             if !collection.subCollections.isEmpty {
@@ -107,6 +102,7 @@ struct WorkoutCatalogMainView: View {
                     if collection.workouts.isEmpty {
                         Text("catalog.empty.collection")
                             .fullWidthText()
+                            .customForegroundColorModifier(Constants.Design.Colors.textColorLowEmphasis)
                     } else {
                         VStack(alignment: .leading, spacing: Constants.Design.spacing) {
                             collectionWorkouts(collection)
@@ -141,7 +137,7 @@ struct WorkoutCatalogMainView: View {
                 style: .inline,
                 content: {
                     Button("catalog.collection.menu.rename") {
-                        
+                        renameCollection(with: collection.id)
                     }
                     Button("catalog.collection.menu.move") {
                         coordinator.goToMoveCollection(movingCollection: collection)
@@ -171,27 +167,13 @@ struct WorkoutCatalogMainView: View {
         }
     }
     
-    private var addCollectionPopoverView: some View {
-        TextFieldPopoverView(
-            popoverTitle: Constants.Placeholders.WorkoutCatalog.addCollectionPopupTitle,
-            textFieldLabel: Constants.Placeholders.WorkoutCatalog.addCollectionPopupText,
-            buttonLabel: Constants.Placeholders.WorkoutCatalog.addCollectionPopupButtonLabel,
-            onDone: { newName in
-                viewModel.addCollection(with: newName)
-                currentEditingState = .none
-            }, onDiscard: {
-                currentEditingState = .none
-            }
-        )
-    }
-    
     private var footerView: some View {
         HStack(alignment: .center, spacing: Constants.Design.spacing) {
             IconButton(
                 systemImage: "plus",
                 style: .secondary,
                 action: {
-                    currentEditingState = .newCollection
+                    addCollection()
                 }
             )
             
@@ -209,6 +191,39 @@ struct WorkoutCatalogMainView: View {
             )
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+    }
+    
+    private func addCollection() {
+        currentEditingState = .newCollection
+        coordinator.presentBottomSheet(
+            type: .singleTextField(
+                kind: .renameCollection,
+                action: {
+                    viewModel.addCollection(with: $0)
+                    currentEditingState = .none
+                },
+                cancel: {
+                    currentEditingState = .none
+                }
+            )
+        )
+    }
+    
+    private func renameCollection(with collectionId: UUID) {
+        currentEditingState = .newCollection
+        coordinator.presentBottomSheet(
+            type: .singleTextField(
+                kind: .renameCollection,
+                initialText: "",
+                action: {
+                    viewModel.renameCollection(with: collectionId, to: $0)
+                    currentEditingState = .none
+                },
+                cancel: {
+                    currentEditingState = .none
+                }
+            )
+        )
     }
     
     private func getWorkoutCount(for collection: CollectionRepresentation) -> Int {

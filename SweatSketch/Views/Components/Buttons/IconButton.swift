@@ -7,30 +7,13 @@
 
 import SwiftUI
 
-//Menu {
-//    Button(action: {
-//        coordinator.goToAddWorkout()
-//    }) {
-//        Text("collection.add.workout.button.label")
-//    }
-//    Button(action: {
-//        coordinator.goToWorkoutLst()
-//    }) {
-//        Text("collection.edit.list.button.label")
-//    }
-//} label: {
-//    Image(systemName: "ellipsis.circle")
-//        .font(.body)
-//        .customForegroundColorModifier(Constants.Design.Colors.textColorHighEmphasis)
-//}
-//.disabled(isCarouselHidden)
-
-
-
 struct IconButton: View {
     let systemImage: String
     let action: () -> Void
-    let config: CustomButtonConfig
+    let style: CustomButtonStyle
+    var config: CustomButtonConfig {
+        style.config
+    }
     
     @Binding var isDisabled: Bool
     
@@ -40,7 +23,7 @@ struct IconButton: View {
          action: @escaping () -> Void) {
         self.action = action
         self.systemImage = systemImage
-        self.config = style.config
+        self.style = style
         self._isDisabled = isDisabled
     }
     
@@ -49,8 +32,14 @@ struct IconButton: View {
             Image(systemName: systemImage)
                 .font(config.isBold ? config.font.bold() : config.font)
                 .customForegroundColorModifier(config.foregroundColor)
-                .padding(.horizontal, Constants.Design.buttonLabelPaddding)
-                .padding(.vertical, Constants.Design.buttonLabelPaddding)
+                .padding(
+                    .horizontal,
+                    style == .inlineTextField ? 0 : Constants.Design.buttonLabelPaddding
+                )
+                .padding(
+                    .vertical,
+                    style == .inlineTextField ? 0 : Constants.Design.buttonLabelPaddding
+                )
                 .background(config.backgroundColor)
                 .opacity(isDisabled ? 0.35 : 1)
                 .contentShape(Circle())
