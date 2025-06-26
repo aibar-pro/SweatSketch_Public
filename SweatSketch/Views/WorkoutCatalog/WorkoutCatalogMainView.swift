@@ -27,9 +27,10 @@ struct WorkoutCatalogMainView: View {
                                 collectionSection(collection)
                             }
                         }
-                        .customForegroundColorModifier(Constants.Design.Colors.textColorHighEmphasis)
+                        .adaptiveForegroundStyle(Constants.Design.Colors.elementFgHighEmphasis)
                         .padding(Constants.Design.spacing)
-                        .materialCardBackgroundModifier()
+                        .materialBackground()
+                        .lightShadow()
                     }
                     .opacity(currentEditingState != .none ? 0.2 : 1)
                     .disabled(currentEditingState != .none)
@@ -45,7 +46,7 @@ struct WorkoutCatalogMainView: View {
         VStack(alignment: .leading, spacing: Constants.Design.spacing) {
             HStack(alignment: .center) {
                 Text("catalog.title")
-                    .fullWidthText(.title, isBold: true)
+                    .fullWidthText(.title, weight: .bold)
                     .lineLimit(2)
                 
                 Spacer(minLength: 0)
@@ -102,7 +103,7 @@ struct WorkoutCatalogMainView: View {
                     if collection.workouts.isEmpty {
                         Text("catalog.empty.collection")
                             .fullWidthText()
-                            .customForegroundColorModifier(Constants.Design.Colors.textColorLowEmphasis)
+                            .adaptiveForegroundStyle(Constants.Design.Colors.elementFgLowEmphasis)
                     } else {
                         VStack(alignment: .leading, spacing: Constants.Design.spacing) {
                             collectionWorkouts(collection)
@@ -125,8 +126,8 @@ struct WorkoutCatalogMainView: View {
             }) {
                 Text(collection.name)
                     .fullWidthText(
-                        isTopLevel ? .title2 : .title3,
-                        isBold: true
+                        isTopLevel ? .title3 : .headline,
+                        weight: isTopLevel ? .bold : .semibold
                     )
                     .lineLimit(2)
             }

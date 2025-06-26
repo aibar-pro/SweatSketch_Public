@@ -1,5 +1,5 @@
 //
-//  CustomAccentColorModifier.swift
+//  View+AdaptiveTint.swift
 //  SweatSketch
 //
 //  Created by aibaranchikov on 19.07.2024.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-fileprivate struct CustomAccentColorModifier: ViewModifier {
+fileprivate struct AdaptiveTint: ViewModifier {
     let color: Color
     
     func body(content: Content) -> some View {
@@ -22,7 +22,7 @@ fileprivate struct CustomAccentColorModifier: ViewModifier {
 }
 
 extension View {
-    func customAccentColorModifier(_ color: Color) -> some View {
-        self.modifier(CustomAccentColorModifier(color: color))
+    func adaptiveTint(_ color: Color) -> some View {
+        self.modifier(AdaptiveTint(color: color))
     }
 }

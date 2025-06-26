@@ -7,7 +7,9 @@
 
 import Foundation
 
-class ActionRepresentation: Identifiable {
+enum ActionKind: Equatable { case reps, timed, distance, rest }
+
+class ActionRepresentation: Identifiable, ObservableObject {
     let id: UUID
     let entityUUID: UUID
     let title: String
@@ -105,7 +107,7 @@ extension ActiveWorkoutActivityState {
     init(action: ActionRepresentation, progress: Double, stepIndex: Int, totalSteps: Int) {
         self.actionID = action.id
         self.title = action.title
-        self.quantity = action.type.description
+        self.quantity = action.type.description(includeSets: false)
         self.progress = progress
         self.isRest = {
             if case .rest = action.type {

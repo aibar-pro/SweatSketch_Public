@@ -18,11 +18,12 @@ extension Text {
 }
 
 extension Text {
-    func fullWidthText(_ style: Font = .body,
-                       isBold: Bool = false,
-                       alignment: Alignment = .leading) -> some View {
+    func fullWidthText(
+        _ style: Font = .body,
+        weight: Font.Weight = .regular,
+        alignment: Alignment = .leading) -> some View {
         self
-            .font(isBold ? style.bold() : style)
+            .font(style.weight(weight))
             .multilineTextAlignment(getTextAlignment(alignment))
             .frame(maxWidth: .infinity, alignment: alignment)
             .fixedSize(horizontal: false, vertical: true)

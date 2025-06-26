@@ -9,15 +9,22 @@ import SwiftUI
 
 enum WidgetConstants {
     enum Colors {
-        static let accentColor = Color("background_accent_color").opacity(0.87)
-        static let backgroundStartColor = Color("background_gradient_start").opacity(0.87)
-        static let backgroundEndColor = Color("background_gradient_end").opacity(0.87)
-        static let iconColor = Color("icon_color").opacity(0.87)
-        static let supportColor = Color.secondary.opacity(0.05)
-        static let highEmphasisColor = Color.primary.opacity(0.87)
-        static let mediumEmphasisColor = Color.primary.opacity(0.6)
-        static let lowEmphasisColor = Color.primary.opacity(0.1)
+        static let screenBgStart = Color.bgGradientStart.opacity(0.87)
+        static let screenBgEnd = Color.bgGradientEnd.opacity(0.87)
+        static let screenBgAccent = Color.bgAccent.opacity(0.87)
+
+        static let elementBgAccent = Color.accent.opacity(0.87)
+        static let elementBgPrimary = Color.bgGradientStart.opacity(0.87)
+        static let elementBgSecondary = Color.bgSecondaryElement.opacity(0.87)
+
+        static let elementFgAccent = Color.accent.opacity(0.87)
+        static let elementFgPrimary = Color.bgGradientStart.opacity(0.87)
+        static let elementFgHighEmphasis = Color.primary.opacity(0.87)
+        static let elementFgMediumEmphasis = Color.primary.opacity(0.6)
+        static let elementFgLowEmphasis = Color.primary.opacity(0.1)
+        static let elementFgLink = Color.fgLink.opacity(0.87)
     }
+    
     static let padding = CGFloat(8)
     static let cornerRadius = CGFloat(8)
 }

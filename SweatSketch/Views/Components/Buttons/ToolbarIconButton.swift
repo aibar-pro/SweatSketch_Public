@@ -12,24 +12,30 @@ enum ToolbarIconButton {
     case closeButton(action: () -> Void)
     case doneButton(action: () -> Void)
     
-    func buttonView(style: CustomButtonStyle = .inline) -> some View {
+    func buttonView(
+        style: CustomButtonStyle = .inline,
+        isDisabled: Binding<Bool> = .constant(false)
+    ) -> some View {
         switch self {
         case .backButton(let action):
             IconButton(
                 systemImage: "chevron.left",
                 style: style,
+                isDisabled: isDisabled,
                 action: action
             )
         case .closeButton(let action):
             IconButton(
                 systemImage: "xmark",
                 style: style,
+                isDisabled: isDisabled,
                 action: action
             )
         case .doneButton(let action):
             IconButton(
                 systemImage: "checkmark",
                 style: style,
+                isDisabled: isDisabled,
                 action: action
             )
         }

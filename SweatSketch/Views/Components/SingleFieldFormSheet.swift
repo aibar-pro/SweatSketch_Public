@@ -72,7 +72,7 @@ struct SingleFieldFormSheet: View {
     var body: some View {
         VStack(alignment: .leading, spacing: Constants.Design.spacing) {
             Text(config.title)
-                .fullWidthText(.title3, isBold: true)
+                .fullWidthText(.title3, weight: .bold)
             
             HStack(alignment: .firstTextBaseline, spacing: Constants.Design.spacing / 2) {
                 TextField(config.placeholder, text: $text)
@@ -91,9 +91,9 @@ struct SingleFieldFormSheet: View {
             .padding(.vertical, Constants.Design.spacing)
             .background(
                 RoundedRectangle(cornerRadius: Constants.Design.cornerRadius)
-                    .stroke(Constants.Design.Colors.backgroundStartColor)
+                    .stroke(Constants.Design.Colors.elementFgPrimary)
             )
-            .customAccentColorModifier(Constants.Design.Colors.backgroundStartColor)
+            .adaptiveTint(Constants.Design.Colors.elementFgPrimary)
             
             buttonStackView
         }

@@ -57,21 +57,15 @@ struct WorkoutEditorView: View {
             }
             
             HStack(alignment: .center, spacing: Constants.Design.spacing) {
-                CapsuleButton(
-                    "app.button.cancel.label",
-                    style: .inline,
-                    isDisabled: Binding { currentEditingState.isCurrent(.list) } set: { _ in },
-                    action: cancelEditing
-                )
+                ToolbarIconButton
+                    .backButton(action: cancelEditing)
+                    .buttonView(style: .inline, isDisabled: isCancelButtonDisabled)
                 
                 Spacer(minLength: 0)
                 
-                CapsuleButton(
-                    "app.button.save.label",
-                    style: .primary,
-                    isDisabled: Binding { isSaveButtonDisabled } set: { _ in },
-                    action: commitEditing
-                )
+                ToolbarIconButton
+                    .doneButton(action: commitEditing)
+                    .buttonView(style: .primary, isDisabled: isDoneButtonDisabled)
             }
         }
     }
@@ -106,7 +100,7 @@ struct WorkoutEditorView: View {
         Text(viewModel.editingWorkout.name ?? Constants.Placeholders.noWorkoutName)
             .fullWidthText(
                 showListEditor ? .title2 : .title3,
-                isBold: showListEditor
+                weight: showListEditor ? .bold : .medium
             )
             .lineLimit(3)
             .scaleEffect(titlePress ? 0.95 : 1)
@@ -114,7 +108,7 @@ struct WorkoutEditorView: View {
             .highPriorityGesture(
                 TapGesture()
                     .onEnded { _ in
-                        if currentEditingState.isExerciseEditing {
+                        if currentEditingState.isOne(of: .exercise()) {
                             cancelExerciseEditing()
                         }
                     }
@@ -123,7 +117,7 @@ struct WorkoutEditorView: View {
                 LongPressGesture(minimumDuration: 0.35)
                     .updating($titlePress) { value, state, _ in state = value }
                     .onEnded { _ in
-                        if currentEditingState.isCurrent(.none) {
+                        if currentEditingState.isOne(of: .none) {
                             switchEditingState(to: .name)
                         }
                     }
@@ -140,11 +134,11 @@ struct WorkoutEditorView: View {
                     
                     Spacer(minLength: 0)
                     
-                    if !currentEditingState.isCurrent(.list) {
+                    if !currentEditingState.isOne(of: .list) {
                         IconButton(
                             systemImage: "ellipsis",
                             style: .inline,
-                            isDisabled: Binding { !currentEditingState.isCurrent(.none) } set: { _ in },
+                            isDisabled: Binding { !currentEditingState.isOne(of: .none) } set: { _ in },
                             action: {
                                 switchEditingState(to: .exercise(exercise.id))
                             }
@@ -161,18 +155,19 @@ struct WorkoutEditorView: View {
         .disabled(isListEditDisabled)
         .listStyle(.plain)
         .listRowInsets(EdgeInsets())
-        .materialCardBackgroundModifier()
+        .materialBackground()
+        .lightShadow()
         .environment(
             \.editMode,
             .constant(
-                currentEditingState.isCurrent(.list)
+                currentEditingState.isOne(of: .list)
                 ? EditMode.active
                 : EditMode.inactive
             )
         )
         .animation(.easeInOut(duration: 0.25))
         .onChange(of: viewModel.exercises.count == 0) { _ in
-            if currentEditingState.isCurrent(.list) {
+            if currentEditingState.isOne(of: .list) {
                 currentEditingState = .none
             }
         }
@@ -196,7 +191,7 @@ struct WorkoutEditorView: View {
                     HStack (alignment: .center, spacing: Constants.Design.spacing / 2) {
                         Image(systemName: "timer")
                         
-                        if !currentEditingState.isCurrent(.restTime) {
+                        if !currentEditingState.isOne(of: .rest) {
                             Text(viewModel.defaultRestTime.duration.int.durationString())
                         } else {
                             Text(Constants.Placeholders.noDuration)
@@ -206,7 +201,7 @@ struct WorkoutEditorView: View {
                 style: .secondary,
                 isDisabled: Binding { isRestTimeEditDisabled } set: { _ in },
                 action: {
-                    switchEditingState(to: .restTime)
+                    switchEditingState(to: .rest)
                 }
             )
             
@@ -215,7 +210,7 @@ struct WorkoutEditorView: View {
             IconButton(
                 systemImage: "plus",
                 style: .secondary,
-                isDisabled: Binding { !currentEditingState.isCurrent(.none) } set: { _ in },
+                isDisabled: Binding { !currentEditingState.isOne(of: .none) } set: { _ in },
                 action: {
                     switchEditingState(to: .exercise())
                 }
@@ -223,24 +218,16 @@ struct WorkoutEditorView: View {
         }
     }
     
-    var isSaveButtonDisabled: Bool {
-        currentEditingState.isCurrent(.name) || currentEditingState.isCurrent(.restTime)
-    }
-    
     var isRenameDisabled: Bool {
-        currentEditingState.isCurrent(.list)
-        || currentEditingState.isCurrent(.restTime)
-        || currentEditingState.isExerciseEditing
+        currentEditingState.isOne(of: .list, .rest, .exercise())
     }
     
     var isRestTimeEditDisabled: Bool {
-        currentEditingState.isCurrent(.name) || currentEditingState.isCurrent(.list)
+        currentEditingState.isOne(of: .name, .list, .exercise())
     }
     
     var isListEditDisabled: Bool {
-        viewModel.exercises.isEmpty
-        || currentEditingState.isCurrent(.name)
-        || currentEditingState.isCurrent(.restTime)
+        viewModel.exercises.isEmpty || currentEditingState.isOne(of: .name, .rest)
     }
     
     private func animateExerciseSelection(uuid: UUID? = nil, revert: Bool = false) {
@@ -270,7 +257,7 @@ struct WorkoutEditorView: View {
     }
     
     private func switchEditingState(to state: EditingState) {
-        guard !currentEditingState.isCurrent(state) else {
+        guard !currentEditingState.isOne(of: state) else {
             currentEditingState = .none
             return
         }
@@ -293,7 +280,7 @@ struct WorkoutEditorView: View {
         case .exercise(let uuid):
             coordinator.beginExerciseEditing(uuid: uuid)
             animateExerciseSelection(uuid: uuid)
-        case .restTime:
+        case .rest:
             coordinator.presentBottomSheet(
                 type: .timePicker(
                     kind: .workout,
@@ -302,13 +289,13 @@ struct WorkoutEditorView: View {
                         viewModel.updateDefaultRestTime(duration: value)
                         currentEditingState = .none
                     },
+                    secondaryAction: {
+                        coordinator.goToAdvancedRestSettings()
+                        currentEditingState = .none
+                    },
                     cancel: {
                         currentEditingState = .none
                     }
-//                    advancedEditor: {
-//                        coordinator.goToAdvancedEditRestPeriod()
-//                        currentEditingState = .none
-//                    }
                 )
             )
         default:
@@ -350,32 +337,33 @@ struct WorkoutEditorView: View {
         }
     }
     
-    enum EditingState {
+    enum EditingState: CaseMatchable {
         case none
         case name
         case list
-        case restTime
+        case rest
         case exercise(UUID? = nil)
         
-        func isCurrent(_ state: EditingState) -> Bool {
-            switch (self, state) {
-            case (.name, .name), (.list, .list), (.restTime, .restTime), (.none, .none):
-                return true
-            case (.exercise(let lhs), .exercise(let rhs)):
-                return lhs == rhs
-            default:
-                return false
-            }
-        }
-        
-        var isExerciseEditing: Bool {
-            switch self {
-            case .exercise:
+        internal func matchesCase(_ other: EditingState) -> Bool {
+            switch (self, other) {
+            case (.none, .none), (.name, .name), (.list, .list), (.rest, .rest), (.exercise, .exercise):
                 return true
             default:
                 return false
             }
         }
+    }
+    
+    private var isCancelButtonDisabled: Binding<Bool> {
+        Binding {
+            currentEditingState.isOne(of: .list)
+        } set: { _ in }
+    }
+    
+    private var isDoneButtonDisabled: Binding<Bool> {
+        Binding {
+            currentEditingState.isOne(of: .name, .rest)
+        } set: { _ in }
     }
 }
 
@@ -399,3 +387,4 @@ struct WorkoutEditView_Previews: PreviewProvider {
             .environmentObject(workoutEditCoordinator)
     }
 }
+

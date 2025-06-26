@@ -70,7 +70,8 @@ struct UserProfileView: View {
                 weightFieldView
             }
             .padding(Constants.Design.spacing)
-            .materialCardBackgroundModifier()
+            .materialBackground()
+            .lightShadow()
             
             if let userProfile = viewModel.userProfile {
                 RectangleButton(
@@ -117,7 +118,7 @@ struct UserProfileView: View {
             }
             .pickerStyle(MenuPickerStyle())
             .labelsHidden()
-            .customAccentColorModifier(Constants.Design.Colors.textColorHighEmphasis)
+            .adaptiveTint(Constants.Design.Colors.elementFgHighEmphasis)
         }
     }
     
@@ -140,7 +141,7 @@ struct UserProfileView: View {
             }
             .pickerStyle(MenuPickerStyle())
             .labelsHidden()
-            .customAccentColorModifier(Constants.Design.Colors.textColorHighEmphasis)
+            .adaptiveTint(Constants.Design.Colors.elementFgHighEmphasis)
         }
     }
     
@@ -163,7 +164,7 @@ struct UserProfileView: View {
             }
             .pickerStyle(MenuPickerStyle())
             .labelsHidden()
-            .customAccentColorModifier(Constants.Design.Colors.textColorHighEmphasis)
+            .adaptiveTint(Constants.Design.Colors.elementFgHighEmphasis)
         }
     }
 }
