@@ -36,14 +36,21 @@ struct MenuButton<Content: View>: View {
         } label: {
             Image(systemName: imageName)
                 .font(config.isBold ? config.font.bold() : config.font)
-                .customForegroundColorModifier(config.foregroundColor)
+                .adaptiveForegroundStyle(config.foregroundColor)
                 .padding(.horizontal, Constants.Design.buttonLabelPaddding)
                 .padding(.vertical, Constants.Design.buttonLabelPaddding)
-                .background(config.backgroundColor)
+                .if(style != .secondary) {
+                    $0.background(config.backgroundColor)
+                }
+                .if(style == .secondary) {
+                    $0.materialBackground(shape: Circle())
+                }
                 .opacity(isDisabled ? 0.35 : 1)
                 .contentShape(Circle())
                 .clipShape(Circle())
-                .shadow(radius: config.hasShadow ? config.shadowRadius : 0)
+                .if(config.hasShadow) {
+                    $0.lightShadow(radius: config.shadowRadius)
+                }
         }
         .disabled(isDisabled)
     }

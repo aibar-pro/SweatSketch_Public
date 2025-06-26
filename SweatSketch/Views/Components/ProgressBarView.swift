@@ -17,13 +17,17 @@ struct ProgressBarView: View {
         GeometryReader { barGeometry in
             ZStack(alignment: .center) {
                 RoundedRectangle(cornerRadius: Constants.Design.cornerRadius)
-                    .customForegroundColorModifier(Constants.Design.Colors.textColorLowEmphasis)
+                    .adaptiveForegroundStyle(Constants.Design.Colors.elementFgLowEmphasis)
                     .frame(width: barGeometry.size.width, height: barGeometry.size.height)
 
                 HStack (alignment: .center, spacing: Constants.Design.spacing/2) {
                     ForEach(0..<totalSections, id: \.self) { section in
                         RoundedRectangle(cornerRadius: Constants.Design.cornerRadius)
-                            .customForegroundColorModifier(section == currentSection ? Constants.Design.Colors.backgroundAccentColor : Constants.Design.Colors.backgroundEndColor)
+                            .adaptiveForegroundStyle(
+                                section == currentSection
+                                ? Constants.Design.Colors.elementBgAccent
+                                : Constants.Design.Colors.elementBgSecondary
+                            )
                     }
                 }
                 .padding(.horizontal, Constants.Design.spacing/2)

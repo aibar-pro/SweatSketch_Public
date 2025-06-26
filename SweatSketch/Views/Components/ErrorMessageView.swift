@@ -19,7 +19,7 @@ struct ErrorMessageView: View {
             Text(text.prefix(textMaxLength))
             Spacer()
         }
-        .customForegroundColorModifier(Color.white.opacity(0.87))
+        .adaptiveForegroundStyle(Color.white.opacity(0.87))
         .padding(.all, Constants.Design.spacing)
         .background(
             ZStack {

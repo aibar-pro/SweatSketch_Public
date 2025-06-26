@@ -17,14 +17,15 @@ struct WorkoutCollectionCarouselView: View {
     var body: some View {
         GeometryReader { geoReader in
             let cardSpacing: CGFloat = min(geoReader.size.width * 0.05, Constants.Design.spacing)
-            let cardWidth: CGFloat = geoReader.size.width - (cardSpacing*2.5)
+            let cardWidth: CGFloat = geoReader.size.width - (cardSpacing * 2.5)
             let cardHeight: CGFloat = geoReader.size.height * 0.95
             
             HStack(alignment: .center, spacing: cardSpacing) {
                 ForEach(viewModel.workouts, id: \.id) { workout in
                     WorkoutDetailView(workout: workout)
-                        .padding(.all, Constants.Design.spacing/2)
-                        .materialCardBackgroundModifier()
+                        .padding(Constants.Design.spacing)
+                        .materialBackground()
+                        .lightShadow()
                         .frame(width: cardWidth, height: cardHeight, alignment: .top)
                 }
             }

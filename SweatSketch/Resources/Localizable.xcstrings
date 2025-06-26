@@ -31,9 +31,6 @@
     "%@" : {
       "shouldTranslate" : false
     },
-    "%@," : {
-      "shouldTranslate" : false
-    },
     "%@, %@!" : {
       "localizations" : {
         "en" : {
@@ -48,10 +45,10 @@
     "%lld" : {
 
     },
-    "0:00" : {
+    "× %lld" : {
 
     },
-    "AAA" : {
+    "0:00" : {
 
     },
     "Action type" : {
@@ -308,12 +305,52 @@
         }
       }
     },
+    "app.max.value.label" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MAX"
+          }
+        }
+      }
+    },
     "app.rename.placeholder" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enter new name…"
+          }
+        }
+      }
+    },
+    "app.time.unit.hour.short" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "h"
+          }
+        }
+      }
+    },
+    "app.time.unit.minute.short" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "m"
+          }
+        }
+      }
+    },
+    "app.time.unit.second.short" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "s"
           }
         }
       }
@@ -643,9 +680,6 @@
           }
         }
       }
-    },
-    "Edit name" : {
-
     },
     "Edit Workout" : {
       "extractionState" : "manual",
@@ -1814,6 +1848,16 @@
         }
       }
     },
+    "workout.edit.advanced.rest.settings.link" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Advanced settings"
+          }
+        }
+      }
+    },
     "workout.edit.default.rest.time.title" : {
       "localizations" : {
         "en" : {
@@ -1852,9 +1896,6 @@
       }
     },
     "x%@" : {
-
-    },
-    "x%@)" : {
 
     },
     "x%lld" : {

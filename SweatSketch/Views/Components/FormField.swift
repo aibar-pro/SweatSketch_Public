@@ -15,7 +15,7 @@ struct FormField<InputField: View>: View {
         VStack(alignment: .leading, spacing: Constants.Design.spacing / 2) {
             Text(title)
                 .fullWidthText(.caption)
-                .customForegroundColorModifier(Constants.Design.Colors.textColorMediumEmphasis)
+                .adaptiveForegroundStyle(Constants.Design.Colors.elementFgMediumEmphasis)
             inputField()
         }
     }

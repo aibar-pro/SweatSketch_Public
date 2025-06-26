@@ -11,10 +11,10 @@ struct ExerciseDetailView: View {
     @ObservedObject var exercise: ExerciseRepresentation
     
     var body: some View {
-        VStack(alignment: .leading, spacing: Constants.Design.spacing / 2) {
+        VStack(alignment: .leading, spacing: Constants.Design.spacing) {
             HStack(alignment: .top, spacing: Constants.Design.spacing) {
                 Text(exercise.name)
-                    .fullWidthText(.title3, isBold: true)
+                    .fullWidthText(.title3, weight: .bold)
                     .lineLimit(2)
                 
                 Spacer(minLength: 0)
@@ -24,7 +24,7 @@ struct ExerciseDetailView: View {
                         .font(.title3)
                 }
             }
-            .customForegroundColorModifier(Constants.Design.Colors.textColorHighEmphasis)
+            .adaptiveForegroundStyle(Constants.Design.Colors.elementFgHighEmphasis)
             
             Group {
                 if exercise.actions.count > 0 {
@@ -39,10 +39,12 @@ struct ExerciseDetailView: View {
     }
         
     private var actions: some View {
-        VStack(alignment: .leading, spacing: Constants.Design.spacing / 2) {
+        let hideIcon  = exercise.actions.allEqual { $0.type.kind }
+        let hideTitle = exercise.actions.allEqual { $0.title }
+        
+        return VStack(alignment: .leading, spacing: Constants.Design.spacing) {
             ForEach(exercise.actions, id: \.id) { action in
-                Text(action.type.description + " - \(action.title)")
-                    .fullWidthText()
+                ActionDetailView(action: action, hideTitle: hideTitle, hideIcon: hideIcon)
             }
         }
     }

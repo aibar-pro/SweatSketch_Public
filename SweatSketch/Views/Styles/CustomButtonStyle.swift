@@ -30,8 +30,8 @@ enum CustomButtonStyle {
             return CustomButtonConfig(
                 font: .title3,
                 isBold: true,
-                foregroundColor: Constants.Design.Colors.textColorHighEmphasis,
-                backgroundColor: Constants.Design.Colors.buttonAccentBackgroundColor,
+                foregroundColor: Constants.Design.Colors.elementFgHighEmphasis,
+                backgroundColor: Constants.Design.Colors.elementBgAccent,
                 hasShadow: true,
                 shadowRadius: 4
             )
@@ -39,19 +39,19 @@ enum CustomButtonStyle {
             return CustomButtonConfig(
                 font: .body,
                 isBold: true,
-                foregroundColor: Constants.Design.Colors.textColorHighEmphasis,
-                backgroundColor: Constants.Design.Colors.buttonPrimaryBackgroundColor,
+                foregroundColor: Constants.Design.Colors.elementFgHighEmphasis,
+                backgroundColor: Constants.Design.Colors.elementBgPrimary,
                 hasShadow: true,
-                shadowRadius: 4
+                shadowRadius: 2
             )
         case .secondary:
             return CustomButtonConfig(
                 font: .body,
                 isBold: false,
-                foregroundColor: Constants.Design.Colors.textColorHighEmphasis,
-                backgroundColor: Constants.Design.Colors.buttonSecondaryBackgroundColor,
-                hasShadow: false,
-                shadowRadius: 4
+                foregroundColor: Constants.Design.Colors.elementFgHighEmphasis,
+                backgroundColor: Constants.Design.Colors.elementBgSecondary,
+                hasShadow: true,
+                shadowRadius: 2
             )
         case .inline:
             return CustomButtonConfig(
@@ -60,25 +60,25 @@ enum CustomButtonStyle {
                 foregroundColor: .primary,
                 backgroundColor: .clear,
                 hasShadow: false,
-                shadowRadius: 4
+                shadowRadius: 2
             )
         case .inlineLink:
             return CustomButtonConfig(
                 font: .body,
                 isBold: true,
-                foregroundColor: Constants.Design.Colors.linkColor,
+                foregroundColor: Constants.Design.Colors.elementFgLink,
                 backgroundColor: .clear,
                 hasShadow: false,
-                shadowRadius: 4
+                shadowRadius: 2
             )
         case .inlineTextField:
             return CustomButtonConfig(
                 font: .body,
                 isBold: false,
-                foregroundColor: Constants.Design.Colors.textColorLowEmphasis,
+                foregroundColor: Constants.Design.Colors.elementFgLowEmphasis,
                 backgroundColor: .clear,
                 hasShadow: false,
-                shadowRadius: 4
+                shadowRadius: 2
             )
         }
     }

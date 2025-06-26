@@ -40,7 +40,10 @@ struct RectangleButton<Content: View>: View {
             content()
                 .font(config.isBold ? config.font.bold() : config.font)
                 .lineLimit(1)
-                .customForegroundColorModifier(config.foregroundColor)
+                .if(style == .inlineLink) {
+                    $0.linkUnderline(color: config.foregroundColor)
+                }
+                .adaptiveForegroundStyle(config.foregroundColor)
                 .padding(
                     .horizontal,
                     style.isInline
@@ -49,14 +52,21 @@ struct RectangleButton<Content: View>: View {
                 )
                 .padding(.vertical, Constants.Design.buttonLabelPaddding)
                 .frame(maxWidth: isFullWidth ? .infinity : nil)
-                .background(
-                    shape
-                        .fill(config.backgroundColor)
-                )
+                .if(style != .secondary) {
+                    $0.background(
+                        shape
+                            .fill(config.backgroundColor)
+                    )
+                }
+                .if(style == .secondary) {
+                    $0.materialBackground(shape: shape)
+                }
                 .opacity(isDisabled ? 0.35 : 1)
                 .clipShape(shape)
                 .contentShape(shape)
-                .shadow(radius: config.hasShadow ? config.shadowRadius : 0)
+                .if(config.hasShadow) {
+                    $0.lightShadow(radius: config.shadowRadius)
+                }
         }
         .disabled(isDisabled)
     }

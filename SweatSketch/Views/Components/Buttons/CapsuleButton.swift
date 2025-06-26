@@ -32,7 +32,11 @@ struct CapsuleButton<Content: View>: View {
         Button(action: action) {
             content()
                 .font(config.isBold ? config.font.bold() : config.font)
-                .customForegroundColorModifier(config.foregroundColor)
+                .lineLimit(1)
+                .if(style == .inlineLink) {
+                    $0.linkUnderline(color: config.foregroundColor)
+                }
+                .adaptiveForegroundStyle(config.foregroundColor)
                 .padding(
                     .horizontal,
                     style.isInline
@@ -40,11 +44,18 @@ struct CapsuleButton<Content: View>: View {
                     : Constants.Design.buttonLabelPaddding * 2
                 )
                 .padding(.vertical, Constants.Design.buttonLabelPaddding)
-                .background(config.backgroundColor)
+                .if(style != .secondary) {
+                    $0.background(config.backgroundColor)
+                }
+                .if(style == .secondary) {
+                    $0.materialBackground(shape: Capsule())
+                }
                 .opacity(isDisabled ? 0.35 : 1)
                 .contentShape(Capsule())
                 .clipShape(Capsule())
-                .shadow(radius: config.hasShadow ? config.shadowRadius : 0)
+                .if(config.hasShadow) {
+                    $0.lightShadow(radius: config.shadowRadius)
+                }
         }
         .disabled(isDisabled)
     }
