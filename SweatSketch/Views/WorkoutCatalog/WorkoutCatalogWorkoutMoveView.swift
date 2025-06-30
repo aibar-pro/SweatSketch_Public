@@ -69,12 +69,12 @@ struct WorkoutCatalogWorkoutMoveView: View {
                     }
                 }
                 .padding(Constants.Design.spacing)
-                .materialCardBackgroundModifier()
+                .materialBackground()
+                .lightShadow()
                 .padding(.horizontal, Constants.Design.spacing)
-                
             }
         }
-        .customAccentColorModifier(Constants.Design.Colors.textColorHighEmphasis)
+        .adaptiveTint(Constants.Design.Colors.elementFgHighEmphasis)
         
     }
 }

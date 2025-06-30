@@ -20,17 +20,18 @@ struct ActiveWorkoutView: View {
                 
                 HStack{
                     Text(viewModel.activeWorkout.title)
-                        .font(.title2.bold())
+                        .fullWidthText(.title2, weight: .semibold)
                         .lineLimit(2)
                     
                     Spacer()
                     
-                    Button(action: {
-                        coordinator.goToWorkoutSummary()
-                    }) {
-                        Image(systemName: "stop")
-                            .secondaryButtonLabelStyleModifier()
-                    }
+                    IconButton(
+                        systemImage: "flag.checkered.2.crossed",
+                        style: .secondary,
+                        action: {
+                            coordinator.goToWorkoutSummary()
+                        }
+                    )
                 }
                 .padding(.horizontal, Constants.Design.spacing)
                 
@@ -53,7 +54,8 @@ struct ActiveWorkoutView: View {
                                     )
                                     .id(item.id)
                                     .padding(Constants.Design.spacing)
-                                    .materialCardBackgroundModifier()
+                                    .materialBackground()
+                                    .lightShadow()
                                     .padding(.horizontal, Constants.Design.spacing)
                                 } else {
                                     Text(item.title)
@@ -61,7 +63,6 @@ struct ActiveWorkoutView: View {
                                         .lineLimit(3)
                                         .multilineTextAlignment(.center)
                                         .padding(Constants.Design.spacing)
-                                        .materialCardBackgroundModifier()
                                         .opacity(0.4)
                                         .id(item.id)
                                 }
@@ -103,7 +104,7 @@ struct ActiveWorkoutView: View {
                     .opacity(0.5)
                 }
             }
-            .customAccentColorModifier(Constants.Design.Colors.textColorHighEmphasis)
+            .adaptiveTint(Constants.Design.Colors.elementFgHighEmphasis)
         }
     }
 }

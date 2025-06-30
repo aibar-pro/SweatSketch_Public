@@ -46,7 +46,7 @@ class WorkoutEditorCoordinator: BaseCoordinator<WorkoutEditorModel>, Coordinator
         activeUndoTarget = viewModel
     }
     
-    func goToAdvancedEditRestPeriod() {
+    func goToAdvancedRestSettings() {
         guard let restTimeEditViewModel = RestTimeEditViewModel(parentViewModel: viewModel) else {
             assertionFailure("Failed to create \(type(of: RestTimeEditViewModel.self))")
             return

@@ -49,25 +49,16 @@ struct ExerciseEditorView: View {
                 id: \.id
             ) { action in
                 HStack (alignment: .firstTextBaseline, spacing: Constants.Design.spacing) {
-                    Text(action.type.description + " - \(action.title)")
-                        .fullWidthText()
+                    ActionDetailView(action: action)
                     
                     Spacer(minLength: 0)
                     
-                    if currentEditingState != .list {
+                    if !currentEditingState.isOne(of: .list) {
                         IconButton(
                             systemImage: "ellipsis",
                             style: .inline,
                             action: {
-//                                print("\(type(of: self)): Edit exercise: \(exercise.name)")
-//                                guard let exerciseEntityToEdit = viewModel.exercises.first(where: { $0.uuid == exercise.id })
-//                                else {
-//                                    assertionFailure("Could not find exercise to edit")
-//                                    return
-//                                }
-////                                coordinator.goToEditExercise(exerciseToEdit: exerciseEntityToEdit)
-//                                coordinator.editExercise(exerciseEntityToEdit)
-//                                animateExerciseSelection(uuid: exercise.id)
+                                switchEditingState(to: .action(action.entityUUID))
                             }
                         )
                     }
@@ -82,11 +73,12 @@ struct ExerciseEditorView: View {
         .disabled(isListEditDisabled)
         .listStyle(.plain)
         .listRowInsets(EdgeInsets())
-        .materialCardBackgroundModifier()
+        .materialBackground()
+        .lightShadow()
         .environment(
             \.editMode,
             .constant(
-                currentEditingState == .list
+                !currentEditingState.isOne(of: .list)
                 ? EditMode.active
                 : EditMode.inactive
             )
@@ -104,11 +96,7 @@ struct ExerciseEditorView: View {
                 style: .secondary,
                 isDisabled: Binding { isListEditDisabled } set: { _ in },
                 action: {
-                    if currentEditingState == .none {
-                        currentEditingState = .list
-                    } else {
-                        currentEditingState = .none
-                    }
+                    switchEditingState(to: .list)
                 }
             )
             
@@ -117,7 +105,7 @@ struct ExerciseEditorView: View {
                     HStack (alignment: .center, spacing: Constants.Design.spacing / 4) {
                         Image(systemName: "timer")
                         
-                        if currentEditingState != .rest {
+                        if !currentEditingState.isOne(of: .rest) {
                             DurationView(durationInSeconds: viewModel.restBetweenActions.duration.int)
                         } else {
                             Text(Constants.Placeholders.noDuration)
@@ -138,39 +126,30 @@ struct ExerciseEditorView: View {
                 style: .secondary,
                 isDisabled: Binding { isAddButtonDisabled } set: { _ in },
                 action: {
-                    viewModel.addExerciseAction()
-                    currentEditingState = .action
+                    switchEditingState(to: .action())
                 }
             )
         }
     }
     
-    private func isSaveButtonDisabled() -> Bool {
-        return [.name, .action, .rest].contains(currentEditingState)
-    }
-    
     private var isAddButtonDisabled: Bool {
-        return [.name, .rest, .list].contains(currentEditingState)
+        currentEditingState.isOne(of: .name, .list, .rest)
     }
     
     private var isListEditDisabled: Bool {
-        return viewModel.actions.isEmpty || [.name, .action, .rest].contains(currentEditingState)
+        return viewModel.actions.isEmpty || currentEditingState.isOne(of: .name, .action(), .rest)
     }
     
-//    private func isListDisabled() -> Bool {
-//        return viewModel.exerciseActions.isEmpty || [.name, .rest].contains(currentEditingState)
-//    }
-    
     func isRenameDisabled() -> Bool {
-        return currentEditingState == .list || [.action, .rest].contains(currentEditingState)
+        currentEditingState.isOne(of: .list, .action(), .rest)
     }
     
     private var isRestEditDisabled: Bool {
-        [.name, .action, .list].contains(currentEditingState)
+        currentEditingState.isOne(of: .name, .action(), .list)
     }
     
     private func switchEditingState(to state: EditingState) {
-        guard currentEditingState != state else {
+        guard !currentEditingState.isOne(of: state) else {
             currentEditingState = .none
             return
         }
@@ -203,18 +182,50 @@ struct ExerciseEditorView: View {
                     }
                 )
             )
+        case .action(let id):
+            viewModel.prepareActionForEditing(id)
+            
+            guard let actionDraft = viewModel.actionDraft
+            else {
+                currentEditingState = .none
+                return
+            }
+            
+            coordinator.presentBottomSheet(
+                type: .actionEditor(
+                    for: actionDraft,
+                    action: { value in
+                        viewModel.commitActionDraft(value)
+                        currentEditingState = .none
+                        print("\(type(of: self)): Save action")
+                    },
+                    cancel: {
+                        currentEditingState = .none
+                        print("\(type(of: self)): Discard action edits")
+                    }
+                )
+            )
         default:
             break
         }
         currentEditingState = state
     }
     
-    enum EditingState {
+    enum EditingState: CaseMatchable {
         case none
         case name
         case list
-        case action
+        case action(UUID? = nil)
         case rest
+        
+        internal func matchesCase(_ other: ExerciseEditorView.EditingState) -> Bool {
+            switch (self, other) {
+            case (.none, .none), (.name, .name), (.rest, .rest), (.list, .list), (.action, .action):
+                return true
+            default:
+                return false
+            }
+        }
     }
 }
 

@@ -8,12 +8,17 @@
 import SwiftUI
 
 struct WorkoutPlanningMainBackgroundView : View {
-    let elementColor: Color = Constants.Design.Colors.backgroundAccentColor
+    let elementColor: Color = Constants.Design.Colors.screenBgAccent
     
     var body: some View {
         ZStack {
             LinearGradient(
-                gradient: Gradient(colors: [Constants.Design.Colors.backgroundStartColor, Constants.Design.Colors.backgroundEndColor]),
+                gradient: Gradient(
+                    colors: [
+                        Constants.Design.Colors.screenBgStart,
+                        Constants.Design.Colors.screenBgEnd
+                    ]
+                ),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
@@ -35,14 +40,14 @@ struct WorkoutPlanningMainBackgroundView : View {
                 .imageScale(.large)
                 .rotationEffect(Angle(degrees: 30))
                 .offset(x: 100, y: -50)
-                .customForegroundColorModifier(elementColor)
+                .adaptiveForegroundStyle(elementColor)
             
             Image(systemName: "gym.bag.fill")
                 .font(.system(size: 100))
                 .imageScale(.large)
                 .rotationEffect(Angle(degrees: -15))
                 .offset(x: -75, y: 150)
-                .customForegroundColorModifier(elementColor)
+                .adaptiveForegroundStyle(elementColor)
             
             Ellipse()
                 .size(CGSize(width: 450, height: 350))

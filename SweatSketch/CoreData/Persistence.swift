@@ -254,7 +254,7 @@ extension PersistenceController {
         if Bool.random() {
             action.distanceMax = NSNumber(value: Double.random(in: 2501...10000))
         }
-        action.unit = "test"
+        action.unit = LengthUnit.miles.rawValue
         action.isMax = Bool.random()
         exercise.addToExerciseActions(action)
     }

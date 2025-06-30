@@ -8,6 +8,7 @@
 import CoreData
 
 enum DataManagerError: Error {
+    case createError(entityName: String, payload: DataManagerErrorPayload? = nil)
     case fetchError(entityName: String, payload: DataManagerErrorPayload? = nil)
     case emptyResult(payload: DataManagerErrorPayload? = nil)
 }

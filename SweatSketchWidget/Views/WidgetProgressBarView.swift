@@ -18,7 +18,7 @@ struct WidgetProgressBarView: View {
         GeometryReader { barGeometry in
             ZStack(alignment: .leading) {
                 RoundedRectangle(cornerRadius: WidgetConstants.cornerRadius)
-                    .foregroundStyle(WidgetConstants.Colors.lowEmphasisColor)
+                    .fill(WidgetConstants.Colors.elementBgSecondary)
                     .frame(width: barGeometry.size.width, height: barGeometry.size.height)
                 
                 HStack(alignment: .center, spacing: WidgetConstants.padding / 2) {
@@ -27,7 +27,7 @@ struct WidgetProgressBarView: View {
                             if step == stepIndex {
                                 ProgressView(value: progress)
                                     .labelsHidden()
-                                    .tint(WidgetConstants.Colors.accentColor)
+                                    .tint(WidgetConstants.Colors.elementFgAccent)
                                     .scaleEffect(x: 1, y: 3, anchor: .center)
                                     .frame(height: barGeometry.size.height - WidgetConstants.padding * 2)
                                     .clipShape(RoundedRectangle(cornerRadius: WidgetConstants.cornerRadius))
@@ -35,8 +35,8 @@ struct WidgetProgressBarView: View {
                                 RoundedRectangle(cornerRadius: WidgetConstants.cornerRadius)
                                     .foregroundStyle(
                                         step < stepIndex
-                                        ? WidgetConstants.Colors.accentColor.opacity(0.65)
-                                        : WidgetConstants.Colors.backgroundEndColor
+                                        ? WidgetConstants.Colors.elementFgPrimary
+                                        : WidgetConstants.Colors.elementFgLowEmphasis
                                     )
                             }
                         }

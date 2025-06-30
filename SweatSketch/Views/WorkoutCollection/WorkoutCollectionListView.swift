@@ -68,7 +68,8 @@ struct WorkoutCollectionListView: View {
         }
         .listStyle(.plain)
         .environment(\.editMode, $editMode)
-        .materialCardBackgroundModifier()
+        .materialBackground()
+        .lightShadow()
     }
     
     private var toolbarView: some View {

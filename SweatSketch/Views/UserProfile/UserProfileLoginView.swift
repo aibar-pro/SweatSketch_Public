@@ -53,7 +53,7 @@ struct UserProfileLoginView: View {
                 
                 footer
             }
-            .customForegroundColorModifier(Constants.Design.Colors.textColorHighEmphasis)
+            .adaptiveForegroundStyle(Constants.Design.Colors.elementFgHighEmphasis)
         }
         .onDisappear(perform: onDismiss)
     }
@@ -61,7 +61,7 @@ struct UserProfileLoginView: View {
     private var footer: some View {
         HStack(alignment: .center, spacing: Constants.Design.spacing) {
             Text("user.profile.signup.login.link.desctiption")
-                .customForegroundColorModifier(Constants.Design.Colors.textColorMediumEmphasis)
+                .adaptiveForegroundStyle(Constants.Design.Colors.elementFgMediumEmphasis)
             
             RectangleButton(
                 "user.profile.signup.button.label",

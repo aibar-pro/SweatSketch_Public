@@ -12,3 +12,10 @@ extension Collection {
         return indices.contains(index) ? self[index] : nil
     }
 }
+
+extension Collection {
+    func allEqual<T: Equatable>(by key: (Element) -> T) -> Bool {
+        guard let first = self.first.map(key) else { return true }
+        return allSatisfy { key($0) == first }
+    }
+}

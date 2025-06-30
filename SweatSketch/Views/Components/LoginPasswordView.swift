@@ -14,7 +14,7 @@ struct LoginPasswordView: View {
         VStack (alignment: .leading, spacing: Constants.Design.spacing) {
             Text(Constants.Placeholders.emailLabel)
                 .font(.footnote)
-                .customForegroundColorModifier(Constants.Design.Colors.textColorMediumEmphasis)
+                .adaptiveForegroundStyle(Constants.Design.Colors.elementFgMediumEmphasis)
             TextField(Constants.Placeholders.emailLabel, text:
                         $user.login
             )
@@ -24,7 +24,7 @@ struct LoginPasswordView: View {
             
             Text(Constants.Placeholders.passwordLabel)
                 .font(.footnote)
-                .customForegroundColorModifier(Constants.Design.Colors.textColorMediumEmphasis)
+                .adaptiveForegroundStyle(Constants.Design.Colors.elementFgMediumEmphasis)
             SecureField(Constants.Placeholders.passwordLabel, text:
                         $user.password
             )
@@ -32,7 +32,8 @@ struct LoginPasswordView: View {
             .padding(.leading, Constants.Design.spacing/2)
         }
         .padding(Constants.Design.spacing)
-        .materialCardBackgroundModifier()
+        .materialBackground()
+        .lightShadow()
     }
 }
 

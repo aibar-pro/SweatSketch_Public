@@ -7,6 +7,9 @@
     " " : {
       "shouldTranslate" : false
     },
+    "-" : {
+
+    },
     "-:-:-" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -31,9 +34,6 @@
     "%@" : {
       "shouldTranslate" : false
     },
-    "%@," : {
-      "shouldTranslate" : false
-    },
     "%@, %@!" : {
       "localizations" : {
         "en" : {
@@ -48,10 +48,10 @@
     "%lld" : {
 
     },
-    "0:00" : {
+    "× %lld" : {
 
     },
-    "AAA" : {
+    "0:00" : {
 
     },
     "Action type" : {
@@ -71,35 +71,102 @@
         }
       }
     },
-    "action.edit.reps.max.label" : {
-      "extractionState" : "stale",
+    "action.edit.isMax.label" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "max"
+            "value" : "MAX set"
           }
         }
       }
     },
-    "action.edit.reps.max.toggle" : {
-      "extractionState" : "stale",
+    "action.edit.max.label" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "max"
+            "value" : "Maximum"
           }
         }
       }
     },
-    "action.edit.reps.name.add.button" : {
-      "extractionState" : "stale",
+    "action.edit.min.label" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Add action name"
+            "value" : "Minimum"
+          }
+        }
+      }
+    },
+    "action.edit.name.label" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name"
+          }
+        }
+      }
+    },
+    "action.edit.or.label" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "or"
+          }
+        }
+      }
+    },
+    "action.edit.sets.label" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sets"
+          }
+        }
+      }
+    },
+    "action.kind.distance" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distance"
+          }
+        }
+      }
+    },
+    "action.kind.reps" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repetitions"
+          }
+        }
+      }
+    },
+    "action.kind.rest" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest"
+          }
+        }
+      }
+    },
+    "action.kind.timed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timed"
           }
         }
       }
@@ -286,6 +353,7 @@
       }
     },
     "app.height.unit.centimeters.short" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -294,9 +362,6 @@
           }
         }
       }
-    },
-    "app.height.unit.feetAndInches.short" : {
-
     },
     "app.loading" : {
       "localizations" : {
@@ -308,12 +373,52 @@
         }
       }
     },
+    "app.max.value.label" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MAX"
+          }
+        }
+      }
+    },
     "app.rename.placeholder" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enter new name…"
+          }
+        }
+      }
+    },
+    "app.time.unit.hour.short" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "h"
+          }
+        }
+      }
+    },
+    "app.time.unit.minute.short" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "m"
+          }
+        }
+      }
+    },
+    "app.time.unit.second.short" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "s"
           }
         }
       }
@@ -644,9 +749,6 @@
         }
       }
     },
-    "Edit name" : {
-
-    },
     "Edit Workout" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -750,7 +852,14 @@
       }
     },
     "exercise.detail.no.actions" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No actions yet"
+          }
+        }
+      }
     },
     "exercise.edit.rename.title" : {
       "localizations" : {
@@ -1365,6 +1474,39 @@
         }
       }
     },
+    "settings.appearance.dark" : {
+
+    },
+    "settings.appearance.light" : {
+
+    },
+    "settings.appearance.system" : {
+
+    },
+    "settings.language.deutsch" : {
+
+    },
+    "settings.language.device" : {
+
+    },
+    "settings.language.english" : {
+
+    },
+    "settings.language.russian" : {
+
+    },
+    "settings.length.imperial" : {
+
+    },
+    "settings.length.metric" : {
+
+    },
+    "settings.weight.kg" : {
+
+    },
+    "settings.weight.lb" : {
+
+    },
     "Share Workout" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1814,6 +1956,16 @@
         }
       }
     },
+    "workout.edit.advanced.rest.settings.link" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Advanced settings"
+          }
+        }
+      }
+    },
     "workout.edit.default.rest.time.title" : {
       "localizations" : {
         "en" : {
@@ -1852,9 +2004,6 @@
       }
     },
     "x%@" : {
-
-    },
-    "x%@)" : {
 
     },
     "x%lld" : {

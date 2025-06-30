@@ -21,8 +21,8 @@ struct SweatSketchWidgetLiveActivity: Widget {
                         quantity: context.state.quantity,
                         progress: context.state.progress
                     )
-                    .font(.headline.bold())
-                    .foregroundStyle(WidgetConstants.Colors.highEmphasisColor)
+                    .font(.headline.weight(.bold))
+                    .foregroundStyle(WidgetConstants.Colors.elementFgHighEmphasis)
                     
                     WidgetProgressBarView(
                         progress: context.state.progress,
@@ -39,23 +39,23 @@ struct SweatSketchWidgetLiveActivity: Widget {
                                     .padding(.horizontal, WidgetConstants.padding)
                                     
                             }
-                            .tint(WidgetConstants.Colors.mediumEmphasisColor)
+                            .tint(WidgetConstants.Colors.elementFgMediumEmphasis)
                             Spacer()
                             Button(intent: ActiveWorkoutNextItemIntent()) {
                                 Image(systemName: "chevron.forward")
                                     .fontWeight(.bold)
                                     .padding(.vertical, WidgetConstants.padding)
-                                    .padding(.horizontal, WidgetConstants.padding*2)
+                                    .padding(.horizontal, WidgetConstants.padding * 2)
                             }
-                            .tint(WidgetConstants.Colors.highEmphasisColor)
+                            .tint(WidgetConstants.Colors.elementFgAccent)
                         }
                     }
                 }
                 .padding(WidgetConstants.padding*2)
                 
             }
-            .activityBackgroundTint(WidgetConstants.Colors.backgroundStartColor)
-            .activitySystemActionForegroundColor(WidgetConstants.Colors.supportColor)
+            .activityBackgroundTint(WidgetConstants.Colors.elementFgPrimary)
+            .activitySystemActionForegroundColor(WidgetConstants.Colors.elementFgPrimary)
 
         } dynamicIsland: { context in
             DynamicIsland {
@@ -67,7 +67,7 @@ struct SweatSketchWidgetLiveActivity: Widget {
                             progress: context.state.progress
                         )
                         .font(.headline.bold())
-                        .foregroundStyle(WidgetConstants.Colors.highEmphasisColor)
+                        .foregroundStyle(WidgetConstants.Colors.elementFgHighEmphasis)
                         
                         WidgetProgressBarView(
                             progress: context.state.progress,
@@ -83,7 +83,7 @@ struct SweatSketchWidgetLiveActivity: Widget {
                                         .padding(.vertical, WidgetConstants.padding/2)
                                         .padding(.horizontal, WidgetConstants.padding/2)
                                 }
-                                .tint(WidgetConstants.Colors.backgroundStartColor)
+                                .tint(WidgetConstants.Colors.elementFgMediumEmphasis)
                                 Spacer()
                                 Button(intent: ActiveWorkoutNextItemIntent()) {
                                     Image(systemName: "chevron.forward")
@@ -91,7 +91,7 @@ struct SweatSketchWidgetLiveActivity: Widget {
                                         .padding(.vertical, WidgetConstants.padding/2)
                                         .padding(.horizontal, WidgetConstants.padding)
                                 }
-                                .tint(WidgetConstants.Colors.accentColor)
+                                .tint(WidgetConstants.Colors.elementFgAccent)
                             }
                         }
                     }
@@ -99,18 +99,18 @@ struct SweatSketchWidgetLiveActivity: Widget {
                 }
             } compactLeading: {
                 Image(systemName: context.state.iconName)
-                    .foregroundStyle(WidgetConstants.Colors.iconColor)
+                    .foregroundStyle(WidgetConstants.Colors.elementFgPrimary)
                     .padding(.trailing, WidgetConstants.padding/2)
             } compactTrailing: {
                 Text("\(context.state.title)")
                     .truncationMode(.tail)
-                    .foregroundStyle(WidgetConstants.Colors.iconColor)
+                    .foregroundStyle(WidgetConstants.Colors.elementFgPrimary)
             } minimal: {
                 Image(systemName: context.state.iconName)
-                    .foregroundStyle(WidgetConstants.Colors.iconColor)
+                    .foregroundStyle(WidgetConstants.Colors.elementFgPrimary)
             }
             .widgetURL(URL(string: "http://www.apple.com"))
-            .keylineTint(WidgetConstants.Colors.backgroundStartColor)
+            .keylineTint(WidgetConstants.Colors.elementFgPrimary)
         }
     }
 }

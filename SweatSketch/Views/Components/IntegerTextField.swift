@@ -17,6 +17,10 @@ struct IntegerTextField<N>: View where N: BinaryInteger & LosslessStringConverti
         TextField(placeholder, text: textBinding)
             .keyboardType(.numberPad)
             .onAppear { text = String(value) }
+            .onChange(of: value) { newValue in
+                text = String(newValue)
+            }
+            .multilineTextAlignment(.trailing)
     }
 
     private var textBinding: Binding<String> {
@@ -34,3 +38,5 @@ struct IntegerTextField<N>: View where N: BinaryInteger & LosslessStringConverti
         )
     }
 }
+
+

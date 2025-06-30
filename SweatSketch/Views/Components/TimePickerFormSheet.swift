@@ -25,22 +25,6 @@ enum TimePickerFormKind {
     }
 }
 
-/*
- RectangleButton(
-     content: {
-         HStack(alignment: .lastTextBaseline, spacing: Constants.Design.spacing / 2) {
-             Text(Constants.Placeholders.WorkoutCollection.customRestTimeText)
-             Image(systemName: "arrow.up.right")
-         }
-     },
-     style: .inline,
-     action: {
-         onSubmit(duration)
-         onAdvancedEdit()
-     }
- )
- */
-
 struct TimePickerFormSheet<Content: View>: View {
     
     init(
@@ -48,36 +32,37 @@ struct TimePickerFormSheet<Content: View>: View {
         initialDuration: Int,
         onSubmit: @escaping (_: Int) -> Void,
         onCancel: @escaping () -> Void,
-        @ViewBuilder extraContent: @escaping () -> Content = { EmptyView() },
+        @ViewBuilder additionalContent: @escaping () -> Content = { EmptyView() },
     ) {
         self.config = kind.config
         self.onSubmit = onSubmit
         self.onCancel = onCancel
-        self.extraContent = extraContent
+        self.additionalContent = additionalContent
         _duration = State(initialValue: initialDuration)
     }
     
     private let config: TimePickerFormConfig
     private let onSubmit: (Int) -> Void
     private let onCancel: () -> Void
-    private let extraContent: () -> Content
+    private let additionalContent: () -> Content
 
     @State var duration: Int = Constants.DefaultValues.restTimeDuration
     
     var body: some View {
         VStack (alignment: .leading, spacing: Constants.Design.spacing) {
             Text(config.title)
-                .fullWidthText(.title3, isBold: true)
+                .fullWidthText(.title3, weight: .bold)
             
             VStack (alignment: .center, spacing: Constants.Design.spacing) {
-                DurationPickerEditView(durationInSeconds: $duration, showHours: false, secondsInterval: 10)
-                    .background(
-                        RoundedRectangle(cornerRadius: Constants.Design.cornerRadius)
-                            .stroke(Constants.Design.Colors.backgroundStartColor)
-                    )
+                DurationPickerEditView(
+                    durationInSeconds: $duration,
+                    showHours: false,
+                    secondsInterval: 10
+                )
+                    .styledBorder()
                     .frame(width: 250, height: 150)
                 
-                extraContent()
+                additionalContent()
             }
             .frame(maxWidth: .infinity, alignment: .center)
             
@@ -117,7 +102,7 @@ struct TimePickerFormSheet<Content: View>: View {
         onCancel: {
             
         },
-        extraContent: {
+        additionalContent: {
             Text("Preview")
         }
     )

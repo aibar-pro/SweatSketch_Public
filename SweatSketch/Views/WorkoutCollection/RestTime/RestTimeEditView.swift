@@ -60,7 +60,7 @@ struct RestTimeEditView: View {
 //                            }
 //                            
 //                        }
-//                        .customForegroundColorModifier(Constants.Design.Colors.textColorMediumEmphasis)
+//                        .adaptiveForegroundStyle(Constants.Design.Colors.textMediumEmphasis)
 //                        .padding(.horizontal, Constants.Design.spacing)
 //
 //                        ScrollView {
@@ -110,7 +110,7 @@ struct RestTimeEditView: View {
 //                                        Text(exercise.name ?? Constants.Placeholders.noExerciseName)
 //                                            .padding(Constants.Design.spacing)
 //                                            .frame(width: geoReader.size.width - 2 * Constants.Design.spacing, alignment: .leading)
-//                                            .materialCardBackgroundModifier()
+//                                            .cardBackground()
 //                                    }
 //                                    .id(exercise.objectID)
 //                                        
@@ -128,7 +128,7 @@ struct RestTimeEditView: View {
 //                    }
 //                }
 //            }
-            .customAccentColorModifier(Constants.Design.Colors.textColorHighEmphasis)
+            .adaptiveTint(Constants.Design.Colors.elementFgHighEmphasis)
         }
     }
 }

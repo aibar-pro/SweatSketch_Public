@@ -8,11 +8,20 @@
 import SwiftUI
 
 struct WorkoutPlanningModalBackgroundView: View {
-    let elementColor: Color = Constants.Design.Colors.backgroundAccentColor
+    let elementColor: Color = Constants.Design.Colors.screenBgAccent
     
     var body: some View {
         ZStack {
-            LinearGradient(gradient: Gradient(colors: [Constants.Design.Colors.backgroundStartColor, Constants.Design.Colors.backgroundEndColor]), startPoint: .topLeading, endPoint: .bottomTrailing)
+            LinearGradient(
+                gradient: Gradient(
+                    colors: [
+                        Constants.Design.Colors.screenBgStart,
+                        Constants.Design.Colors.screenBgEnd
+                    ]
+                ),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
         }
         .ignoresSafeArea(.all)
     }

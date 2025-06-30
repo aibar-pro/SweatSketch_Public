@@ -38,7 +38,7 @@ struct WorkoutCollectionView: View {
     }
     
     private var toolbar: some View {
-        HStack(alignment: .center, spacing: Constants.Design.spacing) {
+        HStack(alignment: .center, spacing: Constants.Design.spacing / 2) {
             catalogButton
             Spacer(minLength: 0)
             editWorkoutButton
@@ -88,7 +88,7 @@ struct WorkoutCollectionView: View {
         ZStack(alignment: .bottom) {
             VStack (alignment: .leading, spacing: Constants.Design.spacing) {
                 Text(viewModel.workouts[presentedWorkoutIndex].name)
-                    .fullWidthText(.title2, isBold: true)
+                    .fullWidthText(.title2, weight: .bold)
                     .lineLimit(3)
                     .padding(.horizontal, Constants.Design.spacing)
 
@@ -112,7 +112,7 @@ struct WorkoutCollectionView: View {
     private var emptyView: some View {
         VStack(alignment: .center, spacing: Constants.Design.spacing) {
             Text("collection.empty.label")
-                .fullWidthText(.title3, isBold: true, alignment: .center)
+                .fullWidthText(.title2, weight: .bold, alignment: .center)
             
             RectangleButton(
                 "collection.add.workout.button.label",

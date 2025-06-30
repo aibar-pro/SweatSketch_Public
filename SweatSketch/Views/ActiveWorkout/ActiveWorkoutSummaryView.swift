@@ -17,7 +17,7 @@ struct ActiveWorkoutSummaryView: View {
     var body: some View {
         VStack(alignment: .center, spacing: Constants.Design.spacing) {
             Text(Constants.Placeholders.workoutSummaryTitle)
-                .fullWidthText(.title, isBold: true, alignment: .center)
+                .fullWidthText(.title, weight: .bold, alignment: .center)
             
             HStack(alignment: .center, spacing: Constants.Design.spacing / 2) {
                 Image(systemName: "timer")
@@ -35,7 +35,8 @@ struct ActiveWorkoutSummaryView: View {
             )
         }
         .padding(Constants.Design.spacing)
-        .materialCardBackgroundModifier()
+        .materialBackground()
+        .lightShadow()
         .padding(Constants.Design.spacing)
         .frame(maxHeight: .infinity, alignment: .center)
         .background(

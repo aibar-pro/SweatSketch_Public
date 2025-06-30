@@ -18,6 +18,12 @@ enum BottomSheetType {
         kind: TimePickerFormKind,
         initialValue: Int,
         action: (Int) -> Void,
+        secondaryAction: (() -> Void)? = nil,
+        cancel: () -> Void
+    )
+    case actionEditor(
+        for: ActionDraftModel,
+        action: (ActionDraftModel) -> Void,
         cancel: () -> Void
     )
     
@@ -38,10 +44,39 @@ enum BottomSheetType {
                         onDismiss?()
                     }
                 )
-            case .timePicker(let kind, let initialValue, let action, let cancel):
+            case .timePicker(let kind, let initialValue, let action, let secondaryAction, let cancel):
                 TimePickerFormSheet(
                     kind: kind,
                     initialDuration: initialValue,
+                    onSubmit: { value in
+                        action(value)
+                        onDismiss?()
+                    },
+                    onCancel: {
+                        cancel()
+                        onDismiss?()
+                    },
+                    additionalContent: {
+                        if kind == .workout {
+                            RectangleButton(
+                                content: {
+                                    HStack(alignment: .lastTextBaseline, spacing: Constants.Design.spacing / 2) {
+                                        Text("workout.edit.advanced.rest.settings.link")
+                                        Image(systemName: "arrow.up.right")
+                                    }
+                                },
+                                style: .inlineLink,
+                                action: {
+                                    onDismiss?()
+                                    secondaryAction?()
+                                }
+                            )
+                        }
+                    }
+                )
+            case .actionEditor(let draft, let action, let cancel):
+                ActionEditorView(
+                    draft: draft,
                     onSubmit: { value in
                         action(value)
                         onDismiss?()
@@ -59,7 +94,9 @@ enum BottomSheetType {
         switch self {
         case .singleTextField(_, _, _, let cancel):
             return cancel
-        case .timePicker(_, _, _, let cancel):
+        case .timePicker(_, _, _, _, let cancel):
+            return cancel
+        case .actionEditor(_, _, let cancel):
             return cancel
         }
     }
@@ -74,6 +111,8 @@ struct BottomSheetView<Content: View>: View {
     
     let onDismiss: (() -> Void)?
     var content: () -> Content
+    
+    let targetBgOpacity: CGFloat = 0.1
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -97,7 +136,7 @@ struct BottomSheetView<Content: View>: View {
     private var mainContent: some View {
         VStack(alignment: .leading, spacing: Constants.Design.spacing) {
             RoundedRectangle(cornerRadius: 12)
-                .fill(Constants.Design.Colors.backgroundStartColor)
+                .fill(Constants.Design.Colors.elementFgPrimary)
                 .frame(width: 40, height: 4)
                 .padding(.top, 8)
                 .frame(maxWidth: .infinity, alignment: .center)
@@ -107,13 +146,16 @@ struct BottomSheetView<Content: View>: View {
             content()
             
             Rectangle()
-                .fill(.white)
-                .frame(height: dragThreshold)
+                .fill(.clear)
+                .frame(height: dragThreshold * 2)
+                .ignoresSafeArea()
         }
         .padding(.horizontal, Constants.Design.spacing)
-        .padding(.bottom, Constants.Design.spacing)
-        .roundedCornerBackground(.white, contentPadding: 0)
-        .offset(CGSize(width: 0, height: dragThreshold))
+        .materialBackground(
+            shape: TopCornerRoundedShape(cornerRadius: Constants.Design.cornerRadius)
+        )
+        .lightShadow(paddingEdges: .vertical)
+        .offset(CGSize(width: 0, height: dragThreshold * 2))
         .transition(.move(edge: .bottom))
     }
     
@@ -148,7 +190,7 @@ struct BottomSheetView<Content: View>: View {
             .easeIn(duration: bgAnimationDuration)
             .delay(bgAnimationDelay)
         ) {
-            opacity = 0.3
+            opacity = targetBgOpacity
         }
         withAnimation(
             .easeOut(duration: bgAnimationDuration)
