@@ -12,9 +12,9 @@ extension Text {
         self + Text(" ") + Text(unit.localizedShortDescription)
     }
     
-    func formattedHeightUnit(_ unit: HeightUnit) -> Text {
-        self + Text(" ") + Text(unit.localizedShortDescription)
-    }
+//    func formattedHeightUnit(_ unit: HeightUnit) -> Text {
+//        self + Text(" ") + Text(unit.localizedShortDescription)
+//    }
 }
 
 extension Text {

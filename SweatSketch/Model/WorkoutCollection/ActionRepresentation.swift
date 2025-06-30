@@ -5,9 +5,27 @@
 //  Created by aibaranchikov on 10.04.2024.
 //
 
-import Foundation
+import SwiftUICore
 
-enum ActionKind: Equatable { case reps, timed, distance, rest }
+enum ActionKind: Equatable, CaseIterable {
+    case reps, timed, distance, rest
+    
+    var localizedTitle: LocalizedStringKey {
+        switch self {
+        case .reps: return "action.kind.reps"
+        case .timed: return "action.kind.timed"
+        case .distance: return "action.kind.distance"
+        case .rest: return "action.kind.rest"
+        }
+    }
+    
+    var isNonRest: Bool {
+        switch self {
+        case .rest: return false
+        default: return true
+        }
+    }
+}
 
 class ActionRepresentation: Identifiable, ObservableObject {
     let id: UUID

@@ -7,6 +7,9 @@
     " " : {
       "shouldTranslate" : false
     },
+    "-" : {
+
+    },
     "-:-:-" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -68,35 +71,102 @@
         }
       }
     },
-    "action.edit.reps.max.label" : {
-      "extractionState" : "stale",
+    "action.edit.isMax.label" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "max"
+            "value" : "MAX set"
           }
         }
       }
     },
-    "action.edit.reps.max.toggle" : {
-      "extractionState" : "stale",
+    "action.edit.max.label" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "max"
+            "value" : "Maximum"
           }
         }
       }
     },
-    "action.edit.reps.name.add.button" : {
-      "extractionState" : "stale",
+    "action.edit.min.label" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Add action name"
+            "value" : "Minimum"
+          }
+        }
+      }
+    },
+    "action.edit.name.label" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name"
+          }
+        }
+      }
+    },
+    "action.edit.or.label" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "or"
+          }
+        }
+      }
+    },
+    "action.edit.sets.label" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sets"
+          }
+        }
+      }
+    },
+    "action.kind.distance" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distance"
+          }
+        }
+      }
+    },
+    "action.kind.reps" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repetitions"
+          }
+        }
+      }
+    },
+    "action.kind.rest" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest"
+          }
+        }
+      }
+    },
+    "action.kind.timed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timed"
           }
         }
       }
@@ -283,6 +353,7 @@
       }
     },
     "app.height.unit.centimeters.short" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -291,9 +362,6 @@
           }
         }
       }
-    },
-    "app.height.unit.feetAndInches.short" : {
-
     },
     "app.loading" : {
       "localizations" : {
@@ -784,7 +852,14 @@
       }
     },
     "exercise.detail.no.actions" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No actions yet"
+          }
+        }
+      }
     },
     "exercise.edit.rename.title" : {
       "localizations" : {
@@ -1398,6 +1473,39 @@
           }
         }
       }
+    },
+    "settings.appearance.dark" : {
+
+    },
+    "settings.appearance.light" : {
+
+    },
+    "settings.appearance.system" : {
+
+    },
+    "settings.language.deutsch" : {
+
+    },
+    "settings.language.device" : {
+
+    },
+    "settings.language.english" : {
+
+    },
+    "settings.language.russian" : {
+
+    },
+    "settings.length.imperial" : {
+
+    },
+    "settings.length.metric" : {
+
+    },
+    "settings.weight.kg" : {
+
+    },
+    "settings.weight.lb" : {
+
     },
     "Share Workout" : {
       "extractionState" : "manual",

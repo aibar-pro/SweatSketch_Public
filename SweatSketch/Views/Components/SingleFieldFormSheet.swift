@@ -87,12 +87,7 @@ struct SingleFieldFormSheet: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, Constants.Design.spacing / 2)
-            .padding(.vertical, Constants.Design.spacing)
-            .background(
-                RoundedRectangle(cornerRadius: Constants.Design.cornerRadius)
-                    .stroke(Constants.Design.Colors.elementFgPrimary)
-            )
+            .styledBorder()
             .adaptiveTint(Constants.Design.Colors.elementFgPrimary)
             
             buttonStackView

@@ -21,6 +21,11 @@ enum BottomSheetType {
         secondaryAction: (() -> Void)? = nil,
         cancel: () -> Void
     )
+    case actionEditor(
+        for: ActionDraftModel,
+        action: (ActionDraftModel) -> Void,
+        cancel: () -> Void
+    )
     
     @ViewBuilder
     func view(onDismiss: (() -> Void)? = nil) -> some View {
@@ -69,6 +74,18 @@ enum BottomSheetType {
                         }
                     }
                 )
+            case .actionEditor(let draft, let action, let cancel):
+                ActionEditorView(
+                    draft: draft,
+                    onSubmit: { value in
+                        action(value)
+                        onDismiss?()
+                    },
+                    onCancel: {
+                        cancel()
+                        onDismiss?()
+                    }
+                )
             }
         }
     }
@@ -78,6 +95,8 @@ enum BottomSheetType {
         case .singleTextField(_, _, _, let cancel):
             return cancel
         case .timePicker(_, _, _, _, let cancel):
+            return cancel
+        case .actionEditor(_, _, let cancel):
             return cancel
         }
     }

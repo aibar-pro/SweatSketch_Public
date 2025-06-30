@@ -17,6 +17,8 @@ struct FormField<InputField: View>: View {
                 .fullWidthText(.caption)
                 .adaptiveForegroundStyle(Constants.Design.Colors.elementFgMediumEmphasis)
             inputField()
+                .adaptiveTint(Constants.Design.Colors.elementFgPrimary)
+                .padding(.vertical, Constants.Design.buttonLabelPaddding / 2)
         }
     }
 }

@@ -24,8 +24,8 @@ enum ExerciseActionType: Equatable {
                     ? maxLabel.stringValue() + " x\(sets)"
                     : maxLabel.stringValue()
             } else {
-                let repPart = rangeString(min, max)
-                return includeSets 
+                let repPart = min.rangeString(to: max)
+                return includeSets
                     ? repPart + " x\(sets)"
                     : repPart
             }
@@ -35,7 +35,7 @@ enum ExerciseActionType: Equatable {
                     ? maxLabel.stringValue() + " x\(sets)"
                     : maxLabel.stringValue()
             } else {
-                let timePart = rangeString(min, max, unit: timeUnitLabel)
+                let timePart = min.rangeString(to: max, unit: timeUnitLabel)
                 return includeSets
                     ? timePart + " x\(sets)"
                     : timePart
@@ -48,26 +48,14 @@ enum ExerciseActionType: Equatable {
             } else {
                 let minStr = min.formatted(precision: 2)
                 let maxStr = max?.formatted(precision: 2)
-                let unitLabel = HeightUnit(rawValue: unit)?.localizedShortDescription.stringValue() ?? unit
-                let distPart = rangeString(minStr, maxStr, unit: unitLabel)
+                let unitLabel = LengthUnit(rawValue: unit)?.localizedName ?? unit
+                let distPart = minStr.rangeString(to: maxStr, unit: unitLabel)
                 return includeSets
                     ? distPart + " x\(sets)"
                     : distPart
             }
         case .rest(let duration):
             return "\(duration)" + timeUnitLabel
-        }
-    }
-    
-    private func rangeString<T: CustomStringConvertible & Equatable>(
-        _ min: T,
-        _ max: T?,
-        unit: String = ""
-    ) -> String {
-        if let max, max != min {
-            return "\(min)-\(max) \(unit)"
-        } else {
-            return "\(min) \(unit)"
         }
     }
 }
