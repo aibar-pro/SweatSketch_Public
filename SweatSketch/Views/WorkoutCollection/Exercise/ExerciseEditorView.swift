@@ -53,7 +53,7 @@ struct ExerciseEditorView: View {
                     
                     Spacer(minLength: 0)
                     
-                    if currentEditingState.isOne(of: .list) {
+                    if !currentEditingState.isOne(of: .list) {
                         IconButton(
                             systemImage: "ellipsis",
                             style: .inline,
@@ -179,6 +179,29 @@ struct ExerciseEditorView: View {
                     },
                     cancel: {
                         currentEditingState = .none
+                    }
+                )
+            )
+        case .action(let id):
+            viewModel.prepareActionForEditing(id)
+            
+            guard let actionDraft = viewModel.actionDraft
+            else {
+                currentEditingState = .none
+                return
+            }
+            
+            coordinator.presentBottomSheet(
+                type: .actionEditor(
+                    for: actionDraft,
+                    action: { value in
+                        viewModel.commitActionDraft(value)
+                        currentEditingState = .none
+                        print("\(type(of: self)): Save action")
+                    },
+                    cancel: {
+                        currentEditingState = .none
+                        print("\(type(of: self)): Discard action edits")
                     }
                 )
             )

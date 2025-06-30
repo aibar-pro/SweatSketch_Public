@@ -7,9 +7,8 @@
 
 import CoreData
 
-class ExerciseDataManager: ExerciseDataManagerProtocol {
-    
-    func createRestTimeBetweenActions(
+final class ExerciseDataManager {
+    func createRestBetweenActions(
         for exercise: ExerciseEntity,
         with duration: Int,
         in context: NSManagedObjectContext
@@ -23,30 +22,142 @@ class ExerciseDataManager: ExerciseDataManagerProtocol {
         
         return newRestTime
     }
+
+    func createRepsAction(for exercise: ExerciseEntity, from draft: ActionDraftModel, in context: NSManagedObjectContext) -> Result<UUID, DataManagerError> {
+        let action = RepsActionEntity(from: draft, in: context)
+        action.uuid = UUID()
+        action.position = draft.position.int16
+        
+        guard let id = action.uuid else {
+            return .failure(
+                .createError(
+                    entityName: "\(type(of: RepsActionEntity.self))",
+                    payload: .init(context: context)
+                )
+            )
+        }
+        
+        exercise.addToExerciseActions(action)
+        return .success(id)
+    }
     
-    func createAction(for exercise: ExerciseEntity, in context: NSManagedObjectContext) -> ExerciseActionEntity {
-        let newAction = ExerciseActionEntity(context: context)
-//        
-//        newAction.uuid = UUID()
-//        newAction.isRestTime = false
-//        newAction.position = calculateNewActionPosition(for: exercise, in: context)
-//        
-//        switch ExerciseType.from(rawValue: exercise.type) {
-//        case .timed:
-//            newAction.type = ExerciseActionType.timed.rawValue
-//            newAction.duration = Int32(Constants.DefaultValues.actionDuration)
-//        case .mixed:
-//            newAction.name = Constants.Placeholders.noActionName
-//            fallthrough
-//        default:
-//            newAction.type = ExerciseActionType.setsNreps.rawValue
-//            newAction.sets = Int16(Constants.DefaultValues.setsCount)
-//            newAction.reps = Int16(Constants.DefaultValues.repsCount)
-//        }
-//        
-//        newAction.exercise = fetchExercise(exercise: exercise, in: context)
-//        
-        return newAction
+    func createTimedAction(for exercise: ExerciseEntity, from draft: ActionDraftModel, in context: NSManagedObjectContext) -> Result<UUID, DataManagerError> {
+        let action = TimedActionEntity(from: draft, in: context)
+        action.uuid = UUID()
+        action.position = draft.position.int16
+        
+        guard let id = action.uuid else {
+            return .failure(
+                .createError(
+                    entityName: "\(type(of: TimedActionEntity.self))",
+                    payload: .init(context: context)
+                )
+            )
+        }
+        
+        exercise.addToExerciseActions(action)
+        return .success(id)
+    }
+    
+    func createDistanceAction(for exercise: ExerciseEntity, from draft: ActionDraftModel, in context: NSManagedObjectContext) -> Result<UUID, DataManagerError> {
+        let action = DistanceActionEntity(from: draft, in: context)
+        action.uuid = UUID()
+        action.position = draft.position.int16
+        
+        guard let id = action.uuid else {
+            return .failure(
+                .createError(
+                    entityName: "\(type(of: DistanceActionEntity.self))",
+                    payload: .init(context: context)
+                )
+            )
+        }
+        exercise.addToExerciseActions(action)
+        return .success(id)
+    }
+    
+    func updateRepsAction(
+        with uuid: UUID,
+        using draft: ActionDraftModel,
+        in context: NSManagedObjectContext
+    ) -> Result<Void, DataManagerError> {
+        do {
+            guard let fetchedAction = try fetchAction(with: uuid, in: context).get() as? RepsActionEntity
+            else {
+                throw DataManagerError.fetchError(entityName: "\(type(of: RepsActionEntity.self))", payload: .init(context: context))
+            }
+            
+            fetchedAction.update(from: draft)
+            return .success(())
+        } catch {
+            assertionFailure("Failed to fetch action: \(error)")
+            return
+                .failure(
+                    .fetchError(
+                        entityName: "\(type(of: RepsActionEntity.self))",
+                        payload: .init(context: context, error: error)
+                    )
+                )
+        }
+    }
+    
+    func updateTimedAction(
+        with uuid: UUID,
+        using draft: ActionDraftModel,
+        in context: NSManagedObjectContext
+    ) -> Result<Void, DataManagerError> {
+        do {
+            guard let fetchedAction = try fetchAction(with: uuid, in: context).get() as? TimedActionEntity
+            else {
+                throw DataManagerError.fetchError(entityName: "\(type(of: TimedActionEntity.self))", payload: .init(context: context))
+            }
+            
+            fetchedAction.update(from: draft)
+            return .success(())
+        } catch {
+            assertionFailure("Failed to fetch action: \(error)")
+            return
+                .failure(
+                    .fetchError(
+                        entityName: "\(type(of: TimedActionEntity.self))",
+                        payload: .init(context: context, error: error)
+                    )
+                )
+        }
+    }
+    
+    func updateDistanceAction(
+        with uuid: UUID,
+        using draft: ActionDraftModel,
+        in context: NSManagedObjectContext
+    ) -> Result<Void, DataManagerError> {
+        do {
+            guard let fetchedAction = try fetchAction(with: uuid, in: context).get() as? DistanceActionEntity
+            else {
+                throw DataManagerError.fetchError(entityName: "\(type(of: DistanceActionEntity.self))", payload: .init(context: context))
+            }
+            
+            fetchedAction.update(from: draft)
+            return .success(())
+        } catch {
+            assertionFailure("Failed to fetch action: \(error)")
+            return
+                .failure(
+                    .fetchError(
+                        entityName: "\(type(of: DistanceActionEntity.self))",
+                        payload: .init(context: context, error: error)
+                    )
+                )
+        }
+    }
+    
+    func removeAction(with id: UUID, from exercise: ExerciseEntity, in context: NSManagedObjectContext) {
+        guard let actionToDelete = try? fetchAction(with: id, in: context).get()
+        else {
+            assertionFailure("Could not find action with id \(id) to delete")
+            return
+        }
+        context.delete(actionToDelete)
     }
     
     func fetchActions(for exercise: ExerciseEntity, in context: NSManagedObjectContext) -> [ExerciseActionEntity] {
@@ -60,6 +171,31 @@ class ExerciseDataManager: ExerciseDataManagerProtocol {
         } catch {
             print("Error fetching actions: \(error)")
             return []
+        }
+    }
+    
+    func fetchAction(with id: UUID, in context: NSManagedObjectContext) -> Result<ExerciseActionEntity, DataManagerError> {
+        let fetchRequest: NSFetchRequest<ExerciseActionEntity> = ExerciseActionEntity.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "uuid == %@", id as CVarArg)
+        fetchRequest.fetchLimit = 1
+        
+        do {
+            guard let actionToReturn = try context.fetch(fetchRequest).first
+            else {
+                assertionFailure("Could not find action with id \(id)")
+                throw DataManagerError.fetchError(entityName: "\(type(of: ExerciseActionEntity.self))", payload: .init(context: context))
+            }
+            
+            return .success(actionToReturn)
+        } catch {
+            assertionFailure("Failed to fetch action: \(error)")
+            return
+                .failure(
+                    .fetchError(
+                        entityName: "\(type(of: ExerciseActionEntity.self))",
+                        payload: .init(context: context, error: error)
+                    )
+                )
         }
     }
     

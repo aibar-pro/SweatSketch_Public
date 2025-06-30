@@ -135,7 +135,7 @@ struct UserProfileView: View {
             ) {
                 ForEach(0..<300, id: \.self) { value in
                     Text(String(value))
-                        .formattedHeightUnit(.centimeters)
+//                        .formattedHeightUnit(.centimeters)
                         .tag(value)
                 }
             }

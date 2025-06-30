@@ -1,25 +1,11 @@
 //
-//  View+Extensions.swift
+//  View+Border.swift
 //  SweatSketch
 //
-//  Created by aibaranchikov on 25.06.2025.
+//  Created by aibaranchikov on 30.06.2025.
 //
 
 import SwiftUICore
-
-extension View {
-    @ViewBuilder
-    func `if`<TrueContent: View>(
-        _ condition: Bool,
-        transform: (Self) -> TrueContent
-    ) -> some View {
-        if condition {
-            transform(self)
-        } else {
-            self
-        }
-    }
-}
 
 extension View {
     func border(width: CGFloat, edges: [Edge], color: Color) -> some View {

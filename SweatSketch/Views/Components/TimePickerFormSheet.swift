@@ -54,11 +54,12 @@ struct TimePickerFormSheet<Content: View>: View {
                 .fullWidthText(.title3, weight: .bold)
             
             VStack (alignment: .center, spacing: Constants.Design.spacing) {
-                DurationPickerEditView(durationInSeconds: $duration, showHours: false, secondsInterval: 10)
-                    .background(
-                        RoundedRectangle(cornerRadius: Constants.Design.cornerRadius)
-                            .stroke(Constants.Design.Colors.elementFgPrimary)
-                    )
+                DurationPickerEditView(
+                    durationInSeconds: $duration,
+                    showHours: false,
+                    secondsInterval: 10
+                )
+                    .styledBorder()
                     .frame(width: 250, height: 150)
                 
                 additionalContent()
