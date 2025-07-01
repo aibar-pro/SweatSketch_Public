@@ -15,12 +15,14 @@ struct ExerciseEditorView: View {
     @State private var currentEditingState: EditingState = .none
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Constants.Design.spacing) {
-            exerciseNameView
-            
-            actionsView
-            
-            buttonStackView
+        Group {
+            VStack(alignment: .leading, spacing: Constants.Design.spacing) {
+                exerciseNameView
+                
+                actionsView
+                
+                buttonStackView
+            }
         }
     }
 
@@ -44,10 +46,7 @@ struct ExerciseEditorView: View {
     
     private var actionsView: some View {
         List {
-            ForEach(
-                viewModel.actions.compactMap { $0.toActionViewRepresentation() },
-                id: \.id
-            ) { action in
+            ForEach(viewModel.actions, id: \.id) { action in
                 HStack (alignment: .firstTextBaseline, spacing: Constants.Design.spacing) {
                     ActionDetailView(action: action)
                     
@@ -66,19 +65,20 @@ struct ExerciseEditorView: View {
                 .padding(.vertical, Constants.Design.spacing / 2)
                 .listRowBackground(Color.clear)
             }
-//            .onDelete { index in viewModel.removeExercises(at: index) }
-//            .onMove(perform: viewModel.reorderWorkoutExercise)
+            .onDelete(perform: viewModel.deleteActions)
+            .onMove(perform: viewModel.moveActions)
         }
         .opacity(isListEditDisabled ? 0.2 : 1)
         .disabled(isListEditDisabled)
         .listStyle(.plain)
         .listRowInsets(EdgeInsets())
+        .adaptiveScrollIndicatorsHidden()
         .materialBackground()
         .lightShadow()
         .environment(
             \.editMode,
             .constant(
-                !currentEditingState.isOne(of: .list)
+                currentEditingState.isOne(of: .list)
                 ? EditMode.active
                 : EditMode.inactive
             )
@@ -118,6 +118,21 @@ struct ExerciseEditorView: View {
                     switchEditingState(to: .rest)
                 }
             )
+            
+            CapsuleButton(
+                content: {
+                    HStack (alignment: .center, spacing: Constants.Design.spacing / 4) {
+                        Image(systemName: "repeat")
+                        
+                        Text(String(viewModel.exercise.superSets))
+                    }
+                },
+                style: .secondary,
+                isDisabled: Binding { isSetsEditDisabled } set: { _ in },
+                action: {
+                    switchEditingState(to: .sets)
+                }
+            )
 
             Spacer(minLength: 0)
             
@@ -132,22 +147,6 @@ struct ExerciseEditorView: View {
         }
     }
     
-    private var isAddButtonDisabled: Bool {
-        currentEditingState.isOne(of: .name, .list, .rest)
-    }
-    
-    private var isListEditDisabled: Bool {
-        return viewModel.actions.isEmpty || currentEditingState.isOne(of: .name, .action(), .rest)
-    }
-    
-    func isRenameDisabled() -> Bool {
-        currentEditingState.isOne(of: .list, .action(), .rest)
-    }
-    
-    private var isRestEditDisabled: Bool {
-        currentEditingState.isOne(of: .name, .action(), .list)
-    }
-    
     private func switchEditingState(to state: EditingState) {
         guard !currentEditingState.isOne(of: state) else {
             currentEditingState = .none
@@ -156,59 +155,96 @@ struct ExerciseEditorView: View {
         
         switch state {
         case .name:
-            coordinator.presentBottomSheet(
-                type: .singleTextField(
-                    kind: .renameExercise,
-                    initialText: viewModel.exercise.name ?? "",
-                    action: { value in
-                        viewModel.renameExercise(newName: value)
-                        currentEditingState = .none
-                    }, cancel: {
-                        currentEditingState = .none
-                    }
-                )
-            )
+            presentRenameSheet()
         case .rest:
-            coordinator.presentBottomSheet(
-                type: .timePicker(
-                    kind: .exercise,
-                    initialValue: viewModel.restBetweenActions.duration.int,
-                    action: { value in
-                        viewModel.setRestBetweenActions(duration: value)
-                        currentEditingState = .none
-                    },
-                    cancel: {
-                        currentEditingState = .none
-                    }
-                )
-            )
+            presentRestSheet()
         case .action(let id):
-            viewModel.prepareActionForEditing(id)
-            
-            guard let actionDraft = viewModel.actionDraft
-            else {
-                currentEditingState = .none
-                return
-            }
-            
-            coordinator.presentBottomSheet(
-                type: .actionEditor(
-                    for: actionDraft,
-                    action: { value in
-                        viewModel.commitActionDraft(value)
-                        currentEditingState = .none
-                        print("\(type(of: self)): Save action")
-                    },
-                    cancel: {
-                        currentEditingState = .none
-                        print("\(type(of: self)): Discard action edits")
-                    }
-                )
-            )
+            presentActionSheet(id)
+        case .sets:
+            presentSetsSheet()
         default:
             break
         }
         currentEditingState = state
+    }
+    
+    private func presentRenameSheet() {
+        coordinator.presentExerciseRenameSheet(
+            onSubmit: { value in
+                viewModel.renameExercise(newName: value)
+                currentEditingState = .none
+            },
+            onDismiss: {
+                currentEditingState = .none
+            }
+        )
+    }
+    
+    private func presentRestSheet() {
+        coordinator.presentExerciseRestSheet(
+            onSubmit: { value in
+                viewModel.setRestBetweenActions(duration: value)
+                currentEditingState = .none
+            },
+            onDismiss: {
+                currentEditingState = .none
+            }
+        )
+    }
+    
+    private func presentActionSheet(_ actionId: UUID?) {
+        viewModel.prepareActionForEditing(actionId)
+        
+        guard let actionDraft = viewModel.actionDraft
+        else {
+            currentEditingState = .none
+            return
+        }
+        
+        coordinator.presentExerciseActionSheet(
+            for: actionDraft,
+            onSubmit: { value in
+                viewModel.commitActionDraft(value)
+                currentEditingState = .none
+                print("\(type(of: self)): Save action")
+            },
+            onDismiss: {
+                currentEditingState = .none
+                print("\(type(of: self)): Discard action edits")
+            }
+        )
+    }
+    
+    private func presentSetsSheet() {
+        coordinator.presentExerciseRepetitionsSheet(
+            onSubmit: { value in
+                viewModel.setSupersets(count: value)
+                currentEditingState = .none
+            },
+            onDismiss: {
+                currentEditingState = .none
+            }
+        )
+    }
+    
+    private var isAddButtonDisabled: Bool {
+        !currentEditingState.isOne(of: .action(), .none)
+    }
+    
+    private var isListEditDisabled: Bool {
+        viewModel.actions.isEmpty || !currentEditingState.isOne(of: .list, .none)
+    }
+    
+    func isRenameDisabled() -> Bool {
+        !currentEditingState.isOne(of: .name, .none)
+    }
+    
+    private var isRestEditDisabled: Bool {
+        !currentEditingState.isOne(of: .rest, .none)
+    }
+    
+    private var isSetsEditDisabled: Bool {
+        !currentEditingState.isOne(of: .sets, .none)
     }
     
     enum EditingState: CaseMatchable {
@@ -217,10 +253,11 @@ struct ExerciseEditorView: View {
         case list
         case action(UUID? = nil)
         case rest
+        case sets
         
         internal func matchesCase(_ other: ExerciseEditorView.EditingState) -> Bool {
             switch (self, other) {
-            case (.none, .none), (.name, .name), (.rest, .rest), (.list, .list), (.action, .action):
+            case (.none, .none), (.name, .name), (.rest, .rest), (.list, .list), (.action, .action), (.sets, .sets):
                 return true
             default:
                 return false
@@ -239,11 +276,11 @@ struct ExerciseEditView_Previews: PreviewProvider {
         
         let workoutCarouselViewModel = WorkoutCollectionViewModel(context: persistenceController.container.viewContext, collectionUUID: firstCollection.uuid)
         
-        let workoutForPreview = collectionDataManager.fetchWorkouts(for: firstCollection, in: workoutCarouselViewModel.mainContext).first!
-        let workoutEditModel = WorkoutEditorModel(parentViewModel: workoutCarouselViewModel, editingWorkoutUUID: workoutForPreview.uuid)!
+        let workoutForPreview = collectionDataManager.fetchWorkouts(for: firstCollection, in: workoutCarouselViewModel.context).first!
+        let workoutEditModel = WorkoutEditorModel(parent: workoutCarouselViewModel, editingWorkoutUUID: workoutForPreview.uuid)!
         
         let workoutDataManager = WorkoutDataManager()
-        let exerciseForPreview = try! workoutDataManager.fetchExercises(for: workoutForPreview, in: workoutEditModel.mainContext).get().randomElement()!
+        let exerciseForPreview = try! workoutDataManager.fetchExercises(for: workoutForPreview, in: workoutEditModel.context).get().randomElement()!
         
         let exerciseEditViewModel = ExerciseEditorModel(parent: workoutEditModel, exerciseId: exerciseForPreview.uuid)!
         

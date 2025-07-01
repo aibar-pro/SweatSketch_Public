@@ -225,7 +225,26 @@ class CollectionDataManager: CollectionDataManagerProtocol {
     }
     
     func calculateNewWorkoutPosition(for collection: WorkoutCollectionEntity, in context: NSManagedObjectContext) -> Int16 {
-        let workoutCount = fetchWorkouts(for: collection, in: context).count
-        return Int16(workoutCount)
+        guard let lastWorkoutPosition = fetchWorkouts(for: collection, in: context).last?.position
+        else { return 0 }
+
+        return lastWorkoutPosition + 1
+    }
+    
+    func updateWorkoutPositions(
+        _ positions: [UUID: Int],
+        for collection: WorkoutCollectionEntity,
+        in context: NSManagedObjectContext
+    ) {
+        let fetchedWorkouts = fetchWorkouts(for: collection, in: context)
+        
+        fetchedWorkouts.forEach { workout in
+            if let uuid = workout.uuid,
+                let newPos = positions[uuid] {
+                print("\(type(of: self)): \(#function): updating workout position for \(String(describing: workout.uuid)). Old position: \(workout.position). New position: \(newPos)")
+                workout.position = newPos.int16
+                
+            }
+        }
     }
 }

@@ -160,6 +160,15 @@ class WorkoutDataManager {
         }
     }
     
+    func removeWorkout(with id: UUID, in context: NSManagedObjectContext) {
+        guard let workoutToDelete = fetchWorkout(by: id, in: context)
+        else {
+            assertionFailure("Could not find exercise with id \(id) to delete")
+            return
+        }
+        context.delete(workoutToDelete)
+    }
+    
     func calculateNewExercisePosition(for workout: WorkoutEntity, in context: NSManagedObjectContext) -> Int16 {
         guard case .success(let exercises) = fetchExercises(for: workout, in: context),
                 let positionOfLastExercise = exercises.last?.position
@@ -168,13 +177,29 @@ class WorkoutDataManager {
         return positionOfLastExercise + 1
     }
     
-    func setupExercisePositions(for workout: WorkoutEntity, in context: NSManagedObjectContext) {
+    func reindexExercises(for workout: WorkoutEntity, in context: NSManagedObjectContext) {
         guard case .success(let exercises) = fetchExercises(for: workout, in: context),
                 !exercises.isEmpty
         else { return }
         
         for (index, exercise) in exercises.enumerated() {
             exercise.position = index.int16
+        }
+    }
+    
+    func updateExercisePositions(
+        _ positions: [UUID: Int],
+        for workout: WorkoutEntity,
+        in context: NSManagedObjectContext
+    ) {
+        guard let fetchedExercises = try? fetchExercises(for: workout, in: context).get()
+        else { return }
+        
+        fetchedExercises.forEach { exercise in
+            if let uuid = exercise.uuid,
+                let newPos = positions[uuid] {
+                exercise.position = newPos.int16
+            }
         }
     }
 }

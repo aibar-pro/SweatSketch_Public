@@ -11,7 +11,7 @@ struct IntegerTextField<N>: View where N: BinaryInteger & LosslessStringConverti
     @Binding var value: N
     @State private var text: String = ""
 
-    var placeholder: String = ""
+    var placeholder: LocalizedStringKey = ""
 
     var body: some View {
         TextField(placeholder, text: textBinding)

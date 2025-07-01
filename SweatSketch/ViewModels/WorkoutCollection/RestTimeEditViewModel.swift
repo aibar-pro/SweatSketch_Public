@@ -22,9 +22,9 @@ class RestTimeEditViewModel: ObservableObject {
     init?(parentViewModel: WorkoutEditorModel) {
         self.parentViewModel = parentViewModel
         self.mainContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-        self.mainContext.parent = parentViewModel.mainContext
+        self.mainContext.parent = parentViewModel.context
 
-        guard let fetchedWorkout = workoutDataManager.fetchWorkout(workout: parentViewModel.editingWorkout, in: self.mainContext),
+        guard let fetchedWorkout = workoutDataManager.fetchWorkout(workout: parentViewModel.workout, in: self.mainContext),
               case .success(let fetchedExercises) = workoutDataManager.fetchExercises(for: fetchedWorkout, in: self.mainContext)
         else {
             return nil

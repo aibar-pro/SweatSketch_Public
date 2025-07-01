@@ -14,20 +14,21 @@ struct SingleFieldFormConfig {
 }
 
 enum SingleFieldFormKind {
-    case renameWorkout
-    case renameExercise
+    case workoutRename
+    case exerciseRename
     case addCollection
     case renameCollection
+    case exerciseSetCount
     
     var config: SingleFieldFormConfig {
         switch self {
-        case .renameWorkout:
+        case .workoutRename:
             return SingleFieldFormConfig(
                 title: "workout.edit.rename.title",
                 placeholder: "app.rename.placeholder",
                 actionLabel: "app.button.rename.label"
             )
-        case .renameExercise:
+        case .exerciseRename:
             return SingleFieldFormConfig(
                 title: "exercise.edit.rename.title",
                 placeholder: "app.rename.placeholder",
@@ -45,12 +46,21 @@ enum SingleFieldFormKind {
                 placeholder: "app.rename.placeholder",
                 actionLabel: "app.button.rename.label"
             )
+        case .exerciseSetCount:
+            return SingleFieldFormConfig(
+                title: "exercise.edit.set.count.title",
+                placeholder: "exercise.edit.set.count.placeholder",
+                actionLabel: "app.button.save.label"
+            )
         }
     }
 }
 
 struct SingleFieldFormSheet: View {
-    let config: SingleFieldFormConfig
+    let kind: SingleFieldFormKind
+    var config: SingleFieldFormConfig {
+        kind.config
+    }
     
     init(
         kind: SingleFieldFormKind,
@@ -58,7 +68,7 @@ struct SingleFieldFormSheet: View {
         onSubmit: @escaping (String) -> Void,
         onCancel: @escaping () -> Void
     ) {
-        self.config = kind.config
+        self.kind = kind
         _text = State(initialValue: initialText)
         self.onSubmit = onSubmit
         self.onCancel = onCancel
@@ -75,7 +85,18 @@ struct SingleFieldFormSheet: View {
                 .fullWidthText(.title3, weight: .bold)
             
             HStack(alignment: .firstTextBaseline, spacing: Constants.Design.spacing / 2) {
-                TextField(config.placeholder, text: $text)
+                switch kind {
+                case .exerciseSetCount:
+                    IntegerTextField(
+                        value: $text.asInt(minimum: 1),
+                        placeholder: config.placeholder
+                    )
+                    .frame(width: 75)
+                default:
+                    TextField(config.placeholder, text: $text)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                
                 if !text.isEmpty {
                     IconButton(
                         systemImage: "xmark.circle",
@@ -86,7 +107,6 @@ struct SingleFieldFormSheet: View {
                     )
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
             .styledBorder()
             .adaptiveTint(Constants.Design.Colors.elementFgPrimary)
             
@@ -121,7 +141,7 @@ struct SingleFieldFormSheet: View {
 
 #Preview {
     SingleFieldFormSheet(
-        kind: .renameWorkout,
+        kind: .workoutRename,
         onSubmit: {_ in },
         onCancel: {}
     )

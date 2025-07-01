@@ -9,7 +9,7 @@ import SwiftUI
 
 struct WorkoutCollectionListView: View {
     
-    @ObservedObject var viewModel: WorkoutCollectionListViewModel
+    @ObservedObject var viewModel: CollectionEditorModel
     
     @State private var editMode = EditMode.active
     var onSubmit: () -> Void
@@ -56,20 +56,22 @@ struct WorkoutCollectionListView: View {
     
     private var workoutListView: some View {
         List {
-            ForEach(viewModel.workouts, id: \.self) { plan in
-                Text(plan.name ?? Constants.Placeholders.noWorkoutName)
+            ForEach(viewModel.workouts, id: \.id) { plan in
+                Text(plan.name)
                     .font(.title3)
                     .lineLimit(3)
                     .padding(.vertical, Constants.Design.spacing / 2)
                     .listRowBackground(Color.clear)
             }
-            .onMove(perform: viewModel.moveWorkout)
-            .onDelete(perform: viewModel.deleteWorkout)
+            .onMove(perform: viewModel.moveWorkouts)
+            .onDelete(perform: viewModel.deleteWorkouts)
         }
         .listStyle(.plain)
-        .environment(\.editMode, $editMode)
+        .listRowInsets(EdgeInsets())
+        .adaptiveScrollIndicatorsHidden()
         .materialBackground()
         .lightShadow()
+        .environment(\.editMode, $editMode)
     }
     
     private var toolbarView: some View {
@@ -82,7 +84,7 @@ struct WorkoutCollectionListView: View {
 
             Spacer(minLength: 0)
             
-            Text(viewModel.workoutCollection.name ?? Constants.DefaultValues.defaultWorkoutCollectionName)
+            Text(viewModel.collection.name ?? Constants.DefaultValues.defaultWorkoutCollectionName)
                 .font(.body.bold())
                 .lineLimit(2)
                 .multilineTextAlignment(.center)
@@ -103,7 +105,7 @@ struct WorkoutCollectionListView_Previews: PreviewProvider {
         
         let persistenceController = PersistenceController.preview
         let workoutViewModel = WorkoutCollectionViewModel(context: persistenceController.container.viewContext)
-        let workoutListModel = WorkoutCollectionListViewModel(parentViewModel: workoutViewModel, workoutCollection: workoutViewModel.workoutCollection)
+        let workoutListModel = CollectionEditorModel(parent: workoutViewModel, workoutCollection: workoutViewModel.workoutCollection)
         
         WorkoutCollectionListView(viewModel: workoutListModel, onSubmit: {}, onDiscard: {})
     }

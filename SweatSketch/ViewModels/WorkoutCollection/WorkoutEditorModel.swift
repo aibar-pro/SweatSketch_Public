@@ -9,77 +9,68 @@ import CoreData
 
 class WorkoutEditorModel: ObservableObject {
     
-    private let parentViewModel: WorkoutCollectionViewModel
-    let mainContext: NSManagedObjectContext
+    private let parent: WorkoutCollectionViewModel
+    let context: NSManagedObjectContext
     var canUndo: Bool {
-        return mainContext.undoManager?.canUndo ?? false
+        return context.undoManager?.canUndo ?? false
     }
     var canRedo: Bool {
-        return mainContext.undoManager?.canRedo ?? false
+        return context.undoManager?.canRedo ?? false
     }
     
-    @Published var editingWorkout: WorkoutEntity
-    @Published var exercises = [ExerciseEntity]()
+    @Published var workout: WorkoutEntity
+    @Published var exercises: [ExerciseRepresentation] = []
     @Published var defaultRestTime: RestTimeEntity
     
     private let collectionDataManager = CollectionDataManager()
     private let workoutDataManager = WorkoutDataManager()
     private let exerciseDataManager = ExerciseDataManager()
     
-    init?(parentViewModel: WorkoutCollectionViewModel, editingWorkoutUUID: UUID? = nil) {
-        self.mainContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-        self.mainContext.parent = parentViewModel.mainContext
-        self.parentViewModel = parentViewModel
+    init?(parent: WorkoutCollectionViewModel, editingWorkoutUUID: UUID? = nil) {
+        self.context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        self.context.parent = parent.context
+        self.parent = parent
         
-        if self.mainContext.undoManager == nil {
-            self.mainContext.undoManager = UndoManager()
+        if self.context.undoManager == nil {
+            self.context.undoManager = UndoManager()
         }
-        self.mainContext.undoManager?.levelsOfUndo = Constants.Data.undoLevelsLimit
-        self.mainContext.undoManager?.beginUndoGrouping()
+        self.context.undoManager?.levelsOfUndo = Constants.Data.undoLevelsLimit
+        self.context.undoManager?.disableUndoRegistration()
         
-        self.editingWorkout = WorkoutEntity()
+        self.workout = WorkoutEntity()
         self.defaultRestTime = RestTimeEntity()
         
         if let workoutUUID = editingWorkoutUUID,
-            let workoutToEdit = workoutDataManager.fetchWorkout(by: workoutUUID, in: self.mainContext) {
+            let workoutToEdit = workoutDataManager.fetchWorkout(by: workoutUUID, in: self.context) {
             
-            self.editingWorkout = workoutToEdit
+            self.workout = workoutToEdit
             
-            let result = workoutDataManager.fetchExercises(for: workoutToEdit, in: self.mainContext)
-            switch result {
-                case .success(let fetchedExercises):
-                self.exercises = fetchedExercises
-            case .failure(let error):
-                print("\(type(of: self)): Failed to fetch exercises for workout: \(error)")
-                return nil
-            }
+            reloadExercises()
         } else {
-            self.editingWorkout = collectionDataManager.createWorkout(for: self.parentViewModel.workoutCollection, in: self.mainContext)
+            self.workout = collectionDataManager.createWorkout(for: self.parent.workoutCollection, in: self.context)
         }
         
         //Setup default workout rest time
-        if let defaultRestTime = workoutDataManager.fetchDefaultRestTime(for: self.editingWorkout, in: self.mainContext) {
+        if let defaultRestTime = workoutDataManager.fetchDefaultRestTime(for: self.workout, in: self.context) {
             self.defaultRestTime = defaultRestTime
         } else {
             guard let createdRestTime = createDefaultRestTime(withDuration: Constants.DefaultValues.restTimeDuration) else { return nil }
             self.defaultRestTime = createdRestTime
         }
         
-        //Ignore Workout and default RestTime creation for undo/redo
-        self.mainContext.undoManager?.endUndoGrouping()
-        self.mainContext.undoManager?.removeAllActions()
+        self.context.undoManager?.enableUndoRegistration()
     }
     
     func renameWorkout(newName: String) {
-        self.editingWorkout.name = newName
+        self.workout.name = newName
     }
     
     func createDefaultRestTime(withDuration duration: Int) -> RestTimeEntity? {
         let result = workoutDataManager
             .createDefaultRestTime(
-                for: self.editingWorkout,
+                for: self.workout,
                 with: duration,
-                in: self.mainContext
+                in: self.context
             )
         
         if case .success(let success) = result {
@@ -93,112 +84,141 @@ class WorkoutEditorModel: ObservableObject {
         self.defaultRestTime.duration = duration.int32
     }
     
-    func deleteExercise(exerciseEntity: ExerciseEntity) {
-        if let index = exercises.firstIndex(of: exerciseEntity) {
-            exercises.remove(at: index)
+    func moveExercises(from source: IndexSet, to destination: Int) {
+        exercises.move(fromOffsets: source, toOffset: destination)
+        
+        context.undoManager?.beginUndoGrouping()
+        defer { context.undoManager?.endUndoGrouping() }
+        
+        let positions = Dictionary(
+            uniqueKeysWithValues: exercises.enumerated().map { idx, repr in
+                (repr.id, idx)
+            }
+        )
+        positions.forEach { idx, pos in
+            if let exercise = exerciseDataManager.fetchExercise(by: idx, in: context) {
+                context.undoManager?.registerUndo(
+                    withTarget: self,
+                    selector: #selector(undoExerciseMove(_ :)),
+                    object: exercise
+                )
+            }
         }
-        self.mainContext.delete(exerciseEntity)
+        workoutDataManager.updateExercisePositions(positions, for: workout, in: context)
     }
     
-    func removeExercises(at offsets: IndexSet) {
-        let exercisesToDelete = offsets.map { self.exercises[$0] }
-        exercisesToDelete.forEach { exercise in
-            self.mainContext.undoManager?.registerUndo(
-                withTarget: self,
-                selector: #selector(undoExerciseDelete(_ :)),
-                object: exercise
-            )
-            self.exercises.remove(atOffsets: offsets)
-            self.mainContext.delete(exercise)
+    func deleteExercises(at offsets: IndexSet) {
+        context.undoManager?.beginUndoGrouping()
+        defer { context.undoManager?.endUndoGrouping() }
+        
+        let toDelete = offsets.map { exercises[$0].id }
+        toDelete.forEach { id in
+            if let exercise = exerciseDataManager.fetchExercise(by: id, in: context) {
+                context.undoManager?.registerUndo(
+                    withTarget: self,
+                    selector: #selector(undoExerciseDelete(_ :)),
+                    object: exercise
+                )
+            }
+            exerciseDataManager.removeExercise(with: id, in: context)
         }
+        
+        exercises.remove(atOffsets: offsets)
     }
     
     @objc func undoExerciseDelete(_ exercise: ExerciseEntity) {
-        mainContext.undoManager?.registerUndo(withTarget: self, selector: #selector(redoExerciseDelete(_ :)), object: exercise)
-        var low: Int = 0
-        var high = exercises.count
+        context.undoManager?.beginUndoGrouping()
+        defer { context.undoManager?.endUndoGrouping() }
         
-        while low < high {
-            let mid = low + (high - low) / 2
-            if exercises[mid].position < exercise.position {
-                low = mid + 1
-            } else {
-                high = mid
-            }
-        }
-        exercises.insert(exercise, at: low)
+        context.undoManager?.registerUndo(
+            withTarget: self,
+            selector: #selector(redoExerciseDelete(_ :)),
+            object: exercise
+        )
+        reloadExercises()
     }
     
     @objc func redoExerciseDelete(_ exercise: ExerciseEntity) {
-        mainContext.undoManager?.registerUndo(
+        context.undoManager?.beginUndoGrouping()
+        defer { context.undoManager?.endUndoGrouping() }
+        
+        guard let uuid = exercise.uuid else { return }
+        context.undoManager?.registerUndo(
             withTarget: self,
             selector: #selector(undoExerciseDelete(_ :)),
             object: exercise
         )
-        if let index = exercises.firstIndex(of: exercise) {
-            exercises.remove(at: index)
-        }
-        self.mainContext.delete(exercise)
+        exerciseDataManager.removeExercise(with: uuid, in: context)
+        reloadExercises()
     }
     
-    func reorderWorkoutExercise(from source: IndexSet, to destination: Int) {
-        exercises.move(fromOffsets: source, toOffset: destination)
+    //TODO: Fix. In rare cases the list freezes
+    @objc func undoExerciseMove(_ exercise: ExerciseEntity) {
+        context.undoManager?.beginUndoGrouping()
+        defer { context.undoManager?.endUndoGrouping() }
         
-        exercises.enumerated().forEach{ index, exercise in
-            editingWorkout.removeFromExercises(exercise)
-            editingWorkout.insertIntoExercises(exercise, at: index)
-            exercise.position = Int16(index)
-        }
+        context.undoManager?.registerUndo(
+            withTarget: self,
+            selector: #selector(undoExerciseMove(_ :)),
+            object: exercise
+        )
+        reloadExercises()
     }
     
     func beginExerciseEditing() {
-        self.mainContext.undoManager?.beginUndoGrouping()
+        self.context.undoManager?.disableUndoRegistration()
     }
     
+    //TODO: Fix undo-redo for exercises
     func endExerciseEditing(for exercise: ExerciseEntity, shouldSave: Bool) {
+        defer { self.context.undoManager?.enableUndoRegistration() }
+        
         if shouldSave,
             exercise.workout == nil,
-            let fetchedExercise = exerciseDataManager.fetchExercise(exercise: exercise, in: self.mainContext) {
-            mainContext.undoManager?.registerUndo(
-                withTarget: self,
-                selector: #selector(redoExerciseDelete(_ :)),
-                object: fetchedExercise
-            )
-            editingWorkout.addToExercises(fetchedExercise)
+            let fetchedExercise = exerciseDataManager.fetchExercise(exercise: exercise, in: self.context) {
+//            mainContext.undoManager?.registerUndo(
+//                withTarget: self,
+//                selector: #selector(redoExerciseDelete(_ :)),
+//                object: fetchedExercise
+//            )
+            workout.addToExercises(fetchedExercise)
         }
-        self.mainContext.undoManager?.endUndoGrouping()
+        
         reloadExercises()
     }
     
     func saveWorkout() {
         do {
-            try mainContext.save()
-            parentViewModel.saveContext()
-            parentViewModel.refreshData()
+            try context.save()
+            parent.saveContext()
+            parent.refreshData()
         } catch {
             print("\(type(of: self)): \(#function): Error saving workout context: \(error)")
         }
     }
     
     func discardWorkout() {
-        mainContext.rollback()
+        context.rollback()
     }
     
     func reloadExercises() {
         do {
-            self.exercises = try workoutDataManager.fetchExercises(for: self.editingWorkout, in: self.mainContext).get()
+            exercises = try workoutDataManager
+                .fetchExercises(for: self.workout, in: self.context)
+                .get()
+                .compactMap { $0.toExerciseRepresentation() }
         } catch {
             print("\(type(of: self)): \(#function): Error fetching exercises: \(error)")
         }
     }
     
     func undo() {
-        mainContext.undoManager?.undo()
+        context.undoManager?.undo()
         self.objectWillChange.send()
     }
     
     func redo() {
-        mainContext.undoManager?.redo()
+        context.undoManager?.redo()
         self.objectWillChange.send()
     }
 }

@@ -9,11 +9,11 @@ import SwiftUI
 
 class WorkoutCollectionListCoordinator: ObservableObject, Coordinator {
     
-    let viewModel: WorkoutCollectionListViewModel
+    let viewModel: CollectionEditorModel
     
     var rootViewController = UIViewController()
     
-    init(viewModel: WorkoutCollectionListViewModel) {
+    init(viewModel: CollectionEditorModel) {
         self.viewModel = viewModel
     }
     
