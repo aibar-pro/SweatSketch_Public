@@ -61,6 +61,65 @@ class WorkoutEditorCoordinator: BaseCoordinator<WorkoutEditorModel>, Coordinator
         rootViewController.present(restTimeViewController, animated: true)
     }
     
+    func presentExerciseRenameSheet(
+        onSubmit: @escaping (String) -> Void,
+        onDismiss: @escaping () -> Void
+    ) {
+        presentBottomSheet(
+            type: .singleTextField(
+                kind: .exerciseRename,
+                initialText: exerciseEditorModel?.exercise.name ?? "",
+                action: onSubmit,
+                cancel: onDismiss
+            )
+        )
+    }
+    
+    func presentExerciseRestSheet(
+        onSubmit: @escaping (Int) -> Void,
+        onDismiss: @escaping () -> Void
+    ) {
+        presentBottomSheet(
+            type: .timePicker(
+                kind: .exercise,
+                initialValue: exerciseEditorModel?.restBetweenActions.duration.int ?? 0,
+                action: onSubmit,
+                cancel: onDismiss
+            )
+        )
+    }
+    
+    func presentExerciseActionSheet(
+        for actionDraft: ActionDraftModel,
+        onSubmit: @escaping (ActionDraftModel) -> Void,
+        onDismiss: @escaping () -> Void
+    ) {
+        presentBottomSheet(
+            type: .actionEditor(
+                for: actionDraft,
+                action: onSubmit,
+                cancel: onDismiss
+            )
+        )
+    }
+
+    func presentExerciseRepetitionsSheet(
+        onSubmit: @escaping (Int) -> Void,
+        onDismiss: @escaping () -> Void
+    ) {
+        presentBottomSheet(
+            type: .singleTextField(
+                kind: .exerciseSetCount,
+                initialText: String(exerciseEditorModel?.exercise.superSets ?? 1),
+                action: {
+                    let intValue = min(1, Int($0) ?? 1)
+                    onSubmit(intValue)
+                },
+                cancel: onDismiss
+            )
+        )
+    }
+    
     func saveWorkoutEdit(){
         print("\(type(of: self)): Save workout, \(Date())")
         viewModel.saveWorkout()

@@ -13,17 +13,22 @@ final class ExerciseDataManager {
         with duration: Int,
         in context: NSManagedObjectContext
     ) -> RestActionEntity {
-        let newRestTime = RestActionEntity(context: context)
+        let restAction = RestActionEntity(context: context)
         
-        newRestTime.uuid = UUID()
-        newRestTime.duration = duration.int32
+        restAction.uuid = UUID()
+        restAction.duration = duration.int32
+        restAction.position = 0
         
-        newRestTime.exercise = fetchExercise(exercise: exercise, in: context)
+        exercise.addToExerciseActions(restAction)
         
-        return newRestTime
+        return restAction
     }
 
-    func createRepsAction(for exercise: ExerciseEntity, from draft: ActionDraftModel, in context: NSManagedObjectContext) -> Result<UUID, DataManagerError> {
+    func createRepsAction(
+        for exercise: ExerciseEntity,
+        from draft: ActionDraftModel,
+        in context: NSManagedObjectContext
+    ) -> Result<UUID, DataManagerError> {
         let action = RepsActionEntity(from: draft, in: context)
         action.uuid = UUID()
         action.position = draft.position.int16
@@ -151,7 +156,7 @@ final class ExerciseDataManager {
         }
     }
     
-    func removeAction(with id: UUID, from exercise: ExerciseEntity, in context: NSManagedObjectContext) {
+    func removeAction(with id: UUID, in context: NSManagedObjectContext) {
         guard let actionToDelete = try? fetchAction(with: id, in: context).get()
         else {
             assertionFailure("Could not find action with id \(id) to delete")
@@ -160,13 +165,27 @@ final class ExerciseDataManager {
         context.delete(actionToDelete)
     }
     
-    func fetchActions(for exercise: ExerciseEntity, in context: NSManagedObjectContext) -> [ExerciseActionEntity] {
+    func removeExercise(with id: UUID, in context: NSManagedObjectContext) {
+        guard let actionToDelete = fetchExercise(by: id, in: context)
+        else {
+            assertionFailure("Could not find exercise with id \(id) to delete")
+            return
+        }
+        context.delete(actionToDelete)
+    }
+    
+    func fetchActions(
+        for exercise: ExerciseEntity,
+        in context: NSManagedObjectContext,
+        includeRest: Bool = true
+    ) -> [ExerciseActionEntity] {
         let fetchRequest: NSFetchRequest<ExerciseActionEntity> = ExerciseActionEntity.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "exercise == %@", exercise)
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "position", ascending: true)]
         
         do {
             let all = try context.fetch(fetchRequest)
+            guard !includeRest else { return all }
             return all.filter { !($0 is RestActionEntity) }
         } catch {
             print("Error fetching actions: \(error)")
@@ -243,10 +262,28 @@ final class ExerciseDataManager {
         return Int16(actionCount)
     }
     
-    func setupActionPositions(for exercise: ExerciseEntity, in context: NSManagedObjectContext) {
-        let actions = fetchActions(for: exercise, in: context)
-        for (index, action) in actions.enumerated() {
-            action.position = index.int16
+    func reindexExercises(for exercise: ExerciseEntity, in context: NSManagedObjectContext) {
+        if let rest = fetchRestTimeBetweenActions(for: exercise, in: context) {
+            rest.position = 0
+        }
+        let nonRest = fetchActions(for: exercise, in: context)
+        for (idx, action) in nonRest.enumerated() {
+            action.position = Int16(idx + 1)
+        }
+    }
+    
+    func updateActionPositions(
+        _ positions: [UUID: Int],
+        for exercise: ExerciseEntity,
+        in context: NSManagedObjectContext
+    ) {
+        let fetchedActions = fetchActions(for: exercise, in: context, includeRest: false)
+        
+        fetchedActions.forEach { action in
+            if let uuid = action.uuid,
+                let newPos = positions[uuid] {
+                action.position = newPos.int16
+            }
         }
     }
 }

@@ -881,6 +881,12 @@
         }
       }
     },
+    "exercise.edit.set.count.placeholder" : {
+
+    },
+    "exercise.edit.set.count.title" : {
+
+    },
     "Go" : {
       "extractionState" : "manual",
       "localizations" : {

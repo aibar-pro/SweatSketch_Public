@@ -7,6 +7,15 @@
 
 import SwiftUICore
 
+extension Binding where Value == String {
+    func asInt(minimum: Int = Int.min) -> Binding<Int> {
+        Binding<Int>(
+            get: { Int(wrappedValue) ?? minimum },
+            set: { wrappedValue = String($0) }
+        )
+    }
+}
+
 extension Binding where Value == Double {
     func asInt() -> Binding<Int> {
         Binding<Int>(

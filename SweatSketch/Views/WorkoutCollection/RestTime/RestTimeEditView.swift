@@ -143,8 +143,8 @@ struct RestTimeEditView_Preview : PreviewProvider {
         
         let workoutCarouselViewModel = WorkoutCollectionViewModel(context: persistenceController.container.viewContext, collectionUUID: firstCollection.uuid)
         
-        let workoutForPreview = collectionDataManager.fetchWorkouts(for: firstCollection, in: workoutCarouselViewModel.mainContext).first!
-        let workoutEditModel = WorkoutEditorModel(parentViewModel: workoutCarouselViewModel, editingWorkoutUUID: workoutForPreview.uuid)!
+        let workoutForPreview = collectionDataManager.fetchWorkouts(for: firstCollection, in: workoutCarouselViewModel.context).first!
+        let workoutEditModel = WorkoutEditorModel(parent: workoutCarouselViewModel, editingWorkoutUUID: workoutForPreview.uuid)!
         
         
         let restTimeEditViewModel = RestTimeEditViewModel(parentViewModel: workoutEditModel)!

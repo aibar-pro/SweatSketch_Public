@@ -18,7 +18,7 @@ protocol WorkoutDataManagerProtocol {
     
     func calculateNewExercisePosition(for workout: WorkoutEntity, in context: NSManagedObjectContext) -> Int16
     
-    func setupExercisePositions(for workout: WorkoutEntity, in context: NSManagedObjectContext)
+    func reindexExercises(for workout: WorkoutEntity, in context: NSManagedObjectContext)
     
     func createRestTime(for followingExercise: ExerciseEntity, with duration: Int, in context: NSManagedObjectContext) -> RestTimeEntity
     func fetchRestTime(for followingExercise: ExerciseEntity, in context: NSManagedObjectContext) -> RestTimeEntity?

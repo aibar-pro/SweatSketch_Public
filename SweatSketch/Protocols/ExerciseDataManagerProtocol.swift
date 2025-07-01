@@ -19,5 +19,5 @@ protocol ExerciseDataManagerProtocol {
     
     func calculateNewActionPosition(for exercise: ExerciseEntity, in context: NSManagedObjectContext) -> Int16
     
-    func setupActionPositions(for exercise: ExerciseEntity, in context: NSManagedObjectContext)
+    func reindexExercises(for exercise: ExerciseEntity, in context: NSManagedObjectContext)
 }

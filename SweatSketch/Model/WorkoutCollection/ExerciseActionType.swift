@@ -14,15 +14,15 @@ enum ExerciseActionType: Equatable {
     case rest(duration: Int)
     
     func description(includeSets: Bool = false) -> String {
-        let maxLabel: LocalizedStringKey = "app.max.value.label"
-        let timeUnitLabel: String = TimeUnit.second.localizedShortDescription.stringValue()
+        let maxLabel = LocalizedStringKey("app.max.value.label").stringValue()
+        let timeUnitLabel = TimeUnit.second.localizedShortDescription.stringValue()
         
         switch self {
         case .reps(let sets, let min, let max, let isMax):
             if isMax {
                 return includeSets
-                    ? maxLabel.stringValue() + " x\(sets)"
-                    : maxLabel.stringValue()
+                    ? maxLabel + " x\(sets)"
+                    : maxLabel
             } else {
                 let repPart = min.rangeString(to: max)
                 return includeSets
@@ -32,8 +32,8 @@ enum ExerciseActionType: Equatable {
         case .timed(let sets, let min, let max, let isMax):
             if isMax {
                 return includeSets
-                    ? maxLabel.stringValue() + " x\(sets)"
-                    : maxLabel.stringValue()
+                    ? maxLabel + " x\(sets)"
+                    : maxLabel
             } else {
                 let timePart = min.rangeString(to: max, unit: timeUnitLabel)
                 return includeSets
@@ -43,8 +43,8 @@ enum ExerciseActionType: Equatable {
         case .distance(let sets, let min, let max, let unit, let isMax):
             if isMax {
                 return includeSets
-                    ? maxLabel.stringValue() + " x\(sets)"
-                    : maxLabel.stringValue()
+                    ? maxLabel + " x\(sets)"
+                    : maxLabel
             } else {
                 let minStr = min.formatted(precision: 2)
                 let maxStr = max?.formatted(precision: 2)

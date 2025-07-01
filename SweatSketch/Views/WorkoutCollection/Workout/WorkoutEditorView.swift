@@ -97,7 +97,7 @@ struct WorkoutEditorView: View {
     }
     
     private var workoutNameView: some View {
-        Text(viewModel.editingWorkout.name ?? Constants.Placeholders.noWorkoutName)
+        Text(viewModel.workout.name ?? Constants.Placeholders.noWorkoutName)
             .fullWidthText(
                 showListEditor ? .title2 : .title3,
                 weight: showListEditor ? .bold : .medium
@@ -128,7 +128,7 @@ struct WorkoutEditorView: View {
     
     private var exercisesView: some View {
         List {
-            ForEach(viewModel.exercises.compactMap { $0.toExerciseRepresentation() }, id: \.id) { exercise in
+            ForEach(viewModel.exercises, id: \.id) { exercise in
                 HStack(alignment: .firstTextBaseline, spacing: Constants.Design.spacing) {
                     ExerciseDetailView(exercise: exercise)
                     
@@ -148,13 +148,14 @@ struct WorkoutEditorView: View {
                 .padding(.vertical, Constants.Design.spacing / 2)
                 .listRowBackground(Color.clear)
             }
-            .onDelete { index in viewModel.removeExercises(at: index) }
-            .onMove(perform: viewModel.reorderWorkoutExercise)
+            .onDelete(perform: viewModel.deleteExercises)
+            .onMove(perform: viewModel.moveExercises)
         }
         .opacity(isListEditDisabled ? 0.2 : 1)
         .disabled(isListEditDisabled)
         .listStyle(.plain)
         .listRowInsets(EdgeInsets())
+        .adaptiveScrollIndicatorsHidden()
         .materialBackground()
         .lightShadow()
         .environment(
@@ -266,8 +267,8 @@ struct WorkoutEditorView: View {
         case .name:
             coordinator.presentBottomSheet(
                 type: .singleTextField(
-                    kind: .renameWorkout,
-                    initialText: viewModel.editingWorkout.name ?? "",
+                    kind: .workoutRename,
+                    initialText: viewModel.workout.name ?? "",
                     action: {
                         viewModel.renameWorkout(newName: $0)
                         currentEditingState = .none
@@ -377,9 +378,9 @@ struct WorkoutEditView_Previews: PreviewProvider {
         
         let workoutViewModel = WorkoutCollectionViewModel(context: persistenceController.container.viewContext, collectionUUID: firstCollection?.uuid)
         
-        let workoutForPreview = collectionDataManager.fetchWorkouts(for: firstCollection!, in: workoutViewModel.mainContext).randomElement()!
+        let workoutForPreview = collectionDataManager.fetchWorkouts(for: firstCollection!, in: workoutViewModel.context).randomElement()!
         
-        let workoutEditModel = WorkoutEditorModel(parentViewModel: workoutViewModel, editingWorkoutUUID: workoutForPreview.uuid)!
+        let workoutEditModel = WorkoutEditorModel(parent: workoutViewModel, editingWorkoutUUID: workoutForPreview.uuid)!
         
         let workoutEditCoordinator = WorkoutEditorCoordinator(viewModel: workoutEditModel)
         
