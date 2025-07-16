@@ -19,19 +19,20 @@ class ActiveWorkoutRepresentation: Identifiable, Equatable, ObservableObject {
     let id: UUID
     var title: String
     
-    var items = [ActiveWorkoutItem]()
-    var currentItemIndex: Int = 0
-    var currentActionIndex: Int = 0
+    @Published var items = [ActiveWorkoutItem]()
+    @Published var currentItemIndex: Int = 0
+    @Published var currentStepIndex: Int = 0
     
     var currentItem: ActiveWorkoutItem? {
-       return items.isEmpty ? nil : items[currentItemIndex]
+        return items.isEmpty ? nil : items[safe: currentItemIndex]
     }
     
     var currentAction: ActionRepresentation? {
         guard !items.isEmpty,
                 !items[currentItemIndex].actions.isEmpty
         else { return nil }
-        return items[currentItemIndex].actions[currentActionIndex]
+        
+        return items[currentItemIndex].actions[currentStepIndex]
     }
     
     private let workoutDataManager = WorkoutDataManager()
@@ -52,8 +53,6 @@ class ActiveWorkoutRepresentation: Identifiable, Equatable, ObservableObject {
                 !fetchedExercises.isEmpty
         else { return [] }
         
-        let defaultRestDuration = fetchDefaultRestTimeDuration(for: workout, in: context)
-        
         // if exercise is not first, if exercise exist: fetch rest time
         // transform fetched rest time or default one
         // add to array of items
@@ -63,14 +62,21 @@ class ActiveWorkoutRepresentation: Identifiable, Equatable, ObservableObject {
         var items = [ActiveWorkoutItem]()
         
         for (index, exercise) in fetchedExercises.enumerated() {
-            if let exerciseRepresentation = exercise.toActiveWorkoutItem(defaultRestDuration: defaultRestDuration) {
+            if let exerciseRepresentation = exercise.toActiveWorkoutItem(defaultRest: workout.defaultRest.int) {
                 //Add rest period between exercises: custom or default
                 if index > 0 {
-                    if let fetchedRestTime = workoutDataManager.fetchRestTime(for: exercise, in: context), 
-                        let restTimeRepresentation = fetchedRestTime.toActiveWorkoutItem() {
-                        items.append(restTimeRepresentation)
+                    if let preRest = fetchedExercises[safe: index - 1]?.postRest?.intValue {
+                        appendRestItem(
+                            items: &items,
+                            duration: preRest,
+                            in: context
+                        )
                     } else {
-                        appendDefaultRestTime(items: &items, duration: defaultRestDuration, in: context)
+                        appendRestItem(
+                            items: &items,
+                            duration: workout.defaultRest.int,
+                            in: context
+                        )
                     }
                 }
                 items.append(exerciseRepresentation)
@@ -80,54 +86,47 @@ class ActiveWorkoutRepresentation: Identifiable, Equatable, ObservableObject {
         return items
     }
     
-    private func fetchDefaultRestTimeDuration(for workout: WorkoutEntity, in context: NSManagedObjectContext) -> Int {
-        guard let fetchedDefaultRestTime = workoutDataManager.fetchDefaultRestTime(for: workout, in: context) else { return 0 }
-        return fetchedDefaultRestTime.duration.int
-    }
-    
-    private func appendDefaultRestTime(
+    private func appendRestItem(
         items: inout [ActiveWorkoutItem],
         duration: Int,
         in context: NSManagedObjectContext
     ) {
-        guard let restTimeItem = ActiveWorkoutItem(
-            entityUUID: UUID(),
-            title: Constants.Placeholders.restPeriodLabel,
-            kind: .rest(duration: duration),
-            in: context
-        ) else { return }
+        guard let restTimeItem = ActiveWorkoutItem(restTime: duration) else { return }
         
-        items.append(
-            restTimeItem
-        )
+        items.append(restTimeItem)
     }
     
     func next() {
-        if currentActionIndex < items[currentItemIndex].actions.count - 1 {
-           currentActionIndex += 1
+        if currentStepIndex < items[currentItemIndex].actions.count - 1 {
+           currentStepIndex += 1
         } else if currentItemIndex < items.count - 1 {
             currentItemIndex += 1
-           currentActionIndex = 0
+           currentStepIndex = 0
         }
     }
 
     func previous() {
-        if currentActionIndex > 0 {
-           currentActionIndex -= 1
+        if currentStepIndex > 0 {
+           currentStepIndex -= 1
         } else if currentItemIndex > 0 {
             currentItemIndex -= 1
-           currentActionIndex = items[currentItemIndex].actions.count - 1
+            currentStepIndex = items[currentItemIndex].actions.count - 1
         }
     }
     
-    func currentItemProgress() -> (current: Int, total: Int) {
+    func currentItemProgress() -> ItemProgress {
         guard let current = currentItem else {
-            return (0, 0)
+            return .init()
         }
-        return (currentActionIndex, current.actions.count)
+        
+        return ItemProgress(
+            stepIndex: currentStepIndex,
+            totalSteps: current.actions.count,
+            stepProgress: .init()
+        )
     }
     
-    func isLastAction() -> Bool {
-        return currentItemIndex == items.count - 1 && currentActionIndex == items[currentItemIndex].actions.count - 1
+    func isLastStep() -> Bool {
+        return currentItemIndex == items.count - 1 && currentStepIndex == items[currentItemIndex].actions.count - 1
     }
 }

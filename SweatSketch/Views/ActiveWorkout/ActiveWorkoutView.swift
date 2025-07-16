@@ -14,12 +14,10 @@ struct ActiveWorkoutView: View {
     @State var yOffset : CGFloat = 0
     
     var body: some View {
-        
         GeometryReader { gReader in
-            VStack (alignment: .center, spacing: Constants.Design.spacing) {
-                
-                HStack{
-                    Text(viewModel.activeWorkout.title)
+            VStack(alignment: .center, spacing: Constants.Design.spacing) {
+                HStack {
+                    Text(viewModel.workoutName)
                         .fullWidthText(.title2, weight: .semibold)
                         .lineLimit(2)
                     
@@ -36,27 +34,29 @@ struct ActiveWorkoutView: View {
                 .padding(.horizontal, Constants.Design.spacing)
                 
                 ScrollViewReader { scrollProxy in
-                    ScrollView {
-                        VStack (alignment: .center, spacing: Constants.Design.spacing) {
+                    ScrollView(showsIndicators: false) {
+                        VStack(alignment: .center, spacing: Constants.Design.spacing) {
                             ForEach(viewModel.items, id: \.id) { item in
-                                if viewModel.isCurrentItem(item: item) {
+                                if viewModel.isCurrentItem(item) {
                                     ActiveWorkoutItemView(
                                         workoutItem: item,
-                                        itemProgress: $viewModel.currentProgress,
+                                        itemProgress: 
+                                            viewModel.progressBinding,
                                         nextRequested: {
-                                            if !viewModel.isLastAction {
-                                                viewModel.nextActiveWorkoutItem()
+                                            if !viewModel.isLastStep {
+                                                viewModel.next()
                                             } else {
                                                 coordinator.goToWorkoutSummary()
                                             }
                                         },
-                                        previousRequested: viewModel.previousActiveWorkoutItem
+                                        previousRequested: {
+                                            viewModel.previous()
+                                        }
                                     )
                                     .id(item.id)
                                     .padding(Constants.Design.spacing)
                                     .materialBackground()
                                     .lightShadow()
-                                    .padding(.horizontal, Constants.Design.spacing)
                                 } else {
                                     Text(item.title)
                                         .font(.subheadline)
@@ -66,45 +66,40 @@ struct ActiveWorkoutView: View {
                                         .opacity(0.4)
                                         .id(item.id)
                                 }
-                                
                             }
                         }
                     }
                     .onChange(of: viewModel.currentItem) { _ in
-                        if let activeItemID = viewModel.currentItem?.id {
-                            withAnimation {
-                                scrollProxy.scrollTo(activeItemID, anchor: .center)
-                            }
-                        }
+                        scrollToActiveItem(scrollProxy: scrollProxy)
                     }
-                    .onAppear(perform: {
-                        if let activeItemID = viewModel.currentItem?.id {
-                            withAnimation {
-                                scrollProxy.scrollTo(activeItemID, anchor: .center)
-                            }
-                        }
-                    })
+                    .onAppear {
+                        scrollToActiveItem(scrollProxy: scrollProxy)
+                    }
                     
-                    Button(action: {
-                        if let activeItemID = viewModel.currentItem?.id {
-                            withAnimation {
-                                scrollProxy.scrollTo(activeItemID, anchor: .center)
+                    CapsuleButton(
+                        content: {
+                            HStack(alignment: .center, spacing: Constants.Design.spacing / 4) {
+                                Image(systemName: "arrow.down.and.line.horizontal.and.arrow.up")
+                                Text(Constants.Placeholders.ActiveWorkout.toActiveItemLabel)
                             }
+                        },
+                        style: .inline,
+                        action: {
+                            scrollToActiveItem(scrollProxy: scrollProxy)
                         }
-                    }) {
-                        HStack (alignment: .center, spacing: Constants.Design.spacing/4) {
-                            Image(systemName: "arrow.down.and.line.horizontal.and.arrow.up")
-                            Text(Constants.Placeholders.ActiveWorkout.toActiveItemLabel)
-                            Spacer()
-                        }
-                        .font(.footnote)
-                        
-                    }
-                    .padding(.horizontal, Constants.Design.spacing)
-                    .opacity(0.5)
+                    )
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
-            .adaptiveTint(Constants.Design.Colors.elementFgHighEmphasis)
+            .padding(.horizontal, Constants.Design.spacing)
+        }
+    }
+    
+    private func scrollToActiveItem(scrollProxy: ScrollViewProxy) {
+        if let activeItemID = viewModel.currentItem?.id {
+            withAnimation {
+                scrollProxy.scrollTo(activeItemID, anchor: .center)
+            }
         }
     }
 }

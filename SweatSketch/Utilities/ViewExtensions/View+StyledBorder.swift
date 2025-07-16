@@ -8,10 +8,13 @@
 import SwiftUI
 
 extension View {
-    public func styledBorder(_ color: Color? = nil) -> some View {
+    public func styledBorder(
+        _ color: Color? = nil,
+        paddings: (horizontal: CGFloat, vertical: CGFloat)? = nil
+    ) -> some View {
         self
-            .padding(.vertical, Constants.Design.spacing)
-            .padding(.horizontal, Constants.Design.spacing)
+            .padding(.vertical, paddings?.vertical ?? Constants.Design.spacing)
+            .padding(.horizontal, paddings?.horizontal ?? Constants.Design.spacing)
             .background(
                 RoundedRectangle(cornerRadius: Constants.Design.cornerRadius, style: .continuous)
                     .stroke(style: StrokeStyle(lineWidth: 2))

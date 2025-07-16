@@ -7,7 +7,14 @@
 
 import SwiftUI
 
-class WorkoutCatalogWorkoutMoveCoordinator: BaseCoordinator<WorkoutCatalogWorkoutMoveViewModel>, Coordinator {
+class WorkoutCatalogWorkoutMoveCoordinator: BaseCoordinator, Coordinator {
+    let viewModel: WorkoutCatalogWorkoutMoveViewModel
+    
+    init(viewModel: WorkoutCatalogWorkoutMoveViewModel) {
+        self.viewModel = viewModel
+        super.init()
+    }
+    
     func start() {
         let view = WorkoutCatalogWorkoutMoveView(viewModel: self.viewModel).environmentObject(self)
         rootViewController = UIHostingController(rootView: view)

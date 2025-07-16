@@ -10,7 +10,6 @@ import Combine
 import CoreData
 
 class ApplicationCoordinator: ObservableObject, Coordinator {
-
     var rootViewController = UINavigationController()
     var childCoordinators = [Coordinator]()
     
@@ -53,7 +52,11 @@ class ApplicationCoordinator: ObservableObject, Coordinator {
     
     private func showActiveWorkout(with workoutUUID: UUID) {
         do {
-            let activeWorkoutCoordinator = try ActiveWorkoutCoordinator(dataContext: dataContext, activeWorkoutUUID: workoutUUID, applicationEvent: self.applicationEvent)
+            let activeWorkoutCoordinator = try ActiveWorkoutCoordinator(
+                dataContext: dataContext,
+                activeWorkoutUUID: workoutUUID,
+                applicationEvent: self.applicationEvent
+            )
             activeWorkoutCoordinator.start()
             
             setActiveWorkoutUUID(workoutUUID)

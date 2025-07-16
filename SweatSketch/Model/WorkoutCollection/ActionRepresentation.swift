@@ -33,21 +33,17 @@ class ActionRepresentation: Identifiable, ObservableObject {
     let title: String
     let type: ExerciseActionType
     
-    @Published var progress: Double = 0.0
-
     private let workoutDataManager = WorkoutDataManager()
     
     init(
         entityUUID: UUID,
         title: String,
-        type: ExerciseActionType,
-        progress: Double = 0.0
+        type: ExerciseActionType
     ) {
         self.id = UUID()
         self.entityUUID = entityUUID
         self.title = title
         self.type = type
-        self.progress = min(max(progress, 0.0), 1.0)
     }
 }
 
@@ -56,7 +52,6 @@ extension ActionRepresentation: Equatable {
         return lhs.entityUUID == rhs.entityUUID
             && lhs.title == rhs.title
             && lhs.type == rhs.type
-            && lhs.progress == rhs.progress
     }
 }
 
@@ -73,14 +68,6 @@ extension ExerciseActionEntity {
         }() ?? ""
         
         switch self {
-        case let rest as RestActionEntity:
-            return ActionRepresentation(
-                entityUUID: uuid,
-                title: Constants.Placeholders.restPeriodLabel,
-                type: .rest(
-                    duration: rest.duration.int
-                )
-            )
         case let t as TimedActionEntity:
             return ActionRepresentation(
                 entityUUID: uuid,
@@ -122,18 +109,18 @@ extension ExerciseActionEntity {
 }
 
 extension ActiveWorkoutActivityState {
-    init(action: ActionRepresentation, progress: Double, stepIndex: Int, totalSteps: Int) {
+    init(action: ActionRepresentation, itemProgress: ItemProgress) {
         self.actionID = action.id
         self.title = action.title
         self.quantity = action.type.description(includeSets: false)
-        self.progress = progress
+        
+        self.itemProgress = itemProgress
+        
         self.isRest = {
             if case .rest = action.type {
                 return true
             }
             return false
         }()
-        self.stepIndex = stepIndex
-        self.totalSteps = totalSteps
     }
 }

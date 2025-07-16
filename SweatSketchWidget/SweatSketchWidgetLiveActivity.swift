@@ -18,18 +18,13 @@ struct SweatSketchWidgetLiveActivity: Widget {
                 VStack(alignment: .leading, spacing: WidgetConstants.padding * 2) {
                     WidgetActionInfoLabelView(
                         title: context.state.title,
-                        quantity: context.state.quantity,
-                        progress: context.state.progress
+                        quantity: context.state.quantity
                     )
                     .font(.headline.weight(.bold))
                     .foregroundStyle(WidgetConstants.Colors.elementFgHighEmphasis)
                     
-                    WidgetProgressBarView(
-                        progress: context.state.progress,
-                        stepIndex: context.state.stepIndex,
-                        totalSteps: context.state.totalSteps
-                    )
-                    .frame(height: WidgetConstants.padding * 3)
+                    WidgetProgressBarView(itemProgress: context.state.itemProgress)
+                        .frame(height: WidgetConstants.padding * 3)
                     
                     if #available(iOS 17.0, *) {
                         HStack(alignment: .top) {
@@ -63,18 +58,13 @@ struct SweatSketchWidgetLiveActivity: Widget {
                     VStack (alignment: .leading, spacing: WidgetConstants.padding) {
                         WidgetActionInfoLabelView(
                             title: context.state.title,
-                            quantity: context.state.quantity,
-                            progress: context.state.progress
+                            quantity: context.state.quantity
                         )
                         .font(.headline.bold())
                         .foregroundStyle(WidgetConstants.Colors.elementFgHighEmphasis)
                         
-                        WidgetProgressBarView(
-                            progress: context.state.progress,
-                            stepIndex: context.state.stepIndex,
-                            totalSteps: context.state.totalSteps
-                        )
-                        .frame(height: WidgetConstants.padding * 2)
+                        WidgetProgressBarView(itemProgress: context.state.itemProgress)
+                            .frame(height: WidgetConstants.padding * 2)
                         
                         if #available(iOS 17.0, *) {
                             HStack(alignment: .top) {
@@ -126,12 +116,14 @@ extension ActiveWorkoutActivityState {
         return .init(
             title: names.randomElement() ?? "",
             quantity: Bool.random()
-            ? String(durations.randomElement() ?? 0) + "-" + String(durations.randomElement() ?? 0)
+                ? String(durations.randomElement() ?? 0) + "-" + String(durations.randomElement() ?? 0)
                 : "max",
-            progress: 0.1,
-            isRest: false,
-            stepIndex: stepIndex,
-            totalSteps: totalSteps
+            itemProgress: .init(
+                stepIndex: stepIndex,
+                totalSteps: totalSteps,
+                stepProgress: .init()
+            ),
+            isRest: false
         )
     }
 }

@@ -29,7 +29,7 @@ class RestTimeEditCoordinator: ObservableObject, Coordinator {
         } else {
             print("Rest Time Coordinator: Save")
         }
-        viewModel.saveRestTime()
+//        viewModel.saveRestTime()
         rootViewController.dismiss(animated: true)
     }
     
@@ -39,7 +39,7 @@ class RestTimeEditCoordinator: ObservableObject, Coordinator {
         } else {
             print("Rest Time Coordinator: Discard")
         }
-        viewModel.cancelRestTime()
+//        viewModel.cancelRestTime()
         rootViewController.dismiss(animated: true)
     }
 }

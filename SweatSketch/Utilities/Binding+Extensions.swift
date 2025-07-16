@@ -25,6 +25,15 @@ extension Binding where Value == Double {
     }
 }
 
+extension Binding where Value == String? {
+    func or(_ defaultValue: String) -> Binding<String> {
+        Binding<String>(
+            get: { wrappedValue ?? defaultValue },
+            set: { value in wrappedValue = value }
+        )
+    }
+}
+
 extension Binding where Value == Double? {
     func or(_ defaultValue: Double) -> Binding<Double> {
         Binding<Double>(

@@ -146,8 +146,11 @@ enum Constants {
         enum UserProfile {
             static let username = Constants.Placeholders.UserProfile.noUsername
             static let age = 18
+            static let ageRange: ClosedRange<Int> = 0...200
             static let height = 100.0
+            static let heightRange: ClosedRange<Double> = 0...200
             static let weight = 50.0
+            static let weightRange: ClosedRange<Double> = 0...500
         }
     }
 }

@@ -8,6 +8,6 @@
 import Foundation
 
 protocol ActiveWorkoutManagementProtocol {
-    func nextActiveWorkoutItem()
-    func previousActiveWorkoutItem()
+    func nextWorkoutStep()
+    func previousWorkoutStep()
 }

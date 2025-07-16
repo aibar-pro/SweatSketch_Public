@@ -9,12 +9,16 @@ import SwiftUI
 import CoreData
 import Combine
 
-class WorkoutCatalogCoordinator: BaseCoordinator<WorkoutCatalogViewModel>, Coordinator {
+class WorkoutCatalogCoordinator: BaseCoordinator, Coordinator {
     let applicationEvent: PassthroughSubject<ApplicationEventType, Never>
+    
+    let viewModel: WorkoutCatalogViewModel
     
     init(dataContext: NSManagedObjectContext, applicationEvent: PassthroughSubject<ApplicationEventType, Never>) {
         self.applicationEvent = applicationEvent
-        super.init(viewModel: WorkoutCatalogViewModel(context: dataContext))
+        self.viewModel = WorkoutCatalogViewModel(context: dataContext)
+        
+        super.init()
     }
     
     func start() {

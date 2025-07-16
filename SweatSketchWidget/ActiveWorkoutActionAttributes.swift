@@ -17,10 +17,10 @@ struct ActiveWorkoutActionAttributes: ActivityAttributes {
         var actionID: UUID?
         var title: String
         var quantity: String
-        var progress: Double
+        
+        var itemProgress: ItemProgress
+        
         var isRest: Bool
-        var stepIndex: Int
-        var totalSteps: Int
         
         var iconName: String {
             isRest ? "leaf" : "flame"

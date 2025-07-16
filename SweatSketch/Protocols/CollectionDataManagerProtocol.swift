@@ -19,7 +19,7 @@ protocol CollectionDataManagerProtocol {
     
     func createCollection(with name: String?, in context: NSManagedObjectContext) -> WorkoutCollectionEntity
     func createDefaultCollection(in context: NSManagedObjectContext) -> WorkoutCollectionEntity
-    func createWorkout(for collection: WorkoutCollectionEntity, in context: NSManagedObjectContext) -> WorkoutEntity
+    func createWorkout(for collection: WorkoutCollectionEntity, defaultRest: Int, in context: NSManagedObjectContext) -> WorkoutEntity
     
     func setupCollectionCatalog(in context: NSManagedObjectContext)
     

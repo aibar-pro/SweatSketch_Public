@@ -169,12 +169,17 @@ class CollectionDataManager: CollectionDataManagerProtocol {
         return newCollection
     }
     
-    func createWorkout(for collection: WorkoutCollectionEntity, in context: NSManagedObjectContext) -> WorkoutEntity {
+    func createWorkout(
+        for collection: WorkoutCollectionEntity,
+        defaultRest: Int,
+        in context: NSManagedObjectContext
+    ) -> WorkoutEntity {
         let newWorkout = WorkoutEntity(context: context)
         newWorkout.uuid = UUID()
         newWorkout.name = Constants.Placeholders.noWorkoutName
         newWorkout.position = calculateNewWorkoutPosition(for: collection, in: context)
         newWorkout.collection = fetchCollection(collection: collection, in: context)
+        newWorkout.defaultRest = defaultRest.int32
         
         return newWorkout
     }

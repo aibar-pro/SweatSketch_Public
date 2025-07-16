@@ -193,7 +193,7 @@ struct WorkoutEditorView: View {
                         Image(systemName: "timer")
                         
                         if !currentEditingState.isOne(of: .rest) {
-                            Text(viewModel.defaultRestTime.duration.int.durationString())
+                            Text(viewModel.defaultRestTime.durationString())
                         } else {
                             Text(Constants.Placeholders.noDuration)
                         }
@@ -285,7 +285,7 @@ struct WorkoutEditorView: View {
             coordinator.presentBottomSheet(
                 type: .timePicker(
                     kind: .workout,
-                    initialValue: viewModel.defaultRestTime.duration.int,
+                    initialValue: viewModel.defaultRestTime,
                     action: { value in
                         viewModel.updateDefaultRestTime(duration: value)
                         currentEditingState = .none

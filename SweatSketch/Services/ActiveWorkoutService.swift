@@ -13,11 +13,11 @@ class ActiveWorkoutService: ActiveWorkoutManagementProtocol {
 
     var workoutManager: ActiveWorkoutManagementProtocol?
 
-    func nextActiveWorkoutItem() {
-        workoutManager?.nextActiveWorkoutItem()
+    func nextWorkoutStep() {
+        workoutManager?.nextWorkoutStep()
     }
     
-    func previousActiveWorkoutItem() {
-        workoutManager?.previousActiveWorkoutItem()
+    func previousWorkoutStep() {
+        workoutManager?.previousWorkoutStep()
     }
 }

@@ -11,7 +11,6 @@ import WidgetKit
 struct WidgetActionInfoLabelView: View {
     var title: String
     var quantity: String
-    var progress: Double
     
     var body: some View {
         HStack(alignment: .top, spacing: WidgetConstants.padding) {

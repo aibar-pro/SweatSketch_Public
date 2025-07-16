@@ -9,22 +9,28 @@ import SwiftUI
 import CoreData
 import Combine
 
-class ActiveWorkoutCoordinator: BaseCoordinator<ActiveWorkoutViewModel>, Coordinator {
-    var activeWorkoutService: ActiveWorkoutService
-    
+class ActiveWorkoutCoordinator: BaseCoordinator, Coordinator {
     let applicationEvent: PassthroughSubject<ApplicationEventType, Never>
     
-    let activeWorkoutUUID: UUID
+    let viewModel: ActiveWorkoutViewModel
     
-    init(dataContext: NSManagedObjectContext, activeWorkoutUUID: UUID, applicationEvent: PassthroughSubject<ApplicationEventType, Never>) throws {
-        self.activeWorkoutService = ActiveWorkoutService.shared
+    let activeWorkoutUUID: UUID
+    let activeWorkoutService: ActiveWorkoutService
+    
+    init(
+        dataContext: NSManagedObjectContext,
+        activeWorkoutUUID: UUID,
+        applicationEvent: PassthroughSubject<ApplicationEventType, Never>
+    ) throws {
         self.activeWorkoutUUID = activeWorkoutUUID
+        self.viewModel = try ActiveWorkoutViewModel(activeWorkoutUUID: activeWorkoutUUID, in: dataContext)
+        
+        self.activeWorkoutService = ActiveWorkoutService.shared
+        self.activeWorkoutService.workoutManager = self.viewModel
+        
         self.applicationEvent = applicationEvent
         
-        let viewModel = try ActiveWorkoutViewModel(activeWorkoutUUID: activeWorkoutUUID, in: dataContext)
-        super.init(viewModel: viewModel)
-        
-        self.activeWorkoutService.workoutManager = self.viewModel
+        super.init()
     }
     
     func start() {
@@ -33,25 +39,24 @@ class ActiveWorkoutCoordinator: BaseCoordinator<ActiveWorkoutViewModel>, Coordin
         rootViewController.view.backgroundColor = .clear
         
         print("Active Workout Coordinator: Start")
-        viewModel.startTimer()
-        viewModel.startActivity()
+        viewModel.startWorkout()
     }
     
     func goToWorkoutSummary() {
-        viewModel.stopTimer()
+        viewModel.stopWorkoutTimer()
         let workoutDuration = viewModel.totalWorkoutDuration
         
         let view = ActiveWorkoutSummaryView(
             workoutDuration: workoutDuration,
             onProceed: {
                 Task {
-                    await self.viewModel.endActivity()
+                    await self.viewModel.endLiveActivity()
                     await MainActor.run {
                         self.finishWorkout()
                     }
                 }
             },
-            onDismiss: viewModel.startTimer)
+            onDismiss: viewModel.startWorkoutTimer)
             .environmentObject(self)
         
         let workoutCompletedController = UIHostingController(rootView: view)
@@ -59,7 +64,7 @@ class ActiveWorkoutCoordinator: BaseCoordinator<ActiveWorkoutViewModel>, Coordin
         rootViewController.present(workoutCompletedController, animated: true)
     }
     
-    private func finishWorkout(){
+    private func finishWorkout() {
         print("\(type(of: self)): Active workout UUID \(activeWorkoutUUID) finished")
         rootViewController.dismiss(animated: false)
         //TODO: Fix transition

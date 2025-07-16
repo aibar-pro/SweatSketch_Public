@@ -38,11 +38,6 @@ struct ActionDetailView: View {
                         .adaptiveForegroundStyle(Constants.Design.Colors.elementFgMediumEmphasis)
                 }
             }
-            
-            if action.progress > 0 && action.progress < 1 {
-                ProgressView(value: action.progress)
-                    .progressViewStyle(.linear)
-            }
         }
         .accessibilityElement(children: .combine)
     }

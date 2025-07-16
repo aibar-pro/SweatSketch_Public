@@ -9,17 +9,16 @@ import Foundation
 import SweatSketchSharedModule
 
 struct UserProfileModel: Codable {
-    var login: String
+    var login: String?
     var username: String?
-    var age: Int32?
+    var age: Int?
     var height: Double?
     var weight: Double?
 }
 
 extension UserProfileModel {
-    func toShared() -> SweatSketchSharedModule.UserProfileModel {
-        return SweatSketchSharedModule.UserProfileModel(
-            login: self.login,
+    func toShared() -> SweatSketchSharedModule.UserProfileDto {
+        return SweatSketchSharedModule.UserProfileDto(
             username: self.username,
             age: self.age?.kotlinInt,
             height: self.height?.kotlinDouble,
@@ -28,12 +27,11 @@ extension UserProfileModel {
     }
 }
 
-extension SweatSketchSharedModule.UserProfileModel {
+extension SweatSketchSharedModule.UserProfileDto {
     func toLocal() -> UserProfileModel {
         return UserProfileModel(
-            login: self.login,
             username: self.username,
-            age: self.age?.int32Value,
+            age: self.age?.intValue,
             height: self.height?.doubleValue,
             weight: self.weight?.doubleValue
         )

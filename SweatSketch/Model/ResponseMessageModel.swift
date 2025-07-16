@@ -12,7 +12,7 @@ struct ResponseMessageModel : Codable {
     var message: String
 }
 
-extension SweatSketchSharedModule.ResponseMessageModel {
+extension SweatSketchSharedModule.ResponseMessageDto {
     func toLocal() -> ResponseMessageModel {
         return ResponseMessageModel(
             message: self.message

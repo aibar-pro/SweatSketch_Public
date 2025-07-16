@@ -9,18 +9,18 @@ import SwiftUI
 
 struct ActiveWorkoutItemView: View {
     var workoutItem: ActiveWorkoutItem
-    @Binding var itemProgress: (current: Int, total: Int)
+    @Binding var itemProgress: ItemProgress
     
-    var nextRequested: () -> ()
-    var previousRequested: () -> ()
+    var nextRequested: () -> Void
+    var previousRequested: () -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: Constants.Design.spacing) {
-            if let currentAction = workoutItem.actions[safe: itemProgress.current] {
+            if let currentAction = workoutItem.actions[safe: itemProgress.stepIndex] {
                 itemDescriptionView(currentAction: currentAction)
             
-                ProgressBarView(totalSections: itemProgress.total, currentSection: itemProgress.current)
-                    .frame(height: 28)
+                ProgressBarView(itemProgress: itemProgress)
+                    .frame(height: Constants.Design.spacing * 1.5)
             }
             
             buttonStackView
@@ -28,39 +28,24 @@ struct ActiveWorkoutItemView: View {
     }
     
     private func itemDescriptionView(currentAction: ActionRepresentation) -> some View {
-        HStack(alignment: .top, spacing: Constants.Design.spacing) {
-            VStack(alignment: .leading, spacing: Constants.Design.spacing) {
-                if workoutItem.title != currentAction.title {
-                    Text(workoutItem.title)
-                        .font(.title3.bold())
-                        .lineLimit(1)
-                        .multilineTextAlignment(.leading)
-                }
+        VStack(alignment: .leading, spacing: Constants.Design.spacing) {
+            HStack(alignment: .firstTextBaseline, spacing: Constants.Design.spacing) {
+                Text(workoutItem.title)
+                    .lineLimit(1)
                 
+                Spacer(minLength: 0)
+                
+                Text(itemProgress.stepProgress.quantity)
+                    .lineLimit(1)
+            }
+            .font(.title3.bold())
+            
+            if workoutItem.title != currentAction.title,
+               currentAction.title.isEmpty == false {
                 Text(currentAction.title)
                     .font(workoutItem.title != currentAction.title ? .headline : .title3.bold())
                     .lineLimit(3)
                     .multilineTextAlignment(.leading)
-            }
-            
-            Spacer(minLength: 0)
-            
-            switch currentAction.type {
-            case .reps(_, let min, let max, let isMax):
-                Group {
-                    if isMax {
-                        Text("x\(Constants.Placeholders.maximumRepetitionsLabel)")
-                    } else if let max {
-                        Text("x\(min)-\(max)")
-                    } else {
-                        Text("x\(min)")
-                    }
-                }
-                .font(.title3.bold())
-            case .rest(let duration):
-                CountdownTimerView(timeRemaining: duration)
-                    .font(.title3.bold())
-            default: EmptyView()
             }
         }
     }
@@ -104,6 +89,11 @@ struct ActiveWorkoutItemView_Previews: PreviewProvider {
         
         let exerciseForPreview = try! ActiveWorkoutRepresentation(workoutUUID: (workoutForPreview?.uuid)!, in: persistenceController.container.viewContext).items[2]
         
-        ActiveWorkoutItemView(workoutItem: exerciseForPreview, itemProgress: .constant((5,10)), nextRequested: {}, previousRequested: {})
+        ActiveWorkoutItemView(
+            workoutItem: exerciseForPreview,
+            itemProgress: .constant(.init()),
+            nextRequested: {},
+            previousRequested: {}
+        )
     }
 }

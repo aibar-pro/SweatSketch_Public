@@ -35,11 +35,6 @@ struct PersistenceController {
                 position: Int16(idx),
                 collection: c
             )
-            _ = createDefaultRestTime(
-                in: viewContext,
-                duration: Int32.random(in: 60...180),
-                workout: w
-            )
             
             print("MOCK: Created workout \(w)")
             let exerciseCount = Int.random(in: 0...maxExerciseCount)
@@ -75,15 +70,6 @@ struct PersistenceController {
                         maxActionCount: maxActionCount
                     )
                 }
-            }
-            if Bool.random(),
-                let ex = w.exercises?.array.randomElement() as? ExerciseEntity {
-                _ = createRestTime(
-                    in: viewContext,
-                    duration: Int32.random(in: 60...180),
-                    followingExercise: ex,
-                    workout: w
-                )
             }
         }
 
@@ -164,36 +150,10 @@ extension PersistenceController {
         if let collection {
             workout.collection = collection
         }
+        workout.defaultRest = Int32.random(in: 30...120)
         return workout
     }
-    
-    private static func createDefaultRestTime(
-        in context: NSManagedObjectContext,
-        duration: Int32,
-        workout: WorkoutEntity
-    ) -> RestTimeEntity {
-        let restTime = RestTimeEntity(context: context)
-        restTime.uuid = UUID()
-        restTime.isDefault = true
-        restTime.duration = duration
-        workout.addToRestTimes(restTime)
-        return restTime
-    }
-    
-    private static func createRestTime(
-        in context: NSManagedObjectContext,
-        duration: Int32,
-        followingExercise: ExerciseEntity,
-        workout: WorkoutEntity
-    ) -> RestTimeEntity {
-        let restTime = RestTimeEntity(context: context)
-        restTime.uuid = UUID()
-        restTime.followingExercise = followingExercise
-        restTime.duration = duration
-        workout.addToRestTimes(restTime)
-        return restTime
-    }
-    
+
     private static func createExercise(
         in context: NSManagedObjectContext,
         name: String,
@@ -259,15 +219,14 @@ extension PersistenceController {
         exercise.addToExerciseActions(action)
     }
     
-    private static func createRestAction(
-        in context: NSManagedObjectContext,
-        exercise: ExerciseEntity,
-        duration: Int
-    ) {
-        let action = RestActionEntity(context: context)
-        action.uuid = UUID()
-        action.duration = duration.int32
-        exercise.addToExerciseActions(action)
+    private static func addExerciseRest(ex: inout ExerciseEntity) {
+        let variation = Int.random(in: 0...5)
+        
+        switch variation {
+        case 0: ex.postRest = Int.random(in: 5...100).nsNumber
+        case 1: ex.intraRest = Int.random(in: 5...100).nsNumber
+        default: break
+        }
     }
     
     private static func createRepsExercise(
@@ -276,7 +235,7 @@ extension PersistenceController {
         position: Int16,
         maxActionCount: Int
     ) -> ExerciseEntity {
-        let ex = createExercise(in: context, name: "Reps \(position)", position: position)
+        var ex = createExercise(in: context, name: "Reps \(position)", position: position)
         let aCount = Int.random(in: 1...maxActionCount)
         for idx in 1...aCount {
             createRepsAction(
@@ -285,9 +244,9 @@ extension PersistenceController {
                 position: Int16(idx)
             )
         }
-        if Bool.random() {
-            createRestAction(in: context, exercise: ex, duration: Int.random(in: 5...100))
-        }
+        
+        addExerciseRest(ex: &ex)
+
         workout.addToExercises(ex)
         return ex
     }
@@ -298,7 +257,7 @@ extension PersistenceController {
         position: Int16,
         maxActionCount: Int
     ) -> ExerciseEntity {
-        let ex = createExercise(in: context, name: "Distance \(position)", position: position)
+        var ex = createExercise(in: context, name: "Distance \(position)", position: position)
         let aCount = Int.random(in: 1...maxActionCount)
         for idx in 1...aCount {
             createDistanceAction(
@@ -307,9 +266,9 @@ extension PersistenceController {
                 position: Int16(idx)
             )
         }
-        if Bool.random() {
-            createRestAction(in: context, exercise: ex, duration: Int.random(in: 5...100))
-        }
+        
+        addExerciseRest(ex: &ex)
+        
         workout.addToExercises(ex)
         return ex
     }
@@ -320,7 +279,7 @@ extension PersistenceController {
         position: Int16,
         maxActionCount: Int
     ) -> ExerciseEntity {
-        let ex = createExercise(in: context, name: "Timed \(position)", position: position)
+        var ex = createExercise(in: context, name: "Timed \(position)", position: position)
         let aCount = Int.random(in: 1...maxActionCount)
         for idx in 1...aCount {
             createTimedAction(
@@ -329,9 +288,8 @@ extension PersistenceController {
                 position: Int16(idx)
             )
         }
-        if Bool.random() {
-            createRestAction(in: context, exercise: ex, duration: Int.random(in: 5...100))
-        }
+        addExerciseRest(ex: &ex)
+        
         workout.addToExercises(ex)
         return ex
     }
@@ -342,7 +300,7 @@ extension PersistenceController {
         position: Int16,
         maxActionCount: Int
     ) -> ExerciseEntity {
-        let ex = createExercise(in: context, name: "Mixed \(position)", position: position)
+        var ex = createExercise(in: context, name: "Mixed \(position)", position: position)
         let aCount = Int.random(in: 1...maxActionCount)
         for idx in 1...aCount {
             let actionType = Int.random(in: 1...3)
@@ -367,9 +325,7 @@ extension PersistenceController {
                 )
             }
         }
-        if Bool.random() {
-            createRestAction(in: context, exercise: ex, duration: Int.random(in: 5...100))
-        }
+        addExerciseRest(ex: &ex)
         workout.addToExercises(ex)
         return ex
     }

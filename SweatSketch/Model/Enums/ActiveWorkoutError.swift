@@ -7,4 +7,5 @@
 
 enum ActiveWorkoutError: Error {
     case invalidWorkoutUUID
+    case emptyWorkout
 }

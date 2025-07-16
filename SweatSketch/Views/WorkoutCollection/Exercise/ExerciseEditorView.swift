@@ -106,7 +106,7 @@ struct ExerciseEditorView: View {
                         Image(systemName: "timer")
                         
                         if !currentEditingState.isOne(of: .rest) {
-                            DurationView(durationInSeconds: viewModel.restBetweenActions.duration.int)
+                            DurationView(durationInSeconds: viewModel.restBetweenActions)
                         } else {
                             Text(Constants.Placeholders.noDuration)
                         }

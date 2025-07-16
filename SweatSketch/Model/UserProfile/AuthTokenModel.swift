@@ -14,7 +14,7 @@ struct AuthTokenModel: Codable {
     let expiresIn: UInt64
 }
 
-extension SweatSketchSharedModule.AuthTokenModel {
+extension SweatSketchSharedModule.AuthTokenDto {
     func toLocal() -> AuthTokenModel {
         return AuthTokenModel(
             accessToken: self.accessToken,
