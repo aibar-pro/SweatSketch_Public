@@ -19,6 +19,7 @@ enum SingleFieldFormKind {
     case addCollection
     case renameCollection
     case exerciseSetCount
+    case username
     
     var config: SingleFieldFormConfig {
         switch self {
@@ -51,6 +52,12 @@ enum SingleFieldFormKind {
                 title: "exercise.edit.set.count.title",
                 placeholder: "exercise.edit.set.count.placeholder",
                 actionLabel: "app.button.save.label"
+            )
+        case .username:
+            return SingleFieldFormConfig(
+                title: "user.edit.username.title",
+                placeholder: "user.edit.username.placeholder",
+                actionLabel: "app.button.add.label"
             )
         }
     }

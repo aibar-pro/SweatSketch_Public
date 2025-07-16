@@ -56,11 +56,23 @@ struct UserProfileView: View {
     }
     
     private var content: some View {
-        VStack(alignment: .leading, spacing: Constants.Design.spacing) {
-            Text("\(Constants.Placeholders.UserProfile.greetingLabel), \(viewModel.getGreeting())!")
+        VStack(alignment: .leading, spacing: Constants.Design.spacing * 2) {
+            Text("user.profile.greeting\(viewModel.getGreeting())!")
                 .fullWidthText(.title, alignment: .center)
             
-            VStack (alignment: .leading, spacing: Constants.Design.spacing) {
+            if viewModel.isEditingProfile {
+                profileEditView
+            } else {
+                Text("")
+            }
+        }
+    }
+    
+    let numberFieldWidth: CGFloat = 75
+    
+    private var profileEditView: some View {
+        VStack(alignment: .leading, spacing: Constants.Design.spacing) {
+            VStack(alignment: .leading, spacing: Constants.Design.spacing) {
                 usernameFieldView
                 
                 ageFieldView
@@ -73,16 +85,15 @@ struct UserProfileView: View {
             .materialBackground()
             .lightShadow()
             
-            if let userProfile = viewModel.userProfile {
-                RectangleButton(
-                    "app.button.save.label",
-                    style: .primary,
-                    isFullWidth: true,
-                    action: {
-                        onSubmit(userProfile)
-                    }
-                )
-            }
+            RectangleButton(
+                "app.button.save.label",
+                style: .primary,
+                isFullWidth: true,
+                action: {
+                    guard let userProfile = viewModel.userProfile else { return }
+                    onSubmit(userProfile)
+                }
+            )
         }
     }
     
@@ -90,85 +101,48 @@ struct UserProfileView: View {
         FormField(title: "user.profile.username.label") {
             TextField(
                 "user.profile.username.placeholder",
-                text:
-                    Binding {
-                        viewModel.getUsername()
-                    } set: {
-                        viewModel.updateUsername(with: $0)
-                    }
+                text: viewModel.usernameBinding
             )
         }
     }
     
     private var ageFieldView: some View {
-        FormField(title: "user.profile.age.label") {
-            Picker(
-                "",
-                selection:
-                    Binding {
-                        viewModel.getAge()
-                    } set: {
-                        viewModel.updateAge(with: $0)
-                    }
-            ) {
-                ForEach(0..<200, id: \.self) { value in
-                    Text(String(value))
-                        .tag(value)
-                }
-            }
-            .pickerStyle(MenuPickerStyle())
-            .labelsHidden()
-            .adaptiveTint(Constants.Design.Colors.elementFgHighEmphasis)
+        FormField(title: "user.profile.age.label", contentMaxWidth: numberFieldWidth) {
+            IntegerTextField(value: viewModel.ageBinding)
         }
     }
     
     private var heightFieldView: some View {
-        FormField(title: "user.profile.height.label") {
-            Picker(
-                "",
-                selection:
-                    Binding {
-                        viewModel.getHeight()
-                    } set: {
-                        viewModel.updateHeight(with: $0)
-                    }
-            ) {
-                ForEach(0..<300, id: \.self) { value in
-                    Text(String(value))
-//                        .formattedHeightUnit(.centimeters)
-                        .tag(value)
+        HStack(alignment: .lastTextBaseline, spacing: Constants.Design.spacing / 4) {
+            FormField(title: "user.profile.height.label", contentMaxWidth: numberFieldWidth) {
+                DecimalTextField(value: viewModel.heightBinding)
+                    .adaptiveTint(Constants.Design.Colors.elementFgPrimary)
+            }
+            
+            Picker("", selection: $viewModel.selectedHeightUnit) {
+                ForEach(AppSettings.shared.lengthSystem.allowedUnits, id: \.id) { unit in
+                    Text(unit.localizedName).tag(unit)
                 }
             }
-            .pickerStyle(MenuPickerStyle())
+            .pickerStyle(.menu)
             .labelsHidden()
             .adaptiveTint(Constants.Design.Colors.elementFgHighEmphasis)
         }
     }
     
     private var weightFieldView: some View {
-        FormField(title: "user.profile.weight.label") {
-            Picker(
-                "",
-                selection:
-                    Binding {
-                        viewModel.getWeight()
-                    } set: {
-                        viewModel.updateWeight(with: $0)
-                    }
-            ) {
-                ForEach(0..<400, id: \.self) { value in
-                    Text(String(value))
-                        .formattedWeightUnit(.kilograms)
-                        .tag(value)
-                }
-            }
-            .pickerStyle(MenuPickerStyle())
-            .labelsHidden()
-            .adaptiveTint(Constants.Design.Colors.elementFgHighEmphasis)
+        FormField(title: "user.profile.weight.label", contentMaxWidth: numberFieldWidth) {
+            DecimalTextField(value: viewModel.weightBinding)
+                .adaptiveTint(Constants.Design.Colors.elementFgPrimary)
         }
     }
 }
 
 #Preview {
-    UserProfileView(onSubmit: {_ in }, onDismiss: {}, onLogout: {}, viewModel: UserProfileViewModel())
+    UserProfileView(
+        onSubmit: {_ in },
+        onDismiss: {},
+        onLogout: {},
+        viewModel: UserProfileViewModel()
+    )
 }

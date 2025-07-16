@@ -80,15 +80,40 @@ class NetworkService {
     }
     
     @MainActor
+    func createDefaultUserProfile(username: String) async throws -> Bool {
+        try await withCheckedThrowingContinuation { continuation in
+            let defaultProfile = UserProfileModel(username: username)
+                .toShared()
+            
+            userRepository.createUserProfile(userProfile: defaultProfile) { response, error in
+                if response != nil {
+                    continuation.resume(returning: true)
+                }
+                
+                guard let error else {
+                    continuation.resume(throwing: APIError.unknownError())
+                    return
+                }
+                
+                continuation.resume(throwing: APIError.map(error))
+            }
+        }
+    }
+    
+    @MainActor
     func getUserProfile() async throws -> UserProfileModel {
         try await withCheckedThrowingContinuation { continuation in
             userRepository.getUserProfile() { response, error in
                 if let response = response {
                     continuation.resume(returning: response.toLocal())
-                } else if let error = error {
-                    print("NETWORK SERVICE: User FETCH failed with error: \(error.localizedDescription)")
-                    continuation.resume(throwing: error)
                 }
+                
+                guard let error else {
+                    continuation.resume(throwing: APIError.unknownError())
+                    return
+                }
+                
+                continuation.resume(throwing: APIError.map(error))
             }
         }
     }
@@ -97,12 +122,16 @@ class NetworkService {
     func updateUser(userProfile: UserProfileModel) async throws -> Bool {
         try await withCheckedThrowingContinuation { continuation in
             userRepository.updateUserProfile(userProfile: userProfile.toShared()) { response, error in
-               if response != nil {
+                if response != nil {
                     continuation.resume(returning: true)
-                } else if let error = error {
-                    print("NETWORK SERVICE: User UPDATE failed with error: \(error.localizedDescription)")
-                    continuation.resume(throwing: error)
                 }
+                
+                guard let error else {
+                    continuation.resume(throwing: APIError.unknownError())
+                    return
+                }
+                
+                continuation.resume(throwing: APIError.map(error))
             }
         }
     }

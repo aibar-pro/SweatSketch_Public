@@ -9,8 +9,10 @@ import SwiftUI
 import CoreData
 import Combine
 
-class WorkoutCollectionCoordinator: BaseCoordinator<WorkoutCollectionViewModel>, Coordinator {
+class WorkoutCollectionCoordinator: BaseCoordinator, Coordinator {
     let applicationEvent: PassthroughSubject<ApplicationEventType, Never>
+    
+    let viewModel: WorkoutCollectionViewModel
     
     init(
         dataContext: NSManagedObjectContext,
@@ -19,8 +21,8 @@ class WorkoutCollectionCoordinator: BaseCoordinator<WorkoutCollectionViewModel>,
     ) {
         self.applicationEvent = applicationEvent
         
-        let viewModel = WorkoutCollectionViewModel(context: dataContext, collectionUUID: collectionUUID)
-        super.init(viewModel: viewModel)
+        self.viewModel = WorkoutCollectionViewModel(context: dataContext, collectionUUID: collectionUUID)
+        super.init()
     }
     
     func startWorkout(workoutIndex: Int) {

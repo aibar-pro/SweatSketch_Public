@@ -15,7 +15,7 @@ class ExerciseEditorModel: ObservableObject {
     @Published var exercise: ExerciseEntity
     @Published var actions: [ActionRepresentation] = []
     @Published var actionDraft: ActionDraftModel?
-    @Published var restBetweenActions: RestActionEntity
+    @Published var restBetweenActions: Int
     
     private let workoutDataManager = WorkoutDataManager()
     private let exerciseDataManager = ExerciseDataManager()
@@ -32,16 +32,25 @@ class ExerciseEditorModel: ObservableObject {
         self.context.undoManager?.disableUndoRegistration()
         
         self.exercise = ExerciseEntity()
-        self.restBetweenActions = RestActionEntity()
-        
+
         if let exerciseId,
             let exerciseToEdit = exerciseDataManager.fetchExercise(by: exerciseId, in: self.context) {
             self.exercise = exerciseToEdit
+            
+            if let rest = exerciseToEdit.intraRest {
+                self.restBetweenActions = rest.intValue
+            } else {
+                self.restBetweenActions = self.parent.defaultRestTime
+            }
+            
             reloadActions()
         } else {
+            let defaultRestTime = parent.defaultRestTime
+            
             guard case .success(let createdExercise) = workoutDataManager
                 .createExercise(
                     for: self.parent.workout,
+                    intraRest: defaultRestTime,
                     in: self.context
                 )
             else {
@@ -49,17 +58,7 @@ class ExerciseEditorModel: ObservableObject {
             }
             
             self.exercise = createdExercise
-        }
-        
-        if let restTimeBetweenActions = exerciseDataManager.fetchRestTimeBetweenActions(for: self.exercise, in: self.context) {
-            self.restBetweenActions = restTimeBetweenActions
-        } else {
-            self.restBetweenActions = exerciseDataManager
-                .createRestBetweenActions(
-                    for: self.exercise,
-                    with: self.parent.defaultRestTime.duration.int,
-                    in: self.context
-                )
+            self.restBetweenActions = defaultRestTime
         }
         
         self.context.undoManager?.enableUndoRegistration()
@@ -131,7 +130,7 @@ class ExerciseEditorModel: ObservableObject {
     
     func reloadActions() {
         actions = exerciseDataManager
-            .fetchActions(for: exercise, in: self.context, includeRest: false)
+            .fetchActions(for: exercise, in: self.context)
             .compactMap {
                 $0.toActionViewRepresentation(exerciseName: exercise.name)
             }
@@ -148,8 +147,10 @@ class ExerciseEditorModel: ObservableObject {
     }
     
     func setRestBetweenActions(duration: Int) {
-        self.restBetweenActions.duration = duration.int32
-        self.objectWillChange.send()
+        guard duration >= 0,
+                duration != parent.workout.defaultRest else { return }
+        restBetweenActions = duration
+        exercise.intraRest = duration.nsNumber
     }
     
     func deleteActions(at offsets: IndexSet) {

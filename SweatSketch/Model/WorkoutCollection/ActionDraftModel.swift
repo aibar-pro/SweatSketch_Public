@@ -66,10 +66,6 @@ class ActionDraftModel: ObservableObject {
                 self.unit = lengthSystem.defaultUnit
             }
             print("\(type(of: self)): \(#function). Creating draft for distance action: \(d.distanceMin), \(String(describing: d.distanceMax)). Current draft values: \(minValue), \(String(describing: maxValue))")
-            
-        case let rest as RestActionEntity:
-            kind = .rest
-            minValue = Double(rest.duration)
         default:
             return nil
         }

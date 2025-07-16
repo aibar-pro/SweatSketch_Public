@@ -8,52 +8,49 @@
 import SwiftUI
 import Combine
 
-class UserProfileCoordinator: ObservableObject, Coordinator {
-    var rootViewController = UIViewController()
-    var childCoordinators = [Coordinator]()
-    
+class UserProfileCoordinator: BaseCoordinator, Coordinator {
     let applicationEvent: PassthroughSubject<ApplicationEventType, Never>
     
     var cancellables = Set<AnyCancellable>()
     
-    init (applicationEvent: PassthroughSubject<ApplicationEventType, Never>) {
+    init(applicationEvent: PassthroughSubject<ApplicationEventType, Never>) {
         self.applicationEvent = applicationEvent
     }
     
     func start() {
         if UserSession.shared.isLoggedIn {
-            showUserProfile()
+            presentUserProfileScreen()
         } else {
             showLogin()
         }
     }
     
-    private func showUserProfile() {
-        let userProfileViewCoordinator = UserProfileViewCoordinator()
-        userProfileViewCoordinator.delegate = self
-        userProfileViewCoordinator.start()
-        childCoordinators.append(userProfileViewCoordinator)
+    private func presentUserProfileScreen() {
+        let coordinator = UserProfileViewCoordinator()
         
-        rootViewController = userProfileViewCoordinator.rootViewController
-     }
-
-     private func showLogin() {
-         let loginCoordinator = UserProfileLoginCoordinator()
-         loginCoordinator.delegate = self
-         loginCoordinator.start()
-         childCoordinators.append(loginCoordinator)
-
-         rootViewController = loginCoordinator.rootViewController
-     }
-
-     private func showSignup() {
-         let signupCoordinator = UserProfileSignupCoordinator()
-         signupCoordinator.delegate = self
-         signupCoordinator.start()
-         childCoordinators.append(signupCoordinator)
-         
-         rootViewController.present(signupCoordinator.rootViewController, animated: true)
-     }
+        coordinator.delegate = self
+        coordinator.start()
+        childCoordinators.append(coordinator)
+        rootViewController = coordinator.rootViewController
+    }
+    
+    private func showLogin() {
+        let loginCoordinator = UserProfileLoginCoordinator()
+        loginCoordinator.delegate = self
+        loginCoordinator.start()
+        childCoordinators.append(loginCoordinator)
+        
+        rootViewController = loginCoordinator.rootViewController
+    }
+    
+    private func showSignup() {
+        let signupCoordinator = UserProfileSignupCoordinator()
+        signupCoordinator.delegate = self
+        signupCoordinator.start()
+        childCoordinators.append(signupCoordinator)
+        
+        rootViewController.present(signupCoordinator.rootViewController, animated: true)
+    }
 }
 
 extension UserProfileCoordinator: UserProfileCoordinatorDelegate {

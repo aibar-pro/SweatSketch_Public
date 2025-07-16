@@ -34,17 +34,6 @@
     "%@" : {
       "shouldTranslate" : false
     },
-    "%@, %@!" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@, %2$@!"
-          }
-        }
-      },
-      "shouldTranslate" : false
-    },
     "%lld" : {
 
     },
@@ -301,7 +290,6 @@
       }
     },
     "app.button.add.label" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -369,6 +357,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Loading…"
+          }
+        }
+      }
+    },
+    "app.login.form.email.label" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Email"
+          }
+        }
+      }
+    },
+    "app.login.form.password.label" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Password"
           }
         }
       }
@@ -1717,12 +1725,28 @@
         }
       }
     },
+    "user.edit.username.placeholder" : {
+
+    },
+    "user.edit.username.title" : {
+
+    },
     "user.profile.age.label" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Age"
+          }
+        }
+      }
+    },
+    "user.profile.greeting%@!" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hello%@!"
           }
         }
       }
@@ -2009,21 +2033,8 @@
         }
       }
     },
-    "x%@" : {
-
-    },
     "x%lld" : {
 
-    },
-    "x%lld-%lld" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "x%1$lld-%2$lld"
-          }
-        }
-      }
     }
   },
   "version" : "1.0"

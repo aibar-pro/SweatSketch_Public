@@ -51,10 +51,10 @@ struct ActionEditorView: View {
         actionForm
     }
     
+    let formWidth: CGFloat = 300
+    
     private var actionForm: some View {
-        let formWidth: CGFloat = 300
-        
-        return VStack(alignment: .leading, spacing: Constants.Design.spacing * 2) {
+        VStack(alignment: .leading, spacing: Constants.Design.spacing * 2) {
             Picker("", selection: $draft.kind) {
                 ForEach(ActionKind.allCases.filter(\.isNonRest), id: \.self) {
                     Text($0.localizedTitle).tag($0)
@@ -64,18 +64,13 @@ struct ActionEditorView: View {
             .pickerStyle(.segmented)
             
             nameField
-                .frame(width: formWidth)
             
-            FormField(
-                title: "action.edit.sets.label",
-                inputField: {
-                    IntegerTextField(
-                        value: $draft.sets,
-                        placeholder: ""
-                    )
-                }
-            )
-            .frame(width: formWidth / 5)
+            FormField(title: "action.edit.sets.label", contentMaxWidth: formWidth / 4) {
+                IntegerTextField(
+                    value: $draft.sets,
+                    placeholder: ""
+                )
+            }
             
             ChipsRow(chips: chips(for: draft.kind))
             
@@ -103,66 +98,53 @@ struct ActionEditorView: View {
                 
                 isMaxSwitch
             }
-            .frame(width: formWidth)
             
             buttonStackView
         }
     }
 
     private var nameField: some View {
-        FormField(
-            title: "action.edit.name.label",
-            inputField: {
-                TextField(
-                    "",
-                    text: $draft.name
-                )
-            }
-        )
+        FormField(title: "action.edit.name.label") {
+            TextField("", text: $draft.name)
+        }
     }
     
     private var minValueField: some View {
-        FormField(
-            title: "action.edit.min.label",
-            inputField: {
-                Group {
-                    switch draft.kind {
-                    case .distance:
-                        DecimalTextField(
-                            value: $draft.minValue,
-                            placeholder: ""
-                        )
-                    default:
-                        IntegerTextField(
-                            value: $draft.minValue.asInt(),
-                            placeholder: ""
-                        )
-                    }
+        FormField(title: "action.edit.min.label", contentMaxWidth: formWidth / 4) {
+            Group {
+                switch draft.kind {
+                case .distance:
+                    DecimalTextField(
+                        value: $draft.minValue,
+                        placeholder: ""
+                    )
+                default:
+                    IntegerTextField(
+                        value: $draft.minValue.asInt(),
+                        placeholder: ""
+                    )
                 }
             }
-        )
+        }
     }
     
     private var maxValueField: some View {
-        FormField(
-            title: "action.edit.max.label",
-            inputField: {
-                Group {
-                    switch draft.kind {
-                    case .distance:
-                        DecimalTextField(
-                            value: $draft.maxValue.or(draft.minValue),
-                            placeholder: ""
-                        )
-                    default:
-                        IntegerTextField(
-                            value: $draft.maxValue.or(draft.minValue).asInt(),
-                            placeholder: ""
-                        )
-                    }
+        FormField(title: "action.edit.max.label", contentMaxWidth: formWidth / 4) {
+            Group {
+                switch draft.kind {
+                case .distance:
+                    DecimalTextField(
+                        value: $draft.maxValue.or(draft.minValue),
+                        placeholder: ""
+                    )
+                default:
+                    IntegerTextField(
+                        value: $draft.maxValue.or(draft.minValue).asInt(),
+                        placeholder: ""
+                    )
                 }
             }
-        )
+        }
     }
     
     private var unitField: some View {
@@ -192,13 +174,10 @@ struct ActionEditorView: View {
     }
     
     private var isMaxSwitch: some View {
-        FormField(
-            title: "action.edit.or.label",
-            inputField: {
-                Toggle("action.edit.isMax.label", isOn: $draft.isMax)
-                    .adaptiveTint(Constants.Design.Colors.elementFgPrimary)
-            }
-        )
+        FormField(title: "action.edit.or.label", contentMaxWidth: formWidth * 0.67) {
+            Toggle("action.edit.isMax.label", isOn: $draft.isMax)
+                .adaptiveTint(Constants.Design.Colors.elementFgPrimary)
+        }
     }
     
     private var buttonStackView: some View {

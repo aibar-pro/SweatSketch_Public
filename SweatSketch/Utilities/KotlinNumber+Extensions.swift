@@ -8,16 +8,16 @@
 import Foundation
 import SweatSketchSharedModule
 
-extension Int32 {
+extension Int {
     var kotlinInt: KotlinInt {
-        return KotlinInt(value: self)
+        return KotlinInt(value: self.int32)
     }
 }
 
-extension Optional where Wrapped == Int32 {
+extension Optional where Wrapped == Int {
     var kotlinInt: KotlinInt? {
         guard let self else { return nil }
-        return KotlinInt(value: self)
+        return KotlinInt(value: self.int32)
     }
 }
 

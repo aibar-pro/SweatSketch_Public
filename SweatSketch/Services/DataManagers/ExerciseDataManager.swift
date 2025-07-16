@@ -8,22 +8,6 @@
 import CoreData
 
 final class ExerciseDataManager {
-    func createRestBetweenActions(
-        for exercise: ExerciseEntity,
-        with duration: Int,
-        in context: NSManagedObjectContext
-    ) -> RestActionEntity {
-        let restAction = RestActionEntity(context: context)
-        
-        restAction.uuid = UUID()
-        restAction.duration = duration.int32
-        restAction.position = 0
-        
-        exercise.addToExerciseActions(restAction)
-        
-        return restAction
-    }
-
     func createRepsAction(
         for exercise: ExerciseEntity,
         from draft: ActionDraftModel,
@@ -176,17 +160,14 @@ final class ExerciseDataManager {
     
     func fetchActions(
         for exercise: ExerciseEntity,
-        in context: NSManagedObjectContext,
-        includeRest: Bool = true
+        in context: NSManagedObjectContext
     ) -> [ExerciseActionEntity] {
         let fetchRequest: NSFetchRequest<ExerciseActionEntity> = ExerciseActionEntity.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "exercise == %@", exercise)
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "position", ascending: true)]
         
         do {
-            let all = try context.fetch(fetchRequest)
-            guard !includeRest else { return all }
-            return all.filter { !($0 is RestActionEntity) }
+            return try context.fetch(fetchRequest)
         } catch {
             print("Error fetching actions: \(error)")
             return []
@@ -217,20 +198,7 @@ final class ExerciseDataManager {
                 )
         }
     }
-    
-    func fetchRestTimeBetweenActions(for exercise: ExerciseEntity, in context: NSManagedObjectContext) -> RestActionEntity? {
-        let fetchRequest: NSFetchRequest<RestActionEntity> = RestActionEntity.fetchRequest()
-        fetchRequest.fetchLimit = 1
-        fetchRequest.predicate = NSPredicate(format: "exercise == %@", exercise)
-        
-        do {
-            return try context.fetch(fetchRequest).first
-        } catch {
-            print("Error fetching actions: \(error)")
-            return nil
-        }
-    }
-    
+
     func fetchExercise(exercise: ExerciseEntity, in context: NSManagedObjectContext) -> ExerciseEntity? {
         let fetchRequest: NSFetchRequest<ExerciseEntity> = ExerciseEntity.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "SELF == %@", exercise.objectID)
@@ -263,12 +231,9 @@ final class ExerciseDataManager {
     }
     
     func reindexExercises(for exercise: ExerciseEntity, in context: NSManagedObjectContext) {
-        if let rest = fetchRestTimeBetweenActions(for: exercise, in: context) {
-            rest.position = 0
-        }
-        let nonRest = fetchActions(for: exercise, in: context)
-        for (idx, action) in nonRest.enumerated() {
-            action.position = Int16(idx + 1)
+        let fetchedActions = fetchActions(for: exercise, in: context)
+        for (idx, action) in fetchedActions.enumerated() {
+            action.position = idx.int16
         }
     }
     
@@ -277,7 +242,7 @@ final class ExerciseDataManager {
         for exercise: ExerciseEntity,
         in context: NSManagedObjectContext
     ) {
-        let fetchedActions = fetchActions(for: exercise, in: context, includeRest: false)
+        let fetchedActions = fetchActions(for: exercise, in: context)
         
         fetchedActions.forEach { action in
             if let uuid = action.uuid,

@@ -9,14 +9,13 @@ import Foundation
 import UIKit
 import SwiftUI
 
-class UserProfileViewCoordinator: Coordinator {
-    var viewModel: UserProfileViewModel
+class UserProfileViewCoordinator: BaseCoordinator, Coordinator {
+    let viewModel: UserProfileViewModel
     
-    var rootViewController = UIViewController()
     weak var delegate: UserProfileCoordinatorDelegate?
     
-    init() {
-        viewModel = UserProfileViewModel()
+    override init() {
+        self.viewModel = UserProfileViewModel()
     }
 
     func start() {

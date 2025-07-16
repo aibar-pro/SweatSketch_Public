@@ -7,13 +7,16 @@
 
 import SwiftUI
 
-class WorkoutEditorCoordinator: BaseCoordinator<WorkoutEditorModel>, Coordinator {
+class WorkoutEditorCoordinator: BaseCoordinator, Coordinator {
     @Published private(set) var activeUndoTarget: Undoable?
     private(set) var exerciseEditorModel: ExerciseEditorModel?
     
-    override init(viewModel: WorkoutEditorModel) {
-        super.init(viewModel: viewModel)
+    let viewModel: WorkoutEditorModel
+    
+    init(viewModel: WorkoutEditorModel) {
+        self.viewModel = viewModel
         self.activeUndoTarget = viewModel
+        super.init()
     }
     
     func start() {
@@ -82,7 +85,7 @@ class WorkoutEditorCoordinator: BaseCoordinator<WorkoutEditorModel>, Coordinator
         presentBottomSheet(
             type: .timePicker(
                 kind: .exercise,
-                initialValue: exerciseEditorModel?.restBetweenActions.duration.int ?? 0,
+                initialValue: exerciseEditorModel?.restBetweenActions ?? 0,
                 action: onSubmit,
                 cancel: onDismiss
             )
@@ -112,7 +115,7 @@ class WorkoutEditorCoordinator: BaseCoordinator<WorkoutEditorModel>, Coordinator
                 kind: .exerciseSetCount,
                 initialText: String(exerciseEditorModel?.exercise.superSets ?? 1),
                 action: {
-                    let intValue = min(1, Int($0) ?? 1)
+                    let intValue = max(1, Int($0) ?? 1)
                     onSubmit(intValue)
                 },
                 cancel: onDismiss

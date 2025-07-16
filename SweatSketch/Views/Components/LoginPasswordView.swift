@@ -11,29 +11,22 @@ struct LoginPasswordView: View {
     @Binding var user: UserCredentialModel
     
     var body: some View {
-        VStack (alignment: .leading, spacing: Constants.Design.spacing) {
-            Text(Constants.Placeholders.emailLabel)
-                .font(.footnote)
-                .adaptiveForegroundStyle(Constants.Design.Colors.elementFgMediumEmphasis)
-            TextField(Constants.Placeholders.emailLabel, text:
-                        $user.login
-            )
-            .disableAutocorrection(true)
-            .padding(.leading, Constants.Design.spacing/2)
-            .padding(.bottom, Constants.Design.spacing)
+        VStack(alignment: .leading, spacing: Constants.Design.spacing) {
+            FormField(title: "app.login.form.email.label") {
+                TextField("", text:$user.login)
+                    .adaptiveForegroundStyle(Constants.Design.Colors.elementFgHighEmphasis)
+                    .adaptiveTint(Constants.Design.Colors.elementBgPrimary)
+                    .keyboardType(.emailAddress)
+                    .disableAutocorrection(true)
+            }
             
-            Text(Constants.Placeholders.passwordLabel)
-                .font(.footnote)
-                .adaptiveForegroundStyle(Constants.Design.Colors.elementFgMediumEmphasis)
-            SecureField(Constants.Placeholders.passwordLabel, text:
-                        $user.password
-            )
-            .disableAutocorrection(true)
-            .padding(.leading, Constants.Design.spacing/2)
+            FormField(title: "app.login.form.password.label") {
+                SecureField("", text: $user.password)
+                    .adaptiveForegroundStyle(Constants.Design.Colors.elementFgHighEmphasis)
+                    .adaptiveTint(Constants.Design.Colors.elementBgPrimary)
+                    .disableAutocorrection(true)
+            }
         }
-        .padding(Constants.Design.spacing)
-        .materialBackground()
-        .lightShadow()
     }
 }
 

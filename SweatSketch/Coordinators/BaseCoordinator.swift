@@ -7,15 +7,11 @@
 
 import SwiftUI
 
-class BaseCoordinator<VM>: ObservableObject {
-    var viewModel: VM
-
+class BaseCoordinator: ObservableObject {
     var rootViewController = UIViewController()
     var childCoordinators = [Coordinator]()
 
-    init(viewModel: VM) {
-        self.viewModel = viewModel
-    }
+    init() {}
     
     func addViewPushTransition(pushDirection: CATransitionSubtype) {
         rootViewController.navigationController?.view.layer.add(CATransition.push(pushDirection), forKey: kCATransition)

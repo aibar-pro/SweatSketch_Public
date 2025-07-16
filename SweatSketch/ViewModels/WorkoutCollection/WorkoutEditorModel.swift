@@ -20,7 +20,7 @@ class WorkoutEditorModel: ObservableObject {
     
     @Published var workout: WorkoutEntity
     @Published var exercises: [ExerciseRepresentation] = []
-    @Published var defaultRestTime: RestTimeEntity
+    @Published var defaultRestTime: Int
     
     private let collectionDataManager = CollectionDataManager()
     private let workoutDataManager = WorkoutDataManager()
@@ -38,25 +38,25 @@ class WorkoutEditorModel: ObservableObject {
         self.context.undoManager?.disableUndoRegistration()
         
         self.workout = WorkoutEntity()
-        self.defaultRestTime = RestTimeEntity()
         
         if let workoutUUID = editingWorkoutUUID,
             let workoutToEdit = workoutDataManager.fetchWorkout(by: workoutUUID, in: self.context) {
             
             self.workout = workoutToEdit
+            self.defaultRestTime = workoutToEdit.defaultRest.int
             
             reloadExercises()
         } else {
-            self.workout = collectionDataManager.createWorkout(for: self.parent.workoutCollection, in: self.context)
+            let restDuration = Constants.DefaultValues.restTimeDuration
+            
+            self.workout = collectionDataManager.createWorkout(
+                for: self.parent.workoutCollection,
+                defaultRest: restDuration,
+                in: self.context
+            )
+            self.defaultRestTime = restDuration
         }
         
-        //Setup default workout rest time
-        if let defaultRestTime = workoutDataManager.fetchDefaultRestTime(for: self.workout, in: self.context) {
-            self.defaultRestTime = defaultRestTime
-        } else {
-            guard let createdRestTime = createDefaultRestTime(withDuration: Constants.DefaultValues.restTimeDuration) else { return nil }
-            self.defaultRestTime = createdRestTime
-        }
         
         self.context.undoManager?.enableUndoRegistration()
     }
@@ -65,23 +65,15 @@ class WorkoutEditorModel: ObservableObject {
         self.workout.name = newName
     }
     
-    func createDefaultRestTime(withDuration duration: Int) -> RestTimeEntity? {
-        let result = workoutDataManager
-            .createDefaultRestTime(
-                for: self.workout,
-                with: duration,
-                in: self.context
-            )
-        
-        if case .success(let success) = result {
-            return success
-        } else {
-            return nil
-        }
-    }
-    
     func updateDefaultRestTime(duration: Int) {
-        self.defaultRestTime.duration = duration.int32
+        guard duration >= 0 else { return }
+        
+        context.undoManager?.beginUndoGrouping()
+        defer { context.undoManager?.endUndoGrouping() }
+        
+        workout.defaultRest = duration.int32
+        
+        defaultRestTime = duration
     }
     
     func moveExercises(from source: IndexSet, to destination: Int) {

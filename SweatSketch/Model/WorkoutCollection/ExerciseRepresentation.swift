@@ -11,7 +11,7 @@ class ExerciseRepresentation: Identifiable, ObservableObject {
     let id: UUID
     var name: String
     var actions = [ActionRepresentation]()
-    var restTimeBetweenActions: RestActionEntity?
+    var restTimeBetweenActions: Int?
     var superSets: Int
     
     init?(exercise: ExerciseEntity, in context: NSManagedObjectContext) {
@@ -25,7 +25,7 @@ class ExerciseRepresentation: Identifiable, ObservableObject {
         let fetchedActions = exerciseDataManager.fetchActions(for: exercise, in: context)
         self.actions = fetchedActions.compactMap { $0.toActionViewRepresentation(exerciseName: name) }
         
-        self.restTimeBetweenActions = exerciseDataManager.fetchRestTimeBetweenActions(for: exercise, in: context)
+        self.restTimeBetweenActions = exercise.intraRest.intValue
 
         self.superSets = exercise.superSets.int
     }

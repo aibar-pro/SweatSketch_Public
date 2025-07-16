@@ -14,7 +14,7 @@ struct ActiveWorkoutNextItemIntent: LiveActivityIntent {
     static var description = IntentDescription("Go to next action in active workout")
     
     func perform() async throws -> some IntentResult {
-        ActiveWorkoutService.shared.nextActiveWorkoutItem()
+        ActiveWorkoutService.shared.nextWorkoutStep()
         return .result()
     }
 }

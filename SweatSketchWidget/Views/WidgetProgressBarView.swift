@@ -8,11 +8,7 @@
 import SwiftUI
 
 struct WidgetProgressBarView: View {
-    var progress: Double
-    var stepIndex: Int
-    var totalSteps: Int
-    
-    @State private var isAnimating = false
+    var itemProgress: ItemProgress
     
     var body: some View {
         GeometryReader { barGeometry in
@@ -22,10 +18,10 @@ struct WidgetProgressBarView: View {
                     .frame(width: barGeometry.size.width, height: barGeometry.size.height)
                 
                 HStack(alignment: .center, spacing: WidgetConstants.padding / 2) {
-                    ForEach(0..<totalSteps, id: \.self) { step in
+                    ForEach(0..<itemProgress.totalSteps, id: \.self) { step in
                         Group {
-                            if step == stepIndex {
-                                ProgressView(value: progress)
+                            if step == itemProgress.stepIndex {
+                                ProgressView(value: itemProgress.stepProgress.progress)
                                     .labelsHidden()
                                     .tint(WidgetConstants.Colors.elementFgAccent)
                                     .scaleEffect(x: 1, y: 3, anchor: .center)
@@ -34,7 +30,7 @@ struct WidgetProgressBarView: View {
                             } else {
                                 RoundedRectangle(cornerRadius: WidgetConstants.cornerRadius)
                                     .foregroundStyle(
-                                        step < stepIndex
+                                        step < itemProgress.stepIndex
                                         ? WidgetConstants.Colors.elementFgPrimary
                                         : WidgetConstants.Colors.elementFgLowEmphasis
                                     )

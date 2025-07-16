@@ -14,7 +14,7 @@ struct ActiveWorkoutPreviousItemIntent: LiveActivityIntent {
     static var description = IntentDescription("Go to previous action in active workout")
     
     func perform() async throws -> some IntentResult {
-        ActiveWorkoutService.shared.previousActiveWorkoutItem()
+        ActiveWorkoutService.shared.previousWorkoutStep()
         return .result()
     }
 }

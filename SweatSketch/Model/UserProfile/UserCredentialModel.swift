@@ -14,8 +14,8 @@ struct UserCredentialModel: Codable {
 }
 
 extension UserCredentialModel {
-    func toShared() -> SweatSketchSharedModule.UserCredentialModel {
-        return SweatSketchSharedModule.UserCredentialModel(
+    func toShared() -> SweatSketchSharedModule.UserCredentialDto {
+        return SweatSketchSharedModule.UserCredentialDto(
             login: self.login,
             password: self.password
         )

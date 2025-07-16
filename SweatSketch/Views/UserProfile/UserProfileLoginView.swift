@@ -24,19 +24,24 @@ struct UserProfileLoginView: View {
                             .buttonView()
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        
                         Image(systemName: "person.badge.key")
-                            .font(.largeTitle)
-                            .imageScale(.large)
+                            .font(.title.weight(.semibold))
                             .padding(.top, Constants.Design.spacing)
                         
                         Text("user.profile.login.title")
-                            .fullWidthText(.title, alignment: .center)
+                            .fullWidthText(.title, weight: .semibold, alignment: .center)
                         
                         Text("user.profile.login.subtitle")
                             .fullWidthText(.subheadline, alignment: .center)
                         
-                        LoginPasswordView(user: $user)
+                        VStack(alignment: .center, spacing: Constants.Design.spacing) {
+           
+                            
+                            LoginPasswordView(user: $user)
+                        }
+                        .padding(Constants.Design.spacing)
+                        .materialBackground()
+                        .lightShadow()
                         
                         RectangleButton(
                             "user.profile.login.button.label",
